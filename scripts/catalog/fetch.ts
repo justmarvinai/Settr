@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { dirs, readLock, type SourceName } from './paths';
+import { dirs, LOCK_FILE, readLock, type SourceName } from './paths';
 
 const git = (cwd: string, ...args: string[]) =>
   execFileSync('git', args, {
@@ -49,6 +49,24 @@ async function download(url: string, file: string): Promise<void> {
   });
   if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
   writeFileSync(file, Buffer.from(await response.arrayBuffer()));
+}
+
+/** Moves every pinned source to its upstream HEAD (weekly sync); returns the ones that changed. */
+export function updateLock(): string[] {
+  const lock = readLock();
+  const changed: string[] = [];
+  for (const [name, source] of Object.entries(lock)) {
+    const head = execFileSync('git', ['ls-remote', source.repo, 'HEAD'])
+      .toString()
+      .split('\t')[0]
+      ?.trim();
+    if (head && head !== source.commit) {
+      changed.push(`${name}: ${source.commit.slice(0, 7)} → ${head.slice(0, 7)}`);
+      source.commit = head;
+    }
+  }
+  writeFileSync(LOCK_FILE, `${JSON.stringify(lock, null, 2)}\n`);
+  return changed;
 }
 
 export interface FetchResult {

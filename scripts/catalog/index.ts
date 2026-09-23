@@ -17,7 +17,7 @@ import { buildSets, type BuildProblems } from './build';
 import { applyCardmarket, loadCardmarket, type CardmarketReport } from './cardmarket';
 import { loadCardOverlays, loadIdAliases, loadSealed } from './curated';
 import { emitCatalog } from './emit';
-import { fetchSources } from './fetch';
+import { fetchSources, updateLock } from './fetch';
 import { loadAssetIndex, resolveImages } from './images';
 import { loadSpeciesNames } from './names';
 import { CACHE, REPORT } from './paths';
@@ -28,6 +28,12 @@ const args = new Set(process.argv.slice(2));
 const network = args.has('--network');
 const problems: BuildProblems = { errors: [], warnings: [] };
 
+if (args.has('--update-sources')) {
+  const changed = updateLock();
+  console.log(
+    changed.length ? `Updated sources:\n  ${changed.join('\n  ')}` : 'Sources are up to date.',
+  );
+}
 await fetchSources({ network });
 const species = loadSpeciesNames();
 const sets = await buildSets(
