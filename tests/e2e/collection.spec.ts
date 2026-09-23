@@ -133,8 +133,11 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
   await expect(table.getByRole('row')).toHaveCount(6); // the header and all five lots
 
-  // Delete everything shown, then take it back.
-  await table.getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' }).click();
+  // Delete everything shown, then take it back. The header box works from the keyboard too; a
+  // click here often hung in CI's WebKit (Playwright's stability check after the re-render).
+  await table
+    .getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' })
+    .press('Space');
   await expect(bar).toContainText('5 ausgewählt');
   await bar.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByText('5 Positionen gelöscht')).toBeVisible();
