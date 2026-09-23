@@ -28,6 +28,10 @@ import {
   RARITY_IDS,
   type CardSection,
   type CatalogCard,
+  pickLanguage,
+  visibleLanguages,
+  cardName,
+  type NameMode,
 } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
@@ -41,10 +45,8 @@ import {
   typeLabel,
 } from '@/i18n';
 import { formatCount } from '@/i18n/format';
-import { useCjkFonts } from './cjk';
+import { useCjkFonts } from '@/components/domain/cjk';
 import { setReleaseText } from './dates';
-import { pickLanguage, visibleLanguages } from './language';
-import { cardName, type NameMode } from './names';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/');
 

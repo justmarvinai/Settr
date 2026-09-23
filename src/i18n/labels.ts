@@ -16,9 +16,9 @@ import type {
 } from '@/domain/catalog';
 import { m } from './paraglide/messages.js';
 
-type Labels<K extends string> = Record<K, () => string>;
+export type Labels<K extends string> = Record<K, () => string>;
 
-const lookup = <K extends string>(labels: Labels<K>) => {
+export const lookup = <K extends string>(labels: Labels<K>) => {
   const byId = new Map<string, () => string>(Object.entries<() => string>(labels));
   return (id: string): string => byId.get(id)?.() ?? id;
 };

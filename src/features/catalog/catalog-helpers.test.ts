@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CatalogCard } from '@/domain/catalog';
-import { pickLanguage, visibleLanguages } from './language';
-import { cardName, otherNames } from './names';
+import { pickLanguage, visibleLanguages, cardName, otherNames } from '@/domain/catalog';
 
 const card: Pick<CatalogCard, 'name' | 'nameSource' | 'languages'> = {
   name: {

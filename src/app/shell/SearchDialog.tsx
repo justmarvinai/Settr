@@ -1,14 +1,17 @@
 import { Autocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import { ArrowRightIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
+import { ArrowRightIcon, MagnifyingGlassIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import { useNavigate, type NavigateOptions } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useManifest } from '@/catalog';
 import { useCatalogSearch } from '@/catalog/useCatalogSearch';
 import { CardImage } from '@/components/domain/CardImage';
 import { ProductImage } from '@/components/domain/ProductImage';
+import { useCustomItems } from '@/db';
 import { pickText } from '@/domain/catalog';
 import { languageCode, m, printLabel, productTypeLabel, rarityLabel } from '@/i18n';
+import { openSheet } from '@/lib/sheets';
+import type { SearchMode } from './AppShell';
 
 interface PaletteGroup {
   value: PaletteItem['group'];
@@ -18,12 +21,14 @@ interface PaletteGroup {
 
 interface PaletteItem {
   id: string;
-  group: 'cards' | 'sealed' | 'sets' | 'pages';
+  group: 'cards' | 'sealed' | 'custom' | 'sets' | 'pages';
   title: string;
   meta?: string;
   visual?: 'card' | 'product';
   image?: Parameters<typeof CardImage>[0]['image'];
   productType?: string;
+  /** Where the item lives (a card's set chunk), for the add sheet. */
+  setId?: string;
   target: NavigateOptions;
 }
 
@@ -51,13 +56,18 @@ const fold = (text: string) => text.normalize('NFKD').replace(/\p{M}/gu, '').toL
 export default function SearchDialog({
   open,
   onOpenChange,
+  mode = 'go',
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** `add`: picking a card or product opens its add sheet (＋ Hinzufügen, UX_SPEC.md §3.3). */
+  mode?: SearchMode;
 }) {
   const navigate = useNavigate();
   const manifest = useManifest();
+  const customItems = useCustomItems();
   const [query, setQuery] = useState('');
+  const adding = mode === 'add';
   const text = query.trim();
   const { results, pending } = useCatalogSearch(text, { limit: 30 }, open && text.length > 0);
 
@@ -78,6 +88,7 @@ export default function SearchDialog({
           .join(' · '),
         visual: 'card',
         image: doc.image,
+        setId: doc.setId,
         target: {
           to: '/catalog/sets/$setId/cards/$cardId',
           params: { setId: doc.setId, cardId: doc.id },
@@ -99,8 +110,24 @@ export default function SearchDialog({
         productType: doc.category ?? 'other',
         target: { to: '/catalog/sealed/$productId', params: { productId: doc.id } },
       });
+    if (adding)
+      for (const item of (customItems ?? []).filter((c) =>
+        Object.values(c.name).some((n) => fold(n).includes(q)),
+      ))
+        items.push({
+          id: `custom:${item.id}`,
+          group: 'custom',
+          title: pickText(item.name),
+          meta: [item.setName, item.localId, ...item.languages.map(languageCode)]
+            .filter(Boolean)
+            .join(' · '),
+          visual: item.kind === 'card' ? 'card' : 'product',
+          productType: item.productType ?? 'other',
+          target: { to: '/collection/cards' },
+        });
     for (const set of manifest.sets.filter(
       (s) =>
+        !adding &&
         s.kind === 'main' &&
         (Object.values(s.name).some((n) => fold(n).includes(q)) || fold(s.code ?? '') === q),
     ))
@@ -112,14 +139,15 @@ export default function SearchDialog({
         target: { to: '/catalog/sets/$setId', params: { setId: set.id } },
       });
   }
-  for (const page of PAGES)
-    if (!text || fold(page.label()).includes(q))
-      items.push({
-        id: `page:${page.label()}`,
-        group: 'pages',
-        title: page.label(),
-        target: page.target,
-      });
+  if (!adding)
+    for (const page of PAGES)
+      if (!text || fold(page.label()).includes(q))
+        items.push({
+          id: `page:${page.label()}`,
+          group: 'pages',
+          title: page.label(),
+          target: page.target,
+        });
 
   const close = () => {
     onOpenChange(false);
@@ -127,15 +155,25 @@ export default function SearchDialog({
   };
   const go = (item: PaletteItem) => {
     close();
+    if (adding && (item.group === 'cards' || item.group === 'sealed' || item.group === 'custom')) {
+      const kind = item.group === 'cards' || item.visual === 'card' ? 'card' : 'sealed';
+      openSheet({ type: 'add', item: { kind, id: item.id }, setId: item.setId });
+      return;
+    }
     void navigate(item.target);
+  };
+  const addCustom = () => {
+    close();
+    openSheet({ type: 'custom', kind: 'card', name: text || undefined });
   };
   const groupLabel = {
     cards: m.search_group_cards(),
     sealed: m.search_group_sealed(),
+    custom: m.search_group_custom(),
     sets: m.search_group_sets(),
     pages: m.search_group_pages(),
   };
-  const groups: PaletteGroup[] = (['cards', 'sealed', 'sets', 'pages'] as const)
+  const groups: PaletteGroup[] = (['cards', 'sealed', 'custom', 'sets', 'pages'] as const)
     .map((group) => ({
       value: group,
       label: groupLabel[group],
@@ -154,7 +192,10 @@ export default function SearchDialog({
     >
       <BaseDialog.Portal>
         <BaseDialog.Backdrop className="ui-backdrop" />
-        <BaseDialog.Popup className="ui-palette glass-thick" aria-label={m.search_title()}>
+        <BaseDialog.Popup
+          className="ui-palette glass-thick"
+          aria-label={adding ? m.search_add_title() : m.search_title()}
+        >
           <Autocomplete.Root
             open
             inline
@@ -169,9 +210,9 @@ export default function SearchDialog({
             <Autocomplete.InputGroup className="flex items-center gap-2 border-b border-line px-4">
               <MagnifyingGlassIcon size={22} aria-hidden className="shrink-0 text-ink-muted" />
               <Autocomplete.Input
-                aria-label={m.search_title()}
+                aria-label={adding ? m.search_add_title() : m.search_title()}
                 aria-describedby="palette-keys"
-                placeholder={m.search_placeholder()}
+                placeholder={adding ? m.search_add_placeholder() : m.search_placeholder()}
                 className="h-16 min-w-0 flex-1 bg-transparent type-ui text-[17px] text-ink outline-none placeholder:text-ink-subtle"
               />
               <BaseDialog.Close
@@ -237,12 +278,24 @@ export default function SearchDialog({
               {text && !pending && !found ? (
                 <p className="type-body m-0 px-3 py-4 text-ink-muted">{m.search_empty()}</p>
               ) : null}
+              {adding && !text ? (
+                <p className="type-body m-0 px-3 py-4 text-ink-muted">{m.search_add_hint()}</p>
+              ) : null}
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-2.5">
               <span id="palette-keys" className="type-small text-ink-muted max-sm:hidden">
-                {m.search_keys()}
+                {adding ? m.search_add_keys() : m.search_keys()}
               </span>
-              {text ? (
+              {adding ? (
+                <button
+                  type="button"
+                  onClick={addCustom}
+                  className="inline-flex items-center gap-1.5 type-small font-bold text-accent-text hover:underline"
+                >
+                  <PlusIcon size={14} weight="bold" aria-hidden />
+                  {m.search_add_custom()}
+                </button>
+              ) : text ? (
                 <button
                   type="button"
                   onClick={() => {

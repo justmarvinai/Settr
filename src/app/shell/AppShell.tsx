@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { ToastViewport } from '@/components/ui/Toasts';
 import { m } from '@/i18n';
+import { useSheets } from '@/lib/sheets';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
 import { Toolbar } from './Toolbar';
@@ -8,6 +9,18 @@ import { Toolbar } from './Toolbar';
 // Loaded on first use: the palette grows with the catalog search (M2) and isn't needed for first paint.
 const SearchDialog = lazy(() => import('./SearchDialog'));
 const MoreSheet = lazy(() => import('./MoreSheet'));
+// The add/edit sheets and their forms load when a page first asks for one.
+const CollectionSheets = lazy(() => import('./CollectionSheets'));
+
+export type SearchMode = 'go' | 'add';
+
+/** Typing in a field (or a composed key) never triggers the single-key shortcuts. */
+function isTyping(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
+  );
+}
 
 /**
  * Global layout (UX_SPEC.md §3): floating glass sidebar/rail, floating toolbar, content that scrolls
@@ -16,10 +29,13 @@ const MoreSheet = lazy(() => import('./MoreSheet'));
 export function AppShell({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchLoaded, setSearchLoaded] = useState(false); // stays mounted after first use (exit animation, focus return)
-  const openSearch = () => {
+  const [searchMode, setSearchMode] = useState<SearchMode>('go');
+  const openSearch = (mode: SearchMode = 'go') => {
+    setSearchMode(mode);
     setSearchLoaded(true);
     setSearchOpen(true);
   };
+  const sheetRequested = useSheets((state) => state.request !== null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [moreLoaded, setMoreLoaded] = useState(false);
   const openMore = () => {
@@ -31,6 +47,22 @@ export function AppShell({ children }: { children: ReactNode }) {
     const onKey = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
+        setSearchMode('go');
+        setSearchLoaded(true);
+        setSearchOpen(true);
+        return;
+      }
+      // N adds (UX_SPEC.md §7): pages handle it for a focused card first, else the add palette.
+      const plain = !event.ctrlKey && !event.metaKey && !event.altKey;
+      if (
+        plain &&
+        event.key.toLowerCase() === 'n' &&
+        !event.defaultPrevented &&
+        !isTyping(event.target)
+      ) {
+        if (useSheets.getState().open) return;
+        event.preventDefault();
+        setSearchMode('add');
         setSearchLoaded(true);
         setSearchOpen(true);
       }
@@ -55,15 +87,22 @@ export function AppShell({ children }: { children: ReactNode }) {
       <Sidebar />
       <div className="relative z-10 px-3 md:pl-[88px] lg:pl-[260px]">
         <div className="mx-auto max-w-[1440px] pt-3">
-          <Toolbar onOpenSearch={openSearch} onOpenMore={openMore} />
+          <Toolbar
+            onOpenSearch={() => openSearch('go')}
+            onAdd={() => openSearch('add')}
+            onOpenMore={openMore}
+          />
           <main id="main" tabIndex={-1} className="pt-5 pb-32 outline-none md:pb-8">
             {children}
           </main>
         </div>
       </div>
-      <TabBar onAdd={openSearch} />
+      <TabBar onAdd={() => openSearch('add')} />
       <Suspense fallback={null}>
-        {searchLoaded ? <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} /> : null}
+        {searchLoaded ? (
+          <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} mode={searchMode} />
+        ) : null}
+        {sheetRequested ? <CollectionSheets /> : null}
         {moreLoaded ? <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} /> : null}
       </Suspense>
       <ToastViewport />

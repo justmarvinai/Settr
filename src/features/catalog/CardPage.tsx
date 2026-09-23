@@ -18,7 +18,14 @@ import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
-import { pickText, STANDARD_VARIANT, type CatalogCard } from '@/domain/catalog';
+import {
+  pickText,
+  STANDARD_VARIANT,
+  type CatalogCard,
+  pickLanguage,
+  cardName,
+  otherNames,
+} from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
@@ -33,9 +40,7 @@ import {
   typeLabel,
 } from '@/i18n';
 import { cardmarketFilters } from './cardmarket';
-import { useCjkFonts } from './cjk';
-import { pickLanguage } from './language';
-import { cardName, otherNames } from './names';
+import { useCjkFonts } from '@/components/domain/cjk';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/cards/$cardId');
 

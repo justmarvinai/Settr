@@ -11,7 +11,7 @@ import { useMatches } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Kbd } from '@/components/ui/Kbd';
-import { db, updateSettings, useSettings } from '@/db';
+import { db, updateSettings, useSettings } from '@/db/core';
 import { applyDisplay, resolvedTheme } from '@/features/appearance';
 import { m } from '@/i18n';
 import { usePrivacy } from '../privacy';
@@ -75,9 +75,11 @@ function PrivacyToggle() {
  */
 export function Toolbar({
   onOpenSearch,
+  onAdd,
   onOpenMore,
 }: {
   onOpenSearch: () => void;
+  onAdd: () => void;
   onOpenMore: () => void;
 }) {
   const title = usePageTitle();
@@ -103,7 +105,7 @@ export function Toolbar({
       <IconButton className="md:hidden" label={m.nav_more()} onClick={onOpenMore}>
         <DotsThreeOutlineIcon size={20} weight="fill" aria-hidden />
       </IconButton>
-      <Button variant="primary" className="max-md:hidden" onClick={onOpenSearch}>
+      <Button variant="primary" className="max-md:hidden" onClick={onAdd}>
         <PlusIcon size={18} weight="bold" aria-hidden />
         {m.nav_add()}
       </Button>

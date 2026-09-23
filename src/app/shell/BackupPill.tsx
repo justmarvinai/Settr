@@ -1,6 +1,6 @@
 import { DatabaseIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
-import { useHoldingCount, useMeta, useSettings } from '@/db';
+import { useHoldingCount, useMeta, useSettings } from '@/db/core';
 import { m } from '@/i18n';
 import { formatRelative } from '@/i18n/format';
 import { cn } from '@/components/ui/cn';

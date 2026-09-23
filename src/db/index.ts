@@ -8,3 +8,4 @@ export * from './repositories/prices';
 export * from './repositories/settings';
 export * from './repositories/tombstones';
 export * from './hooks';
+export * from './collection-hooks';

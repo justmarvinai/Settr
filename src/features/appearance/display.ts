@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useStoredDisplay } from '@/db';
+import { useStoredDisplay } from '@/db/core';
 import type { Settings } from '@/domain/schemas';
 
 type Display = Settings['display'];

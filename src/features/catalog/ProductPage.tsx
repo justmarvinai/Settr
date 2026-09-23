@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
-import { pickText } from '@/domain/catalog';
+import { pickText, pickLanguage } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   exclusiveLabel,
@@ -20,8 +20,7 @@ import {
 } from '@/i18n';
 import { formatDate, formatMoney } from '@/i18n/format';
 import { cardmarketFilters } from './cardmarket';
-import { useCjkFonts } from './cjk';
-import { pickLanguage } from './language';
+import { useCjkFonts } from '@/components/domain/cjk';
 import { ProductTile } from './ProductTile';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sealed/$productId');

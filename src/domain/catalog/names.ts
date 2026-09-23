@@ -1,10 +1,6 @@
-import {
-  isTranslatedName,
-  pickText,
-  type CatalogCard,
-  type CatalogProduct,
-} from '@/domain/catalog';
-import type { CardLanguage } from '@/domain/catalog-types';
+import type { CardLanguage } from '../catalog-types';
+import type { CatalogCard, CatalogProduct } from './schema';
+import { DISPLAY_LANGUAGE_ORDER, isTranslatedName, pickText } from './sets';
 
 /**
  * Which name the catalog shows (I18N.md §1): German wherever it exists (the catalog default), or the
@@ -50,4 +46,32 @@ export function otherNames(
 
 export function productName(product: Pick<CatalogProduct, 'name'>): string {
   return pickText(product.name);
+}
+
+/** Einstellungen › Allgemein: which name a lot shows (Q3.6). */
+export type NameDisplay = 'copy' | 'german' | 'original';
+
+/**
+ * The name of a lot in the collection: by default the one printed on the copy (its language),
+ * else German, or the print's original language (JA for Asian sets).
+ */
+export function lotName(
+  card: Pick<CatalogCard, 'name' | 'nameSource' | 'languages'>,
+  copyLanguage: CardLanguage,
+  display: NameDisplay,
+): ShownName {
+  if (display === 'german') return cardName(card, copyLanguage, 'german');
+  if (display === 'original') return cardName(card, card.languages[0] ?? copyLanguage, 'card');
+  return cardName(card, copyLanguage, 'card');
+}
+
+/** A product's name in the copy's language, else German first. */
+export function productNameIn(
+  product: Pick<CatalogProduct, 'name'>,
+  lang: CardLanguage,
+): ShownName {
+  const text = product.name[lang];
+  if (text) return { text, lang, translated: false };
+  const fallback = DISPLAY_LANGUAGE_ORDER.find((l) => product.name[l]);
+  return { text: pickText(product.name), lang: fallback ?? lang, translated: false };
 }
