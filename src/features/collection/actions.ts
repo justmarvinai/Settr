@@ -21,6 +21,10 @@ export function openOpening(holdingId: string): void {
   openSheet({ type: 'open', holdingId });
 }
 
+export function openValue(holdingId: string): void {
+  openSheet({ type: 'value', holdingId });
+}
+
 export function openQuickAdd(setId: string, language?: CardLanguage): void {
   openSheet({ type: 'quick', setId, language });
 }

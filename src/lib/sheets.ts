@@ -14,6 +14,8 @@ export type SheetRequest =
   | { type: 'dispose'; holdingId: string }
   /** Open a sealed product and log its pulls (COL-12). */
   | { type: 'open'; holdingId: string }
+  /** The lot's own value per copy, *Eigener Wert* (PRC-07). */
+  | { type: 'value'; holdingId: string }
   /** Schnellerfassung for a set (COL-06). */
   | { type: 'quick'; setId: string; language?: CardLanguage | undefined }
   /** Create a custom item (CAT-08), then add a lot of it. */

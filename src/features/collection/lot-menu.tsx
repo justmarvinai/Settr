@@ -1,5 +1,6 @@
 import {
   CopySimpleIcon,
+  CurrencyEurIcon,
   PackageIcon,
   PencilSimpleIcon,
   ShoppingBagIcon,
@@ -9,12 +10,12 @@ import type { MenuAction } from '@/components/ui/Menu';
 import { db, deleteHolding, duplicateHolding, restoreHolding } from '@/db';
 import { remaining, type Holding } from '@/domain/schemas';
 import { m } from '@/i18n';
-import { openDispose, openEdit, openOpening } from './actions';
+import { openDispose, openEdit, openOpening, openValue } from './actions';
 import { toastError, toastWithUndo } from './toasts';
 
 /**
- * The ⋯ menu of a lot (UX_SPEC.md §4.4): Bearbeiten, Duplizieren, Verkaufen…, Öffnen… (sealed) and
- * Löschen, every change undoable. `label` names the lot in toasts.
+ * The ⋯ menu of a lot (UX_SPEC.md §4.4): Bearbeiten, Duplizieren, Eigener Wert…, Verkaufen…,
+ * Öffnen… (sealed) and Löschen, every change undoable. `label` names the lot in toasts.
  */
 export function lotMenuActions(holding: Holding, label: string): MenuAction[] {
   const actions: MenuAction[] = [
@@ -36,6 +37,11 @@ export function lotMenuActions(holding: Holding, label: string): MenuAction[] {
     },
   ];
   if (remaining(holding) > 0) {
+    actions.push({
+      label: m.action_value(),
+      icon: <CurrencyEurIcon size={18} />,
+      onSelect: () => openValue(holding.id),
+    });
     actions.push({
       label: m.action_dispose(),
       icon: <ShoppingBagIcon size={18} />,

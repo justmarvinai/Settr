@@ -802,5 +802,20 @@
   "history_actions": "Aktionen für den Preis vom {date}",
   "history_edit_title": "Preis bearbeiten",
   "history_note": "Notiz",
-  "action_cancel": "Abbrechen"
+  "action_cancel": "Abbrechen",
+  "action_value": "Eigener Wert …",
+  "value_title": "Eigener Wert",
+  "value_intro": "Für Exemplare, die weniger (LP, beschädigt) oder mehr wert sind als der Marktpreis. Ab seinem Datum zählt dieser Wert statt des Marktpreises, und er veraltet wie jeder Preis.",
+  "value_amount": "Wert pro Stück",
+  "value_date": "Gilt ab",
+  "value_market": "Marktpreis {language}: {amount} · {date}",
+  "value_no_market": "Für {language} ist noch kein Marktpreis eingetragen.",
+  "value_remove": "Eigenen Wert entfernen",
+  "toast_value_saved": "Eigener Wert gespeichert: {what}",
+  "toast_value_removed": "Eigener Wert entfernt: {what}",
+  "lot_value": "Wert {value}",
+  "lot_value_with_unit": "Wert {value} ({unit} pro Stück)",
+  "lot_value_own": "eigener Wert · {date}",
+  "lot_value_at_cost": "zum Kaufpreis",
+  "lot_unpriced": "Noch ohne Preis"
 }

@@ -1,5 +1,5 @@
 export { CollectionLayout } from './CollectionLayout';
-export { openAdd, openDispose, openEdit, openOpening, openQuickAdd } from './actions';
+export { openAdd, openDispose, openEdit, openOpening, openQuickAdd, openValue } from './actions';
 export {
   CompletionSummary,
   QuickAddButton,

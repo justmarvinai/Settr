@@ -7,3 +7,4 @@ export { AddHoldingBody, EditHoldingBody, SheetLoading } from './HoldingSheet';
 export { CustomItemBody } from './CustomItem';
 export { DisposeBody, OpenBody } from './LotActions';
 export { QuickAddBody } from './QuickAdd';
+export { ValueBody } from './ValueOverride';
