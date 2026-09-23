@@ -7,7 +7,7 @@
 
 ## 0. Phase gate (applies to every agent)
 
-**Current phase: M0 · PLANNING** (spec v0.2, design pick pending). No application code, scaffolding or dependency installs until Marvin explicitly approves in chat. The status line in `CLAUDE.md` is authoritative. If it doesn't say a milestone is approved, **stop and ask**.
+**Current phase: M0 · PLANNING** (spec v0.3, design direction D chosen, round 3 open). No application code, scaffolding or dependency installs until Marvin explicitly approves in chat. The status line in `CLAUDE.md` is authoritative. If it doesn't say a milestone is approved, **stop and ask**.
 
 ---
 
@@ -17,7 +17,7 @@
 2. **Money** is integer minor units. User-data changes need a migration + fixture + round-trip test. Deletes write tombstones. IDs are UUIDv7.
 3. **Layering:** `domain/` is pure. Only `db/` touches IndexedDB. Only `catalog/` fetches catalog data.
 4. **i18n:** no hard-coded strings. **German only** in v1 (ADR-019), but every string lives in the message catalog.
-5. **Design:** tokens only, reduced motion respected, WCAG 2.2 AA, P/L never color-only.
+5. **Design:** tokens only, reduced motion respected, WCAG 2.2 AA, P/L never color-only. Usability beats decoration (Marvin: *"Usability and user experience is always #1"*).
 6. **Licensing:** no GPL code (the holo effect is clean-room), no Pokémon logos in branding, self-hosted fonts.
 7. **Definition of Done:** `docs/QUALITY.md` §1. **Ask instead of guessing** about product behavior.
 
@@ -35,7 +35,7 @@ Settr is built by a **lead** (the main session) that orchestrates **specialist a
 | **Design-system engineer** | `src/styles/**`, `src/components/ui/**`, `src/components/domain/**`, `public/fonts/**`, icons | Tokens, themes, primitives (shadcn/Base UI restyle), CardImage/CardTile/HoloCard, charts wrappers, motion | `DESIGN_SYSTEM.md`, `QUALITY.md` §5 |
 | **Feature engineer** (1…n) | `src/features/<feature>/**`, `src/routes/<feature>/**` | Screens and flows exactly per `UX_SPEC.md`, composed from domain + db + components | `UX_SPEC.md`, `PRODUCT_SPEC.md` |
 | **Search engineer** (can be merged into Catalog) | `src/workers/search*`, `src/catalog/search*` | MiniSearch index, CJK tokenization, normalization, query syntax | `ARCHITECTURE.md` §7 |
-| **QA & accessibility** | `tests/e2e/**`, visual baselines, `size-limit`/Lighthouse config | E2E journeys, axe, visual regression, budgets, cross-browser checks. Reviews PRs against the DoD | `QUALITY.md` |
+| **QA & accessibility** | `tests/e2e/**`, visual baselines, `size-limit`/Lighthouse config | E2E journeys, axe, visual regression, budgets, cross-browser checks. Owns the manual **Brave smoke test** with default Shields before each release (Brave on Windows is the primary browser; checklist in `QUALITY.md` §3.1, run in a real Brave install). Reviews PRs against the DoD | `QUALITY.md` |
 | **i18n & copy** | `src/i18n/messages/**` (keys added by features are reviewed here) | German microcopy quality, glossary consistency, pseudo-locale checks (EN parity once English is added) | `I18N.md` |
 
 **Shared files** (`package.json`, the router tree, message catalogs, `vercel.json`) are changed by the **lead**, or by an agent whose brief explicitly allows it. Feature agents add i18n keys only under their feature prefix (`collection_*`, `prices_*`, …) to avoid merge conflicts.
@@ -48,7 +48,7 @@ The lead first lands the **contracts** (types, interfaces, fixtures). Specialist
 
 | Milestone | Sequential first step (lead) | Parallel workstreams | Integration gate |
 |---|---|---|---|
-| **M1 Foundation** | Scaffold + tooling + CI + Vercel | ① Design system: tokens (chosen direction), glass materials, fonts, primitives, app shell ② Domain/data: money, IDs, Zod, Dexie v1 ③ i18n setup (German catalog) ④ PWA skeleton | Deploys (noindex), offline load, theme + transparency switch, green CI |
+| **M1 Foundation** | Scaffold + tooling + CI + Vercel | ① Design system: tokens (direction D, light + dark), glass materials, fonts, primitives, app shell ② Domain/data: money, IDs, Zod, Dexie v1 ③ i18n setup (German catalog) ④ PWA skeleton | Deploys (noindex), offline load, theme + transparency switch, green CI |
 | **M2 Catalog** | Catalog JSON schema (`DATA_MODEL.md` §4) + fixture catalog | ① Catalog pipeline + curated data ② Catalog UI on the fixture catalog ③ Search worker ④ CardImage/SetTile components | Real catalog replaces fixtures. All cards/products render |
 | **M3 Collection** | Repository interfaces + holding form contract | ① Holdings repos + completion domain ② Add/edit sheets ③ Collection views ④ E2E journeys 1, 4 | Collection fully usable, completion correct |
 | **M4 Prices & Portfolio** | Valuation/time-series API | ① Valuation + worker ② Chart components ③ Price entry + session ④ Dashboard/portfolio ⑤ E2E 2, 3, 5 | Dashboard reconciles with a hand-calculated fixture |
@@ -97,8 +97,9 @@ The lead first lands the **contracts** (types, interfaces, fixtures). Specialist
 
 ## 5. Workflow conventions
 
-- **Branches:** `feat/<milestone>-<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`. The current planning branch is `claude/great-edison-uri1z0`.
+- **Branches:** `feat/<milestone>-<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`. The current planning branch is `claude/great-edison-uri1z0`, which is also the repository's default branch until `main` is created at the start of M1 (⟶ R3.3).
 - **Commits:** Conventional Commits in English, imperative mood (`feat(collection): add quick-add mode`).
+- **What never gets committed (ADR-029):** secrets and personal collection data. While the repository is public (⟶ R3.2), also Cardmarket price-guide snapshots (`cm-prices.json`) and the deployment URL.
 - **Pull requests:**
   - One per coherent change, and at least one per milestone.
   - The description lists the feature IDs, screenshots (light + dark, mobile + desktop for UI) and the Vercel preview link.
@@ -123,11 +124,11 @@ The lead first lands the **contracts** (types, interfaces, fixtures). Specialist
 
 1. **Correctness:** matches `DATA_MODEL.md` formulas, edge cases (0 cost, unpriced, partial disposals), and the time zone (dates are local calendar dates).
 2. **Data safety:** transactions, tombstones, migrations, no data loss paths.
-3. **Architecture:** layer rules, no runtime data-API calls, no catalog ID parsing.
+3. **Architecture:** layer rules, no runtime data-API calls, no catalog ID parsing, nothing hard-coded to a single set (ADR-028), and no dependency on APIs that Brave disables by default (ADR-027).
 4. **UX fidelity:** flows and microcopy per `UX_SPEC.md`. Speed-of-entry targets are kept.
 5. **Design fidelity:** tokens, spacing, typography, motion, and no "default shadcn" leftovers.
 6. **Performance:** no unnecessary re-renders (React Compiler friendly), virtualization for long lists, lazy chunks.
-7. **Security/privacy:** no new third-party requests, CSP-compatible, untrusted input validated.
+7. **Security/privacy:** no new third-party requests, CSP-compatible, untrusted input validated, and nothing committed that ADR-029 rules out.
 
 ---
 

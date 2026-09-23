@@ -1,7 +1,8 @@
 # Settr: Data Sources, Catalog Pipeline and Licensing
 
-> Status: **Draft v0.2** (round-1 answers incorporated) · Research date: 2026-09-23 (TCGdex repo commit `a211f11`, 2026-09-22).
-> Evidence labels: **[V]** verified by us in source data or compiler output · **[V-src]** verified in server/SDK source code · **[3P]** dated live measurements published by other projects · **[D]** vendor docs · **[U]** unverified.
+> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23 · Research date: 2026-09-23 (TCGdex repo commit `a211f11`, 2026-09-22).
+> Evidence labels: **[V]** verified by us in source data or compiler output · **[V-src]** verified in server/SDK source code · **[M]** checked live by Marvin (dated) · **[3P]** dated live measurements published by other projects · **[D]** vendor docs · **[U]** unverified.
+> References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
 > Our cloud environment blocked live HTTP checks to most hosts (see `CLAUDE.md`), so all **[3P]** items must be re-verified from an unrestricted network in M0/M1.
 
 ---
@@ -12,8 +13,8 @@
 |---|---|---|---|
 | **Card data, DE/EN** | **TCGdex** (compiled from the `tcgdex/cards-database` repo at build time) | TCGdex live API (CORS `*`) for ad-hoc checks | pokemontcg.io (English-only, **shutting down 1 Mar 2027**) |
 | **Card data, JA** | TCGdex (`M6a` complete: 176 cards) | `type-null/PTCG-database` for gaps | — |
-| **Card data, ZH-CN** (focus, Q3.2) | **The M6a card list** (SC mirrors it: 176 cards). **Chinese names:** Pokémon cards get names **derived** from PokéAPI species names (`zh-Hans`) + suffix (`ex` …), labeled "übersetzt". The few Trainer/Energy cards are curated by hand | `duanxr/PTCG-CHS-Datasets` (`30thC`, 176 cards incl. images) **only with the maintainer's permission** (⟶ R2.8) | TCGdex zh-cn (empty shells or copies of Traditional text) |
-| **Card data, ZH-TW** (sealed only; cards per ⟶ R2.3) | JP card list + Traditional Chinese names from `type-null/PTCG-database` (`data_tc`) | Manual curation from the official TW site | — |
+| **Card data, ZH-CN** (focus, Q3.2) | **The M6a card list** (SC mirrors it: 176 cards; numbering to spot-check against Cardmarket expansion 6603, §10). **Chinese names:** Pokémon cards get names **derived** from PokéAPI species names (`zh-Hans`) + suffix (`ex` …), labeled "übersetzt". The few Trainer/Energy cards are curated by hand. **Images:** the JP (`M6a`) artwork where one exists | Later: TCGdex, or another source that allows redistribution, once it has SC data | TCGdex zh-cn (empty shells or copies of Traditional text) · `duanxr/PTCG-CHS-Datasets` (its terms need the official owner's consent, R2.8; §4) |
+| **Card data, ZH-TW** (cards + sealed, R2.3) | JP card list (numbering mirrors M6a) + Traditional Chinese names from `type-null/PTCG-database` (`data_tc`, covers M6a; data licensing to verify) | Names derived from PokéAPI species names (`zh-Hant`), labeled "übersetzt"; Trainer names curated by hand (ADR-026) | — |
 | **Card images** | TCGdex assets CDN (webp, 245×337 low / 600×825 high; **CORS `*` on 200**) | See §5: official-site URLs (JP/TW), user photos, placeholder | Cardmarket's image CDN |
 | **Sealed products** | **Curated by us**: skeleton from **Cardmarket's public product catalog file** (IDs, names, categories), enriched by hand (DE names, contents, dates, UVP) | TCGCSV (TCGplayer EN/JP catalog) for product images and names; Bulbapedia for details | Paid APIs (Scrydex $29+/month) |
 | **Cardmarket linking** | `idProduct` per card variant from TCGdex (`30th` 161/161, `30th-c` 30/30, `M6a` 173/176) and per sealed product from Cardmarket's nonsingles file | Search URL | The official Cardmarket API (closed to new applicants) |
@@ -31,7 +32,7 @@
 | **Cardmarket** (expansion IDs) | 6601: 191 singles (161 + 30), **45 sealed** | 6602: 176 singles, 4 sealed. 6628: `MF` 49 singles, 1 sealed | (sold as JP products + language filter "T-Chinese") | 6603: 176 singles, 11 sealed |
 | **pokemontcg.io** | `me55` (161), `me55c` (30), English only | — | — | — |
 | **type-null/PTCG-database** | — | ✓ up to M6a (official image URLs) | ✓ up to M6a (official TW image URLs) | — |
-| **duanxr/PTCG-CHS-Datasets** | — | — | — | `30thC` 176 cards (license restricted) |
+| **duanxr/PTCG-CHS-Datasets** | — | — | — | `30thC` 176 cards (license restricted; **not used**, R2.8) |
 
 **Data quirks to handle (pipeline overrides)**
 - Every 30th card is **foil**, but TCGdex marks many as `normal`. We override to a single `std` variant per card.
@@ -103,11 +104,11 @@
 | Source | Use in Settr | Terms / caveats |
 |---|---|---|
 | **Cardmarket product catalog** (`https://downloads.s3.cardmarket.com/productCatalog/productList/products_singles_6.json` 13.6 MB; `…/products_nonsingles_6.json` 0.95 MB) | Sealed catalog skeleton: `idProduct`, English name, `categoryName` (Booster, Display, Elite Trainer Box, Box Set, Blisters, Tins, Theme Decks, …), `idExpansion`, `idMetacard` (links the same card across prints!), `dateAdded` | Public, no auth, updated daily (≈ 02:48 CEST). **No CORS**, so build/CI only. No images, numbers or languages. German sealed = international product + language filter |
-| **Cardmarket price guide** (`…/priceGuide/price_guide_6.json`, 15.5 MB) | **Not used** (manual prices by design). Only relevant if you opt in to Q6.6 (a daily build-time snapshot limited to catalog products, shown only as a suggestion) | Public, daily, no CORS |
-| **type-null/PTCG-database** (GitHub) | JP gaps and **Traditional Chinese** names up to M6a (only needed if ⟶ R2.3 = yes) | MIT code. Data scraped from official sites. **Its official image URLs are not used** (Q4.6) |
-| **duanxr/PTCG-CHS-Datasets** (GitHub) | **Simplified Chinese**: 232 products incl. `30thC` (176 cards) with names and images. It's the only complete SC source | **Non-commercial, no redistribution.** Used only after written permission from the maintainer (⟶ R2.8; request drafted for Marvin to send) |
+| **Cardmarket price guide** (`…/priceGuide/price_guide_6.json`, 15.5 MB) | **Suggestions only** (Q6.6 → PRC-09): a daily snapshot limited to catalog products, never saved without confirmation (§8.3). Prices stay manual by design | Public, daily, no CORS. The snapshot isn't committed while the repository is public (ADR-029) |
+| **type-null/PTCG-database** (GitHub) | JP gaps and the primary source of **Traditional Chinese** names (`data_tc`, up to M6a; R2.3, ADR-026) | MIT code. Data scraped from official sites, so **its data licensing is to verify** before use. **Its official image URLs are not used** (Q4.6) |
+| **duanxr/PTCG-CHS-Datasets** (GitHub) | **Not used** (R2.8, revised). It has 232 Simplified Chinese products incl. `30thC` (176 cards) with names and images, but nothing from it is committed or shipped | **Non-commercial, no redistribution.** Its terms reserve consent for redistribution to **the official owner or an authorized entity** (they point to Pokémon Shanghai), not the maintainer. A request to the maintainer can't grant it, so none is sent |
 | **TCGCSV** (`tcgcsv.com`; TCGplayer categories 3 = EN, 85 = JP) | Product names and **images of EN/JP sealed products** (`tcgplayer-cdn…/product/{id}_in_1000x1000.jpg`), matched to Cardmarket products by name | Free, no key, needs its own User-Agent, max 10k requests/day, daily updates. Build step only |
-| **PokéAPI** (CSV in its GitHub repo) | Pokémon species names in de/ja/zh-Hant/zh-Hans/ko. Used for (1) **search aliases** ("Glurak" ⇄ "Charizard" ⇄ "リザードン" ⇄ "喷火龙"), (2) **derived Simplified Chinese names** for M6a Pokémon cards, and (3) **derived German names** for Asian-print cards ("ピカチュウex" → "Pikachu-ex"). Derived names are flagged in `nameSource` | Free, open |
+| **PokéAPI** (CSV in its GitHub repo) | Pokémon species names in de/ja/zh-Hant/zh-Hans/ko. Used for (1) **search aliases** ("Glurak" ⇄ "Charizard" ⇄ "リザードン" ⇄ "喷火龙"), (2) **derived Simplified Chinese names** (`zh-Hans`) for M6a Pokémon cards, plus derived Traditional Chinese names (`zh-Hant`) as the fallback for TC (ADR-026), and (3) **derived German names** for Asian-print cards ("ピカチュウex" → "Pikachu-ex"). Derived names are flagged in `nameSource` | Free, open |
 | **Bulbapedia / Serebii / PokeBeach / official galleries** | Manual research for sealed contents, release waves, promos | Read-only research; no scraping into the product |
 | **Limitless TCG** | Printed Classic Collection numbers (CC1–CC30), and as a reference | No API; image CDN terms unclear, so not used |
 | **pokemontcg.io** | ✗ Deprecated. Offline on **1 Mar 2027**, no new keys, English only | — |
@@ -120,7 +121,7 @@
 **Priority chain per card and language** (resolved at build time, stored in the catalog as the verified URL list):
 
 1. TCGdex asset for the **exact language** (`{lang}` = de/en/ja).
-2. TCGdex asset for **another language of the same print** (e.g. an EN image for a DE card), flagged "Bild in Englisch" in the UI.
+2. TCGdex asset for **another language of the same print**: e.g. an EN image for a DE card, flagged "Bild in Englisch" in the UI, or the JP `M6a` image for an SC or TC card (R2.8, R2.3).
 3. **Cross-print artwork match** (build-time heuristic, manually reviewed): the same card in the other print, matched via Cardmarket `idMetacard` + same illustrator + same expansion family (e.g. JP `M6a` ↔ EN `30th`). It's labeled "Abbildung: englische Ausgabe".
 4. The **user's own photo** (`media` table), once photos ship (I-12).
 5. A **placeholder**: a designed card-back with the set symbol, number and name.
@@ -142,7 +143,7 @@ Decision (Q4.6): **no official publisher images**. The chain is TCGdex → cross
 | `catalog.config.ts` | Which sets to include, e.g. `{ print: 'intl', tcgdex: ['30th', '30th-c'], energies: { set: 'mee', localIds: ['009'…'016'] } }` and `{ print: 'asia', tcgdex: ['M6a'] }` |
 | TCGdex | `tcgdex/cards-database` at a **pinned commit** (git clone, sparse, ~8 s), compiled with its own compiler (Bun) into per-language JSON. The asset index `datas.json` is fetched in CI |
 | Cardmarket | `products_nonsingles_6.json` (sealed skeleton) + `products_singles_6.json` (`idMetacard` links, e.g. to map JP M6a cards to their **Simplified Chinese products in expansion 6603**), downloaded in CI |
-| Cardmarket price guide | `price_guide_6.json`, fetched **daily** by a separate job (§8.3) |
+| Cardmarket price guide | `price_guide_6.json`, fetched **daily** by a separate job (§8.3; committed or built at deploy time per ADR-029) |
 | PokéAPI | species-name CSV (derived names and search aliases) |
 | Curated overlays (`data/curated/`) | YAML/JSON, human-edited and reviewed in PRs (§6.3) |
 
@@ -151,11 +152,11 @@ Decision (Q4.6): **no official publisher images**. The chain is TCGdex → cross
 1. **Fetch:** check out the TCGdex commit, download the Cardmarket files and `datas.json` (and TCGCSV groups when sealed images are needed).
 2. **Compile:** run the TCGdex compiler for the configured languages.
 3. **Normalize** into Settr's schema (`DATA_MODEL.md` §4): Settr IDs, `print`, `section`, `sort`, `printedNumber`, controlled vocabularies (English values → Settr IDs), variants (`variantId` → Settr `VariantId`, with overrides), and per-variant Cardmarket IDs.
-4. **Overlay** curated data: sealed products (DE/EN/JP/TC/SC), Chinese names (derived + curated), printed numbers (Classic Collection), SC printed rarity marks, promos, rarity-display rules, name fixes, and Cardmarket ID corrections.
+4. **Overlay** curated data: sealed products (DE/EN/JP/TC/SC), Chinese names (TC from `type-null/PTCG-database` or derived from PokéAPI `zh-Hant`; SC derived from PokéAPI `zh-Hans`; Trainer/Energy names curated), printed numbers (Classic Collection), SC printed rarity marks, promos, rarity-display rules, name fixes, and Cardmarket ID corrections.
    **Per-language Cardmarket IDs:** for `asia` cards, the JP product (expansion 6602) goes into `byLanguage.ja`, and the SC product with the same `idMetacard` (expansion 6603) into `byLanguage['zh-cn']`. Traditional Chinese copies use the JP product with Cardmarket's T-Chinese language filter.
 5. **Resolve images:** apply the §5 chain. Keep only URLs that are listed in `datas.json` **and** pass a CI GET check.
 6. **Validate:** Zod schemas, counts vs official counts (e.g. `30th` = 161, `30th-c` = 30, `M6a` = 176), unique IDs, every sealed product has ≥ 1 set, and every `idProduct` exists in the Cardmarket file.
-7. **Emit** `public/catalog/v1/manifest.json`, `sets/*.json` and `sealed.json` with SHA-256 hashes and `catalogVersion`.
+7. **Emit** `public/catalog/v1/manifest.json` (set summaries grouped by series), one `sets/*.json` chunk per set, `sealed.json` and the slim global `search-index.json` (ADR-028), with SHA-256 hashes and `catalogVersion`.
 8. **Report:** a Markdown diff summary (new/changed/removed cards and products, image coverage per language, and ID changes, which **must** be aliased) posted to the PR.
 
 ### 6.3 Curated overlay formats (examples)
@@ -182,6 +183,16 @@ intl:30th-c:001: { printedNumber: "4/102", classicIndex: 1 }   # Charizard (Base
 
 - `pnpm catalog:sync` runs locally (with network access) or in **GitHub Actions** (`catalog-sync.yml`: weekly plus manual). The workflow opens a PR containing the regenerated catalog and the diff report. It is never auto-merged.
 - The upstream commit is recorded in the manifest (`sources[].version`) for reproducibility.
+
+### 6.5 Adding sets after v1 (R2.5, ADR-028)
+
+v1 ships *30 Jahre* only. Marvin's other sets follow **one by one, era by era, once the core site is fully functional** (suggested order, to confirm when v1 is done: Mega Evolution → Scarlet & Violet → Sword & Shield → Sun & Moon → Base Set). Adding a set means:
+
+1. A `catalog.config.ts` entry (TCGdex set IDs per print, plus subsets and energies where they exist).
+2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections).
+3. A reviewed catalog-sync PR (counts, images, Cardmarket IDs).
+
+The output is one more set chunk plus its manifest (series) and search-index entries, not a refactor. Old-set specifics use the existing variant model: Base Set *1st Edition* vs *Unlimited*, for example, are variants of kind `edition`.
 
 ---
 
@@ -241,15 +252,16 @@ Released or announced as of 2026-09-23. **Scope (Q4.3):** DE, EN, JP, Traditiona
 
 ## 8. Cardmarket integration (no API; links and files only)
 
-### 8.1 Deep links [3P, verify in M1]
+### 8.1 Deep links
 
-- **Exact product (preferred):** `https://www.cardmarket.com/{de|en}/Pokemon/Products?idProduct={idProduct}&language={langId}&minCondition={cond}`
-- **Fallback search:** `https://www.cardmarket.com/de/Pokemon/Products/Search?searchString={urlencoded name + number}`
-- **Cardmarket language IDs:** 1 English · 2 French · **3 German** · 4 Spanish · 5 Italian · **6 S-Chinese** · **7 Japanese** · 8 Portuguese · 9 Russian · 10 Korean · **11 T-Chinese** · 12 Dutch · 13 Polish · 14 Czech · 15 Hungarian · 16 Indonesian · 17 Thai.
-- **Condition codes (`minCondition`):** 1 MT · 2 NM · 3 EX · 4 GD · 5 LP · 6 PL · 7 PO.
-- Reverse holos: add `isReverseHolo=Y` (same product ID). Pattern reverses have their own product IDs.
-- **Seller country:** `sellerCountry={countryId}`. **Germany is believed to be `7` [U, verify in M1].**
-- **Settr's default link (Q6.3):** `…/Products?idProduct={id}&language={langId of the copy}&sellerCountry=7` (+ `&minCondition=2` if ⟶ R2.2 = NM or better). This opens the product with exactly the offers Marvin compares: his language, German sellers, sorted by price.
+- **Exact product (preferred):** `https://www.cardmarket.com/{de|en}/Pokemon/Products?idProduct={idProduct}&language={langId}&minCondition={cond}`. The `Products?idProduct=` redirect to the product page works **[M, 2026-09-23]**.
+- **Fallback search:** `https://www.cardmarket.com/de/Pokemon/Products/Search?searchString={urlencoded name + number}` [3P].
+- **Cardmarket language IDs** [3P, except `3` = German: M, 2026-09-23]: 1 English · 2 French · **3 German** · 4 Spanish · 5 Italian · **6 S-Chinese** · **7 Japanese** · 8 Portuguese · 9 Russian · 10 Korean · **11 T-Chinese** · 12 Dutch · 13 Polish · 14 Czech · 15 Hungarian · 16 Indonesian · 17 Thai.
+- **Condition codes (`minCondition`)** [3P]: 1 MT · 2 NM · 3 EX · 4 GD · 5 LP · 6 PL · 7 PO. **`minCondition=2` is still to verify** (a test link for Marvin, ⟶ R3.5).
+- Reverse holos: add `isReverseHolo=Y` (same product ID) [3P]. Pattern reverses have their own product IDs.
+- **Seller country:** `sellerCountry={countryId}`. **Germany = `7`** **[M, 2026-09-23]**.
+- **Settr's default link (Q6.3, R2.2):** `…/Products?idProduct={id}&language={langId of the copy}&sellerCountry=7&minCondition=2`. This opens the product with exactly the offers Marvin compares: his language, German sellers, **Near Mint or better**, sorted by price. Traditional Chinese copies link to the JP product with `language=11` (T-Chinese, R2.3).
+- **Verified example [M]:** on 2026-09-23 Marvin confirmed that `https://www.cardmarket.com/de/Pokemon/Products?idProduct=907757&language=3&sellerCountry=7` opens **Pikachu ex (30C 150)** filtered to **German sellers** and **German cards**.
 
 ### 8.2 Purchase import (I-14)
 
@@ -270,25 +282,29 @@ Unmatched rows go to a resolution screen.
   1. Download `price_guide_6.json` (15.5 MB).
   2. Keep only the `idProduct`s referenced by the catalog (cards per variant/language + sealed products): a few KB.
   3. Write `public/catalog/v1/cm-prices.json` (`PriceGuideSnapshot`, `DATA_MODEL.md` §4.1).
-  4. Commit it to `main` **only if changed**. Vercel redeploys automatically; one small commit per day is the accepted cost of staying static.
+  4. Publish it. How depends on the repository's visibility (ADR-029, ⟶ R3.2):
+     - **Private repository (recommended):** commit it to `main` **only if changed**. Vercel redeploys automatically; one small commit per day is the accepted cost of staying static.
+     - **Public repository:** **never commit it**, because a public repo would republish Cardmarket's data. The job only calls a Vercel **deploy hook** (its URL is kept as a GitHub Actions secret), and steps 1–3 run inside the Vercel build, so the file exists only in the deployment.
 - **Semantics** (shown in the UI):
   - **International** products (DE/EN share one product): `low` = the cheapest offer across **all languages, countries and conditions**, and `trend` = Cardmarket's trend. So it's usually *lower* than "cheapest German seller in German", and it's labeled *"alle Sprachen & Länder"*.
-  - **JP / SC products** are language-specific.
+  - **JP / SC products** are separate Cardmarket products, so their values don't mix in international offers. Traditional Chinese copies are listed under the JP product (language filter *T-Chinese*, R2.3), so JP values may include TC offers [U: verify].
   - The `-holo` fields are Cardmarket's **reverse-holo** prices for Pokémon. They're used only for `reverse` variants, and 30 Jahre has none [U: verify].
+  - **Every price belongs to its card language (R2.6):** each suggestion is labeled with the scope it really covers, and a guide value is never presented as if it applied to a language it doesn't cover.
 - **UX:** a suggestion chip with the date, *ab* and *Trend*, and one click to copy a value into the input. It's **never saved automatically**, and an accepted value is stored with `origin: 'guide'`. The chip is hidden when the snapshot is older than 3 days or the product isn't in the guide.
-- **Failure handling:** if the download or parse fails, the job keeps the previous snapshot and opens an issue after 3 consecutive failures. The app shows the snapshot's date, so staleness is visible.
+- **Failure handling:** if the download or parse fails, the job keeps the previous snapshot and opens an issue after 3 consecutive failures. The app shows the snapshot's date, so staleness is visible. In the public-repository variant, a failed download must not fail the deploy: the build ships without a snapshot, and the chip stays hidden.
 
 ---
 
 ## 9. Legal and licensing
 
-- **Data:** TCGdex database is MIT. We credit it (About page + README). Cardmarket product catalog files are publicly offered downloads; we use IDs and names only. PokéAPI is open.
+- **Data:** TCGdex database is MIT. We credit it (About page + README). Cardmarket product catalog files are publicly offered downloads; we use IDs and names only. PokéAPI is open. `type-null/PTCG-database` is MIT code with data scraped from official sites, so its data licensing is to verify before TC names ship (ADR-026). `duanxr/PTCG-CHS-Datasets` is not used (R2.8).
+- **Public repository (ADR-029, ⟶ R3.2):** while the GitHub repository is public, Cardmarket's price guide is never committed (`cm-prices.json` is built at deploy time, §8.3), so the repo doesn't republish Cardmarket's data.
 - **Artwork and card text:** © The Pokémon Company, Nintendo, GAME FREAK, Creatures. We **hotlink or proxy** (never re-host) images, and show this disclaimer:
   - **DE:** „Settr ist ein inoffizielles Fanprojekt und steht in keiner Verbindung zu The Pokémon Company, Nintendo, GAME FREAK oder Creatures. Pokémon und alle zugehörigen Namen sind Marken von Nintendo/The Pokémon Company. Kartenbilder und -texte © The Pokémon Company, Nintendo, GAME FREAK und/oder Creatures. Keine Verbindung zu Cardmarket. Preise sind Nutzereingaben ohne Gewähr."
   - **EN:** "Settr is an unofficial fan project and is not affiliated with, endorsed or sponsored by The Pokémon Company, Nintendo, GAME FREAK or Creatures. Pokémon and all related names are trademarks of Nintendo/The Pokémon Company. Card images and text © The Pokémon Company, Nintendo, GAME FREAK and/or Creatures. Not affiliated with Cardmarket. Prices are user-entered."
 - **Name and branding:** "Pokémon" appears only descriptively ("für Pokémon-Sammelkarten"), never in the app name, logo or domain. No Pokémon logo font and no Poké Ball.
 - **Germany-specific** (not legal advice):
-  - **Decision (Q1.2): Settr is deployed privately.** It uses an unlisted `*.vercel.app` URL and is shared only with a few friends, with `noindex` via meta tag, `X-Robots-Tag` header and `robots.txt`. **No Impressum while it stays private.** The exemption in § 18 Abs. 1 MStV covers purely personal or family purposes; sharing with friends is a grey zone, so the risk is low but not zero. If Settr is ever offered publicly, add an **Impressum** (§ 5 DDG / § 18 Abs. 1 MStV).
+  - **Decision (Q1.2): Settr is deployed privately.** It uses an unlisted `*.vercel.app` URL that is shared only with a few friends and never written into the repository (ADR-029), with `noindex` via meta tag, `X-Robots-Tag` header and `robots.txt`. **No Impressum while it stays private.** The exemption in § 18 Abs. 1 MStV covers purely personal or family purposes; sharing with friends is a grey zone, so the risk is low but not zero. If Settr is ever offered publicly, add an **Impressum** (§ 5 DDG / § 18 Abs. 1 MStV).
   - A short **privacy note** ("Datenschutz") is shown regardless: no tracking, data stays local, and Vercel hosting logs plus the image host `assets.tcgdex.net` see IP addresses.
   - **Self-host fonts.** Loading Google Fonts from Google's CDN led to damages (LG München I, 2022).
   - With no analytics and only strictly necessary local storage, **no cookie banner** is needed (§ 25 Abs. 2 TDDDG).
@@ -299,8 +315,10 @@ Unmatched rows go to a resolution screen.
 ## 10. Open verification tasks (M0/M1, needs an unrestricted network)
 
 - [ ] GET-check TCGdex images: `https://assets.tcgdex.net/de/me/30th/001/high.webp`, `…/en/me/30th/001/high.webp`, `…/de/me/30th-c/001/high.webp`, `…/ja/M/M6a/001/high.webp`, plus CORS headers.
-- [ ] Confirm the Cardmarket deep-link format (`Products?idProduct=…&language=3&sellerCountry=7&minCondition=2`) redirects correctly, and that `7` = Germany.
-- [ ] Confirm the price-guide field semantics (`low` scope, `-holo` = reverse holo for Pokémon).
+- [x] Cardmarket deep-link format: `Products?idProduct=…` redirects correctly, `language=3` = German and `sellerCountry=7` = Germany. Verified by Marvin on 2026-09-23 with Pikachu ex (30C 150), §8.1.
+- [ ] Confirm that `minCondition=2` filters to Near Mint or better (test link for Marvin, ⟶ R3.5).
+- [ ] Confirm the price-guide field semantics (`low` scope, `-holo` = reverse holo for Pokémon, and whether JP product values include Traditional Chinese offers).
 - [ ] Confirm German product names (◐) from pokemon.de product galleries.
-- [ ] Simplified Chinese: send the permission request to the duanxr maintainer (⟶ R2.8). Verify that the SC card list = M6a numbering (spot-check 20 cards against Cardmarket expansion 6603).
+- [ ] Simplified Chinese: verify that the SC card list = M6a numbering (spot-check 20 cards against Cardmarket expansion 6603). No permission request is sent, because `duanxr/PTCG-CHS-Datasets` isn't used (R2.8).
+- [ ] Traditional Chinese: check the data licensing of `type-null/PTCG-database` (`data_tc`) before using its names. If it doesn't allow reuse, ship the PokéAPI `zh-Hant` fallback (ADR-026).
 - [ ] Spot-check 20 random Cardmarket IDs from TCGdex for the 30th sets (issue #2325).

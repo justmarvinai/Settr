@@ -1,22 +1,23 @@
 # Settr: UX Specification
 
-> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > Covers the information architecture, navigation, screen specifications, key flows, states and keyboard model.
-> Visual language (colors, type, motion) lives in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md). Feature IDs (`CAT-02`, `PRC-04`, …) refer to [`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md).
-> References like (Q6.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R2.x** marks a still-open round-2 question.
-> **Platform priority:** Windows desktop (Chrome/Edge) first, then iPhone (installed PWA). **UI language:** German only (Q3.1).
+> Visual language (colors, type, motion) lives in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md): direction **D · Bold Studio**, light and dark (R2.1). Its artboards on the design canvas are the visual reference for the shell (§3) and the Übersicht, set and card screens (§4.1, §4.3, §4.4); Marvin confirms the final look in ⟶ R3.1. Feature IDs (`CAT-02`, `PRC-04`, …) refer to [`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md).
+> References like (Q6.3) or (R2.1) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
+> **Platform priority:** Windows desktop (**Brave**, Chromium; R2.9) first, then iPhone (installed PWA, Safari/WebKit). **UI language:** German only (Q3.1).
 
 ---
 
 ## 1. UX principles
 
-1. **Cards first.** Card and product imagery is the hero. The UI recedes with hairline borders, calm surfaces and no decorative noise.
-2. **Speed of entry is the product.** Prices are entered by hand, so every capture flow is designed for speed: adding a card takes **≤ 3 interactions** and a price update takes **one number and Enter**. Desktop is keyboard-first and mobile is thumb-first.
-3. **Numbers you can trust.** Tabular numerals, explicit currency, explicit dates ("Preis vom 12.09.2026"), visible staleness, and no silent assumptions such as treating an unpriced item as worth zero.
-4. **Private and safe by default.** Data never leaves the device. Backup status is always visible. Every destructive action can be undone, and imports take a safety snapshot first.
-5. **Progressive disclosure.** Smart defaults (language, condition, variant, price type) keep the everyday form short. Grading, fees, storage location, photos and notes sit behind "Mehr Details".
-6. **Robust in four scripts.** German strings run about 30 % longer than English, and Japanese/Chinese names need proper CJK typography. Layouts must never truncate prices or card numbers.
-7. **Delight with restraint.** Holo foil, shared-element transitions and scrubbable charts are signature moments, but they're used sparingly and are always disabled under `prefers-reduced-motion`.
+1. **Usability first.** Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks and usability conflict, usability wins: legibility, WCAG AA contrast, 44 px touch targets, keyboard paths, and no decoration that hides data.
+2. **Cards first.** Card and product imagery is the hero. The UI recedes with hairline borders, calm surfaces and no decorative noise.
+3. **Speed of entry is the product.** Prices are entered by hand, so every capture flow is designed for speed: adding a card takes **≤ 3 interactions** in the full form and **one** with quick add (＋) from the grid, and a price update takes **one number and Enter**. Desktop is keyboard-first and mobile is thumb-first. Marvin's existing cards come over by hand (R2.5), so this matters from day one.
+4. **Numbers you can trust.** Tabular numerals, explicit currency, explicit dates ("Preis vom 12.09.2026"), visible staleness, **every price tied to its card language** (R2.6), and no silent assumptions such as treating an unpriced item as worth zero.
+5. **Private and safe by default.** Data never leaves the device. Backup status is always visible. Every destructive action can be undone, and imports take a safety snapshot first.
+6. **Progressive disclosure.** Smart defaults (language, condition, variant, price type) keep the everyday form short. Grading, fees, storage location, photos and notes sit behind "Mehr Details".
+7. **Robust in four scripts.** German strings run about 30 % longer than English, and Japanese/Chinese names need proper CJK typography. Layouts must never truncate prices or card numbers.
+8. **Delight with restraint.** Holo foil, shared-element transitions and scrubbable charts are signature moments, but they're used sparingly and are always disabled under `prefers-reduced-motion`.
 
 ---
 
@@ -72,7 +73,7 @@ Route slugs are English and language-neutral. Labels are localized.
 |---|---|---|
 | `sm` (phone) | < 640 px | Top app bar + **bottom tab bar** + center **＋** action |
 | `md` (tablet) | 640–1023 px | Collapsed **icon rail** (64 px) + top bar |
-| `lg` (desktop) | ≥ 1024 px | **Sidebar** (240 px, collapsible) + top bar |
+| `lg` (desktop) | ≥ 1024 px | **Floating glass sidebar** (236 px, collapsible) + floating toolbar |
 | `xl` | ≥ 1440 px | Same, with wider content and optional right detail panel |
 
 ### 3.2 Desktop shell (wireframe)
@@ -80,24 +81,26 @@ Route slugs are English and language-neutral. Labels are localized.
 ```
 ┌──────────────┬──────────────────────────────────────────────────────────────────┐
 │ ◆ Settr      │  Sammlung › Karten           [ ⌕  Suchen…     Strg K ]  ◐  👁  [＋ Hinzufügen] │
-│              ├──────────────────────────────────────────────────────────────────┤
-│ ▣ Übersicht  │                                                                  │
-│ ▤ Sammlung   │                          page content                            │
+│ Jede Karte   ├──────────────────────────────────────────────────────────────────┤
+│ zählt.       │                                                                  │
+│ ▣ Übersicht  │                          page content                            │
+│ ▤ Sammlung   │                                                                  │
 │ ▦ Katalog    │                                                                  │
 │ € Preise   3 │                                                                  │
 │ ↗ Portfolio  │                                                                  │
-│              │                                                                  │
-│              │                                                                  │
+│ SETS         │                                                                  │
+│ ◔ 30 Jahre   │                                                                  │
 │ ─────────────│                                                                  │
 │ ⛁ Backup     │                                                                  │
-│   vor 3 Tagen│                                                                  │
+│   fällig     │                                                                  │
 │ ⚙ Einstell.  │                                                                  │
 └──────────────┴──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Liquid Glass chrome (DSN-05):** the sidebar is a **floating glass panel** (inset 12 px from the window edges, 20 px radius), and the top bar is a floating glass toolbar. Content scrolls **beneath** both, so card art tints the glass. It's solid when *Transparenz reduzieren* is on. Details in `DESIGN_SYSTEM.md` §3.5.
-- **Top bar:** page title/breadcrumb · global search (opens the command palette; shortcut labels are platform-aware, e.g. **Strg K** on Windows and ⌘K on Mac/iPad) · theme toggle (◐) · **privacy toggle (👁)**, which blurs every money value (PRT-05) · primary **＋ Hinzufügen**.
-- **Sidebar footer:** backup status pill. It turns amber after N days without a backup and links to `/settings/data`.
+- **Liquid Glass chrome (DSN-05, *Balanced*, R2.1):** the sidebar is a **floating glass panel** (236 px, inset 12 px from the window edges, radius 24), and the top bar is a floating glass toolbar (radius 20). List pages add a **sticky glass filter bar** (§4.3). Content scrolls **beneath** them, so card art tints the glass. It's solid when *Transparenz reduzieren* is on. Details in `DESIGN_SYSTEM.md` §3.5.
+- **Top bar:** page title/breadcrumb · global search (opens the command palette; shortcut labels are platform-aware, e.g. **Strg K** on Windows and ⌘K on Mac/iPad) · theme toggle (◐, a quick light/dark switch; the setting lives in Einstellungen › Darstellung) · **privacy toggle (👁)**, which blurs every money value (PRT-05) · primary **＋ Hinzufügen**.
+- **Sidebar:** the wordmark with the short tagline *"Jede Karte zählt."* underneath (R2.7) · navigation (Übersicht, Sammlung, Katalog, Preise, Portfolio) · a **Sets** quick-access section with pinned and recently opened sets, each with its progress ring, so it stays useful as sets are added after v1 (R2.5) · footer with the backup status and Einstellungen.
+- **Backup status (DAT-04):** a pill in the sidebar footer, e.g. *"Backup vor 3 Tagen"*. Once a backup is due (after N days, default 7, Q7.1) it turns amber and reads *"Backup fällig · Letztes vor 12 Tagen"*. It links to `/settings/data`.
 - The badge on **Preise** shows the number of stale prices.
 
 ### 3.3 Mobile shell
@@ -159,30 +162,35 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 
 - A grid of **set tiles**: logo artwork, series, localized name, release date per language, card counts (official/total) and the user's **progress ring**.
 - **Print switcher** (segmented): *International (DE/EN/…)* · *Asien (JA/ZH/…)*. The two prints are separate set structures with different card lists and numbering (see `DATA_MODEL.md` §2). A language filter narrows further (e.g. only sets available in `zh-tw`).
-- v1 has very few sets. The layout must still scale to 150+ sets later, so it's grouped by series with sticky series headers and a per-series collapse.
+- v1 has very few sets. The layout must still scale to 150+ sets later, so it's grouped by series with sticky series headers and a per-series collapse. Screens and routes are multi-set and multi-era from day one (ADR-028), because Marvin's sets are added era by era after v1 (R2.5).
 
 ### 4.3 Set detail · CAT-02, COL-07
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ [SET LOGO]  <Set name DE>            Release 2026-xx-xx · 000/000 Karten    │
-│             <Original name JA>       ◔ Basis 64 %  ◑ Komplett 51 %  ◔ Master 38 % │
-│             Sprache: [DE] [EN]                                             │
+│ [SET LOGO]  <Serie> · International · Release 2026-xx-xx · 000 Karten    │
+│             <SET NAME DE>   (big display title)                          │
+│             <Original name JA>                                           │
+│             Druck: (International|Asien)   Sprache: (DE|EN)              │
+│             Basis 64 % · 000/000        Komplett 51 %   Master 38 %      │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ [Karten] [Sealed] [Statistik]                                              │
-│ ⌕ In Set suchen   Besitz: (Alle|Besitzt|Fehlt)  Seltenheit ▾  Typ ▾  Variante ▾  Sort: Nr. ▾  ▦▦▦ │
+│ (Alle 00|Besitzt 00|Fehlt 00)  Bereich ▾  Seltenheit ▾  Typ ▾  Sortierung ▾  ⌕ In Set suchen  ▦|☰ │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐                      │
-│ │img │ │img │ │░░░░│ │img │ │img │ │░░░░│ │img │ │img │   ░ = missing (ghost) │
-│ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘                      │
+│ │img │ │img+│ │░░░░│ │img │ │img │ │░░░░│ │img │ │img │   ░ = missing (ghost) │
+│ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘   + = quick add      │
 │ 001 ●● 002 ●  003    004 ●  …                            ● = variant owned    │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
+- **Header (R2.1):** a big set title in display type under an eyebrow line (series · print · release date · card count), the **print switch** (*International / Asien*), the card-language switch, and completion: *Basis* as a big percentage, plus *Komplett* and *Master*.
+- **Sticky glass filter bar (R2.1):** *Alle / Besitzt / Fehlt* with counts, *Bereich* (section), *Seltenheit*, *Typ*, *Variante* (only for sets with variants), *Sortierung* (number, value, name, recently added), in-set search, and a grid/list toggle. It stays under the toolbar while the grid scrolls beneath it.
 - **Card tile:** image with lazy loading and a card-back shimmer placeholder, then number, localized name and a rarity glyph.
   - *Owned:* full color, a quantity badge ("×3"), and **variant dots** (normal, reverse, special patterns) that are filled when owned.
   - *Missing:* a desaturated 35 % "ghost" with a dashed outline. It can be toggled to fully hidden.
-  - *Hover (desktop):* a subtle lift and tilt with a **＋** quick-add button and a **€** quick-price button.
+  - *Hover or keyboard focus (desktop):* a subtle lift and tilt with a **＋** quick-add button and a **€** quick-price button.
+  - **Quick add (R2.1):** **＋** adds one copy immediately with defaults (the language of the current view, NM, no price) and shows an undo toast (*"Hinzugefügt: <Nr.> <Name> · DE · NM"* · *Rückgängig*). It counts as one interaction. The full add sheet (§4.7, ≤ 3 interactions) stays one step away: `N` on the focused tile, *Hinzufügen* on the card page, or the long-press menu on mobile.
   - *Long-press (mobile):* a context sheet with Hinzufügen, Preis eintragen and Details (+ Zur Wunschliste once I-06 ships).
 - **Progress definitions** (Q5.5, all three shown): *Basis* counts the numbered main set, *Komplett* adds secret rares, and *Master* adds subsets and energies (every card × variant). They're computed per selected language, with an "any language" toggle.
 - **Density control:** S / M / L tile sizes, persisted per device.
@@ -199,26 +207,33 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 │      │   HOLO CARD   │        │ Elektro · 200 KP · Illus. <Name>            │
 │      │  (tilt+foil)  │        ├──────────────────────────────────────────┤
 │      │               │        │ Sprache [DE][EN]   Variante [Holo][Reverse]  │
-│      └───────────────┘        │ Aktueller Preis  34,90 €  · Trend · 12.09.   │
-│   [DE] [EN]  (print languages) │ [ Preis eintragen … ⏎ ]  [↗ Cardmarket]      │
+│      └───────────────┘        │ Aktueller Preis  34,90 €  · Deutsch · 12.09. │
+│   [DE] [EN]  (print languages) │ ab (DE) · NM oder besser     [↗ Cardmarket] │
+│                               │ [ Neuer Preis … ]  [ab (DE) ▾]  [Speichern ⏎]│
+│                               │ Preisguide 22.09. · alle Sprachen & Länder   │
+│                               │ ab 29,90 € · Trend 33,10 €                   │
 │                               ├──────────────────────────────────────────┤
 │                               │ Preisverlauf    1M 3M 6M 1J Max             │
 │                               │ ╭────────────────────────────────────╮     │
 │                               │ │ ●───●────────●──●                   │     │
 │                               │ ╰────────────────────────────────────╯     │
 │                               ├──────────────────────────────────────────┤
-│                               │ In deiner Sammlung (2)          [＋ Hinzufügen] │
+│                               │ In deiner Sammlung (3)          [＋ Hinzufügen] │
 │                               │ DE · Holo · NM · ×1 · 22,00 € → 34,90 € +58,6 % │
+│                               │ DE · Holo · LP · ×1 · 18,00 € → 20,00 € +11,1 % │
+│                               │   ↳ eigener Wert · 20.09.                       │
 │                               │ DE · Holo · PSA 10 · ×1 · 120 € → 180 € +50 %  │
 └───────────────────────────────┴──────────────────────────────────────────┘
 ```
 
 - **Holo viewer (DSN-01):** pointer and gyroscope tilt, glare, and a rarity-driven foil layer. Click for fullscreen. Only languages available in this print are offered.
 - **Series selector:** the language and variant chips (plus a grade selector when graded copies exist) choose which **price series** is shown and edited.
-- **Inline price entry (PRC-01):** amount with a German decimal comma, date (default today) and type (default **"ab (DE)"**, i.e. the lowest offer in this language from German sellers, Q6.3). Enter saves, and the entry pulses into the chart.
-- **Price-guide suggestion (PRC-09):** a quiet chip under the input: *"Cardmarket-Guide 22.09.: ab 89,00 € · Trend 97,40 €"*. Its info tooltip reads *"alle Sprachen & Länder"* for international cards. Clicking a value copies it into the input, and Enter saves it (`origin: guide`). It's never saved automatically.
-- **Cardmarket button (PRC-06):** opens the exact Cardmarket product in a new tab, pre-filtered by **the copy's language + seller country Germany** (+ minimum condition per ⟶ R2.2).
-- **Holdings list:** every lot of this card shows its cost, current value and P/L, with inline edit and a context menu (Bearbeiten, Verkaufen…, Duplizieren, Löschen).
+- **Price context (R2.2, R2.6):** the panel states what the current price means: card language, price type and condition, e.g. *"Aktueller Preis · Deutsch · ab (DE) · NM oder besser · 12.09."*. A price never appears under another language's series.
+- **Inline price entry (PRC-01):** amount with a German decimal comma, date (default today) and type (default **"ab (DE)"**, i.e. the lowest offer in this language from German sellers, **Near Mint or better**, Q6.3/R2.2). **Speichern** or Enter saves, and the entry pulses into the chart.
+- **Price-guide suggestion (PRC-09):** a quiet chip under the input, labeled with date and scope: *"Preisguide 22.09. · alle Sprachen & Länder: ab 89,00 € · Trend 97,40 €"*. Its info tooltip reads *"alle Sprachen & Länder"* for international cards. Clicking a value copies it into the input, and Enter saves it (`origin: guide`). It's never saved automatically.
+- **Cardmarket button (PRC-06):** opens the exact Cardmarket product in a new tab, pre-filtered by **the copy's language + seller country Germany + Near Mint or better** (R2.2; the `minCondition` parameter is still to verify, ⟶ R3.5). Traditional Chinese copies open the JP product with Cardmarket's T-Chinese language filter (R2.3).
+- **Holdings list:** every lot of this card shows its cost, current value and P/L, with inline edit and a context menu (Bearbeiten, *Eigener Wert…*, Verkaufen…, Duplizieren, Löschen).
+  - ***Eigener Wert* (PRC-07, R2.2):** the reference price means Near Mint or better, so a worse copy (LP, damaged) can get its own per-lot value with a date and an optional note. That lot then shows the value with an *"eigener Wert"* tag, and it goes stale like any price.
 - **Prev/next:** ← / → keys and swipe on mobile, in set order.
 - **Shared-element transition (DSN-02):** the tile image morphs into the hero image.
 
@@ -236,8 +251,9 @@ This screen uses the same structure as card detail, but:
 - **Views:**
   - *Raster* (grid): tiles as in set detail, plus value and P/L chips.
   - *Tabelle* (table): virtualized. Default columns are Karte (thumb + name), Set, Nr., Sprache, Variante, Zustand, Menge, Einkauf/Stk., Wert/Stk., Wert, G/V, G/V %, and Preis vom. Columns are configurable and sortable.
-  - *Binder* (COL-08, post-v1 ⟶ R2.4): your real binders page by page (3×3 VaultX, 3×4/4×3 Withyu), or set order with missing-pocket placeholders.
-- **Filters** (chips + popover): Set, Sprache, Seltenheit, Variante, Zustand, Gradiert, Tags, Lagerort, Bepreist/Unbepreist, Preis veraltet, G/V positiv/negativ, and Kaufdatum range.
+  - *Binder* (COL-08, v1.1 right after v1, R2.4; v1 already stores binder, page and slot): your real binders page by page (3×3 VaultX, 3×4/4×3 Withyu), or set order with missing-pocket placeholders.
+- **Filters** (chips + popover, in the sticky glass filter bar, R2.1): Set, Sprache, Seltenheit, Variante, Zustand, Gradiert, Tags, Lagerort, Bepreist/Unbepreist, Preis veraltet, G/V positiv/negativ, and Kaufdatum range.
+- ***Eigener Wert*:** lots with a per-copy value (PRC-07, R2.2) show it with the *"eigener Wert"* tag in tiles and table cells.
 - **Group by:** none · Set · Sprache · Seltenheit · Lagerort.
 - **Multi-select:** tag, move location, start a price session for the selection, export the selection as CSV, or delete (with undo).
 - **Empty state:** an illustrated empty binder with "Öffne ein Set und tippe auf ＋" and a button to the catalog.
@@ -278,7 +294,7 @@ This screen uses the same structure as card detail, but:
 ### 4.9 Price entry popover · PRC-01
 
 - Opened from a tile's € button, the detail page, a table row or the keyboard shortcut `P`.
-- Fields: amount (autofocus), date (default today), type (*Trend*, *ab*, *30-Tage-Ø*, *7-Tage-Ø*, *Verkauft*, *Eigener Wert*, with the default from settings) and an optional note.
+- Fields: amount (autofocus), date (default today), type (*Trend*, *ab*, *30-Tage-Ø*, *7-Tage-Ø*, *Verkauft*, *Eigene Schätzung*, with the default from settings) and an optional note.
 - It shows the last price and its date, and a live delta vs last (+/− abs and %).
 - `Enter` saves and `Esc` closes. "Unverändert" (`U`) re-confirms the last price with today's date.
 
@@ -306,7 +322,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 - **Scopes:** all holdings · stale only (> N days) · a set · a selection · the wishlist · top-N by value.
 - **Order:** by value descending (default), staleness, or set order.
-- **Keyboard:** `C` opens Cardmarket (exact product, language + seller country DE preset) in a new tab, `V` copies the price-guide suggestion into the input, `Enter` saves and advances, `U` keeps the price unchanged, `S` skips, `←` goes back, and `Esc` pauses. The session can be resumed, and its state persists.
+- **Keyboard:** `C` opens Cardmarket (exact product, language + seller country DE + Near Mint or better preset) in a new tab, `V` copies the price-guide suggestion into the input, `Enter` saves and advances, `U` keeps the price unchanged, `S` skips, `←` goes back, and `Esc` pauses. The session can be resumed, and its state persists.
 - **On desktop,** a tip suggests arranging Settr and Cardmarket side by side. Cardmarket can't be embedded in an iframe.
 - **Summary screen:** number updated, portfolio delta caused by this session, the biggest movers, and "Fertig" or "Weitere veraltete Preise".
 
@@ -326,17 +342,20 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 | Section | Settings |
 |---|---|
-| **Allgemein** | Card-name display (*Sprache meiner Karte* / *immer Deutsch* / *Originalsprache*) · default card language · active card languages (DE, EN, JA, ZH-CN; ZH-TW per ⟶ R2.3). The UI language is German (a selector appears once English exists) |
-| **Darstellung** | Theme (System/Dunkel/Hell) · card-tile density · holo/animation level (*voll / reduziert / aus*) · **Transparenz reduzieren** (solid instead of glass) · colorblind-safe P/L colors |
-| **Preise** | Default price type (**ab (DE)**) · Cardmarket link filters (**seller country: Deutschland**, **language: like the copy**, min. condition ⟶ R2.2) · price-guide suggestions (on/off) · stale threshold (14 days) · valuation of unpriced items (*ausschließen* / *Einkaufspreis verwenden*) |
+| **Allgemein** | Card-name display (*Sprache meiner Karte* / *immer Deutsch* / *Originalsprache*) · default card language · active card languages (DE, EN, JA, ZH-CN, ZH-TW; R2.3). The UI language is German (a selector appears once English exists) |
+| **Darstellung** | Theme (*Hell / Dunkel / System*, default *System*; light and dark are equals, R2.1; the top bar keeps a quick toggle) · card-tile density · holo/animation level (*voll / reduziert / aus*) · **Transparenz reduzieren** (solid instead of glass) · colorblind-safe P/L colors |
+| **Preise** | Default price type (**ab (DE)**) · Cardmarket link filters (**seller country: Deutschland**, **language: like the copy**, **min. condition: Near Mint or better**, R2.2) · price-guide suggestions (on/off) · stale threshold (14 days) · valuation of unpriced items (*ausschließen* / *Einkaufspreis verwenden*) |
 | **Lagerorte** | Binders and boxes: name, layout (3×3 / 3×4 / 4×3 / custom), page count, sort order |
-| **Daten** | Export backup · import backup · CSV export · backup reminder interval · storage status (persistent? used/quota) · request persistence · delete all data |
-| **Über** | App version · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
+| **Daten** | Export backup (a download; Brave asks where to save it) · import backup · CSV export · backup reminder interval · **storage status**: persistent yes/no (`persist()`) and used space; the reported quota isn't relied on, since Brave always reports 2 GiB (ADR-027) · request persistence · **install hint**: an installed app gets `persist()` (Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*; English menu names, the German ones are to verify) · **delete-on-exit warning**: Brave's Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data* and a per-site *"clear cookies on exit"* erase the whole collection (all off by default; ADR-027, ⟶ R3.4) · delete all data |
+| **Über** | App version and the long tagline (*"Jede Karte. Jedes Set. Jeder Cent."*) · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
 
 ### 4.14 Onboarding · APP-06
 
-1. **Willkommen:** a one-line value proposition and the short tagline. Pick the card languages you collect (preset: DE, EN, JA, ZH-CN).
-2. **Deine Daten bleiben bei dir:** explains local storage and asks for **persistent storage** (`navigator.storage.persist()`). On iOS it recommends **"Zum Home-Bildschirm"**, since Safari may clear site data after 7 days without a visit (see `ARCHITECTURE.md` §8).
+1. **Willkommen:** a one-line value proposition and the short tagline *"Jede Karte zählt."* (R2.7). Pick the card languages you collect (preset: DE, EN, JA, ZH-CN, ZH-TW).
+2. **Deine Daten bleiben bei dir:** explains local storage and asks for **persistent storage** (`navigator.storage.persist()`).
+   - On iOS it recommends **"Zum Home-Bildschirm"**, since Safari may clear site data after 7 days without a visit (see `ARCHITECTURE.md` §8).
+   - On Windows it recommends installing Settr as an app (in Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*), because Chromium grants `persist()` to installed apps without a prompt (ADR-027).
+   - It warns that browser settings which delete site data on exit erase the collection (in Brave: Shields *"Forget me when I close this site"*, *"Delete data on exit"*, per-site *"clear cookies on exit"*; all off by default, ⟶ R3.4).
 3. **Los geht's:** pick your default card language(s) and open the 30th Anniversary set.
 
 ---
@@ -345,14 +364,14 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 | # | Flow | Steps (happy path) |
 |---|---|---|
-| F1 | Add a card from set page | Set detail → hover tile → **＋** → sheet (defaults prefilled) → type price → **Enter** → toast "Hinzugefügt · Rückgängig" → tile shows badge |
+| F1 | Add a card from set page | **Quick add:** set detail → hover or focus tile → **＋** → one copy added with defaults (the view's language, NM, no price) → toast "Hinzugefügt: … · DE · NM · Rückgängig" → tile shows badge (1 interaction, R2.1). **With a price:** focus tile → `N` → sheet (defaults prefilled) → type price → **Enter** |
 | F2 | Add via search | **Strg K** → type "pika 25" → pick result → **Enter** opens add sheet → **Enter** |
 | F3 | Quick-add many | Set detail → **Schnellerfassung** → set defaults once → `1⏎ 4⏎ 7x2⏎ 25r⏎` … |
 | F4 | Record one price | Card detail → price input → `34,9` **Enter** → chart animates the new point |
 | F5 | Price session | Übersicht "37 veraltet" → session → `C` (check Cardmarket) → type → **Enter** … → summary |
 | F6 | Sell part of a lot | Holding menu → **Verkaufen…** → qty 1 of 3, price, fees, date → the lot records a **disposal** of 1 (remaining ×2); realized P/L recorded (Q6.5) |
 | F7 | Open sealed | Sealed holding → **Öffnen…** → confirm → optional "Pulls erfassen" (quick-add bound to the product's set) → **Abschließen** splits the product cost proportionally to the pulls' values (evenly if unpriced) (Q5.8) |
-| F8 | Export / import | Einstellungen › Daten → **Backup exportieren** → file saved. On another device: **Backup importieren** → preview (counts, date, app version) → *Ersetzen* or *Zusammenführen* → safety snapshot → done |
+| F8 | Export / import | Einstellungen › Daten → **Backup exportieren** → download (Brave asks where to save it, so backups can live in one folder). On another device: **Backup importieren** → preview (counts, date, app version) → *Ersetzen* or *Zusammenführen* → safety snapshot → done |
 | F9 | First run | Onboarding (3 steps) → set detail |
 | F10 | App/catalog update | Service worker finds a new version → non-blocking toast "Neue Version verfügbar · Neu laden" |
 
@@ -405,6 +424,9 @@ Shortcuts are suppressed while typing in inputs, and every action is also reacha
   - Empty collection: *"Noch keine Karten. Öffne ein Set und tippe auf ＋."*
   - Stale price: *"Preis von vor 21 Tagen"*
   - Backup reminder: *"Letztes Backup vor 12 Tagen. Jetzt sichern?"*
+  - Backup status pill (due): *"Backup fällig · Letztes vor 12 Tagen"*
+  - Price context: *"ab (DE) · NM oder besser"* · per-copy value tag: *"eigener Wert"*
+  - Short tagline (sidebar, PWA description): *"Jede Karte zählt."* (R2.7)
 
 ---
 
@@ -412,7 +434,7 @@ Shortcuts are suppressed while typing in inputs, and every action is also reacha
 
 - WCAG 2.2 AA contrast in both themes, including chart strokes and P/L colors.
 - P/L is never communicated by color alone: sign, arrow and label are always present, and a colorblind-safe palette is optional.
-- Full keyboard operability, visible focus rings (2 px, offset) and logical focus order in sheets and dialogs (focus trap and return).
+- Full keyboard operability, visible focus rings (3 px, 2 px offset) and logical focus order in sheets and dialogs (focus trap and return).
 - Grids use `role="grid"` semantics with a roving tabindex. Images carry meaningful `alt` text ("Pikachu ex, 025, Deutsch").
 - Respect `prefers-reduced-motion` (no tilt, foil or morph transitions) and `prefers-contrast`.
 - Minimum touch target of 44 × 44 px on mobile.

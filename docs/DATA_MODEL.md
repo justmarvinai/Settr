@@ -1,9 +1,9 @@
 # Settr: Data Model and Domain Rules
 
-> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > The single source of truth for entities, IDs, the IndexedDB schema, valuation and P/L formulas, and set-completion rules.
 > Backup file format → [`IMPORT_EXPORT.md`](./IMPORT_EXPORT.md). Where catalog data comes from → [`DATA_SOURCES.md`](./DATA_SOURCES.md).
-> References like (Q6.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R2.x** marks a still-open round-2 question.
+> References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
 
 ---
 
@@ -28,16 +28,19 @@ Pokémon cards are **not** the same card list translated into every language. Th
 - **International print (`intl`):** English, German, French, Italian, Spanish, Portuguese, etc. share *one* card list and numbering per set. A German and an English copy of `025/128` are the same catalog card in two **languages**. Example: TCGdex set `30th` (*30th Celebration* / *30 Jahre*).
 - **Asian print (`asia`):** Japanese sets have their own card lists, numbering and release schedule. International sets are often built from several Japanese sets and differ in content. For 30th Celebration, EN has 25 main-set cards that Japan put in a deck product instead. *Traditional Chinese* (`zh-tw`), Korean, Thai, Indonesian and often *Simplified Chinese* (`zh-cn`) releases **mirror** the Japanese set with the same list and numbering, so they're modeled as **languages of the same set** (TCGdex does the same: set `SV10` carries `ja`, `zh-tw` and `zh-cn` names). Example: TCGdex set `M6a` (*30th CELEBRATION*).
 - **Mainland-China-exclusive sets** (e.g. TCGdex `CSV…C` sets) are separate `asia` sets whose only language is `zh-cn`.
-- **Decision (Q3.2): Settr's Chinese focus is Simplified Chinese (`zh-cn`).** The Simplified Chinese *30周年庆典* mirrors `M6a` (176 cards, both on Cardmarket (expansion 6603) and in the only SC dataset), so `asia:M6a` carries the languages `['ja', 'zh-cn']`. Its one difference is that SC prints C/R rarity marks that JP doesn't, which is handled by `printedRarity` per language (§4.1). Traditional Chinese (`zh-tw`) is used for TC sealed products, and for cards if ⟶ R2.3 = yes.
+- **Decision (Q3.2, R2.3): Settr's Chinese card languages are Simplified Chinese (`zh-cn`, the focus) and Traditional Chinese (`zh-tw`).** Both Chinese editions of *30th CELEBRATION* mirror `M6a`, so `asia:M6a` carries the languages `['ja', 'zh-cn', 'zh-tw']` (ADR-021, ADR-026):
+  - The Simplified Chinese *30周年庆典* has the same 176 cards (Cardmarket expansion 6603). Its one difference is that SC prints C/R rarity marks that JP doesn't, which is handled by `printedRarity` per language (§4.1).
+  - Traditional Chinese is active for cards and sealed products (R2.3). TC copies use the M6a numbering.
 
 Therefore:
 
 - A **Print** partitions the catalog: `intl | asia`.
-- A **Set** belongs to exactly one print. Sets can have **subsets** (e.g. the *Classic Collection* of 30th Celebration is TCGdex set `30th-c`). A subset points to its parent via `parentSetId` and is shown as a section of the parent.
+- A **Set** belongs to exactly one print and one **series** (an era such as *Mega Evolution* or *Scarlet & Violet*), which groups sets on the Sets page (ADR-028). Sets can have **subsets** (e.g. the *Classic Collection* of 30th Celebration is TCGdex set `30th-c`). A subset points to its parent via `parentSetId` and is shown as a section of the parent.
 - A **Card** belongs to one set, has a **section** (`main`, `secret`, `subset`, `energy`, `promo`) and exists in one or more **languages**: `intl` cards in `de`, `en`, …; `asia` cards in `ja` and, when mirrored, `zh-tw`/`zh-cn`/`ko`.
-- A **Variant** is a physical version of a card within one print: *normal (non-holo)*, *holo*, *reverse holo*, special reverse **foil patterns** (e.g. *Poké Ball*, *Master Ball*), **stamps** (e.g. Pokémon Center, pre-release), and special sizes. The catalog declares which variants exist per card, derived from TCGdex's detailed variant model (`type` + `foil` + `stamp[]` + `subtype` + `size`, with per-variant Cardmarket/TCGplayer IDs) plus curated overrides.
+- A **Variant** is a physical version of a card within one print: *normal (non-holo)*, *holo*, *reverse holo*, special reverse **foil patterns** (e.g. *Poké Ball*, *Master Ball*), **stamps** (e.g. Pokémon Center, pre-release), special sizes, and **editions** of older sets (e.g. Base Set *1st Edition* vs *Unlimited*; ADR-028). The catalog declares which variants exist per card, derived from TCGdex's detailed variant model (`type` + `foil` + `stamp[]` + `subtype` + `size`, with per-variant Cardmarket/TCGplayer IDs) plus curated overrides.
   - *30th Celebration note:* every card in this set is foil and has **exactly one** standard variant. TCGdex marks some as `normal`, so the pipeline overrides this.
 - An owned copy is identified by **card × language × variant (× condition/grade)**.
+- **Multi-set and multi-era from day one (R2.5, ADR-028):** v1 ships one expansion, but nothing in the IDs, the schema or the completion rules assumes a single set or era. Adding a set after v1 means pipeline config, a curated overlay and a review, not a model change.
 
 ```
 Print 1─* Set 1─* Card 1─* Variant
@@ -55,7 +58,7 @@ PriceEntry ──> PriceSeries(card|product, language, variant, grade)
 | Entity | Format | Example | Notes |
 |---|---|---|---|
 | Print | enum | `intl`, `asia` | |
-| Card language | enum | **Active in v1:** `de`, `en`, `ja`, `zh-cn`, plus `zh-tw` for sealed products (cards per ⟶ R2.3). `fr`, `it`, `es`, `pt`, `ko` stay valid enum values but are disabled (Q3.3) | Uses TCGdex language codes to avoid mapping friction |
+| Card language | enum | **Active in v1:** `de`, `en`, `ja`, `zh-cn`, `zh-tw`, for cards and sealed products (`zh-tw` cards since R2.3). `fr`, `it`, `es`, `pt`, `ko` stay valid enum values but are disabled (Q3.3) | Uses TCGdex language codes to avoid mapping friction |
 | `SetId` | `<print>:<sourceSetId>` | `intl:30th`, `intl:30th-c`, `asia:M6a` | Opaque. **Never parse IDs**; store foreign keys explicitly (TCGdex IDs can contain dots, e.g. `sv03.5`) |
 | `CardId` | `<SetId>:<localId>` | `intl:30th:025`, `intl:30th:R`, `asia:M6a:017` | `localId` = TCGdex local ID as a string. The *printed* number is a separate field (it differs for the Classic Collection) |
 | `ProductId` (sealed) | `<print>:<slug>` | `intl:30th-etb`, `intl:30th-pc-etb`, `asia:m6a-box` | Curated slugs |
@@ -73,12 +76,15 @@ Files are produced by `scripts/catalog/*` (see `DATA_SOURCES.md` §6) into `publ
 
 ```
 public/catalog/v1/
-  manifest.json          # CatalogManifest: version, sources, prints, set summaries, file hashes
-  sets/<setId>.json      # CatalogSet incl. all cards (filename = encoded setId)
+  manifest.json          # CatalogManifest: version, sources, prints, set summaries (grouped by series), file hashes
+  sets/<setId>.json      # CatalogSet incl. all cards (filename = encoded setId); one lazily loaded chunk per set
   sealed.json            # all CatalogProducts
-  cm-prices.json         # PriceGuideSnapshot: daily Cardmarket price-guide values for catalog products (PRC-09)
+  search-index.json      # slim global search index: one small document per card and product across all sets (ADR-028)
+  cm-prices.json         # PriceGuideSnapshot: daily Cardmarket price-guide values for catalog products (PRC-09); committed or built at deploy time (ADR-029)
   i18n/<lang>.json       # localized labels for rarities, types, variants, product types (if not inline)
 ```
+
+**Multi-set layout (ADR-028):** the manifest lists every set, so the Sets page can group them by series and print without loading any set file. Set chunks load only when a set is needed. The search index carries only the fields search needs (`ARCHITECTURE.md` §7), so global search never loads every chunk. A new set adds one chunk plus manifest and index entries.
 
 ### 4.1 Types
 
@@ -93,12 +99,12 @@ interface CatalogManifest {
   catalogVersion: string;        // e.g. '2026.09.23.1'; bumped on every regeneration
   generatedAt: string;           // ISO timestamp
   sources: { name: string; fetchedAt: string; license: string; url: string }[];
-  sets: CatalogSetSummary[];     // lightweight list for the Sets page & search
-  files: { sets: Record<string, { path: string; sha256: string }>; sealed: { path: string; sha256: string } };
+  sets: CatalogSetSummary[];     // lightweight list of every set for the Sets page (grouped by series) & search
+  files: { sets: Record<string, { path: string; sha256: string }>; sealed: { path: string; sha256: string }; search: { path: string; sha256: string } };
 }
 
 interface CatalogSetSummary {
-  id: string; print: Print; series: { id: string; name: LocalizedText };
+  id: string; print: Print; series: { id: string; name: LocalizedText }; // series = era, e.g. Mega Evolution (ADR-028)
   kind: 'main' | 'subset'; parentSetId?: string;  // e.g. intl:30th-c → parent intl:30th
   name: LocalizedText; code?: string; languages: CardLanguage[];
   releaseDates: Partial<Record<CardLanguage, ISODate>>;
@@ -135,7 +141,7 @@ interface CardVariant {
   id: VariantId;
   languages?: CardLanguage[];    // restrict when a variant exists only in some languages
   refs?: {
-    cardmarket?: { default?: number; byLanguage?: Partial<Record<CardLanguage, number>> }; // JP (exp. 6602) and SC (exp. 6603) are separate Cardmarket products
+    cardmarket?: { default?: number; byLanguage?: Partial<Record<CardLanguage, number>> }; // JP (exp. 6602) and SC (exp. 6603) are separate Cardmarket products; TC copies use the JP product (R2.3)
     tcgplayer?: number; cardtrader?: number;
   };
 }
@@ -163,7 +169,7 @@ interface CatalogProduct {
   refs?: { cardmarket?: number; tcgplayer?: number };
 }
 
-// PRC-09: produced daily by a GitHub Action from Cardmarket's public price guide, filtered to catalog products
+// PRC-09: produced daily from Cardmarket's public price guide, filtered to catalog products (committed or built at deploy time, ADR-029)
 interface PriceGuideSnapshot {
   source: 'cardmarket-price-guide';
   guideCreatedAt: string;        // Cardmarket's own timestamp
@@ -175,7 +181,7 @@ interface PriceGuideSnapshot {
 }
 ```
 
-**Semantics of guide values (shown to the user):** for international products, one Cardmarket product covers **all languages and seller countries**, so `low` is the global cheapest offer, not "cheapest German seller in German". Japanese and Simplified Chinese products are separate Cardmarket products, so their values are language-specific. The UI labels suggestions accordingly (`UX_SPEC.md` §4.4).
+**Semantics of guide values (shown to the user):** for international products, one Cardmarket product covers **all languages and seller countries**, so `low` is the global cheapest offer, not "cheapest German seller in German". Japanese and Simplified Chinese products are separate Cardmarket products, so their values don't mix in international offers. Traditional Chinese copies are listed under the JP product (R2.3), so JP values may include TC offers (to verify). The UI labels suggestions accordingly (`UX_SPEC.md` §4.4): every price belongs to its card language (R2.6), and a guide value is never presented as if it applied to a language it doesn't cover.
 
 ### 4.2 Display snapshot on user records
 
@@ -228,7 +234,7 @@ interface Holding extends RecordBase {
   condition?: Condition;          // cards: Cardmarket scale
   grading?: Grading;              // present ⇒ graded copy (own price series)
   sealedState?: 'sealed' | 'damaged'; // sealed only
-  flags?: { firstEdition?: boolean; signed?: boolean; altered?: boolean; misprint?: boolean };
+  flags?: { signed?: boolean; altered?: boolean; misprint?: boolean }; // 1st edition is a catalog variant (kind 'edition'), not a flag
 
   quantity: number;               // units acquired in this lot (integer ≥ 1)
   acquisition: {
@@ -240,7 +246,7 @@ interface Holding extends RecordBase {
     fromHoldingId?: string;       // pulled from an opened sealed holding (I-11)
   };
   disposals: Disposal[];          // partial/complete sales, trades, openings (quantity-based)
-  valueOverride?: { price: Money; date: ISODate; note?: string }; // per-lot manual value (PRC-07)
+  valueOverride?: { price: Money; date: ISODate; note?: string }; // per-lot manual value (PRC-07), UI "Eigener Wert", e.g. for copies below NM (R2.2, §6.1)
 
   tags: string[];                 // Tag ids
   location?: { id: string; page?: number; slot?: number; note?: string }; // e.g. VaultX binder, page 4, slot 7 (Q5.7)
@@ -283,9 +289,9 @@ interface PriceEntry extends RecordBase {
   snapshot: ItemSnapshot;
   date: ISODate;                  // observation date (not time)
   price: ForeignMoney;            // price per ONE unit
-  priceType: 'from' | 'trend' | 'avg30' | 'avg7' | 'avg1' | 'sold' | 'manual'; // default 'from' = "ab" (Q6.3)
+  priceType: 'from' | 'trend' | 'avg30' | 'avg7' | 'avg1' | 'sold' | 'manual'; // default 'from' = "ab" (Q6.3); 'manual' = "Eigene Schätzung"
   source: 'cardmarket' | 'ebay' | 'tcgplayer' | 'local' | 'other';
-  context?: { sellerCountry?: string; language?: CardLanguage; minCondition?: Condition }; // how the price was looked up (default: DE sellers, copy's language)
+  context?: { sellerCountry?: string; language?: CardLanguage; minCondition?: Condition }; // how the price was looked up (default: DE sellers, copy's language, minCondition 'NM' = NM or better, R2.2)
   origin: 'manual' | 'guide';     // 'guide' = accepted price-guide suggestion (PRC-09)
   note?: string;
 }
@@ -325,7 +331,7 @@ interface Location extends RecordBase {
 }
 ```
 
-**Slots:** `slot` is 1-based, left→right, top→bottom within a page. The "next free slot" is the first `(page, slot)` not occupied by an open holding. Occupancy is a warning, not a constraint, since a slot can hold a stack of identical cards.
+**Slots:** `slot` is 1-based, left→right, top→bottom within a page. The "next free slot" is the first `(page, slot)` not occupied by an open holding. Occupancy is a warning, not a constraint, since a slot can hold a stack of identical cards. v1 stores binder, page and slot per copy; the virtual binder view that shows them ships in v1.1 (COL-08, R2.4) without a data change.
 
 ```ts
 ```
@@ -357,7 +363,7 @@ Images are downscaled client-side before storing (max 1600 px long edge, WebP q�
 
 | key | value |
 |---|---|
-| `settings` | `Settings` object (Zod schema with defaults; merged on read so new settings appear automatically). Key v1 defaults: `cardLanguages: ['de','en','ja','zh-cn']`, `defaultCardLanguage: 'de'`, `defaultCondition: 'NM'`, `price: { defaultType: 'from', cardmarket: { sellerCountry: 'DE', matchLanguage: true, minCondition: 'NM' /* ⟶ R2.2 */ }, guideSuggestions: true, staleAfterDays: 14, unpriced: 'exclude' }`, `display: { theme: 'system', reduceTransparency: false, motion: 'full' }`, `backup: { remindAfterDays: 7 }` |
+| `settings` | `Settings` object (Zod schema with defaults; merged on read so new settings appear automatically). Key v1 defaults: `cardLanguages: ['de','en','ja','zh-cn','zh-tw']`, `defaultCardLanguage: 'de'`, `defaultCondition: 'NM'`, `price: { defaultType: 'from', cardmarket: { sellerCountry: 'DE', matchLanguage: true, minCondition: 'NM' /* NM or better, R2.2 */ }, guideSuggestions: true, staleAfterDays: 14, unpriced: 'exclude' }`, `display: { theme: 'system', reduceTransparency: false, motion: 'full' }`, `backup: { remindAfterDays: 7 }` |
 | `meta` | `{ installId, createdAt, schemaVersion, lastBackupAt?, lastImportAt?, catalogVersionSeen }` |
 | `priceSession` | resumable price-session state (queue, cursor, scope) |
 | `ui:*` | per-device UI prefs (density, last-used defaults, collapsed panels) |
@@ -391,8 +397,9 @@ seriesKey(sealed) = `sealed|${productId}|${language}`
 gradeKey          = holding.grading ? `${company}-${grade}${qualifier ? '-' + qualifier : ''}` (lowercased, slugified) : 'raw'
 ```
 
-- All raw copies of the same card/language/variant **share one price series**. The recorded price is the market reference: the cheapest offer in that language from German sellers, with the condition filter per ⟶ R2.2.
-- **Decision (Q6.2):** copies worth noticeably less (LP, damaged) or more (special pieces) get a per-lot `valueOverride`. Automatic condition multipliers are **not** planned.
+- All raw copies of the same card/language/variant **share one price series**. The recorded price is the market reference: the cheapest offer in that language from German sellers, **Near Mint or better** (R2.2, ADR-025).
+- **Every price belongs to its card language (R2.6).** A series never takes a price from another language, and a price is only ever shown for the language it was recorded for.
+- **Decision (Q6.2, R2.2):** because the reference is NM or better, copies worth noticeably less (LP, damaged) or more (special pieces) get a per-lot `valueOverride` (PRC-07). It's the existing field, not a new one. The UI calls it *Eigener Wert* and tags it "eigener Wert" wherever it's shown. It carries its own date, so it goes stale like any price, and it feeds valuation and P/L (§6.3). Automatic condition multipliers are **not** planned.
 - Graded copies have **their own series per company+grade**.
 
 ### 6.2 Cost basis
@@ -414,13 +421,13 @@ remainingCost(h)    = costTotal(h) − Σ costOfUnits(disposed units)
 
 ```
 unitPrice(series, d) = price of the latest entry with entry.date ≤ d        (carry-forward)
-unitValue(h, d)      = h.valueOverride (if set and date ≤ d)
+unitValue(h, d)      = h.valueOverride (if set and date ≤ d)                ("Eigener Wert", Q6.2/R2.2)
                        ?? unitPrice(series(h), d) × conditionFactor(h)       (factor = 1 unless Q6.2 enabled)
 value(h, d)          = remaining(h, d) × unitValue(h, d)
 ```
 
 - **Unpriced** holdings (no entry ≤ d) are **excluded** from value **and** from P/L cost (so they don't fake a loss). They're counted and surfaced separately. Setting: *"Einkaufspreis für unbepreiste Positionen verwenden"* (value = remaining cost ⇒ P/L 0).
-- **Stale:** latest entry older than `settings.staleAfterDays` (default 14).
+- **Stale:** latest entry older than `settings.staleAfterDays` (default 14). A lot's *Eigener Wert* goes stale the same way, by its own `date` (R2.2).
 
 ### 6.4 Profit and loss
 
@@ -523,7 +530,7 @@ db.version(1).stores({
   "location": { "id": "0192f0aa-…", "page": 4, "slot": 7 },   // "VaultX 9er", page 4, slot 7
   "disposals": [], "tags": [], "mediaIds": []
 }
-// prices: lowest German-language offer from German sellers ("ab (DE)") for that series
+// prices: lowest German-language offer from German sellers, Near Mint or better ("ab (DE)"), for that series
 {
   "id": "0192f1c4-…", "createdAt": "…", "updatedAt": "…",
   "seriesKey": "card|intl:30th:150|de|std|raw",

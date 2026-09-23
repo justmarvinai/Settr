@@ -1,8 +1,8 @@
 # Settr: Import, Export and Backups
 
-> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > Settr has no server, so the backup file **is** the user's safety net and the only way to move data between devices. This document specifies the format and the guarantees.
-> Entities → [`DATA_MODEL.md`](./DATA_MODEL.md). References like (Q7.1) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R2.x** marks a still-open round-2 question.
+> Entities → [`DATA_MODEL.md`](./DATA_MODEL.md). References like (Q7.1) or (R2.9) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
 
 ---
 
@@ -64,11 +64,12 @@ A single UTF-8 JSON file. The filename pattern is `settr-backup-2026-09-23-1012.
 2. Options: *Fotos einschließen* ☑ · (future) *Mit Passwort verschlüsseln* ☐.
 3. Settle queued writes, then read all tables in one read-only transaction, which gives a consistent snapshot.
 4. Build the envelope, compute counts and the checksum, then serialize.
-5. Save:
-   - Chromium: `showSaveFilePicker()` with a suggested name.
-   - Others: a Blob download via `<a download>`.
-   - Mobile: the **Web Share API** with files ("In Dateien sichern", AirDrop, etc.) when supported, otherwise a download.
-6. Update `meta.lastBackupAt`. The backup pill turns green.
+5. Save. **Backups are downloads** (R2.9, ADR-027):
+   - Desktop: a Blob download via `<a download>` with the suggested name. Brave's "Ask where to save each file" is on by default, so a Save-As dialog opens and Marvin can keep his backups in one folder.
+   - `showSaveFilePicker()` is only an optional extra where it exists. Feature-detect the picker function itself (`'showSaveFilePicker' in window`), never `FileSystemHandle`: Brave disables the File System Access API by default.
+   - No Web Share on desktop: Brave on Windows refuses `.json` files (`NotAllowedError`, although `canShare()` says yes), so desktop offers no "share backup".
+   - iPhone: the **Web Share API** with files ("In Dateien sichern", AirDrop, etc.) when supported, otherwise (or when the share is rejected) a download.
+6. Update `meta.lastBackupAt` when the download starts. The sidebar backup status resets (it's amber only when a backup is due). A cancelled Save-As dialog can't be detected by a web page, so the toast says *"Backup-Download gestartet"* and offers *Erneut speichern* for a few seconds.
 
 ---
 
@@ -78,7 +79,7 @@ A single UTF-8 JSON file. The filename pattern is `settr-backup-2026-09-23-1012.
 Pick file ─▶ Parse ─▶ Envelope check ─▶ Migrate ─▶ Validate ─▶ Preview & choose mode ─▶ Safety snapshot ─▶ Write ─▶ Rebuild derived ─▶ Done
 ```
 
-1. **Pick:** file input, drag & drop onto the Daten page, or `showOpenFilePicker()`. `.settr.json` and `.json` are accepted.
+1. **Pick:** file input or drag & drop onto the Daten page, which work in every browser. `showOpenFilePicker()` is used only where the function exists (Brave disables it by default, ADR-027). `.settr.json` and `.json` are accepted.
 2. **Parse:** `JSON.parse` in a Web Worker (keeps the UI responsive for large files). Syntax errors show line/column.
 3. **Envelope check:** `format` must match. If `formatVersion` or `schemaVersion` is newer than supported, **abort** with an update hint.
 4. **Migrate:** pure functions `migrate_vN_to_vN+1(data)` are applied in sequence (the same functions Dexie upgrades use).
@@ -129,25 +130,16 @@ For Excel/Numbers/Google Sheets analysis. **CSV isn't a backup format** because 
 
 ## 7. CSV import from other apps (⟶ I-16)
 
-This is a **mapping wizard**: upload a CSV, auto-detect the delimiter and encoding, map columns to Settr fields, then **match** rows to catalog items by set + number (fuzzy fallback on name) and show unmatched rows for manual resolution. **Post-v1** (I-16).
+This is a **mapping wizard**: upload a CSV, auto-detect the delimiter and encoding, map columns to Settr fields, then **match** rows to catalog items by set + number (fuzzy fallback on name) and show unmatched rows for manual resolution. **Post-v1** (I-16), **generic only**. Matching needs the rows' sets in Settr's catalog.
 
-**Collectr preset first** (Q1.6: Marvin's current tool; timing ⟶ R2.5). Collectr's CSV export (a **Collectr Pro** feature) has these columns: `Portfolio Name, Category, Set, Product Name, Card Number, Rarity, Variance, Grade, Card Condition, Average Cost Paid, Quantity, Market Price (As of <date>), Price Override, Watchlist, Date Added, Notes`.
+**No Collectr preset (dropped, R2.5, ADR-028).** Collectr's CSV export is a Collectr Pro feature, and Marvin has no Collectr Pro, so there's no file to import. His ~200 cards come over by hand, set by set, as their sets arrive in the catalog. That's why quick add from the grid and the ≤ 3-interaction add sheet matter (`UX_SPEC.md` §4.3, §4.7).
 
-| Collectr field | Settr field | Note |
-|---|---|---|
-| Set + Card Number (+ Product Name) | catalog card | Matching needs the set in Settr's catalog, hence "add your sets" (⟶ R2.5) |
-| Category = sealed | sealed product | Matched by name + set |
-| Variance | variant | e.g. "Reverse Holofoil" → `reverse` |
-| Grade | `grading` | e.g. "PSA 10" |
-| Card Condition | condition | TCGplayer scale → Cardmarket scale, below (adjustable in the wizard) |
-| Average Cost Paid × Quantity | `acquisition.priceTotal` | USD values are converted at an entered rate (Settr stores EUR) |
-| Date Added | `acquisition.date` | |
-| Market Price | *(ignored)* | Settr prices come from your own entries |
-| Notes | `note` | |
+**Generic mapping rules** (kept for the wizard):
+- Prices in another currency (e.g. USD) are converted at an entered rate, because Settr stores EUR.
+- Market-price columns are ignored. Settr prices come from your own entries.
+- **Condition mapping** for US-style exports (TCGplayer scale → Cardmarket): Near Mint → **NM** · Lightly Played → **EX** · Moderately Played → **GD** · Heavily Played → **PL** · Damaged → **PO**. Cardmarket's *LP* sits between TCGplayer's MP and HP, so the wizard lets you override the mapping per import.
 
-**Proposed condition mapping** (TCGplayer/Collectr → Cardmarket): Near Mint → **NM** · Lightly Played → **EX** · Moderately Played → **GD** · Heavily Played → **PL** · Damaged → **PO**. Cardmarket's *LP* sits between TCGplayer's MP and HP, so the wizard lets you override the mapping per import.
-
-Other presets (TCG Collector, Cardmarket stock/shipment exports) follow on demand. There are no files yet (Q7.4).
+Presets (TCG Collector, Cardmarket stock/shipment exports) follow on demand. There are no files yet (Q7.4).
 
 ---
 
@@ -155,12 +147,13 @@ Other presets (TCG Collector, Cardmarket stock/shipment exports) follow on deman
 
 | Mechanism | Behavior |
 |---|---|
-| **Persistent storage** | Settr requests `navigator.storage.persist()` after onboarding and after the first holding is added. Status is shown in Einstellungen › Daten |
-| **Backup reminder** | Pill + toast when `lastBackupAt` is older than **7 days** (Q7.1) **and** there were changes since. The interval is configurable |
+| **Persistent storage** | Settr requests `navigator.storage.persist()` after onboarding, after the first holding is added, and after installation as an app. Chromium browsers (incl. Brave) don't prompt: they grant it to installed apps and to often-used or bookmarked sites, and never while the site's cookies are blocked or cleared on exit. A `false` result is retried later. Status is shown in Einstellungen › Daten |
+| **Delete-on-exit warning** (Brave, ADR-027) | Brave's Shields *"Forget me when I close this site"* (per site, or globally at `brave://settings/shields`), the *"Delete data on exit"* tab under *Clear browsing data*, and a per-site *"clear cookies on exit"* exception all erase IndexedDB. They're off by default. The first wipes all site data about 30 s after the last tab closes, even for installed apps, and the last also blocks `persist()`. Onboarding and Einstellungen › Daten warn about them (⟶ R3.4) |
+| **Backup reminder** | The sidebar pill turns amber (*"Backup fällig · Letztes vor 12 Tagen"*) and a toast appears when `lastBackupAt` is older than **7 days** (Q7.1) **and** there were changes since. The interval is configurable |
 | **Change counter** | After 50 changes without a backup, a gentle reminder |
-| **Auto-backup to folder** (I-15, **post-v1** per Q7.2; works in Chrome/Edge on Windows) | The user grants a directory once (the handle is stored in IndexedDB). Settr writes `settr-backup-latest.settr.json` and rotating dated copies (keeps the last 10) after changes (debounced 60 s) and on `visibilitychange: hidden`. Permission is re-requested per session when needed |
+| **Auto-backup to folder** (I-15, **post-v1** per Q7.2; needs the File System Access API: Chromium browsers, and Brave only after enabling `brave://flags/#file-system-access-api`, ADR-027) | Settr feature-detects the picker functions (`'showDirectoryPicker' in window`), never `FileSystemHandle`, and explains Brave's flag when the picker is missing. The user grants a directory once (the handle is stored in IndexedDB). Settr writes `settr-backup-latest.settr.json` and rotating dated copies (keeps the last 10) after changes (debounced 60 s) and on `visibilitychange: hidden`. Permission is re-requested per session when needed. Without the API, backups stay downloads |
 | **iOS/Safari caveat** | Script-writable storage can be evicted after 7 days without use when *not* installed to the home screen. Onboarding recommends installing the PWA. See `ARCHITECTURE.md` §8 |
-| **Storage estimate** | `navigator.storage.estimate()` shown as used/quota. Warns at 80 % |
+| **Storage estimate** | `navigator.storage.estimate()`: the **usage** is shown. The reported quota isn't relied on, because Brave always reports 2 GiB (anti-fingerprinting) while the real limit is Chromium's usual one. The 80 % warning is therefore only a hint, and a real `QuotaExceededError` gets its own dialog (`UX_SPEC.md` §6) |
 
 ---
 
@@ -168,7 +161,7 @@ Other presets (TCG Collector, Cardmarket stock/shipment exports) follow on deman
 
 Candidates (all client-side, user-owned storage). **None are planned for v1**:
 
-- **File-based sync:** auto-backup into a cloud-synced folder (iCloud Drive/OneDrive/Dropbox desktop app) plus merge-import on the other device. It's zero-infrastructure but works on desktop Chromium only.
+- **File-based sync:** auto-backup into a cloud-synced folder (iCloud Drive/OneDrive/Dropbox desktop app) plus merge-import on the other device. It's zero-infrastructure but needs the File System Access API: desktop Chromium only, and in Brave only after enabling its flag (ADR-027).
 - **Bring-your-own-cloud:** Google Drive `appDataFolder`, Dropbox, OneDrive or WebDAV/Nextcloud via OAuth PKCE from the browser, storing an encrypted backup and running the §5 merge logic on pull.
 - **Hosted sync service** (e.g. Dexie Cloud or a CRDT service) would contradict "no backend" and cost money, so it's listed only for completeness.
 

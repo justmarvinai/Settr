@@ -1,6 +1,6 @@
 # Settr: Quality, Testing, Performance, Accessibility and Security
 
-> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > Defines what "done" means and how quality is enforced automatically. Referenced by `AGENTS.md` (Definition of Done) and CI.
 
 ---
@@ -32,11 +32,12 @@ A change is **done** only when all of the following hold:
 | **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed |
 | **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
 | **Component** | Vitest Browser Mode (Playwright provider) + Testing Library | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
-| **E2E** | Playwright | Critical journeys (below). **Every PR:** Chromium desktop (Marvin's Windows setup) + WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation | All journeys green before merge to `main` |
+| **E2E** | Playwright | Critical journeys (below). **Every PR:** Chromium desktop (the engine of Marvin's Brave on Windows) + WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation | All journeys green before merge to `main` |
 | **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
 | **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
 | **Catalog pipeline** | Vitest + Zod | Generated JSON validates. Counts match the manifest. Image URL sampling (HEAD) runs as a non-blocking job | Every catalog PR |
+| **Manual Brave check** | Brave (current stable) on Windows, **default Shields** | The Brave smoke test (§3.1): install as app, offline, `persist()`, backup download with Save-As, CJK rendering, glass | Before each release |
 
 ### 2.1 Critical E2E journeys
 
@@ -56,7 +57,7 @@ A change is **done** only when all of the following hold:
 
 ### 2.2 Test data
 
-- `tests/fixtures/catalog/`: a trimmed, frozen catalog (a few cards per print), so tests don't depend on the live pipeline.
+- `tests/fixtures/catalog/`: a trimmed, frozen catalog (a few cards per print), so tests don't depend on the live pipeline. It contains at least two sets from two series, so no code path can assume a single set (ADR-028).
 - `tests/fixtures/backups/v1/…`: backups of every released schema version, used for the migration tests.
 - A factory module (`tests/factories.ts`) builds valid holdings, prices and so on with sensible defaults.
 
@@ -66,14 +67,26 @@ A change is **done** only when all of the following hold:
 
 | Platform | Supported |
 |---|---|
-| **Chrome / Edge on Windows** (primary, Q1.3) | last 2 major versions: every PR, manual QA |
+| **Brave on Windows** (primary, Q1.3, R2.9) | current stable: Chromium in CI on every PR (Brave's engine), plus the manual Brave smoke test with default Shields before each release (§3.1) |
 | **Safari iOS** (secondary; installed PWA) | 17.4+: every PR (WebKit), manual QA on iPhone |
+| Chrome / Edge on Windows | last 2 major versions: Chromium in CI on every PR |
 | Chrome Android, Safari macOS/iPadOS | last 2 / 17.4+: nightly |
 | Firefox | last 2 major versions + current ESR: nightly |
 | Samsung Internet | last 2 major versions |
 
-- **Baseline target:** *Baseline widely available*, plus selected *newly available* features used as **progressive enhancements** with fallbacks: View Transitions, File System Access, BarcodeDetector, Web Share with files, device orientation for the holo tilt, and anchor positioning.
+- **Baseline target:** *Baseline widely available*, plus selected *newly available* features used as **progressive enhancements** with fallbacks: View Transitions, File System Access (off by default in Brave, so backups are downloads; ADR-027), BarcodeDetector, Web Share with files, device orientation for the holo tilt, and anchor positioning.
 - Minimum viewport is 360 px wide. No horizontal page scroll at any width.
+
+### 3.1 Brave smoke test (manual, before each release)
+
+Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Before each release, run this checklist in the current stable Brave on Windows with **default Shields** and default fingerprinting protection, and note the Brave version and results in the release PR:
+
+1. **Install as app** (install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*). The app window opens, and Shields block nothing Settr needs (assets, catalog JSON, service worker, fonts, TCGdex images).
+2. **Offline:** load the app, go offline, navigate catalog and collection, and add a holding (as in E2E journey 9).
+3. **`persist()`:** after installing, persistent storage is granted, and *Einstellungen › Daten* shows it.
+4. **Backup download:** *Backup exportieren* opens Brave's Save-As dialog, and the saved file imports again.
+5. **CJK rendering:** Japanese, Simplified and Traditional Chinese names render with the self-hosted Noto slices, since Brave may hide named system fonts such as Yu Gothic.
+6. **Glass:** sidebar, toolbar, filter bar and sheets blur correctly in light and dark, and *Transparenz reduzieren* switches them to solid.
 
 ---
 
@@ -100,9 +113,11 @@ A change is **done** only when all of the following hold:
 
 ## 5. Accessibility (WCAG 2.2 AA)
 
-- Contrast is ≥ 4.5:1 for text and ≥ 3:1 for UI components and chart strokes, in both themes. It's checked with automated token tests (OKLCH contrast in `tokens.test.ts`).
+Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks and usability conflict, usability wins: legibility, AA contrast, 44 px touch targets, keyboard paths, and no decoration that hides data.
+
+- Contrast is ≥ 4.5:1 for text and ≥ 3:1 for UI components and chart strokes, in **both themes of direction D** (light and dark are equals, *System* is the default; `DESIGN_SYSTEM.md` §3.1). It's checked with automated token tests (OKLCH contrast in `tokens.test.ts`) for every token pair, in light and in dark.
 - P/L is never color-only: a sign, an arrow and text are always shown. An optional colorblind-safe palette (blue/orange) is available.
-- Keyboard: everything is operable, with a visible 2 px focus ring. Grids use a roving tabindex. Sheets/dialogs trap focus and restore it on close. Skip-link to the main content.
+- Keyboard: everything is operable, with a visible focus ring (`--focus`: 3 px with a 2 px offset, `DESIGN_SYSTEM.md` §3.1). Grids use a roving tabindex. Sheets/dialogs trap focus and restore it on close. Skip-link to the main content.
 - Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
 - Motion: `prefers-reduced-motion` disables tilt, foil animation, morph transitions and number tickers. There's also an in-app motion setting.
 - **Glass legibility:** text on Liquid Glass meets AA against the worst-case backdrop (bright card art beneath). `prefers-reduced-transparency` and the in-app toggle make glass solid. Windows `forced-colors` mode is supported.
@@ -130,7 +145,8 @@ A change is **done** only when all of the following hold:
 - **Untrusted input:** imported files and CSVs are validated with Zod. Data is never rendered as HTML (no `dangerouslySetInnerHTML`). Import size is capped (200 MB) and parsing runs in a worker.
 - **External links** (Cardmarket) use `rel="noopener noreferrer"`.
 - **Dependencies:** minimal and well-maintained, with a committed lockfile, Renovate for updates (grouped weekly) and `pnpm audit` in CI.
-- **Analytics and telemetry:** none (Q8.3). Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
+- **Analytics and telemetry:** none (Q8.3). Never add Vercel Analytics (it's on EasyPrivacy, so Brave would block it anyway). Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
+- **Repository (ADR-029):** no secrets and no personal collection data are ever committed. While the GitHub repository is public (⟶ R3.2), neither are Cardmarket price-guide snapshots (`cm-prices.json`) nor the deployment URL.
 
 ---
 
@@ -138,10 +154,13 @@ A change is **done** only when all of the following hold:
 
 | Workflow | Trigger | Steps |
 |---|---|---|
-| `ci.yml` | PR, push to `main` | pnpm install (cached) → `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → build → size-limit → Playwright (Chromium on PR; all engines on `main`) → upload reports |
+| `ci.yml` | PR, push to `main` | pnpm install (cached) → `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → build → size-limit → Playwright (Chromium + WebKit on PR; all engines on `main`) → upload reports |
 | `e2e-nightly.yml` | nightly | Full browser matrix + visual regression + random-seed property tests |
 | `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
+| `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, ⟶ R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
 | Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |
 | `lighthouse.yml` | PR (after the Vercel preview is ready) | Lighthouse CI against the preview URL with budgets |
 
-Branch protection on `main` requires green CI and a review.
+Branch protection on `main` requires green CI and a review (`main` becomes the default branch at the start of M1, ⟶ R3.3). Before each release, the manual Brave smoke test (§3.1) must pass.
+
+In a private repository, GitHub Free includes 2,000 Actions minutes per month, which should cover CI, the weekly catalog sync and the daily price-guide job (to verify against real CI times, ADR-029).
