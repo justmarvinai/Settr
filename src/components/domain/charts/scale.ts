@@ -44,7 +44,7 @@ export interface Ticks {
 
 /**
  * The y domain for values from `min` to `max`: the data plus a little air (8 % of the span), with
- * 2–4 gridlines at nice values inside it. A flat line gets room around it (±10 %), and the domain
+ * 3–5 gridlines at nice values inside it (2 only for very narrow spans). A flat line gets room around it (±10 %), and the domain
  * never goes below zero when the data doesn't. The domain follows the data rather than the ticks,
  * so a line from 24,90 € to 34,90 € uses the whole height instead of starting at 20 €.
  */
@@ -63,11 +63,12 @@ export function niceTicks(min: number, max: number, count = 3): Ticks {
   if (min >= 0) lo = Math.max(0, lo);
   const inside = (step: number) => {
     const ticks: number[] = [];
-    for (let value = Math.ceil(lo / step) * step; value <= hi; value += step) ticks.push(value);
+    // `+ 0` turns −0 (from rounding a small negative bound up) into 0, so no label reads "−0 €".
+    for (let value = Math.ceil(lo / step) * step; value <= hi; value += step) ticks.push(value + 0);
     return ticks;
   };
   let ticks = inside(niceStep(hi - lo, count));
-  if (ticks.length < 2) ticks = inside(niceStep(hi - lo, count + 2));
+  if (ticks.length < 3) ticks = inside(niceStep(hi - lo, count + 2));
   return { domain: [lo, hi], ticks };
 }
 

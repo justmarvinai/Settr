@@ -13,7 +13,7 @@ import { conditionLabel, sealedStateLabel } from '@/i18n/collection-labels';
 import { formatCount } from '@/i18n/format';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 import { NO_FILTERS, type FilterOptions } from './library-options';
-import type { LibraryKind } from './rows';
+import type { LibraryKind } from '@/features/collection';
 
 const fields = /* @__PURE__ */ collectionSearchSchema.shape;
 

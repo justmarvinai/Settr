@@ -4,7 +4,7 @@ import { m } from '@/i18n';
 import { gradingText, sealedStateLabel } from '@/i18n/collection-labels';
 import { formatCount } from '@/i18n/format';
 import { lotLabel } from '@/features/collection';
-import type { LibraryRow } from './rows';
+import type { LibraryRow } from '@/features/collection';
 
 /** `×2`, `1 von 3` after a partial sale, or `Abgeschlossen`. */
 export function quantityText(h: Holding): string {

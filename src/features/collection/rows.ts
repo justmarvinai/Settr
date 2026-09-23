@@ -12,13 +12,16 @@ import {
   customIdOf,
   customInfo,
   isCustomId,
-  locationText,
   productInfo,
   snapshotInfo,
   type ItemInfo,
-} from '@/features/collection';
+} from './item';
+import { locationText } from './location';
 
-/** A lot as Sammlung › Karten / Sealed shows it (COL-04, COL-05). */
+/**
+ * A lot as Sammlung › Karten / Sealed (COL-04, COL-05) and the dashboard's movers and recent
+ * lots show it: resolved from the catalog, a custom item or the lot's snapshot, with its value.
+ */
 export interface LibraryRow extends LotRow {
   info: ItemInfo;
   /** The set page the item lives on (a subset's main set), for links; catalog cards only. */

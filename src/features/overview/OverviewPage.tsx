@@ -1,11 +1,30 @@
 import { ArrowRightIcon, CardsThreeIcon, SquaresFourIcon, TagIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
+import { Suspense } from 'react';
 import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useHoldingCount } from '@/db';
 import { m } from '@/i18n';
+import { Dashboard } from './Dashboard';
 
-/** Übersicht in M1: an honest welcome and what comes next. No demo data (I-19). */
+/**
+ * Übersicht (PRT-01): the dashboard once something is collected; before that an honest welcome
+ * with the first steps and the backup explainer. No demo data (I-19).
+ */
 export function OverviewPage() {
+  const count = useHoldingCount();
+  if (count === undefined) return <div aria-busy="true" className="min-h-[60vh]" />;
+  if (count > 0) {
+    return (
+      <Suspense fallback={<div aria-busy="true" className="min-h-[60vh]" />}>
+        <Dashboard />
+      </Suspense>
+    );
+  }
+  return <Welcome />;
+}
+
+function Welcome() {
   const steps = [
     { icon: SquaresFourIcon, text: m.overview_step_catalog() },
     { icon: CardsThreeIcon, text: m.overview_step_collection() },

@@ -17,7 +17,7 @@ import { remaining, type Location, type Tag } from '@/domain/schemas';
 import { conditionLabel, sealedStateLabel } from '@/i18n/collection-labels';
 import { languageLabel, m, productTypeLabel, rarityLabel } from '@/i18n';
 import { formatDate } from '@/i18n/format';
-import type { LibraryKind, LibraryRow } from './rows';
+import type { LibraryKind, LibraryRow } from '@/features/collection';
 
 /** What each library offers (UX_SPEC.md §4.6); sealed lots have no number, rarity or condition. */
 const PRICE_SORTS: readonly LotSort[] = ['value', 'unitValue', 'pl', 'plRatio', 'priceDate'];

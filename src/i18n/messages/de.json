@@ -851,5 +851,59 @@
   "library_col_pl_ratio": "G/V %",
   "library_col_price_date": "Preis vom",
   "library_columns": "Spalten wählen",
-  "library_value_own": "eigener Wert"
+  "library_value_own": "eigener Wert",
+  "overview_value": "Gesamtwert",
+  "overview_invested": "Investiert {amount}",
+  "overview_realized": "Realisiert {amount}",
+  "overview_mode": "Diagramm zeigt",
+  "overview_mode_value": "Wert",
+  "overview_mode_pl": "Gewinn/Verlust",
+  "overview_today": "Heute",
+  "overview_on": "Am {date}",
+  "overview_chart_label": "Verlauf deiner Sammlung, Tag wählen",
+  "overview_chart_point": "{date}: {value}",
+  "overview_chart_empty": "Sobald deine Karten Preise haben, zeigt dieser Verlauf ihren Wert.",
+  "overview_legend_value": "Wert",
+  "overview_legend_pl": "Gewinn/Verlust",
+  "overview_legend_invested": "Investiert",
+  "overview_stale_title": "Preise veraltet",
+  "overview_stale_count": [
+    {
+      "declarations": ["input n", "input count", "input days", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position mit einem Preis älter als {days} Tage",
+        "plural=*": "{count} Positionen mit Preisen älter als {days} Tage"
+      }
+    }
+  ],
+  "overview_stale_none": "Alle Preise sind aktuell.",
+  "overview_stale_action": "Preis-Session starten",
+  "overview_progress_title": "Set-Fortschritt",
+  "overview_progress_basis": "{owned} von {total} Karten",
+  "overview_gainers": "Top-Gewinner",
+  "overview_losers": "Top-Verlierer",
+  "overview_movers_by": "Sortieren nach",
+  "overview_movers_abs": "Euro",
+  "overview_movers_ratio": "Prozent",
+  "overview_movers_none": "Gewinne und Verluste erscheinen, sobald Karten einen Kaufpreis und einen Preis haben.",
+  "overview_allocation_title": "Aufteilung",
+  "overview_alloc_singles": "Karten",
+  "overview_alloc_graded": "Gradiert",
+  "overview_alloc_sealed": "Sealed",
+  "overview_alloc_none": "Noch nichts bepreist.",
+  "overview_recent_title": "Zuletzt hinzugefügt",
+  "overview_unpriced": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position ohne Preis. Nicht im Gesamtwert enthalten.",
+        "plural=*": "{count} Positionen ohne Preis. Nicht im Gesamtwert enthalten."
+      }
+    }
+  ],
+  "overview_unpriced_action": "Zeigen",
+  "overview_dashboard_label": "Übersicht deiner Sammlung",
+  "overview_movers_title": "Seit dem Kauf"
 }

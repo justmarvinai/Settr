@@ -45,7 +45,7 @@ import {
   orderGroups,
   SORT_LABELS,
 } from './library-options';
-import { useLibraryRows, type LibraryKind, type LibraryRow } from './rows';
+import { useLibraryRows, type LibraryKind, type LibraryRow } from '@/features/collection';
 
 function Stat({
   label,

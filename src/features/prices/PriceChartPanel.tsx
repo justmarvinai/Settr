@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { PLDelta } from '@/components/domain/PLDelta';
-import { CHART_RANGES, rangeStartDay, type ChartRange } from '@/components/domain/charts/scale';
+import { RangeChips } from '@/components/domain/charts/RangeChips';
+import { CHART_RANGES, rangeStartDay } from '@/components/domain/charts/scale';
 import {
   LineSwatch,
   MarkerSwatch,
@@ -9,8 +10,7 @@ import {
   type OtherSeries,
 } from '@/components/domain/charts/TimeChart';
 import { Panel } from '@/components/ui/Panel';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { db, setUiPref, useUiPref } from '@/db';
+import { useUiChoice } from '@/db';
 import type { CardLanguage } from '@/domain/catalog-types';
 import { dayNumber, isoFromDayNumber } from '@/domain/dates';
 import { todayIso } from '@/domain/ids';
@@ -30,42 +30,6 @@ import {
   newestFirst,
   purchaseBaseline,
 } from './series';
-
-const RANGE_LABELS: Record<ChartRange, () => string> = {
-  '1m': m.chart_range_1m,
-  '3m': m.chart_range_3m,
-  '6m': m.chart_range_6m,
-  '1y': m.chart_range_1y,
-  max: m.chart_range_max,
-};
-
-const isRange = (value: unknown): value is ChartRange =>
-  CHART_RANGES.some((range) => range === value);
-
-/** The chosen range, remembered on this device for every chart (kv `ui:chart.range`). */
-export function useChartRange(): [ChartRange, (range: ChartRange) => void] {
-  const stored = useUiPref('chart.range');
-  const range = isRange(stored?.value) ? stored.value : 'max';
-  return [range, (next) => void setUiPref(db, 'chart.range', next).catch(toastError)];
-}
-
-export function RangeChips({
-  value,
-  onChange,
-}: {
-  value: ChartRange;
-  onChange: (range: ChartRange) => void;
-}) {
-  return (
-    <SegmentedControl<ChartRange>
-      label={m.chart_range()}
-      value={value}
-      onValueChange={onChange}
-      options={CHART_RANGES.map((r) => ({ value: r, label: RANGE_LABELS[r]() }))}
-      className="[&>*]:h-8 [&>*]:min-w-10 [&>*]:px-3"
-    />
-  );
-}
 
 function ToggleText({
   pressed,
@@ -116,7 +80,7 @@ export function PriceChartPanel({
   loading: boolean;
 }) {
   const id = useId();
-  const [range, setRange] = useChartRange();
+  const [range, setRange] = useUiChoice('chart.range', CHART_RANGES, 'max');
   const [comparing, setComparing] = useState(false);
   const [asTable, setAsTable] = useState(false);
   const [active, setActive] = useState<number>();
@@ -179,7 +143,7 @@ export function PriceChartPanel({
             value={range}
             onChange={(next) => {
               setActive(undefined);
-              setRange(next);
+              setRange(next).catch(toastError);
             }}
           />
         ) : null}

@@ -23,7 +23,7 @@ import { useElementBox } from '@/lib/useElementBox';
 import type { SelectionProps } from './LibraryGrid';
 import { lotMenuActions, toastError } from '@/features/collection';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
-import type { LibraryKind, LibraryRow } from './rows';
+import type { LibraryKind, LibraryRow } from '@/features/collection';
 
 type TableItem =
   | { type: 'header'; key: string; title: string; count: number }

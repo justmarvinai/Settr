@@ -9,7 +9,7 @@ import {
   type Tag,
 } from '@/domain/schemas';
 import { db } from './instance';
-import { getUiPref } from './repositories/collection-meta';
+import { getUiPref, setUiPref } from './repositories/collection-meta';
 import { listHoldingsInSets, listHoldingsOfItem } from './repositories/holdings';
 import { listPricesOfItem, listSeries } from './repositories/prices';
 
@@ -60,6 +60,20 @@ export function useCustomItems(): CustomItem[] | undefined {
  */
 export function useUiPref(key: string): { value: unknown } | undefined {
   return useLiveQuery(async () => ({ value: await getUiPref(db, key) }), [key]);
+}
+
+/**
+ * A remembered choice among fixed values (kv `ui:<key>`), e.g. a chart's range: the stored value
+ * if it's still one of `choices`, else `fallback`. The setter's promise rejects when saving fails.
+ */
+export function useUiChoice<T extends string>(
+  key: string,
+  choices: readonly T[],
+  fallback: T,
+): [T, (value: T) => Promise<void>] {
+  const stored = useUiPref(key)?.value;
+  const value = choices.find((choice) => choice === stored) ?? fallback;
+  return [value, (next) => setUiPref(db, key, next)];
 }
 
 const collator = new Intl.Collator('de');

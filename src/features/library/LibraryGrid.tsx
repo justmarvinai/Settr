@@ -15,7 +15,7 @@ import { formatCount, formatMoney } from '@/i18n/format';
 import { useElementBox } from '@/lib/useElementBox';
 import { lotMenuActions, openAdd, openEdit } from '@/features/collection';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
-import type { LibraryKind, LibraryRow } from './rows';
+import type { LibraryKind, LibraryRow } from '@/features/collection';
 
 /** Grid tiles (UX_SPEC.md §4.6): the set grid's tiles plus quantity, language and condition. */
 const TILE_MIN = { card: 132, sealed: 168 } as const;

@@ -25,3 +25,4 @@ export {
 } from './item';
 export { toastError, toastWithUndo } from './toasts';
 export { LocationsManager } from './LocationsManager';
+export { useLibraryRows, type LibraryKind, type LibraryRow } from './rows';

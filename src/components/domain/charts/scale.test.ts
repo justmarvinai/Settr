@@ -60,6 +60,15 @@ describe('niceTicks', () => {
     expect(niceTicks(20, 5000).domain[0]).toBe(0);
   });
 
+  it('has at least three gridlines for spans from zero, and never −0', () => {
+    // 0 … 292,70 € (a portfolio's value) → 0, 100, 200, 300 €
+    expect(niceTicks(0, 29_270).ticks).toEqual([0, 10_000, 20_000, 30_000]);
+    // P/L from −5 € to +80 € → the zero line is a plain 0
+    const pl = niceTicks(-500, 8000);
+    expect(pl.ticks).toContain(0);
+    expect(pl.ticks.some((t) => Object.is(t, -0))).toBe(false);
+  });
+
   it('keeps 2 to 5 gridlines, all inside the domain', () => {
     for (const [lo, hi] of [
       [100, 199],
