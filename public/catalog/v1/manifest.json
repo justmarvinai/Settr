@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.23.3",
-  "generatedAt": "2026-09-23T15:00:27.175Z",
+  "catalogVersion": "2026.09.23.1",
+  "generatedAt": "2026-09-23T15:12:12.872Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
     {"name":"PokéAPI (species names)","version":"575291cdb197a7e3a320297be276c9de4ef8401a","license":"BSD-3-Clause","url":"https://github.com/PokeAPI/pokeapi"}
   ],
-  "imagesVerified": true,
+  "imagesVerified": false,
   "sets": [
     {"id":"intl:30th","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"30 Jahre","en":"30th Celebration"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":128,"total":169}},
     {"id":"intl:30th-c","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"subset","parentSetId":"intl:30th","name":{"de":"30 Jahre: Klassische Sammlung","en":"30th Classic Collection"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":30,"total":30}},
@@ -17,24 +17,24 @@
     "sets": {
       "intl:30th": {
         "path": "sets/intl_30th.json",
-        "sha256": "50901b789cc0b03dbf7d4edb13e066db5e1130f0ca0b633ca6e8894b6bc54e2a",
-        "bytes": 94189
+        "sha256": "9da8d5828258e42d6774e4a63a0f1feae083d93296c5ca57a17ad9ab8b36db31",
+        "bytes": 121146
       },
       "asia:M6a": {
         "path": "sets/asia_M6a.json",
-        "sha256": "c7ac5ec55e0f126350d761b1f9647c0f40529182aecc761682ead716f86273fd",
-        "bytes": 117318
+        "sha256": "cf4d48e5319d4e0ae1f23ea66f87744a3d99ce3c79f15fdbad4df96f87b1ed89",
+        "bytes": 143722
       }
     },
     "sealed": {
       "path": "sealed.json",
-      "sha256": "8b1b5cbb791fce01ebaafbcdb84518789a657b2416d53f6c50d21bf1395d3be7",
-      "bytes": 43
+      "sha256": "5ae24812ec517c5fb3f362a3b40b658339211be937dbff4f0ec762cde25b2ebb",
+      "bytes": 23367
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "4e4d94599440a9e31bcd949a69746774b57c7643bba3002956107068ed68717c",
-      "bytes": 118207
+      "sha256": "e859038abb69067e9357d5cdab9e52f02e9be7b28b662086a370fb10dc025771",
+      "bytes": 158840
     }
   }
 }

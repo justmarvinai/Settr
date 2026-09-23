@@ -1,2 +1,562 @@
 # Sealed products of 30 Jahre / 30th Celebration, international print (DE/EN), DATA_SOURCES.md §7.1.
-products: []
+# Names marked "to confirm" aren't verified against pokemon.de yet. MSRP: UVP (EUR) where known,
+# otherwise the US price. Cardmarket ids (refs.cardmarket) come from the catalog-sync report; one
+# Cardmarket product covers every language of a product.
+source: PokéBeach English set guide, pokemon.com product gallery, Cardmarket product list (research 2026-09-23)
+products:
+  - id: intl:30th-booster
+    print: intl
+    setIds: [intl:30th]
+    type: booster-pack
+    name: { de: 30 Jahre Booster, en: 30th Celebration Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents:
+      cardsPerPack: 6
+      description:
+        de: 5 Folienkarten (eine davon immer ein Pikachu), 1 Folien-Energie und eine Code-Karte. Nur in Produkten erhältlich.
+        en: 5 foil cards (one always a Pikachu), 1 foil Energy and a code card. Only sold inside products.
+    refs: { cardmarket: 890360 }
+
+  - id: intl:30th-c-booster
+    print: intl
+    setIds: [intl:30th-c]
+    type: booster-pack
+    name:
+      {
+        de: Booster der Klassischen Sammlung (30 Jahre),
+        en: 30th Celebration Classic Collection Booster Pack,
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-11-06, en: 2026-11-06 }
+    contents:
+      cardsPerPack: 3
+      description:
+        de: 3 Karten der Klassischen Sammlung. Liegt den Ultra-Premium-Kollektionen bei.
+        en: 3 Classic Collection cards. Comes with the Ultra-Premium Collections.
+    refs: { cardmarket: 895603 }
+    note: German product name to confirm.
+
+  - id: intl:30th-etb
+    print: intl
+    setIds: [intl:30th]
+    type: etb
+    name: { de: Top-Trainer-Box 30 Jahre, en: 30th Celebration Elite Trainer Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents:
+      packs: 9
+      cardsPerPack: 6
+      promos: [Nidorina (MEP 101)]
+      description:
+        de: 9 Booster, Full-Art-Promokarte Nidorina, 65 Kartenhüllen, 16 Energiekarten, Würfel und Leitfaden.
+        en: 9 booster packs, full-art Nidorina promo, 65 sleeves, 16 Energy cards, dice and a player's guide.
+    msrp: { de: { minor: 5499, currency: EUR }, en: { minor: 4999, currency: USD } }
+    refs: { cardmarket: 895551 }
+
+  - id: intl:30th-pc-etb
+    print: intl
+    setIds: [intl:30th]
+    type: pc-etb
+    name:
+      {
+        de: Pokémon Center Top-Trainer-Box 30 Jahre,
+        en: Pokémon Center Elite Trainer Box 30th Celebration,
+      }
+    languages: [en]
+    releaseDates: { en: 2026-09-16 }
+    exclusive: pokemon-center
+    contents:
+      packs: 11
+      cardsPerPack: 6
+      promos: ['Nidorina (MEP 101)', 'Nidorina (MEP 101, Pokémon-Center-Stempel)']
+    msrp: { en: { minor: 5999, currency: USD } }
+    refs: { cardmarket: 895552 }
+    note: A German version isn't confirmed; add `de` once it is.
+
+  - id: intl:30th-ex-box-sylveon
+    print: intl
+    setIds: [intl:30th]
+    type: ex-box
+    family: intl:30th-ex-box
+    name: { de: 'ex-Box: Feelinara-ex', en: Pokémon ex Box (Sylveon ex) }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents: { packs: 4, cardsPerPack: 6, promos: [Feelinara-ex (Promo und Übergröße)] }
+    msrp: { en: { minor: 2199, currency: USD } }
+    refs: { cardmarket: 895557 }
+    note: German product name to confirm.
+
+  - id: intl:30th-ex-box-greninja
+    print: intl
+    setIds: [intl:30th]
+    type: ex-box
+    family: intl:30th-ex-box
+    name: { de: 'ex-Box: Quajutsu-ex', en: Pokémon ex Box (Greninja ex) }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents: { packs: 4, cardsPerPack: 6, promos: [Quajutsu-ex (Promo und Übergröße)] }
+    msrp: { en: { minor: 2199, currency: USD } }
+    refs: { cardmarket: 895558 }
+    note: German product name to confirm.
+
+  - id: intl:30th-poster-collection
+    print: intl
+    setIds: [intl:30th]
+    type: poster-collection
+    name: { de: Poster-Kollektion 30 Jahre, en: 30th Celebration Poster Collection }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents: { packs: 3, cardsPerPack: 6, promos: [Arktos, Zapdos, Lavados] }
+    msrp: { en: { minor: 1499, currency: USD } }
+    refs: { cardmarket: 895553 }
+
+  - id: intl:30th-tech-sticker-exeggutor
+    print: intl
+    setIds: [intl:30th]
+    type: sticker-collection
+    family: intl:30th-tech-sticker
+    name:
+      {
+        de: 'Tech-Sticker-Kollektion: Alola-Kokowei',
+        en: 'Tech Sticker Collection: Alolan Exeggutor',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents: { packs: 3, cardsPerPack: 6, promos: [Alola-Kokowei] }
+    msrp: { en: { minor: 1499, currency: USD } }
+    refs: { cardmarket: 895554 }
+    note: German product name to confirm.
+
+  - id: intl:30th-tech-sticker-lucario
+    print: intl
+    setIds: [intl:30th]
+    type: sticker-collection
+    family: intl:30th-tech-sticker
+    name: { de: 'Tech-Sticker-Kollektion: Lucario', en: 'Tech Sticker Collection: Lucario' }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents: { packs: 3, cardsPerPack: 6, promos: [Lucario] }
+    msrp: { en: { minor: 1499, currency: USD } }
+    refs: { cardmarket: 895555 }
+    note: German product name to confirm.
+
+  - id: intl:30th-2-pack-blister
+    print: intl
+    setIds: [intl:30th]
+    type: blister-2
+    name: { de: 2er-Pack-Blister 30 Jahre, en: 30th Celebration 2-Pack Blister }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        promos: [Evoli (Folie)],
+        description: { de: '2 Booster, Folien-Promokarte Evoli und eine Münze.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895556 }
+
+  - id: intl:30th-knock-out-collection
+    print: intl
+    setIds: [intl:30th]
+    type: collection
+    name: { de: Knock-Out-Kollektion 30 Jahre, en: 30th Celebration Knock Out Collection }
+    languages: [de, en]
+    releaseDates: { de: 2026-09-16, en: 2026-09-16 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        promos: [Evoli (Folie)],
+        description: { de: '2 Booster, Folien-Promokarte Evoli und eine Münze.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895559 }
+    note: German product name to confirm.
+
+  - id: intl:30th-booster-bundle
+    print: intl
+    setIds: [intl:30th]
+    type: booster-bundle
+    name: { de: Booster-Bundle 30 Jahre, en: 30th Celebration Booster Bundle }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents: { packs: 6, cardsPerPack: 6 }
+    msrp: { en: { minor: 2694, currency: USD } }
+    refs: { cardmarket: 895561 }
+
+  - id: intl:30th-mini-tin-mew-alolan-exeggutor
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Mew & Alola-Kokowei',
+        en: '30th Celebration Mini Tin: Mew & Alolan Exeggutor',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895564 }
+    note: Ten designs whose fronts form a day and a night picture. Names follow Cardmarket; German names to confirm.
+
+  - id: intl:30th-mini-tin-espeon-meowth
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Psiana & Mauzi',
+        en: '30th Celebration Mini Tin: Espeon & Meowth',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895565 }
+
+  - id: intl:30th-mini-tin-greninja-volbeat
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Quajutsu & Volbeat',
+        en: '30th Celebration Mini Tin: Greninja & Volbeat',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895566 }
+
+  - id: intl:30th-mini-tin-lapras-drifloon
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Lapras & Driftlon',
+        en: '30th Celebration Mini Tin: Lapras & Drifloon',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895567 }
+
+  - id: intl:30th-mini-tin-mewtwo-scraggy
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Mewtu & Zurrokex',
+        en: '30th Celebration Mini Tin: Mewtwo & Scraggy',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895568 }
+
+  - id: intl:30th-mini-tin-moltres-articuno
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Lavados & Arktos',
+        en: '30th Celebration Mini Tin: Moltres & Articuno',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895569 }
+
+  - id: intl:30th-mini-tin-pikachu-toxtricity
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Pikachu & Riffex',
+        en: '30th Celebration Mini Tin: Pikachu & Toxtricity',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895570 }
+
+  - id: intl:30th-mini-tin-umbreon-alolan-meowth
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Nachtara & Alola-Mauzi',
+        en: '30th Celebration Mini Tin: Umbreon & Alolan Meowth',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895571 }
+
+  - id: intl:30th-mini-tin-pikachu-vivillon
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Pikachu & Vivillon',
+        en: '30th Celebration Mini Tin: Pikachu & Vivillon',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895572 }
+
+  - id: intl:30th-mini-tin-zapdos-hisuian-zorua
+    print: intl
+    setIds: [intl:30th]
+    type: mini-tin
+    family: intl:30th-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Tag & Nacht: Zapdos & Hisui-Zorua',
+        en: '30th Celebration Mini Tin: Zapdos & Hisuian Zorua',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    contents:
+      {
+        packs: 2,
+        cardsPerPack: 6,
+        description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
+      }
+    msrp: { en: { minor: 999, currency: USD } }
+    refs: { cardmarket: 895573 }
+
+  - id: intl:30th-battle-deck-espeon
+    print: intl
+    setIds: [intl:30th]
+    type: deck
+    family: intl:30th-battle-deck
+    name: { de: 'Kampfdeck 30 Jahre: Psiana-ex', en: '30th Celebration Battle Deck: Espeon ex' }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-30, en: 2026-10-30 }
+    contents:
+      {
+        promos: [Victini],
+        description: { de: 'Vollfolien-Deck mit 60 Karten, Spielmatte, Deckbox und Münze.' },
+      }
+    msrp: { en: { minor: 1999, currency: USD } }
+    refs: { cardmarket: 895562 }
+    note: Which deck carries Victini and which Zeraora is to confirm.
+
+  - id: intl:30th-battle-deck-umbreon
+    print: intl
+    setIds: [intl:30th]
+    type: deck
+    family: intl:30th-battle-deck
+    name: { de: 'Kampfdeck 30 Jahre: Nachtara-ex', en: '30th Celebration Battle Deck: Umbreon ex' }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-30, en: 2026-10-30 }
+    contents:
+      {
+        promos: [Zeraora],
+        description: { de: 'Vollfolien-Deck mit 60 Karten, Spielmatte, Deckbox und Münze.' },
+      }
+    msrp: { en: { minor: 1999, currency: USD } }
+    refs: { cardmarket: 895563 }
+
+  - id: intl:30th-upc-day
+    print: intl
+    setIds: [intl:30th]
+    type: ultra-premium-collection
+    family: intl:30th-upc
+    name:
+      {
+        de: 'Ultra-Premium-Kollektion Tag (Psiana-ex)',
+        en: '30th Celebration Ultra-Premium Collection: Day (Espeon ex)',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-11-06, en: 2026-11-06 }
+    contents:
+      packs: 30
+      promos: [Pikachu-ex, Psiana-ex]
+      description:
+        de: 29 Booster und 1 Booster der Klassischen Sammlung, Spielmatte, 65 Kartenhüllen, Deckbox, Metallmünze, 6 Würfel und Code-Karte.
+        en: 29 booster packs and 1 Classic Collection booster pack, playmat, 65 sleeves, deck box, metal coin, 6 dice and a code card.
+    msrp: { en: { minor: 17999, currency: USD } }
+    refs: { cardmarket: 895577 }
+    note: German product name to confirm.
+
+  - id: intl:30th-upc-night
+    print: intl
+    setIds: [intl:30th]
+    type: ultra-premium-collection
+    family: intl:30th-upc
+    name:
+      {
+        de: 'Ultra-Premium-Kollektion Nacht (Nachtara-ex)',
+        en: '30th Celebration Ultra-Premium Collection: Night (Umbreon ex)',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2026-11-06, en: 2026-11-06 }
+    contents:
+      packs: 30
+      promos: [Pikachu-ex, Nachtara-ex]
+      description:
+        de: 29 Booster und 1 Booster der Klassischen Sammlung, Spielmatte, 65 Kartenhüllen, Deckbox, Metallmünze, 6 Würfel und Code-Karte.
+        en: 29 booster packs and 1 Classic Collection booster pack, playmat, 65 sleeves, deck box, metal coin, 6 dice and a code card.
+    msrp: { en: { minor: 17999, currency: USD } }
+    refs: { cardmarket: 895578 }
+
+  - id: intl:30th-ditto-premium
+    print: intl
+    setIds: [intl:30th]
+    type: premium-collection
+    name: { de: Ditto-Premium-Kollektion, en: Ditto Premium Collection }
+    languages: [de, en]
+    releaseDates: { de: 2026-11-06, en: 2026-11-06 }
+    contents: { packs: 8, cardsPerPack: 6, description: { de: 8 Booster und Acryl-Display. } }
+    msrp: { en: { minor: 3999, currency: USD } }
+    refs: { cardmarket: 895574 }
+    note: German product name to confirm.
+
+  - id: intl:30th-figure-collection-mewtwo
+    print: intl
+    setIds: [intl:30th]
+    type: figure-collection
+    family: intl:30th-figure-collection
+    name:
+      { de: 'Figuren-Kollektion 30 Jahre: Mewtu', en: '30th Celebration Figure Collection: Mewtwo' }
+    languages: [de, en]
+    releaseDates: { de: 2026-11-06, en: 2026-11-06 }
+    contents:
+      {
+        packs: 5,
+        cardsPerPack: 6,
+        promos: [Mewtu],
+        description: { de: '5 Booster, Folien-Promokarte und Übergröße-Karte Mewtu, Figur.' },
+      }
+    msrp: { en: { minor: 2999, currency: USD } }
+    refs: { cardmarket: 895575 }
+    note: German product name to confirm.
+
+  - id: intl:30th-figure-collection-mew
+    print: intl
+    setIds: [intl:30th]
+    type: figure-collection
+    family: intl:30th-figure-collection
+    name: { de: 'Figuren-Kollektion 30 Jahre: Mew', en: '30th Celebration Figure Collection: Mew' }
+    languages: [de, en]
+    releaseDates: { de: 2026-11-06, en: 2026-11-06 }
+    contents:
+      {
+        packs: 5,
+        cardsPerPack: 6,
+        promos: [Mew],
+        description: { de: '5 Booster, Folien-Promokarte und Übergröße-Karte Mew, Figur.' },
+      }
+    msrp: { en: { minor: 2999, currency: USD } }
+    refs: { cardmarket: 895576 }
+    note: German product name to confirm.
+
+  - id: intl:30th-binder-collection
+    print: intl
+    setIds: [intl:30th]
+    type: binder-collection
+    name: { de: Sammelalbum-Kollektion 30 Jahre, en: 30th Celebration Binder Collection }
+    languages: [de, en]
+    releaseDates: { de: 2026-12-04, en: 2026-12-04 }
+    contents: { packs: 5, cardsPerPack: 6, description: { de: 5 Booster und ein Sammelalbum. } }
+    msrp: { en: { minor: 3199, currency: USD } }
+    refs: { cardmarket: 895560 }
+    note: German product name to confirm.
+
+  - id: intl:30th-ex-tin-sylveon
+    print: intl
+    setIds: [intl:30th]
+    type: tin
+    family: intl:30th-ex-tin
+    name: { de: 'ex-Tin: Feelinara-ex', en: Sylveon ex Tin }
+    languages: [de, en]
+    releaseDates: { de: 2026-12-04, en: 2026-12-04 }
+    contents: { packs: 4, cardsPerPack: 6, promos: [Feelinara-ex] }
+    msrp: { en: { minor: 2199, currency: USD } }
+    refs: { cardmarket: 895746 }
+
+  - id: intl:30th-ex-tin-greninja
+    print: intl
+    setIds: [intl:30th]
+    type: tin
+    family: intl:30th-ex-tin
+    name: { de: 'ex-Tin: Quajutsu-ex', en: Greninja ex Tin }
+    languages: [de, en]
+    releaseDates: { de: 2026-12-04, en: 2026-12-04 }
+    contents: { packs: 4, cardsPerPack: 6, promos: [Quajutsu-ex] }
+    msrp: { en: { minor: 2199, currency: USD } }
+    refs: { cardmarket: 895745 }
