@@ -28,7 +28,8 @@ import {
   sealedStateLabel,
 } from '@/i18n/collection-labels';
 import { formatMoney } from '@/i18n/format';
-import { ItemHeader, LocationFields, selectClass, TagsField } from './fields';
+import { ItemHeader, LocationFields, TagsField } from './fields';
+import { NativeSelect } from '@/components/ui/NativeSelect';
 import {
   ACQUISITION_TYPES,
   errorText,
@@ -134,9 +135,17 @@ export function HoldingForm({
     element.addEventListener('keydown', onKey);
     return () => element.removeEventListener('keydown', onKey);
   }, [canNext, form]);
-  // The price is what's typed next (UX_SPEC.md §4.7); also when the form appears after loading.
+  // The price is what's typed next (UX_SPEC.md §4.7): also when the form replaces another one in
+  // an open sheet (custom item, "& nächste"), where the drawer's focus handling runs after ours.
   useEffect(() => {
-    if (mode === 'add') priceRef.current?.focus();
+    if (mode !== 'add') return undefined;
+    let frame = 0;
+    const focus = () => priceRef.current?.focus();
+    focus();
+    frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(focus);
+    });
+    return () => cancelAnimationFrame(frame);
   }, [mode]);
   const shown = (errors: readonly unknown[], touched: boolean) =>
     touched || attempts > 0 ? errorText(errors) : undefined;
@@ -146,21 +155,20 @@ export function HoldingForm({
       <form.Field name="gradingCompany">
         {(field) => (
           <FormRow label={m.holding_grading_company()} htmlFor={`${id}-company`}>
-            <select
+            <NativeSelect
               id={`${id}-company`}
               value={field.state.value}
               onChange={(event) => {
                 const next = GRADING_COMPANIES.find((c) => c === event.target.value);
                 if (next) field.handleChange(next satisfies GradingCompany);
               }}
-              className={selectClass}
             >
               {GRADING_COMPANIES.map((c) => (
                 <option key={c} value={c}>
                   {gradingCompanyLabel(c)}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </FormRow>
         )}
       </form.Field>

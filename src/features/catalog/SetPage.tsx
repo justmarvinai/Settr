@@ -16,6 +16,7 @@ import {
   type SetSort,
 } from '@/catalog';
 import { CardTile } from '@/components/domain/CardTile';
+import { sectionTitle } from '@/components/domain/sections';
 import { Button, IconButton } from '@/components/ui/Button';
 import { cn } from '@/components/ui/cn';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -44,7 +45,6 @@ import {
   m,
   printLabel,
   rarityLabel,
-  sectionLabel,
   typeLabel,
 } from '@/i18n';
 import { formatCount } from '@/i18n/format';
@@ -81,17 +81,6 @@ const RARITY_ORDER = /* @__PURE__ */ new Map<string, number>(
 const rarityAbbr = (rarity: string | undefined) => ABBREVIATIONS.get(rarity ?? '');
 const rarityRank = (rarity: string | undefined) =>
   RARITY_ORDER.get(rarity ?? '') ?? RARITY_IDS.length;
-
-/** Section heading: a subset's own name (Klassische Sammlung) or the generic label. */
-function sectionTitle(section: CardSection, loaded: LoadedSet): string {
-  if (section === 'subset') {
-    const subset = loaded.subsets[0];
-    const named = loaded.set.sectionNames?.subset;
-    if (named) return pickText(named);
-    if (subset) return pickText(subset.name).replace(`${pickText(loaded.set.name)}: `, '');
-  }
-  return sectionLabel(section);
-}
 
 /** Case- and accent-insensitive match on names (all languages) and numbers. */
 function matches(card: CatalogCard, query: string): boolean {

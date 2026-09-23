@@ -114,6 +114,14 @@ export async function updateLocation(
   });
 }
 
+/** Undo for an edit: the location as it was. */
+export async function restoreLocation(db: SettrDB, location: Location): Promise<void> {
+  await db.transaction('rw', db.locations, db.kv, async () => {
+    await db.locations.put(locationSchema.parse({ ...location, updatedAt: nowIso() }));
+    await bumpDataVersion(db);
+  });
+}
+
 export interface DeletedLocation {
   location: Location;
   /** Lots that were stored there, as they were. */

@@ -1,12 +1,11 @@
-import { CaretDownIcon } from '@phosphor-icons/react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { CardImage } from '@/components/domain/CardImage';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { Button } from '@/components/ui/Button';
 import { ChipGroup } from '@/components/ui/ChipGroup';
 import { FormRow } from '@/components/ui/FormControls';
-import { Input, inputClass } from '@/components/ui/Input';
-import { cn } from '@/components/ui/cn';
+import { Input } from '@/components/ui/Input';
+import { NativeSelect } from '@/components/ui/NativeSelect';
 import { db, ensureTag, useHoldingsInLocation, useLocations, useTags } from '@/db';
 import { isOccupied, nextFreeSlot, occupiedSlots, type SlotPosition } from '@/domain/collection';
 import type { CardLanguage } from '@/domain/catalog-types';
@@ -46,8 +45,6 @@ export function ItemHeader({ info, language }: { info: ItemInfo; language: CardL
     </div>
   );
 }
-
-export const selectClass = cn(inputClass, 'appearance-none pr-10');
 
 /**
  * Binder + page + slot (COL-09, Q5.7). Picking a binder fills in its next free pocket; an occupied
@@ -99,31 +96,22 @@ export function LocationFields({
   return (
     <div className="flex flex-col gap-3">
       <FormRow label={m.holding_location()} htmlFor={`${id}-location`}>
-        <div className="relative">
-          <select
-            id={`${id}-location`}
-            value={locationId}
-            onChange={(event) => {
-              const next = locations.find((l) => l.id === event.target.value);
-              onChange({ locationId: event.target.value, page: '', slot: '' });
-              autofill.current = next?.kind === 'binder';
-            }}
-            className={selectClass}
-          >
-            <option value="">{m.holding_location_none()}</option>
-            {locations.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
-          <CaretDownIcon
-            size={16}
-            weight="bold"
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-muted"
-          />
-        </div>
+        <NativeSelect
+          id={`${id}-location`}
+          value={locationId}
+          onChange={(event) => {
+            const next = locations.find((l) => l.id === event.target.value);
+            onChange({ locationId: event.target.value, page: '', slot: '' });
+            autofill.current = next?.kind === 'binder';
+          }}
+        >
+          <option value="">{m.holding_location_none()}</option>
+          {locations.map((l) => (
+            <option key={l.id} value={l.id}>
+              {l.name}
+            </option>
+          ))}
+        </NativeSelect>
       </FormRow>
       {layout ? (
         <div className="flex flex-col gap-2">

@@ -22,3 +22,4 @@ export {
   type ItemInfo,
 } from './item';
 export { toastError, toastWithUndo } from './toasts';
+export { LocationsManager } from './LocationsManager';

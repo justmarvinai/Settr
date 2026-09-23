@@ -3,14 +3,25 @@ import { Sheet } from '@/components/ui/Sheet';
 import { m } from '@/i18n';
 import { useSheets, type SheetRequest } from '@/lib/sheets';
 import { useMediaQuery } from '@/lib/useMediaQuery';
-import { AddHoldingBody, EditHoldingBody, SheetLoading } from '@/features/entry';
+import {
+  AddHoldingBody,
+  CustomItemBody,
+  DisposeBody,
+  EditHoldingBody,
+  OpenBody,
+  QuickAddBody,
+  SheetLoading,
+} from '@/features/entry';
 
 function titleOf(request: SheetRequest): string {
   if (request.type === 'add') {
     return request.item.kind === 'card' ? m.holding_add_card() : m.holding_add_sealed();
   }
   if (request.type === 'edit') return m.holding_edit_title();
-  return '';
+  if (request.type === 'dispose') return m.dispose_title();
+  if (request.type === 'open') return m.open_title();
+  if (request.type === 'quick') return m.quick_title();
+  return m.custom_title();
 }
 
 function Body({ request }: { request: SheetRequest }) {
@@ -18,7 +29,11 @@ function Body({ request }: { request: SheetRequest }) {
     return <AddHoldingBody item={request.item} setId={request.setId} language={request.language} />;
   }
   if (request.type === 'edit') return <EditHoldingBody holdingId={request.holdingId} />;
-  return null;
+  if (request.type === 'dispose') return <DisposeBody holdingId={request.holdingId} />;
+  if (request.type === 'open') return <OpenBody holdingId={request.holdingId} />;
+  if (request.type === 'quick')
+    return <QuickAddBody setId={request.setId} language={request.language} />;
+  return <CustomItemBody kind={request.kind} name={request.name} />;
 }
 
 /**

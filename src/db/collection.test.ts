@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { remaining } from '@/domain/schemas';
+import { cardSeriesKey } from '@/domain/series';
 import { SettrDB } from './db';
 import {
   addDisposal,
+  addPrice,
   allocatePullCosts,
   backupFileName,
   canonicalJson,
@@ -193,6 +195,32 @@ describe('opening sealed products (COL-12)', () => {
     const byValue = await db.holdings.bulkGet(pulls.map((p) => p.id));
     expect(byValue.map((p) => p?.acquisition.priceTotal?.minor)).toEqual([15000, 0]);
     expect(byValue.every((p) => p?.acquisition.fromHoldingId === box!.id)).toBe(true);
+  });
+
+  it('weighs pulls by their latest prices when no values are given', async () => {
+    const [box] = await createHoldings(db, [display]);
+    await addDisposal(db, box!.id, { type: 'opened', date: '2026-09-20', quantity: 1 });
+    const pull = { type: 'pull' as const, date: '2026-09-20', fromHoldingId: box!.id };
+    const [hit, bulk] = await createHoldings(db, [
+      card('asia:M6a:150', { language: 'ja', acquisition: pull }),
+      card('asia:M6a:001', { language: 'ja', quantity: 3, acquisition: pull }),
+    ]);
+    await addPrice(db, {
+      seriesKey: cardSeriesKey('asia:M6a:150', 'ja', 'std', 'raw'),
+      item: { kind: 'card', id: 'asia:M6a:150' },
+      language: 'ja',
+      variant: 'std',
+      grade: 'raw',
+      snapshot: { name: 'hit' },
+      date: '2026-09-20',
+      price: { minor: 9000, currency: 'EUR' },
+      priceType: 'from',
+      source: 'cardmarket',
+      origin: 'manual',
+    });
+    await allocatePullCosts(db, box!.id);
+    const after = await db.holdings.bulkGet([hit!.id, bulk!.id]);
+    expect(after.map((p) => p?.acquisition.priceTotal?.minor)).toEqual([15000, 0]);
   });
 });
 

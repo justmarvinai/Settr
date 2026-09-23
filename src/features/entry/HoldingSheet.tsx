@@ -95,7 +95,7 @@ function WithCustom({
   return children(customInfo(item));
 }
 
-function WithItem({
+export function WithItem({
   item,
   setId,
   fallback,

@@ -1,5 +1,6 @@
 import { allocateOpeningCost, disposalCost, type PullShareInput } from '@/domain/collection';
 import { newId, nowIso, todayIso } from '@/domain/ids';
+import { cardSeriesKey, gradeKey } from '@/domain/series';
 import { money } from '@/domain/money';
 import {
   disposalSchema,
@@ -188,6 +189,11 @@ export async function listHoldingsInSets(
     .toArray();
 }
 
+/** Lots stored in a location (for binder pockets). */
+export async function listHoldingsAt(db: SettrDB, locationId: string): Promise<Holding[]> {
+  return db.holdings.where('location.id').equals(locationId).toArray();
+}
+
 export async function listHoldingsOfItem(db: SettrDB, itemId: string): Promise<Holding[]> {
   return db.holdings.where('item.id').equals(itemId).toArray();
 }
@@ -237,17 +243,29 @@ export async function listPulls(db: SettrDB, productHoldingId: string): Promise<
   return db.holdings.filter((h) => h.acquisition.fromHoldingId === productHoldingId).toArray();
 }
 
+/** A pull's value at opening: the latest price of its series × its copies (DATA_MODEL.md §6.3). */
+async function pullValues(db: SettrDB, pulls: readonly Holding[]): Promise<Map<string, number>> {
+  const values = new Map<string, number>();
+  for (const pull of pulls) {
+    if (pull.item.kind !== 'card' || !pull.variant) continue;
+    const key = cardSeriesKey(pull.item.id, pull.language, pull.variant, gradeKey(pull.grading));
+    const latest = await db.priceLatest.get(key);
+    if (latest) values.set(pull.id, latest.price.minor * pull.quantity);
+  }
+  return values;
+}
+
 /**
  * Splits what the opened units of a product lot cost across its pulls (Q5.8, DATA_MODEL.md §6.2)
  * and writes each share as the pull's purchase price. `values` are the pulls' values at opening
- * (by holding id), where known. Returns the pulls as they were, for undo.
+ * (by holding id); by default the latest prices. Returns the pulls as they were, for undo.
  */
 export async function allocatePullCosts(
   db: SettrDB,
   productHoldingId: string,
-  values: ReadonlyMap<string, number> = new Map(),
+  values?: ReadonlyMap<string, number>,
 ): Promise<Holding[]> {
-  return db.transaction('rw', db.holdings, db.kv, async () => {
+  return db.transaction('rw', db.holdings, db.priceLatest, db.kv, async () => {
     const product = await db.holdings.get(productHoldingId);
     if (!product) throw new Error(`Holding ${productHoldingId} not found`);
     const pulls = await listPulls(db, productHoldingId);
@@ -256,8 +274,9 @@ export async function allocatePullCosts(
     const cost = opened.reduce((n, d) => n + (disposalCost(product, d.id)?.minor ?? 0), 0);
     const currency = product.acquisition.priceTotal?.currency ?? 'EUR';
     const sorted = pulls.toSorted((a, b) => a.createdAt.localeCompare(b.createdAt));
+    const known = values ?? (await pullValues(db, sorted));
     const inputs: PullShareInput[] = sorted.map((pull) => {
-      const value = values.get(pull.id);
+      const value = known.get(pull.id);
       return {
         quantity: pull.quantity,
         value: value === undefined ? undefined : money(value, currency),
