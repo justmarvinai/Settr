@@ -15,7 +15,7 @@
 
 ## Round 2: open questions
 
-**R2.1 ★ Design direction.** Open the **design canvas** (link in chat, "Settr Design Directions"). It shows three glass-based directions built from your references (Revolut, Apple, Wise; bold type; Apple minimalism; Liquid Glass): dashboard and card detail on desktop, plus the set grid on mobile. Which one should Settr get?
+**R2.1 ★ Design direction.** Open the **design canvas** "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private: only you can open it). It shows three glass-based directions built from your references (Revolut, Apple, Wise; bold type; Apple minimalism; Liquid Glass): dashboard and card detail on desktop, plus the set grid on mobile. Which one should Settr get?
 - [ ] ⭐ **A · Vault Glass**: dark, gold accent, smoked glass
 - [ ] **B · Studio Glass**: light, Apple minimalism, frosted glass
 - [ ] **C · Bold**: Revolut/Wise energy, heavy type, cobalt "wallet" cards

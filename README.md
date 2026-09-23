@@ -4,7 +4,7 @@
 
 Settr is a local-first collection tracker for Pokémon TCG **singles and sealed products**, covering German, English, Japanese and Simplified Chinese cards, with a German interface. You record the prices you check on Cardmarket, and Settr turns them into price trends, portfolio value and profit/loss against what you paid. Everything stays private in your browser. There are no accounts and no server database, and you get full import/export.
 
-> **Status: 🚧 M0 · Planning (spec v0.2).** This repository contains the complete product and technical plan, with round-1 answers incorporated. The design directions are on the design canvas. **No application code exists yet.** Coding starts after the design pick and Marvin's explicit approval.
+> **Status: 🚧 M0 · Planning (spec v0.2).** This repository contains the complete product and technical plan, with round-1 answers incorporated. The design directions are on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link). **No application code exists yet.** Coding starts after the design pick and Marvin's explicit approval.
 >
 > Private project: unlisted deployment, not indexed, shared with a few friends.
 

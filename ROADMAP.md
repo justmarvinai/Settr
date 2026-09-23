@@ -34,7 +34,7 @@
 - [x] Agent instructions (`CLAUDE.md`, `AGENTS.md`), roadmap, changelog
 - [x] **You:** answer `USER_QUESTIONS.md` round 1 (2026-09-23)
 - [x] Incorporate the answers into all docs (spec v0.2)
-- [x] Build the design canvas: 3 Liquid-Glass directions (A Vault Glass · B Studio Glass · C Bold), each with desktop dashboard, desktop card detail and mobile set grid
+- [x] Build the [design canvas](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq): 3 Liquid-Glass directions (A Vault Glass · B Studio Glass · C Bold), each with desktop dashboard, desktop card detail and mobile set grid
 - [ ] **You:** pick a design direction on the canvas (R2.1) and answer the other round-2 questions
 - [ ] Incorporate round 2 (spec v0.3). Send the Simplified Chinese dataset permission request if approved (R2.8)
 - [ ] Verify from an unrestricted network that TCGdex images exist (HEAD checks per language, `DATA_SOURCES.md` §4)

@@ -7,7 +7,7 @@
 **Current phase: M0 · PLANNING.**
 
 - Round-1 answers received 2026-09-23 and incorporated (spec v0.2).
-- Design mockups are approved (Q9.1 → recommendation) and live on the design canvas "Settr Design Directions".
+- Mockups-first is approved (Q9.1 → recommendation). The three directions live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only). No direction is picked yet.
 - Open: round-2 questions (`USER_QUESTIONS.md`), including the design pick (R2.1).
 - **Coding is NOT approved yet.**
 
