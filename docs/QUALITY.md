@@ -1,0 +1,141 @@
+# Settr: Quality, Testing, Performance, Accessibility and Security
+
+> Status: **Draft v0.1 (planning)** · Last updated: 2026-09-23
+> Defines what "done" means and how quality is enforced automatically. Referenced by `AGENTS.md` (Definition of Done) and CI.
+
+---
+
+## 1. Definition of Done (every feature / PR)
+
+A change is **done** only when all of the following hold:
+
+1. **Acceptance criteria** of the referenced feature ID (`PRODUCT_SPEC.md`) are met and demonstrated (screenshot or clip in the PR for UI changes).
+2. **Types:** `tsc --noEmit` passes in strict mode. There's no `any`, no `@ts-ignore`/`@ts-expect-error` without a justification comment, and no non-null `!` on external data.
+3. **Lint/format** passes: Oxlint with type-aware rules (`oxlint-tsgolint`), plus oxfmt (see `ARCHITECTURE.md` §3).
+4. **Tests:** domain logic has unit tests, and user-facing flows touched by the change have E2E coverage. All suites pass.
+5. **i18n:** every user-visible string is in the message catalogs for **DE and EN**, with no hard-coded UI text. German copy has been checked in the layout (longest-string test).
+6. **Accessibility:** keyboard operable, labelled controls, axe shows zero *serious/critical* violations, and focus management in sheets/dialogs is correct.
+7. **Responsive:** verified at 375 / 768 / 1280 / 1920 px, in **light and dark** themes.
+8. **Motion:** `prefers-reduced-motion` is respected (no tilt/foil/morph).
+9. **Performance budgets** (§4) aren't exceeded (`size-limit` check in CI).
+10. **Data safety:** if the persisted user-data shape changed, the change includes a Dexie migration, a backup migration, a new fixture and a passing round-trip test.
+11. **Docs:** a `CHANGELOG.md` entry under *Unreleased*, `ROADMAP.md` checkbox(es) ticked, and `DATA_MODEL.md` / `DECISIONS.md` updated if the model or a decision changed.
+12. **Preview deployment** on Vercel has been opened and smoke-tested.
+
+---
+
+## 2. Test strategy
+
+| Layer | Tool | Scope | Target |
+|---|---|---|---|
+| **Unit** | Vitest 5 | `src/domain/**` (money, allocation, valuation, P/L, time series, completion, series keys, CSV, migrations) and `src/lib/**` | ≥ 95 % branch coverage on `src/domain` |
+| **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed |
+| **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
+| **Component** | Vitest Browser Mode (Playwright provider) + Testing Library | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
+| **E2E** | Playwright | Critical journeys (below) on Chromium, Firefox and WebKit, desktop plus mobile emulation (iPhone, Pixel) | All journeys green before merge to `main` |
+| **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
+| **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
+| **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
+| **Catalog pipeline** | Vitest + Zod | Generated JSON validates. Counts match the manifest. Image URL sampling (HEAD) runs as a non-blocking job | Every catalog PR |
+
+### 2.1 Critical E2E journeys
+
+1. First run → onboarding → open set → add a card with a price → dashboard shows the value and P/L.
+2. Record prices for 3 items → chart shows the points → dashboard value updates.
+3. Price session: scope *stale* → update 3 items (Enter/U/S) → summary is correct.
+4. Sell part of a lot → remaining quantity and realized P/L are correct.
+5. Add a sealed product → record a price → P/L is correct.
+6. Export backup → clear data → import (replace) → the state is identical (deep-equal via an in-page hook).
+7. Merge import with conflicting edits → last-write-wins and tombstones are honored.
+8. Search in DE / EN / JA / ZH scripts finds the expected cards.
+9. Offline: load app → go offline → navigate catalog/collection → add holding → back online, with no errors.
+10. Keyboard-only: add card, record price and run the session without a mouse.
+
+### 2.2 Test data
+
+- `tests/fixtures/catalog/`: a trimmed, frozen catalog (a few cards per print), so tests don't depend on the live pipeline.
+- `tests/fixtures/backups/v1/…`: backups of every released schema version, used for the migration tests.
+- A factory module (`tests/factories.ts`) builds valid holdings, prices and so on with sensible defaults.
+
+---
+
+## 3. Browser and device support
+
+| Platform | Supported |
+|---|---|
+| Chrome / Edge (desktop and Android) | last 2 major versions |
+| Firefox | last 2 major versions + current ESR |
+| Safari macOS / iOS / iPadOS | 17.4+ (primary test target: latest) |
+| Samsung Internet | last 2 major versions |
+
+- **Baseline target:** *Baseline widely available*, plus selected *newly available* features used as **progressive enhancements** with fallbacks: View Transitions, File System Access, BarcodeDetector, Web Share with files, device orientation for the holo tilt, and anchor positioning.
+- Minimum viewport is 360 px wide. No horizontal page scroll at any width.
+
+---
+
+## 4. Performance budgets
+
+| Metric | Budget |
+|---|---|
+| Initial JS (app shell, gzip) | ≤ 170 KB |
+| Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
+| CSS (gzip) | ≤ 35 KB |
+| Web fonts on first render | ≤ 2 files, ≤ 90 KB total (latin subsets, variable). CJK fonts load lazily and only when CJK text is rendered |
+| LCP (Lighthouse mobile, simulated 4G) | ≤ 2.0 s |
+| INP (P75) | ≤ 200 ms |
+| CLS | ≤ 0.05 (image slots have a fixed aspect ratio of 63∶88) |
+| Grid scroll | 60 fps with 300+ tiles (virtualized above ~150) |
+| Valuation of 10k holdings | ≤ 50 ms |
+| Portfolio series (10k holdings, 50k prices, 3 years) | ≤ 300 ms in a worker |
+| Warm start offline (desktop) | interactive ≤ 1 s |
+
+**Techniques:** route-based code splitting, `loading="lazy"` + `decoding="async"` images with low-quality thumbnails in grids, `content-visibility: auto` for off-screen sections, TanStack Virtual for long lists and tables, Web Workers for search indexing and analytics, and memoization keyed by a data-version counter.
+
+---
+
+## 5. Accessibility (WCAG 2.2 AA)
+
+- Contrast is ≥ 4.5:1 for text and ≥ 3:1 for UI components and chart strokes, in both themes. It's checked with automated token tests (OKLCH contrast in `tokens.test.ts`).
+- P/L is never color-only: a sign, an arrow and text are always shown. An optional colorblind-safe palette (blue/orange) is available.
+- Keyboard: everything is operable, with a visible 2 px focus ring. Grids use a roving tabindex. Sheets/dialogs trap focus and restore it on close. Skip-link to the main content.
+- Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
+- Motion: `prefers-reduced-motion` disables tilt, foil animation, morph transitions and number tickers. There's also an in-app motion setting.
+- Touch targets are ≥ 44 × 44 px. No hover-only functionality: every hover action has a tap/long-press or menu equivalent.
+- Language tagging: CJK card names get `lang="ja"` / `lang="zh-Hant"` / `lang="zh-Hans"` for correct font selection and screen-reader pronunciation.
+
+---
+
+## 6. Security and privacy
+
+- **No accounts, no server-side user data.** All user data stays in the browser.
+- **Content Security Policy** via `vercel.json` headers (draft):
+  ```
+  default-src 'self';
+  script-src 'self';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: blob: https://assets.tcgdex.net <other curated image hosts>;
+  font-src 'self';
+  connect-src 'self' <FX API only if Q6.1 = yes>;
+  worker-src 'self' blob:;
+  manifest-src 'self';
+  frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  ```
+  Plus `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(self)` (only if scanning features ship, otherwise `camera=()`), and `Cross-Origin-Opener-Policy: same-origin`.
+- **Untrusted input:** imported files and CSVs are validated with Zod. Data is never rendered as HTML (no `dangerouslySetInnerHTML`). Import size is capped (200 MB) and parsing runs in a worker.
+- **External links** (Cardmarket) use `rel="noopener noreferrer"`.
+- **Dependencies:** minimal and well-maintained, with a committed lockfile, Renovate for updates (grouped weekly) and `pnpm audit` in CI.
+- **Analytics and telemetry:** none by default ⟶ **Q8.3**. Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
+
+---
+
+## 7. CI/CD pipeline (GitHub Actions + Vercel)
+
+| Workflow | Trigger | Steps |
+|---|---|---|
+| `ci.yml` | PR, push to `main` | pnpm install (cached) → `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → build → size-limit → Playwright (Chromium on PR; all engines on `main`) → upload reports |
+| `e2e-nightly.yml` | nightly | Full browser matrix + visual regression + random-seed property tests |
+| `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
+| Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |
+| `lighthouse.yml` | PR (after the Vercel preview is ready) | Lighthouse CI against the preview URL with budgets |
+
+Branch protection on `main` requires green CI and a review.
