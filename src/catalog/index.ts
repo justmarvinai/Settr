@@ -1,6 +1,7 @@
 /** Catalog access for the UI: loading, picture URLs and Cardmarket links (ARCHITECTURE.md §4.1). */
 export { CatalogLoadError, type LoadedSealed, type LoadedSet } from './api';
 export {
+  cardmarketFilters,
   cardmarketProductId,
   cardmarketSearchUrl,
   cardmarketUrl,

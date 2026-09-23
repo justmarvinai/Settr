@@ -80,7 +80,8 @@ export function StaleTile({ stale, staleAfterDays }: { stale: number; staleAfter
             })}
           </p>
           <Link
-            to="/prices"
+            to="/prices/session"
+            search={{ start: 'stale' }}
             className={buttonVariants({ variant: 'primary', size: 'sm', className: 'w-fit' })}
           >
             {m.overview_stale_action()}

@@ -1,5 +1,6 @@
 import { newId, nowIso } from '@/domain/ids';
 import { priceEntrySchema, type PriceEntry, type PriceLatest } from '@/domain/schemas';
+import { priceSessionSchema, type PriceSessionState } from '@/domain/valuation';
 import type { SettrDB } from '../db';
 import { bumpDataVersion } from './meta';
 import { writeTombstone } from './tombstones';
@@ -101,6 +102,10 @@ export async function restorePrices(db: SettrDB, entries: readonly PriceEntry[])
   });
 }
 
+export async function getPrice(db: SettrDB, id: string): Promise<PriceEntry | undefined> {
+  return db.prices.get(id);
+}
+
 /** Every entry of one card or product, all languages, variants and grades (charts compare them). */
 export async function listPricesOfItem(db: SettrDB, itemId: string): Promise<PriceEntry[]> {
   return db.prices.where('item.id').equals(itemId).toArray();
@@ -121,4 +126,21 @@ export async function rebuildPriceLatest(db: SettrDB): Promise<void> {
 
 export async function listSeries(db: SettrDB, seriesKey: string): Promise<PriceEntry[]> {
   return db.prices.where('[seriesKey+date]').between([seriesKey, ''], [seriesKey, '￿']).toArray();
+}
+
+const SESSION_KEY = 'priceSession';
+
+/** The paused or running price session (kv `priceSession`); undefined when none or unreadable. */
+export async function getPriceSession(db: SettrDB): Promise<PriceSessionState | undefined> {
+  const parsed = priceSessionSchema.safeParse((await db.kv.get(SESSION_KEY))?.value);
+  return parsed.success ? parsed.data : undefined;
+}
+
+/** Session state is per device and never exported (DATA_MODEL.md §5.9). */
+export async function savePriceSession(db: SettrDB, state: PriceSessionState): Promise<void> {
+  await db.kv.put({ key: SESSION_KEY, value: priceSessionSchema.parse(state) });
+}
+
+export async function clearPriceSession(db: SettrDB): Promise<void> {
+  await db.kv.delete(SESSION_KEY);
 }

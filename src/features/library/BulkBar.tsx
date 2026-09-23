@@ -1,5 +1,11 @@
-import { ArrowsLeftRightIcon, TagIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
-import { Link } from '@tanstack/react-router';
+import {
+  ArrowsLeftRightIcon,
+  CurrencyEurIcon,
+  TagIcon,
+  TrashIcon,
+  XIcon,
+} from '@phosphor-icons/react';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
@@ -12,11 +18,13 @@ import {
   ensureTag,
   listHoldingsAt,
   restoreHoldings,
+  setUiPref,
   updateHoldings,
   useHoldingsInLocation,
 } from '@/db';
 import { freeSlots, NO_LOCATION, occupiedSlots } from '@/domain/collection';
-import type { Holding, Location, Tag } from '@/domain/schemas';
+import { remaining, type Holding, type Location, type Tag } from '@/domain/schemas';
+import { seriesKeyOf } from '@/domain/series';
 import { m } from '@/i18n';
 import { formatCount } from '@/i18n/format';
 import { toastError, toastWithUndo } from '@/features/collection';
@@ -303,8 +311,20 @@ export function BulkBar({
   onClear: () => void;
 }) {
   const [dialog, setDialog] = useState<'tags' | 'move' | null>(null);
+  const navigate = useNavigate();
   const count = lots.length;
   const close = () => setDialog(null);
+
+  /** A price session over the series of the chosen lots (UX_SPEC.md §4.6, PRC-04). */
+  const priceSession = async () => {
+    try {
+      const keys = [...new Set(lots.filter((h) => remaining(h) > 0).map(seriesKeyOf))];
+      await setUiPref(db, 'session.selection', keys);
+      await navigate({ to: '/prices/session', search: { start: 'selection' } });
+    } catch (error) {
+      toastError(error);
+    }
+  };
 
   const remove = async () => {
     try {
@@ -336,6 +356,16 @@ export function BulkBar({
         </Button>
       ) : null}
       <span className="ml-auto flex items-center gap-1 md:ml-0">
+        <Button
+          variant="quiet"
+          size="sm"
+          disabled={!lots.some((h) => remaining(h) > 0)}
+          onClick={() => void priceSession()}
+          aria-label={m.bulk_prices()}
+        >
+          <CurrencyEurIcon size={16} weight="bold" aria-hidden />
+          <span className="max-sm:hidden">{m.bulk_prices()}</span>
+        </Button>
         <Button
           variant="quiet"
           size="sm"

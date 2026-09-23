@@ -1,6 +1,7 @@
 import type { CardLanguage, Condition } from '@/domain/catalog-types';
 import { CONDITIONS } from '@/domain/catalog-types';
 import type { CatalogCard, CatalogProduct } from '@/domain/catalog';
+import type { Settings } from '@/domain/schemas';
 
 /**
  * Cardmarket deep links (PRC-06, DATA_SOURCES.md §8.1): the exact product, filtered to the copy's
@@ -20,6 +21,8 @@ const LANGUAGE_IDS: Partial<Record<CardLanguage, number>> = {
   'zh-tw': 11,
 };
 const GERMANY = 7;
+/** Cardmarket's country ids for the seller filter (only Germany is verified, §8.1). */
+const COUNTRY_IDS: Record<string, number> = { DE: GERMANY };
 const BASE = 'https://www.cardmarket.com/de/Pokemon/Products';
 
 export interface CardmarketFilters {
@@ -67,4 +70,16 @@ export function productCardmarketUrl(
 ): string | undefined {
   const id = product.refs?.cardmarket;
   return id ? cardmarketUrl(id, filters) : undefined;
+}
+
+/** The link filters from Einstellungen › Preise (R2.2 defaults: DE sellers, copy's language, NM+). */
+export function cardmarketFilters(settings: Settings, lang: CardLanguage): CardmarketFilters {
+  const { cardmarket } = settings.price;
+  return {
+    ...(cardmarket.matchLanguage ? { language: lang } : {}),
+    ...(COUNTRY_IDS[cardmarket.sellerCountry]
+      ? { sellerCountry: COUNTRY_IDS[cardmarket.sellerCountry] }
+      : {}),
+    minCondition: cardmarket.minCondition,
+  };
 }

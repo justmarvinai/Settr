@@ -1,7 +1,13 @@
 import { ArrowLeftIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
-import { cardmarketSearchUrl, productCardmarketUrl, useManifest, useSealed } from '@/catalog';
+import {
+  cardmarketFilters,
+  cardmarketSearchUrl,
+  productCardmarketUrl,
+  useManifest,
+  useSealed,
+} from '@/catalog';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -18,7 +24,6 @@ import {
   productTypeLabel,
 } from '@/i18n';
 import { formatDate, formatMoney } from '@/i18n/format';
-import { cardmarketFilters } from './cardmarket';
 import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
 import { HoldingsPanel, lotLabel, openAdd, productInfo, snapshotOf } from '@/features/collection';

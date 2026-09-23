@@ -9,9 +9,14 @@ import {
   gridDays,
   portfolioSeries,
   portfolioTotals,
+  priceSessionSchema,
   rankMovers,
   realizedTotal,
+  seriesStates,
+  sessionQueue,
+  sessionSummary,
   valueLots,
+  type PriceSessionState,
   type ValuationOptions,
 } from './index';
 
@@ -311,5 +316,62 @@ describe('dates', () => {
     const days = gridDays('2023-01-01', '2026-09-23');
     expect(days.length).toBeLessThan(200);
     expect(days.at(-1)).toBe(gridDays('2026-09-23', '2026-09-23')[0]);
+  });
+});
+
+describe('price session (PRC-04)', () => {
+  const states = seriesStates(HOLDINGS, latestOf(PRICES), {
+    today: '2026-09-23',
+    staleAfterDays: 14,
+  });
+  const byKey = new Map(states.map((s) => [s.seriesKey, s]));
+  const Y = cardSeriesKey('y', 'en', 'std', 'raw');
+
+  it('walks price series, leaving out lots valued by their Eigener Wert', () => {
+    expect(byKey.get(X)).toMatchObject({ copies: 3, value: 2400, unitCost: 500, stale: false });
+    expect(byKey.get(X)?.lots.map((l) => l.id)).toEqual([A.id, D.id]);
+    expect(byKey.get(Y)).toMatchObject({ copies: 1, value: 0, unitCost: 2000, latest: undefined });
+    expect(byKey.get(ETB)).toMatchObject({ value: 6500, unitCost: 5999, stale: true });
+    // One of three copies of Z is left; it cost 1,00 €.
+    expect(byKey.get(Z)).toMatchObject({ copies: 1, value: 150, unitCost: 100, stale: false });
+  });
+
+  it('queues a scope in the chosen order', () => {
+    expect(sessionQueue(states, 'stale', 'value')).toEqual([ETB]);
+    expect(sessionQueue(states, 'unpriced', 'value')).toEqual([Y]);
+    expect(sessionQueue(states, 'all', 'value')).toEqual([ETB, X, Z, Y]);
+    expect(sessionQueue(states, 'all', 'oldest')).toEqual([Y, ETB, Z, X]);
+    expect(sessionQueue(states, 'selection', 'value', { selection: new Set([Z, X]) })).toEqual([
+      X,
+      Z,
+    ]);
+  });
+
+  it('sums up what a session changed', () => {
+    const state: PriceSessionState = {
+      scope: 'all',
+      order: 'value',
+      queue: [ETB, X, Z, Y],
+      position: 4,
+      startedAt: '2026-09-23T10:00:00.000Z',
+      results: {
+        [X]: { outcome: 'saved', before: 800, after: 900, copies: 3 },
+        [ETB]: { outcome: 'unchanged', before: 6500, after: 6500, copies: 1 },
+        [Y]: { outcome: 'saved', after: 1000, copies: 1 },
+        [Z]: { outcome: 'skipped', copies: 1 },
+      },
+    };
+    expect(sessionSummary(state)).toEqual({
+      saved: 2,
+      unchanged: 1,
+      skipped: 1,
+      delta: 1300,
+      newlyPriced: 1000,
+      movers: [
+        { seriesKey: Y, delta: 1000, before: undefined, after: 1000 },
+        { seriesKey: X, delta: 300, before: 800, after: 900 },
+      ],
+    });
+    expect(priceSessionSchema.safeParse({ ...state, position: -1 }).success).toBe(false);
   });
 });

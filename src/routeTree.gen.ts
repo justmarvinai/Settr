@@ -20,6 +20,7 @@ import { Route as CollectionCardsRouteImport } from './routes/collection/cards'
 import { Route as CollectionSealedRouteImport } from './routes/collection/sealed'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio/index'
 import { Route as PricesIndexRouteImport } from './routes/prices/index'
+import { Route as PricesSessionRouteImport } from './routes/prices/session'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as SettingsAboutRouteImport } from './routes/settings/about'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings/appearance'
@@ -86,6 +87,11 @@ const PricesIndexRoute = PricesIndexRouteImport.update({
   path: '/prices/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricesSessionRoute = PricesSessionRouteImport.update({
+  id: '/prices/session',
+  path: '/prices/session',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -146,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
+  '/prices/session': typeof PricesSessionRoute
   '/settings/about': typeof SettingsAboutRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/data': typeof SettingsDataRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
+  '/prices/session': typeof PricesSessionRoute
   '/settings/about': typeof SettingsAboutRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/data': typeof SettingsDataRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
+  '/prices/session': typeof PricesSessionRoute
   '/settings/about': typeof SettingsAboutRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/data': typeof SettingsDataRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
+    | '/prices/session'
     | '/settings/about'
     | '/settings/appearance'
     | '/settings/data'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
+    | '/prices/session'
     | '/settings/about'
     | '/settings/appearance'
     | '/settings/data'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
+    | '/prices/session'
     | '/settings/about'
     | '/settings/appearance'
     | '/settings/data'
@@ -279,6 +291,7 @@ export interface RootRouteChildren {
   CatalogRouteRoute: typeof CatalogRouteRouteWithChildren
   CollectionRouteRoute: typeof CollectionRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
+  PricesSessionRoute: typeof PricesSessionRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
   PricesIndexRoute: typeof PricesIndexRoute
 }
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/prices'
       fullPath: '/prices/'
       preLoaderRoute: typeof PricesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prices/session': {
+      id: '/prices/session'
+      path: '/prices/session'
+      fullPath: '/prices/session'
+      preLoaderRoute: typeof PricesSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogRouteRoute: CatalogRouteRouteWithChildren,
   CollectionRouteRoute: CollectionRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
+  PricesSessionRoute: PricesSessionRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
   PricesIndexRoute: PricesIndexRoute,
 }

@@ -2,6 +2,7 @@ import { ArrowLeftIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/re
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, type ReactNode } from 'react';
 import {
+  cardmarketFilters,
   cardmarketProductId,
   cardmarketSearchUrl,
   cardmarketUrl,
@@ -33,7 +34,6 @@ import {
   trainerTypeLabel,
   typeLabel,
 } from '@/i18n';
-import { cardmarketFilters } from './cardmarket';
 import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
 import { cardInfo, HoldingsPanel, lotLabel, openAdd, snapshotOf } from '@/features/collection';

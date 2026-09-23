@@ -8,10 +8,11 @@ import {
   type PriceLatest,
   type Tag,
 } from '@/domain/schemas';
+import type { PriceSessionState } from '@/domain/valuation';
 import { db } from './instance';
 import { getUiPref, setUiPref } from './repositories/collection-meta';
 import { listHoldingsInSets, listHoldingsOfItem } from './repositories/holdings';
-import { listPricesOfItem, listSeries } from './repositories/prices';
+import { getPrice, getPriceSession, listPricesOfItem, listSeries } from './repositories/prices';
 
 /** Live queries of the collection (ARCHITECTURE.md §5), loaded with the pages that use them. */
 
@@ -131,4 +132,14 @@ export function useLatestPrices(): ReadonlyMap<string, PriceLatest> | undefined 
 /** Every price entry, for the portfolio over time (DATA_MODEL.md §6.5). */
 export function useAllPrices(): PriceEntry[] | undefined {
   return useLiveQuery(() => db.prices.toArray(), []);
+}
+
+/** The stored price session, wrapped so "loading" (undefined) differs from "none". */
+export function usePriceSession(): { value: PriceSessionState | undefined } | undefined {
+  return useLiveQuery(async () => ({ value: await getPriceSession(db) }), []);
+}
+
+/** One price entry by id (e.g. a series' latest, for its type); undefined while loading or none. */
+export function usePriceEntry(id: string | undefined): PriceEntry | undefined {
+  return useLiveQuery(async () => (id ? getPrice(db, id) : undefined), [id]);
 }
