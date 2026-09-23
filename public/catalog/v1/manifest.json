@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026.09.23.2",
+  "generatedAt": "2026-09-23T14:58:24.886Z",
+  "sources": [
+    {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
+    {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
+    {"name":"PokéAPI (species names)","version":"575291cdb197a7e3a320297be276c9de4ef8401a","license":"BSD-3-Clause","url":"https://github.com/PokeAPI/pokeapi"}
+  ],
+  "imagesVerified": false,
+  "sets": [
+    {"id":"intl:30th","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"30 Jahre","en":"30th Celebration"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":128,"total":169}},
+    {"id":"intl:30th-c","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"subset","parentSetId":"intl:30th","name":{"de":"30 Jahre: Klassische Sammlung","en":"30th Classic Collection"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":30,"total":30}},
+    {"id":"asia:M6a","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"30th CELEBRATION","zh-tw":"30th CELEBRATION","zh-cn":"30周年庆典","de":"30th CELEBRATION","en":"30th CELEBRATION"},"code":"M6a","languages":["ja","zh-cn","zh-tw"],"releaseDates":{"ja":"2026-09-16"},"counts":{"official":103,"total":176}}
+  ],
+  "files": {
+    "sets": {
+      "intl:30th": {
+        "path": "sets/intl_30th.json",
+        "sha256": "9da8d5828258e42d6774e4a63a0f1feae083d93296c5ca57a17ad9ab8b36db31",
+        "bytes": 121146
+      },
+      "asia:M6a": {
+        "path": "sets/asia_M6a.json",
+        "sha256": "438d6ae30542b6a59ce594de8af0801e547afb02812dfdb03b61ce1e37180dc7",
+        "bytes": 139351
+      }
+    },
+    "sealed": {
+      "path": "sealed.json",
+      "sha256": "8b1b5cbb791fce01ebaafbcdb84518789a657b2416d53f6c50d21bf1395d3be7",
+      "bytes": 43
+    },
+    "search": {
+      "path": "search-index.json",
+      "sha256": "890359bf03f7ade57a3271d8dbc537352a1cbd5501832b1c4b0c405ce9c1e845",
+      "bytes": 144520
+    }
+  }
+}

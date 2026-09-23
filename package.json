@@ -25,7 +25,8 @@
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm test:browser && pnpm build && pnpm csp && pnpm size",
     "icons": "node scripts/icons.mjs",
     "csp": "node scripts/csp-hash.mjs",
-    "test:browser": "vitest run --project browser"
+    "test:browser": "vitest run --project browser",
+    "catalog:sync": "tsx scripts/catalog/index.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",
@@ -38,6 +39,7 @@
     "clsx": "2.1.1",
     "dexie": "4.4.6",
     "dexie-react-hooks": "4.4.0",
+    "minisearch": "7.2.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "tailwind-merge": "3.7.0",
@@ -66,21 +68,25 @@
     "fake-indexeddb": "6.2.5",
     "fast-check": "4.10.2",
     "lefthook": "2.1.14",
+    "opencc-js": "1.4.2",
     "oxfmt": "0.70.0",
     "oxlint": "1.85.0",
     "oxlint-tsgolint": "7.0.2002",
     "playwright": "1.63.0",
     "size-limit": "14.0.0",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vite": "8.3.0",
     "vite-plugin-pwa": "1.3.0",
     "vitest": "5.0.1",
     "vitest-browser-react": "2.3.0",
-    "workbox-build": "7.4.1"
+    "workbox-build": "7.4.1",
+    "yaml": "2.9.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "esbuild",
       "lefthook"
     ]
   }
