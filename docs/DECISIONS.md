@@ -26,7 +26,7 @@
 | 018 | Chinese data strategy for v1 | Superseded by ADR-021 |
 | 019 | German-only UI, translation-ready | Accepted (Q3.1) |
 | 020 | Cardmarket price-guide suggestions via a daily static snapshot | Accepted (Q6.6; storage per ADR-029) |
-| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; R2.8 revised; amended by ADR-026) |
+| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; R2.8 revised; amended by ADR-026, ADR-034) |
 | 022 | Private deployment: unlisted + noindex, no Impressum while private | Accepted (Q1.2) |
 | 023 | Binder-aware storage locations (layout, page, slot) | Accepted (Q5.7) |
 | 024 | Liquid Glass as a material for chrome only | Accepted (Q9.5) |
@@ -38,6 +38,9 @@
 | 030 | Performance budgets re-baselined on the measured M1 build | Accepted (M1) |
 | 031 | UI primitives hand-written on Base UI (no shadcn CLI under TypeScript 7) | Accepted (M1; amends ADR-009) |
 | 032 | Pre-paint UI state in localStorage (theme mirror, privacy mode) | Accepted (M1) |
+| 033 | Catalog pipeline: pinned sources offline, network facts in CI only | Accepted (M2) |
+| 034 | Simplified Chinese names converted from the official Traditional ones | Accepted (M2; amends ADR-021) |
+| 035 | Catalog URLs and search: cards under their set, ids with colons, one worker index | Accepted (M2) |
 
 ---
 
@@ -191,7 +194,7 @@
   - `asia:M6a.languages = ['ja', 'zh-cn']`. SC printed rarity marks are handled via `printedRarity`.
   - Chinese Pokémon names are **derived** from PokéAPI species names (+ `ex` suffix), labeled *übersetzt*. The few Trainer/Energy names are curated.
   - SC Cardmarket product IDs are mapped via `idMetacard` (6602 ↔ 6603).
-  - **R2.8 revised (2026-09-23):** the dataset's own terms reserve consent for redistribution to the **official owner or an authorized entity** (they point to Pokémon Shanghai), not to the maintainer, so a request to the maintainer can't unlock it. Settr therefore **doesn't use `duanxr/PTCG-CHS-Datasets`**: nothing from it is committed or shipped. SC names are derived (PokéAPI `zh-Hans`) plus hand-curated Trainer/Energy names.
+  - **R2.8 revised (2026-09-23):** the dataset's own terms reserve consent for redistribution to the **official owner or an authorized entity** (they point to Pokémon Shanghai), not to the maintainer, so a request to the maintainer can't unlock it. Settr therefore **doesn't use `duanxr/PTCG-CHS-Datasets`**: nothing from it is committed or shipped. SC names are derived (since M2: converted from the official TC names, ADR-034).
 - **Consequences:** SC copies are trackable at launch with correct numbers and Cardmarket links. Names and images improve without migrations.
 - **Alternatives:** Waiting for TCGdex (unknown timeline), scraping pokemon.cn (ToS and fragility).
 
@@ -224,7 +227,7 @@
 - **Context:** Marvin wants Traditional Chinese sealed products (Q4.3). Opening one yields TC cards, which need a home.
 - **Decision:**
   - `asia:M6a.languages = ['ja', 'zh-cn', 'zh-tw']`. Active card languages are **DE, EN, JA, ZH-CN and ZH-TW**.
-  - TC names come from `type-null/PTCG-database` (`data_tc`, covers M6a; its data licensing is to verify). The fallback is PokéAPI `zh-Hant` species names labeled *übersetzt*, with Trainer names curated by hand. Numbering mirrors M6a.
+  - TC names come from `type-null/PTCG-database` (`data_tc`, covers M6a; MIT, verified in M2). The fallback is PokéAPI `zh-Hant` species names labeled *übersetzt*. Numbering mirrors M6a.
   - Cardmarket links for TC copies use the JP product with Cardmarket's T-Chinese language filter.
 - **Consequences:** TC copies are trackable from launch with correct numbers. Names are tagged `lang="zh-Hant"` and rendered with Noto Sans TC (`DESIGN_SYSTEM.md` §4).
 - **Alternatives:** Sealed-only TC (opened cards would have nowhere to go).
@@ -285,3 +288,28 @@
   - A small inline script in `index.html` reads both keys and sets `data-theme`, `data-transparency`, `data-motion` and `data-privacy` on `<html>` before first paint. The CSP allows exactly this script by its SHA-256 hash; `pnpm csp` checks the hash against `index.html` and the built `dist/index.html` in CI.
 - **Consequences:** no theme flash and no amount flash, including on the very first frame of an installed app. Clearing site data resets privacy mode to off, which is the safe direction for a local app (the collection is gone too in that case).
 - **Alternatives:** `kv ui:*` in IndexedDB (async, so it flashes), cookies (sent nowhere, but pointless without a server), a blocking script without CSP hash (weaker CSP).
+
+### ADR-033 · Catalog pipeline: pinned sources offline, network facts in CI only (Accepted, M2)
+- **Context:** the development sandbox reaches GitHub and npm but not TCGdex's API or image server, Cardmarket's files or TCGCSV. TCGdex's own compiler needs Bun and its asset index (`datas.json`) lags behind new sets: on 2026-09-23 it listed none of `30th`, `30th-c`, `mee` or `M6a`, and TCGdex's API special-cases `30th` for that reason.
+- **Decision:**
+  - The pipeline (`scripts/catalog`, tsx) imports the set files of a **pinned** `tcgdex/cards-database` commit directly, plus pinned PTCG-database and PokéAPI commits (`sources.lock.json`). That part runs anywhere and is deterministic.
+  - Everything that needs the open web runs in CI only (`catalog-sync.yml`, `--network`): Cardmarket's product files (ID checks, JP↔SC mapping), TCGCSV (sealed pictures) and **GET checks of every picture URL** on TCGdex's and TCGplayer's servers. `datas.json` isn't used.
+  - An offline build keeps what the last network build found (pictures, logos, Asian Cardmarket ids, product pictures) per id, so a local run never downgrades a verified catalog; `imagesVerified` in the manifest says whether every picture was checked.
+  - The CI report lists what needs curation: unmatched Cardmarket singles, Cardmarket and TCGplayer sealed products with the curated ones marked.
+- **Consequences:** the committed catalog is reproducible and reviewable (one JSON line per card). New pictures appear with the weekly sync. Local builds can't verify pictures; they don't pretend to.
+- **Alternatives:** TCGdex's compiler (needs Bun, and still the stale asset index), the REST API at build time (unreachable from the sandbox, not pinned), trusting `datas.json` (0 pictures for the v1 set).
+
+### ADR-034 · Simplified Chinese names converted from the official Traditional ones (Accepted, M2; amends ADR-021)
+- **Context:** ADR-021 planned Simplified Chinese names derived from PokéAPI `zh-Hans` species names plus curated Trainer and Energy names. In M2 the Traditional Chinese names of all 176 M6a cards turned out to be available and MIT-licensed (`type-null/PTCG-database`, ADR-026), Trainers and card-name suffixes included. Simplified and Traditional Chinese card names differ almost only in script.
+- **Decision:** the SC name of an M6a card is its official TC name converted with OpenCC (`tw` → `cn`, `opencc-js`, build time only), labeled *übersetzt* (`nameSource: derived-script`). PokéAPI stays the fallback for missing TC names and the source of search aliases; hand-curated names win over both.
+- **Consequences:** every M6a card has an SC name on day one, Trainers included, with the same "übersetzt" honesty as before. Where the official SC name differs from the TC name beyond script, a curated `curatedName` fixes it.
+- **Alternatives:** PokéAPI species names only (Trainers and Energies would all need hand-typing), the SC dataset (excluded by R2.8).
+
+### ADR-035 · Catalog URLs and search: cards under their set, ids with colons, one worker index (Accepted, M2)
+- **Context:** a card id alone doesn't say which set chunk to load (ids are never parsed, DATA_MODEL.md §3), and prev/next needs the set's order. Search has to cover every set without loading every chunk (ADR-028).
+- **Decision:**
+  - The card page lives at `/catalog/sets/$setId/cards/$cardId` (UX_SPEC.md §2.2); a subset URL opens its main set filtered to that section. The router keeps `:` in path params, so URLs read like the ids (`/catalog/sets/intl:30th/cards/intl:30th:150`).
+  - Search runs in one module worker over `search-index.json` (MiniSearch, ARCHITECTURE.md §7), built once per catalog version from MiniSearch's serialized form (≈ 0.4 s for 20k cards). Names are indexed in a Latin and a CJK field (the n-grams of Chinese and Japanese names would otherwise drown Latin matches), German umlauts both folded and expanded, katakana folded to hiragana, and card numbers in every written form (`025/128`, `25`, `#025`). The command palette (APP-05) and Katalog › Karten share it; without worker support it runs on the main thread.
+- **Consequences:** shareable, readable URLs; global search stays fast as sets are added. The search engine depends on MiniSearch 7's serialized format (pinned; the engine tests catch a break on upgrade).
+- **Alternatives:** `/catalog/cards/$cardId` with an id → set lookup through the search index (an extra load per card page), a search index per set (global search would load every set).
+

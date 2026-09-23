@@ -202,6 +202,7 @@ settr/
 - **Fields and boosts:** name (all languages) ×3, number ×3 (exact `025`, `25`, `025/128`), set name/code ×2, illustrator ×1, rarity ×1.
 - **Query syntax (power users):** `set:30c`, `lang:ja`, `rarity:sar`, `#025`, and `owned:yes|no` (applied as filters after the text search).
 - Optional pinyin search for Chinese names (`pinyin-pro`) is deferred to post-v1.
+- **As built (M2, ADR-035):** `src/catalog/search` (engine, query parser, normalization, worker client) and `src/workers/search.worker.ts`. The worker builds the index once per catalog version from MiniSearch's serialized form; names sit in a Latin and a CJK field, CJK runs index bigrams plus each run's last character, and a query term that equals a card number ranks first. `useCatalogSearch` (TanStack Query) serves the palette and Katalog › Karten. `owned:` is parsed but applied by the collection (M3).
 
 ---
 
@@ -343,7 +344,7 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| **Chinese data missing** from TCGdex (SC and TC for M6a) | Chinese names/images incomplete at launch | SC and TC copies trackable on the M6a list from day one, with JP (M6a) artwork where it exists. SC names derived from PokéAPI (`zh-Hans`) + curated Trainer/Energy names; `duanxr/PTCG-CHS-Datasets` isn't used (R2.8). TC names from `type-null/PTCG-database` (licensing to verify) or derived from PokéAPI `zh-Hant` (ADR-026) |
+| **Chinese data missing** from TCGdex (SC and TC for M6a) | Chinese names/images incomplete at launch | SC and TC copies trackable on the M6a list from day one, with JP (M6a) artwork where it exists. TC names from `type-null/PTCG-database` (MIT, all 176), SC names converted from them with OpenCC (ADR-034); `duanxr/PTCG-CHS-Datasets` isn't used (R2.8) |
 | **Card images missing** for some languages (a brand-new set, released 16 Sep 2026) | Placeholders instead of art | Verify via HEAD in the pipeline. Fall back to another language of the same print, then the card-back placeholder. Re-sync weekly |
 | TCGdex upstream changes or outages | Build-time only (runtime uses our static copy) | Pinned commit, schema validation, id-alias map |
 | Browser storage eviction | Data loss | Persistence request, PWA install, backups, reminders, auto-backup (post-v1; Chromium with File System Access, in Brave only behind a flag) |

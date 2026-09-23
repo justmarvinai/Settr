@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-23 · Current phase: **M1 · Foundation** ✅ built, waiting for your check (Vercel, Brave, iPhone) · next: **M2 · Catalog**
+> Last updated: 2026-09-23 · Current phase: **M2 · Catalog** ✅ built, waiting for your check (together with M1: Vercel, Brave, iPhone) · next: **M3 · Collection**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -12,7 +12,7 @@
 |---|---|---|---|
 | **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ✅ |
 | **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ built · 🔒 your check |
-| **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | 🔒 |
+| **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ built · 🔒 your check |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | 🔒 |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | 🔒 |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | 🔒 |
@@ -67,28 +67,29 @@
 
 ---
 
-## M2 · Catalog 🔒 → v0.2.0
+## M2 · Catalog ✅ → v0.2.0 (built, waiting for your check)
 
-- [ ] Catalog pipeline `scripts/catalog/` (`DATA_SOURCES.md` §6):
-  - [ ] Ingest TCGdex (`intl:30th`, `intl:30th-c`, 30th energies, `asia:M6a`) into the normalized schema
-  - [ ] Curated overlays: sections, variant overrides (all-foil ⇒ `std`), printed numbers for the Classic Collection, id aliases
-  - [ ] **Simplified Chinese** on `asia:M6a` (ADR-021):
-    - [ ] derived names (PokéAPI) + curated Trainer/Energy names
-    - [ ] SC printed rarity marks
-    - [ ] SC Cardmarket IDs via `idMetacard` (6602 ↔ 6603)
-  - [ ] **Traditional Chinese** on `asia:M6a` (ADR-026): names from `type-null/PTCG-database` (`data_tc`, licensing to verify) or derived (PokéAPI `zh-Hant`), curated Trainer names
-  - [ ] PokéAPI species names → search aliases + derived German names for Asian-print cards
-  - [ ] Image verification (HEAD per language, run in GitHub Actions because this sandbox can't reach TCGdex) and fallback flags
-  - [ ] Curated **sealed catalog** for DE/EN/JP/**TC/SC**, incl. Pokémon Center exclusives and JP lottery items, with release waves through Dec 2026 (Q4.3). EN/JP images via TCGCSV + the `/img/tcgp` proxy
-  - [ ] Manifest with hashes, Zod-validated output, CI job + weekly sync PR
-- [ ] **Multi-set foundation** (ADR-028): series grouping, per-set lazy-loaded chunks and a slim global search index, so later sets are config + curation only
-- [ ] Sets overview (CAT-01), set detail with sections and filters (CAT-02)
-- [ ] Card detail with language switch (CAT-03), images with fallback chain (CAT-07)
-- [ ] Sealed catalog + product detail (CAT-05)
-- [ ] Search: cards + sealed, multi-script, numbers, filters (CAT-04, CAT-06) + command palette base (APP-05)
-- [ ] Cardmarket deep links (PRC-06): exact product + **copy's language + seller country Germany** + **Near Mint or better** (`minCondition=2`, R2.2)
+- [x] Catalog pipeline `scripts/catalog/` (`DATA_SOURCES.md` §6, ADR-033):
+  - [x] Ingest TCGdex (`intl:30th` 169 incl. the 8 energies, `intl:30th-c` 30, `asia:M6a` 176) into the normalized schema, from a pinned commit
+  - [x] Curated overlays: sections, one `std` variant per card, printed numbers and order of the Classic Collection, name fixes (M6a 156), counterparts, id aliases
+  - [x] **Simplified Chinese** on `asia:M6a` (ADR-021, ADR-034):
+    - [x] names converted from the official Traditional Chinese ones (OpenCC), marked *übersetzt*
+    - [ ] SC printed rarity marks: no source yet (JP marks RR/AR/SAR/FUR are in)
+    - [x] SC and JP Cardmarket IDs sorted by expansion and linked through `idMetacard` (171 JP / 173 SC of 176; RGB Mews curated, order to verify; Sylveon ex 059/130 open)
+  - [x] **Traditional Chinese** on `asia:M6a` (ADR-026): all 176 names from `type-null/PTCG-database` (MIT, verified)
+  - [x] PokéAPI species names → search aliases + German/English names for Asian-print cards without a counterpart
+  - [x] Picture verification by GET in GitHub Actions, with the fallback chain (other language, same artwork from the other print, placeholder): DE/EN 158 of 199, JA/ZH 133 of 176 via the international artwork
+  - [x] Curated **sealed catalog**: 52 products (33 international, 5 JP, 3 TC, 11 SC) incl. Pokémon Center and lottery items and release waves through Dec 2026; Cardmarket IDs for 47, pictures for 35 (TCGCSV + `/img/tcgp`)
+  - [x] Manifest with hashes, Zod-validated output, `catalog-sync.yml` (weekly PR, manual commit) with a report
+- [x] **Multi-set foundation** (ADR-028): series grouping, per-set lazy-loaded chunks, a slim global search index, set covers and print links in the manifest
+- [x] Sets overview (CAT-01), set detail with sections, filters, sort, tile sizes and list view (CAT-02)
+- [x] Card detail with language switch, translated-name marks and prev/next (CAT-03), images with fallback chain (CAT-07)
+- [x] Sealed catalog + product detail (CAT-05), sealed filters incl. release window (CAT-06)
+- [x] Search: cards + sealed, multi-script, numbers, power-user filters (CAT-04, CAT-06) + command palette (APP-05), in a worker (ADR-035)
+- [x] Cardmarket deep links (PRC-06): exact product + **copy's language + seller country Germany** + **Near Mint or better** (`minCondition=2`, R2.2); TC copies on the JP product with the T-Chinese filter
+- [x] Japanese and Chinese names with the right glyphs (`lang` by script) and self-hosted Noto fallbacks loaded on demand
 
-**Exit:** every card and product of the v1 scope is browsable and searchable in all in-scope languages, with correct images or graceful fallbacks.
+**Exit:** every card and product of the v1 scope is browsable and searchable in all in-scope languages, with correct images or graceful fallbacks. ✅ (Open data points are listed in `USER_QUESTIONS.md`, round 4.)
 
 ---
 
