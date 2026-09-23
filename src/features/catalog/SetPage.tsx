@@ -1,12 +1,13 @@
 import {
   ArrowLeftIcon,
+  LightningIcon,
   ListIcon,
   MagnifyingGlassIcon,
   SortAscendingIcon,
   SquaresFourIcon,
 } from '@phosphor-icons/react';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useCatalogSet,
   useManifest,
@@ -15,10 +16,12 @@ import {
   type SetSort,
 } from '@/catalog';
 import { CardTile } from '@/components/domain/CardTile';
-import { IconButton } from '@/components/ui/Button';
+import { sectionTitle } from '@/components/domain/sections';
+import { Button, IconButton } from '@/components/ui/Button';
 import { cn } from '@/components/ui/cn';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
+import { Switch } from '@/components/ui/Switch';
 import { useSettings } from '@/db';
 import {
   CARD_SECTIONS,
@@ -28,23 +31,35 @@ import {
   RARITY_IDS,
   type CardSection,
   type CatalogCard,
+  pickLanguage,
+  visibleLanguages,
+  cardName,
+  type NameMode,
 } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
   htmlLang,
   languageCode,
+  languageLabel,
   m,
   printLabel,
   rarityLabel,
-  sectionLabel,
   typeLabel,
 } from '@/i18n';
 import { formatCount } from '@/i18n/format';
-import { useCjkFonts } from './cjk';
+import {
+  CompletionSummary,
+  openAdd,
+  openQuickAdd,
+  QuickAddButton,
+  useSetOwnership,
+  type SetOwnership,
+} from '@/features/collection';
+import { useCjkFonts } from '@/components/domain/cjk';
+import { isTyping } from '@/lib/keys';
+import { useSheets } from '@/lib/sheets';
 import { setReleaseText } from './dates';
-import { pickLanguage, visibleLanguages } from './language';
-import { cardName, type NameMode } from './names';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/');
 
@@ -68,17 +83,6 @@ const RARITY_ORDER = /* @__PURE__ */ new Map<string, number>(
 const rarityAbbr = (rarity: string | undefined) => ABBREVIATIONS.get(rarity ?? '');
 const rarityRank = (rarity: string | undefined) =>
   RARITY_ORDER.get(rarity ?? '') ?? RARITY_IDS.length;
-
-/** Section heading: a subset's own name (Klassische Sammlung) or the generic label. */
-function sectionTitle(section: CardSection, loaded: LoadedSet): string {
-  if (section === 'subset') {
-    const subset = loaded.subsets[0];
-    const named = loaded.set.sectionNames?.subset;
-    if (named) return pickText(named);
-    if (subset) return pickText(subset.name).replace(`${pickText(loaded.set.name)}: `, '');
-  }
-  return sectionLabel(section);
-}
 
 /** Case- and accent-insensitive match on names (all languages) and numbers. */
 function matches(card: CatalogCard, query: string): boolean {
@@ -116,6 +120,9 @@ export function SetPage() {
   const sort: SetSort = search.sort ?? 'number';
   const view = search.view ?? 'grid';
   useCjkFonts(names === 'card' ? [lang] : []);
+  const ownership = useSetOwnership(loaded, search.all ? undefined : lang);
+  const ownedCount = (card: CatalogCard) => ownership.owned.get(card.id)?.count ?? 0;
+  const ownedCards = loaded.cards.filter((card) => ownedCount(card) > 0).length;
   const update = (patch: Partial<SetSearch>) =>
     void navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
@@ -135,6 +142,7 @@ export function SetPage() {
       (!search.type ||
         card.category === search.type ||
         (card.category === 'pokemon' && (card.types ?? []).includes(search.type))) &&
+      (!search.own || (search.own === 'owned') === ownedCount(card) > 0) &&
       matches(card, query),
   );
   const collator = new Intl.Collator('de');
@@ -152,6 +160,18 @@ export function SetPage() {
   const isFiltered = filtered.length !== loaded.cards.length;
   const other = set.otherPrint ? manifest.sets.find((s) => s.id === set.otherPrint) : undefined;
 
+  // Q opens Schnellerfassung for this set in the language shown (UX_SPEC.md §7).
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'q' || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.defaultPrevented || isTyping(event.target) || useSheets.getState().open) return;
+      event.preventDefault();
+      openQuickAdd(set.id, lang);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [set.id, lang]);
+
   const changeDensity = (next: Density) => {
     setDensity(next);
     try {
@@ -168,13 +188,27 @@ export function SetPage() {
         style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${TILE_MIN[density]}, 1fr))` }}
       >
         {cards.map((card) => (
-          <li key={card.id}>
-            <CardLink card={card} setId={set.id} lang={lang} names={names} />
+          <li key={card.id} className="group/tile relative">
+            <CardLink card={card} setId={set.id} lang={lang} names={names} ownership={ownership} />
+            <QuickAddButton
+              card={card}
+              loaded={loaded}
+              language={lang}
+              name={`${card.printedNumber || card.localId} ${cardName(card, lang, names).text}`}
+              className="absolute top-1.5 right-1.5 opacity-0 group-hover/tile:opacity-100 group-focus-within/tile:opacity-100 [@media(hover:none)]:bg-surface-1/90 [@media(hover:none)]:text-accent-text [@media(hover:none)]:opacity-100"
+            />
           </li>
         ))}
       </ul>
     ) : (
-      <CardList cards={cards} setId={set.id} lang={lang} names={names} />
+      <CardList
+        cards={cards}
+        setId={set.id}
+        lang={lang}
+        names={names}
+        loaded={loaded}
+        ownership={ownership}
+      />
     );
 
   return (
@@ -227,7 +261,31 @@ export function SetPage() {
               options={languages.map((l) => ({ value: l, label: languageCode(l) }))}
             />
           ) : null}
+          <Button
+            variant="outline"
+            aria-keyshortcuts="Q"
+            onClick={() => openQuickAdd(set.id, lang)}
+          >
+            <LightningIcon size={18} weight="bold" aria-hidden />
+            {m.catalog_quick_entry()}
+          </Button>
         </div>
+        {ownership.holdings && ownership.collecting ? (
+          <div className="tile flex flex-col gap-4 p-5">
+            <CompletionSummary
+              completion={ownership.completion}
+              scope={search.all ? m.completion_any() : languageLabel(lang)}
+            />
+            {languages.length > 1 ? (
+              <Switch
+                id="completion-all-languages"
+                label={m.completion_any_toggle()}
+                checked={Boolean(search.all)}
+                onCheckedChange={(checked) => update({ all: checked || undefined })}
+              />
+            ) : null}
+          </div>
+        ) : null}
       </header>
 
       <search
@@ -270,6 +328,31 @@ export function SetPage() {
           </fieldset>
         </div>
         <div className="-mx-2 flex items-center gap-2 overflow-x-auto px-2 lg:mx-0 lg:overflow-visible lg:px-0">
+          {ownership.collecting ? (
+            <SegmentedControl<'all' | 'owned' | 'missing'>
+              label={m.catalog_own_label()}
+              value={search.own ?? 'all'}
+              onValueChange={(next) => update({ own: next === 'all' ? undefined : next })}
+              className="shrink-0"
+              options={[
+                { value: 'all', label: m.catalog_own_all() },
+                {
+                  value: 'owned',
+                  label: m.catalog_own_count({
+                    label: m.catalog_own_owned(),
+                    count: formatCount(ownedCards),
+                  }),
+                },
+                {
+                  value: 'missing',
+                  label: m.catalog_own_count({
+                    label: m.catalog_own_missing(),
+                    count: formatCount(loaded.cards.length - ownedCards),
+                  }),
+                },
+              ]}
+            />
+          ) : null}
           <Select<CardSection | ''>
             label={m.catalog_filter_section()}
             placeholder={m.catalog_filter_section()}
@@ -355,7 +438,7 @@ export function SetPage() {
           <Link
             to="/catalog/sets/$setId"
             params={{ setId: set.id }}
-            search={{ lang: search.lang }}
+            search={{ lang: search.lang, all: search.all }}
             onClick={() => setQuery('')}
             className="type-ui text-accent-text underline-offset-4 hover:underline"
           >
@@ -397,22 +480,34 @@ function CardLink({
   setId,
   lang,
   names,
+  ownership,
 }: {
   card: CatalogCard;
   setId: string;
   lang: CardLanguage;
   names: NameMode;
+  ownership: SetOwnership;
 }) {
   const name = cardName(card, lang, names);
   const number = card.printedNumber || card.localId;
   const rarity = card.rarity ? rarityLabel(card.rarity) : undefined;
+  const owned = ownership.owned.get(card.id)?.count ?? 0;
+  const ownedText = owned ? m.catalog_owned_badge({ count: owned }) : undefined;
   return (
     <Link
       to="/catalog/sets/$setId/cards/$cardId"
       params={{ setId, cardId: card.id }}
       search={{ lang }}
-      aria-label={[number, name.text, rarity].filter(Boolean).join(', ')}
+      aria-label={[number, name.text, rarity, ownedText].filter(Boolean).join(', ')}
       className="group block rounded-[14px] outline-offset-4"
+      onKeyDown={(event) => {
+        // N opens the full add sheet for the focused card (UX_SPEC.md §7).
+        if (event.key.toLowerCase() !== 'n' || event.ctrlKey || event.metaKey || event.altKey) {
+          return;
+        }
+        event.preventDefault();
+        openAdd({ kind: 'card', id: card.id }, setId, lang);
+      }}
     >
       <CardTile
         image={card.images[lang]}
@@ -422,6 +517,9 @@ function CardLink({
         rarity={rarityAbbr(card.rarity)}
         badge={imageBadge(card, lang)}
         missingLabel={m.catalog_image_missing()}
+        owned={owned}
+        ownedText={m.count_times({ count: formatCount(owned) })}
+        ghost={ownership.collecting && owned === 0}
       />
     </Link>
   );
@@ -432,11 +530,15 @@ function CardList({
   setId,
   lang,
   names,
+  loaded,
+  ownership,
 }: {
   cards: CatalogCard[];
   setId: string;
   lang: CardLanguage;
   names: NameMode;
+  loaded: LoadedSet;
+  ownership: SetOwnership;
 }) {
   return (
     <div className="tile overflow-x-auto p-2">
@@ -457,6 +559,9 @@ function CardList({
             </th>
             <th scope="col" className="px-3 py-2 font-bold max-md:hidden">
               {m.catalog_col_illustrator()}
+            </th>
+            <th scope="col" className="px-3 py-2 text-right font-bold">
+              {m.catalog_col_owned()}
             </th>
           </tr>
         </thead>
@@ -488,6 +593,23 @@ function CardList({
                     : categoryLabel(card.category)}
                 </td>
                 <td className="px-3 py-2.5 text-ink-muted max-md:hidden">{card.illustrator}</td>
+                <td className="px-3 py-1.5">
+                  <div className="flex items-center justify-end gap-2">
+                    {ownership.owned.get(card.id)?.count ? (
+                      <span className="font-mono font-bold text-ink">
+                        {m.count_times({
+                          count: formatCount(ownership.owned.get(card.id)?.count ?? 0),
+                        })}
+                      </span>
+                    ) : null}
+                    <QuickAddButton
+                      card={card}
+                      loaded={loaded}
+                      language={lang}
+                      name={`${card.printedNumber || card.localId} ${name.text}`}
+                    />
+                  </div>
+                </td>
               </tr>
             );
           })}

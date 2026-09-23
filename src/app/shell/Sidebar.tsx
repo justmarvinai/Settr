@@ -1,5 +1,5 @@
-import { GearSixIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
+import { GearSixGlyph } from '@/components/ui/glyphs';
 import { Logo } from '@/components/ui/Logo';
 import { m } from '@/i18n';
 import { BackupPill } from './BackupPill';
@@ -47,7 +47,7 @@ export function Sidebar() {
       <div className="mt-auto flex flex-col gap-1.5">
         <BackupPill />
         <Link to="/settings" className={itemClass}>
-          <GearSixIcon size={22} aria-hidden className="shrink-0" />
+          <GearSixGlyph size={22} aria-hidden className="shrink-0" />
           <span className="max-lg:sr-only">{m.nav_settings()}</span>
         </Link>
       </div>

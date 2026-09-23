@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
-import { pickText } from '@/domain/catalog';
+import { pickText, pickLanguage } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   exclusiveLabel,
@@ -20,8 +20,9 @@ import {
 } from '@/i18n';
 import { formatDate, formatMoney } from '@/i18n/format';
 import { cardmarketFilters } from './cardmarket';
-import { useCjkFonts } from './cjk';
-import { pickLanguage } from './language';
+import { useCjkFonts } from '@/components/domain/cjk';
+import { remaining } from '@/domain/schemas';
+import { HoldingsPanel, lotLabel, openAdd, productInfo } from '@/features/collection';
 import { ProductTile } from './ProductTile';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sealed/$productId');
@@ -128,6 +129,14 @@ export function ProductPage() {
             />
           ) : null}
 
+          <HoldingsPanel
+            itemId={product.id}
+            describe={(h) =>
+              lotLabel(productInfo(product), { language: h.language, quantity: remaining(h) })
+            }
+            onAdd={() => openAdd({ kind: 'sealed', id: product.id }, undefined, lang)}
+          />
+
           <Panel className="flex flex-col gap-3 p-5">
             <h3 className="type-h3 m-0">{m.catalog_cardmarket_title()}</h3>
             <p className="type-small m-0 text-ink-muted">
@@ -220,8 +229,6 @@ export function ProductPage() {
               </ul>
             </section>
           ) : null}
-
-          <p className="type-small m-0 text-ink-muted">{m.catalog_product_collection_soon()}</p>
         </div>
       </div>
     </div>

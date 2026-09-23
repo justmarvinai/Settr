@@ -26,6 +26,10 @@ export const setSearchSchema = z.object({
   q: optional(z.string().max(80)),
   view: optional(z.enum(['grid', 'list'])),
   names: optional(z.enum(['german', 'card'])),
+  /** Alle / Besitzt / Fehlt (UX_SPEC.md §4.3). */
+  own: optional(z.enum(['owned', 'missing'])),
+  /** Completion and ownership over all languages instead of the view's (Q5.5). */
+  all: optional(z.boolean()),
 });
 export type SetSearch = z.infer<typeof setSearchSchema>;
 

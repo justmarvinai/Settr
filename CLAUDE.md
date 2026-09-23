@@ -4,7 +4,7 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M2 · CATALOG ✅ built, waiting for Marvin's check** (M1 · Foundation too). Coding was approved on 2026-09-23 (Marvin: "You can start"), and "Continue" started M2. Both milestones live on `claude/great-edison-uri1z0` (not merged into `main` yet; no PR until Marvin asks). Open on Marvin's side: connect the repo to Vercel, make `main` the default branch, check the app in Brave and on the iPhone, answer round 4 in `USER_QUESTIONS.md` when convenient, then say whether to open the PR(s) and start **M3 · Collection**.
+**Current phase: M3 · COLLECTION ✅ built, waiting for Marvin's check** (M1 · Foundation and M2 · Catalog too). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1 + M2 are merged into `main` (PR #1, 2026-09-23). M3 sits on `claude/great-edison-uri1z0` on top of that; its PR opens when Marvin asks. Open on Marvin's side: connect the repo to Vercel, make `main` the default branch, check the app in Brave and on the iPhone, answer rounds 4 and 5 in `USER_QUESTIONS.md` when convenient, then say whether to open the M3 PR and start **M4 · Prices & Portfolio**.
 
 - Rounds 1–3 are answered and incorporated (spec v0.3). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.

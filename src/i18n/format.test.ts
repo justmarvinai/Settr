@@ -8,8 +8,9 @@ import {
   formatMoney,
   formatPercent,
   formatRelative,
-  parseMoneyInput,
+  formatShare,
 } from './format';
+import { formatAmountInput, parseMoneyInput } from './money-input';
 
 const NBSP = ' ';
 
@@ -96,5 +97,29 @@ describe('parseMoneyInput (I18N.md §3 table)', () => {
   it('allows no decimals for JPY', () => {
     expect(parseMoneyInput('7.200', 'JPY')).toEqual({ ok: true, minor: 7200 });
     expect(parseMoneyInput('72,5', 'JPY')).toEqual({ ok: false, error: 'too-many-decimals' });
+  });
+});
+
+describe('formatAmountInput', () => {
+  it('writes amounts the way they are typed, and they parse back', () => {
+    expect(formatAmountInput({ minor: 450, currency: 'EUR' })).toBe('4,50');
+    expect(formatAmountInput({ minor: 123456, currency: 'EUR' })).toBe('1234,56');
+    expect(formatAmountInput({ minor: 500, currency: 'JPY' })).toBe('500');
+    for (const minor of [0, 1, 99, 450, 123456, 99999999]) {
+      expect(parseMoneyInput(formatAmountInput({ minor, currency: 'EUR' }))).toEqual({
+        ok: true,
+        minor,
+      });
+    }
+  });
+});
+
+describe('formatShare', () => {
+  it('rounds progress down and never shows 100 % early', () => {
+    expect(formatShare(0)).toBe('0\u00a0%');
+    expect(formatShare(0.641)).toBe('64\u00a0%');
+    expect(formatShare(198 / 199)).toBe('99\u00a0%');
+    expect(formatShare(1)).toBe('100\u00a0%');
+    expect(formatShare(Number.NaN)).toBe('0\u00a0%');
   });
 });

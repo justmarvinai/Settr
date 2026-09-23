@@ -1,16 +1,7 @@
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import {
-  add,
-  allocate,
-  allocateEvenly,
-  compare,
-  money,
-  multiply,
-  negate,
-  subtract,
-  sum,
-} from './money';
+import { allocate, allocateEvenly } from './allocation';
+import { add, compare, money, multiply, negate, subtract, sum } from './money';
 
 describe('money arithmetic', () => {
   it('adds, subtracts and multiplies integer minor units', () => {

@@ -262,6 +262,14 @@ This screen uses the same structure as card detail, but:
 - **Group by:** none · Set · Sprache · Seltenheit · Lagerort.
 - **Multi-select:** tag, move location, start a price session for the selection, export the selection as CSV, or delete (with undo).
 - **Empty state:** an illustrated empty binder with "Öffne ein Set und tippe auf ＋" and a button to the catalog.
+- **As built (M3):**
+  - *Summary:* Positionen, Exemplare, verschiedene Karten (or Produkte) and Investiert, with "N ohne Kaufpreis" under it. *Wert* and *G/V* join with prices in M4.
+  - *Bar:* search (name in any language, number, set), **Filter** (a sheet: right on desktop, from the bottom on phones; the button shows how many are active), sort with a direction toggle, grouping, *Auswahl* and the view switch. Active filters are removable chips under the bar, with "Alle Filter entfernen" from two on. The sheet offers only choices the collection has (a filter with one possible value is hidden) and its footer says how many lots match. Price filters (Bepreist, Preis veraltet, G/V) come with M4.
+  - *Table:* Karte (thumb, name, set · variant when it isn't the standard print · *Eigener Eintrag*), Nr., Sprache, Zustand (Status for sealed), Menge, Einkauf/Stk., Investiert, Kaufdatum, Lagerort. Columns drop out as the table narrows (the sidebar counts); below about 560 px a compact line under the name shows quantity, language and condition. Karte, Nr., Menge, Einkauf/Stk. and Kaufdatum sort from their header. Choosing columns arrives with M4's price columns.
+  - *Grid:* tiles as on the set page with "×2 · DE · NM" (plus a non-standard variant) under the name; closed lots are faded and say *Abgeschlossen*.
+  - *Grouping* shows groups in their own order (sets as in the catalog, rarities from common up, languages as everywhere, locations as sorted in Einstellungen), "ohne …" last; the sort applies inside each group.
+  - *Multi-select:* check boxes on hover (desktop) or after *Auswahl* (always on touch), `Space` on a focused tile, the table's header box for everything shown. The bar at the bottom offers **Tags …** (checked = all, dash = some; untouched tags stay), **Verschieben …** (into a binder, lots fill the next free pockets in list order; lots already in it keep theirs) and **Löschen**, each with *Rückgängig*. The price session (M4) and CSV (M5) for a selection come later.
+  - `N` on a focused tile adds another lot of that card or product; custom items and lots whose item left the catalog open their edit sheet instead of a page.
 
 ### 4.7 Add / edit holding sheet · COL-01, COL-02
 
@@ -288,6 +296,13 @@ This screen uses the same structure as card detail, but:
 - **"Hinzufügen & nächste"** keeps the sheet open and advances to the next card number, which gives a fast sequential entry mode.
 - **Validation:** quantity ≥ 1, price ≥ 0, and date not in the future. A warning (not an error) appears when the price is far above the latest known price.
 - **Sealed variant:** no variant or condition. It has *Status* (versiegelt/beschädigt) instead.
+- **As built (M3):**
+  - Opens from *＋ Hinzufügen* (the palette in add mode lists cards, products and your custom items, plus *Eigenen Eintrag anlegen* for what the catalog lacks), `N` on a focused tile, and *Hinzufügen* on card and product pages. A side sheet on desktop, a bottom sheet on phones; the price field has focus.
+  - Defaults: the language of the view you came from (else the last used), the first variant that exists, the condition from Einstellungen (NM), today's date, and the last-used source and Lagerort (per device, not in backups). Whether the condition should follow the last-used one too is round 5's R5.1.
+  - Fees, grading, tags and note sit under *Mehr Details*. `Enter` saves, `⇧ Enter` is *Hinzufügen & nächste*; on phones the button reads *& nächste*.
+  - Editing uses the same form. Every save, edit, duplicate and delete toasts with *Rückgängig*. The "far above the latest price" warning waits for prices (M4).
+  - **Verkaufen oder abgeben …** (lot menu): what happened (verkauft, getauscht, verschenkt, verloren), how many, the proceeds for all (the value received, for trades), fees and date; the lot keeps its history and shows "1 von 3".
+  - **Öffnen …** (sealed lots): how many and when, then optional *Pulls erfassen* with Schnellerfassung bound to the product's set; *Abschließen* splits the product's cost over the pulls (`DATA_MODEL.md` §6.2), *Ohne Kostenaufteilung schließen* leaves the pulls at zero cost.
 
 ### 4.8 Quick-add mode · COL-06
 
@@ -295,6 +310,7 @@ This screen uses the same structure as card detail, but:
 - A focus-mode panel with sticky defaults at the top (Sprache, Variante, Zustand, Quelle, Kaufdatum). The main input takes a **card number**: typing `25` shows the card preview, and `Enter` adds 1 copy.
   - Modifiers: `25x3` adds 3 copies, `25r` adds a reverse holo, and `25 4,50` adds one with a purchase price.
 - A running list below shows each added item with undo.
+- **As built (M3):** opens from the set page's *Schnellerfassung* button or `Q` there (a palette entry follows with palette commands in M6). The sticky defaults (Sprache, Zustand, Bereich for numbers that repeat across sections, Quelle, Kaufdatum for the same day, Lagerort) are kept per device. The grammar also takes printed numbers (`4/102` for the Klassische Sammlung) and letters (`R`, `GRA`), and `25 4,50` is the price per copy. With a binder as Lagerort each card goes into its next free pocket. The running list keeps the last 50 entries, each with its own undo.
 
 ### 4.9 Price entry popover · PRC-01
 

@@ -3,7 +3,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { TooltipProvider } from '@/components/ui/Tooltip';
 import { ToastProvider, toastManager } from '@/components/ui/Toasts';
-import { db, ensureMeta } from '@/db';
+import { db, ensureMeta } from '@/db/core';
 import { useDisplaySync } from '@/features/appearance';
 import { UpdatePrompt } from '@/features/pwa';
 import { queryClient } from './queryClient';

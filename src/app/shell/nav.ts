@@ -1,27 +1,28 @@
+import type { ComponentType } from 'react';
 import {
-  CardsThreeIcon,
-  ChartLineUpIcon,
-  HouseIcon,
-  SquaresFourIcon,
-  TagIcon,
-  type Icon,
-} from '@phosphor-icons/react';
+  CardsThreeGlyph,
+  ChartLineUpGlyph,
+  HouseGlyph,
+  SquaresFourGlyph,
+  TagGlyph,
+  type GlyphProps,
+} from '@/components/ui/glyphs';
 import { m } from '@/i18n';
 
 export interface NavItem {
   to: '/' | '/collection' | '/catalog' | '/prices' | '/portfolio';
   label: () => string;
-  icon: Icon;
+  icon: ComponentType<GlyphProps>;
   exact?: boolean;
 }
 
 /** Main navigation (Q2.2). Wunschliste appears once I-06 ships. */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { to: '/', label: m.nav_overview, icon: HouseIcon, exact: true },
-  { to: '/collection', label: m.nav_collection, icon: CardsThreeIcon },
-  { to: '/catalog', label: m.nav_catalog, icon: SquaresFourIcon },
-  { to: '/prices', label: m.nav_prices, icon: TagIcon },
-  { to: '/portfolio', label: m.nav_portfolio, icon: ChartLineUpIcon },
+  { to: '/', label: m.nav_overview, icon: HouseGlyph, exact: true },
+  { to: '/collection', label: m.nav_collection, icon: CardsThreeGlyph },
+  { to: '/catalog', label: m.nav_catalog, icon: SquaresFourGlyph },
+  { to: '/prices', label: m.nav_prices, icon: TagGlyph },
+  { to: '/portfolio', label: m.nav_portfolio, icon: ChartLineUpGlyph },
 ];
 
 /** Phone tab bar: Übersicht · Sammlung · (＋) · Katalog · Preise (UX_SPEC.md §3.3). */

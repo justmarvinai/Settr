@@ -57,6 +57,20 @@ export function formatPercent(ratio: number | null | undefined): string {
   return trueMinus(percentFormatter.format(ratio));
 }
 
+const shareFormatter = new Intl.NumberFormat(LOCALE, {
+  style: 'percent',
+  maximumFractionDigits: 0,
+});
+
+/**
+ * Progress as a whole percentage, rounded down so it reads 100 % only when complete
+ * (set completion: `64 %`, 198 of 199 = `99 %`).
+ */
+export function formatShare(ratio: number): string {
+  const clamped = Math.min(1, Math.max(0, Number.isFinite(ratio) ? ratio : 0));
+  return shareFormatter.format(clamped === 1 ? 1 : Math.floor(clamped * 100) / 100);
+}
+
 const countFormatter = new Intl.NumberFormat(LOCALE);
 export function formatCount(n: number): string {
   return trueMinus(countFormatter.format(n));
@@ -112,62 +126,4 @@ export function formatBytes(bytes: number): string {
     unit: chosen.unit,
     maximumFractionDigits: chosen.size === 1 ? 0 : 1,
   }).format(bytes / chosen.size);
-}
-
-export type MoneyParseResult =
-  | { ok: true; minor: number }
-  | { ok: false; error: 'empty' | 'invalid' | 'negative' | 'too-many-decimals' };
-
-/**
- * Parses what people type into a price field (I18N.md §3, MoneyInput rules):
- * `4,5` → 450 · `1.234,56` → 123456 · `1.234` → 123400 · `4.50` → 450 · `1,234.56` → 123456.
- */
-export function parseMoneyInput(input: string, currency: CurrencyCode = 'EUR'): MoneyParseResult {
-  const digits = MINOR_DIGITS[currency];
-  const cleaned = input.replace(/\s| | /g, '').replace(/€|eur/gi, '');
-  if (cleaned === '') return { ok: false, error: 'empty' };
-  if (/^[-−]/.test(cleaned)) return { ok: false, error: 'negative' };
-  if (!/^[\d.,]+$/.test(cleaned) || !/\d/.test(cleaned)) return { ok: false, error: 'invalid' };
-
-  let intPart = cleaned;
-  let fracPart = '';
-  const lastComma = cleaned.lastIndexOf(',');
-  const lastDot = cleaned.lastIndexOf('.');
-
-  if (lastComma >= 0 && lastDot >= 0) {
-    // Both present: the last one is the decimal separator.
-    const decimalAt = Math.max(lastComma, lastDot);
-    const thousands = decimalAt === lastComma ? '.' : ',';
-    const head = cleaned.slice(0, decimalAt);
-    if (head.includes(cleaned[decimalAt] ?? '')) return { ok: false, error: 'invalid' };
-    if (!/^\d{1,3}([.,]\d{3})*$/.test(head) || head.includes(thousands === '.' ? ',' : '.')) {
-      return { ok: false, error: 'invalid' };
-    }
-    intPart = head.split(thousands).join('');
-    fracPart = cleaned.slice(decimalAt + 1);
-  } else if (lastComma >= 0) {
-    // Comma only: decimal separator (German habit).
-    if (cleaned.indexOf(',') !== lastComma) return { ok: false, error: 'invalid' };
-    intPart = cleaned.slice(0, lastComma);
-    fracPart = cleaned.slice(lastComma + 1);
-  } else if (lastDot >= 0) {
-    const tail = cleaned.slice(lastDot + 1);
-    const dots = cleaned.split('.').length - 1;
-    if (tail.length === 3 || dots > 1) {
-      // Dot + exactly 3 digits (or several dots) = thousands separator.
-      if (!/^\d{1,3}(\.\d{3})+$/.test(cleaned)) return { ok: false, error: 'invalid' };
-      intPart = cleaned.split('.').join('');
-    } else {
-      // Dot + 1–2 digits = decimal separator (forgiving for English-habit typing).
-      intPart = cleaned.slice(0, lastDot);
-      fracPart = tail;
-    }
-  }
-
-  if (intPart === '') intPart = '0';
-  if (!/^\d+$/.test(intPart) || !/^\d*$/.test(fracPart)) return { ok: false, error: 'invalid' };
-  if (fracPart.length > digits) return { ok: false, error: 'too-many-decimals' };
-  const minor = Number(intPart) * 10 ** digits + Number(fracPart.padEnd(digits, '0') || '0');
-  if (!Number.isSafeInteger(minor)) return { ok: false, error: 'invalid' };
-  return { ok: true, minor };
 }

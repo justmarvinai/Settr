@@ -1,6 +1,6 @@
 import { Toast } from '@base-ui/react/toast';
-import { XIcon } from '@phosphor-icons/react';
 import { m } from '@/i18n';
+import { XGlyph } from './glyphs';
 
 /** App-wide toast queue, usable outside React (e.g. the service-worker update prompt). */
 export const toastManager = Toast.createToastManager();
@@ -12,10 +12,13 @@ function ToastList() {
       key={toast.id}
       toast={toast}
       swipeDirection={['down', 'right']}
-      className="ui-toast glass-thick"
+      className="group ui-toast glass-thick"
     >
       <Toast.Content className="flex items-center gap-3 py-2 pr-2 pl-5">
-        <span aria-hidden className="size-2 shrink-0 rounded-pill bg-gain" />
+        <span
+          aria-hidden
+          className="size-2 shrink-0 rounded-pill bg-gain group-data-[type=error]:bg-loss"
+        />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <Toast.Title className="type-ui text-ink" />
           <Toast.Description className="type-small text-ink-muted" />
@@ -27,7 +30,7 @@ function ToastList() {
           aria-label={m.dialog_close()}
           className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill text-ink-muted hover:bg-hover hover:text-ink"
         >
-          <XIcon size={18} weight="bold" aria-hidden />
+          <XGlyph size={18} aria-hidden />
         </Toast.Close>
       </Toast.Content>
     </Toast.Root>

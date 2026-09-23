@@ -18,7 +18,14 @@ import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
-import { pickText, STANDARD_VARIANT, type CatalogCard } from '@/domain/catalog';
+import {
+  pickText,
+  STANDARD_VARIANT,
+  type CatalogCard,
+  pickLanguage,
+  cardName,
+  otherNames,
+} from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
@@ -33,9 +40,9 @@ import {
   typeLabel,
 } from '@/i18n';
 import { cardmarketFilters } from './cardmarket';
-import { useCjkFonts } from './cjk';
-import { pickLanguage } from './language';
-import { cardName, otherNames } from './names';
+import { useCjkFonts } from '@/components/domain/cjk';
+import { remaining } from '@/domain/schemas';
+import { cardInfo, HoldingsPanel, lotLabel, openAdd } from '@/features/collection';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/cards/$cardId');
 
@@ -200,6 +207,18 @@ export function CardPage() {
           />
         ) : null}
 
+        <HoldingsPanel
+          itemId={card.id}
+          describe={(h) =>
+            lotLabel(cardInfo(card, loaded), {
+              language: h.language,
+              condition: h.condition,
+              quantity: remaining(h),
+            })
+          }
+          onAdd={() => openAdd({ kind: 'card', id: card.id }, setId, lang)}
+        />
+
         <Panel className="flex flex-col gap-3 p-5">
           <h3 className="type-h3 m-0">{m.catalog_cardmarket_title()}</h3>
           <p className="type-small m-0 text-ink-muted">
@@ -270,8 +289,6 @@ export function CardPage() {
             </ul>
           </Panel>
         ) : null}
-
-        <p className="type-small m-0 text-ink-muted">{m.catalog_card_collection_soon()}</p>
       </div>
     </div>
   );

@@ -55,6 +55,8 @@ A change is **done** only when all of the following hold:
 12. Binder slots: create a 3×3 and a 3×4 binder, add three cards, and the "next free slot" suggestions are correct.
 13. Open sealed with pulls: proportional cost allocation sums exactly to the product cost.
 
+**Automated as of M3** (`tests/e2e/*.spec.ts`, desktop and phone Chromium; WebKit in CI): 4 (the sale; realized P/L arrives with M4), 8, 12 (next-free-slot rules as unit tests for 3×3 and 3×4, the move into a binder in e2e) and 13 (the exact sum as a property test, the flow in e2e). The collection spec also covers quick add with undo, the add sheet, Sammlung filters, table sort, tags, move and delete with undo, the backup download and `owned:` search, with axe on those screens in light and dark. The other journeys arrive with their milestones.
+
 ### 2.2 Test data
 
 - `tests/fixtures/catalog/`: a trimmed, frozen catalog (a few cards per print), so tests don't depend on the live pipeline. It contains at least two sets from two series, so no code path can assume a single set (ADR-028).

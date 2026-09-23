@@ -1,5 +1,5 @@
-import type { CardLanguage } from '@/domain/catalog-types';
-import type { Settings } from '@/domain/schemas';
+import type { CardLanguage } from '../catalog-types';
+import type { Settings } from '../schemas/settings';
 
 /**
  * The card language a catalog page starts in: the URL's, else the default card language when the

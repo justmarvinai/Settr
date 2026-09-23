@@ -14,9 +14,9 @@ import {
 import type { MotionLevel, Settings, Theme } from '@/domain/schemas';
 import { languageLabel, m } from '@/i18n';
 import { formatDate } from '@/i18n/format';
-import { InstallSection, StorageSection } from '@/features/data';
-import { ComingSoon } from '@/components/ui/ComingSoon';
+import { BackupSection, InstallSection, StorageSection } from '@/features/data';
 import { applyDisplay } from '@/features/appearance';
+import { LocationsManager } from '@/features/collection';
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
@@ -154,12 +154,15 @@ export function PriceSettings() {
 }
 
 export function LocationSettings() {
-  return <ComingSoon badge={m.page_coming_title()} body={m.settings_locations_coming()} />;
+  return <LocationsManager />;
 }
 
 export function DataSettings() {
   return (
     <div className="flex flex-col gap-4">
+      <Section id="settings-backup" title={m.settings_data_backup()}>
+        <BackupSection />
+      </Section>
       <Section id="settings-storage" title={m.settings_data_storage()}>
         <StorageSection />
       </Section>
@@ -168,9 +171,6 @@ export function DataSettings() {
       </Section>
       <Section id="settings-exit" title={m.settings_data_exit_title()}>
         <p className="type-body m-0 text-ink-muted">{m.settings_data_exit_body()}</p>
-      </Section>
-      <Section id="settings-backup" title={m.settings_data_backup()}>
-        <p className="type-body m-0 text-ink-muted">{m.settings_data_backup_coming()}</p>
       </Section>
     </div>
   );

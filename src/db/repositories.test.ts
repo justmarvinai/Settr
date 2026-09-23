@@ -95,10 +95,11 @@ describe('holdings', () => {
     const h = await createHolding(db, pikachu);
     expect(h.disposals).toEqual([]);
     expect(await getDataVersion(db)).toBe(1);
-    const updated = await updateHolding(db, h.id, {
+    const { before, after: updated } = await updateHolding(db, h.id, {
       condition: 'LP',
       valueOverride: { price: { minor: 6500, currency: 'EUR' }, date: '2026-09-23' },
     });
+    expect(before).toEqual(h);
     expect(updated.condition).toBe('LP');
     expect(updated.createdAt).toBe(h.createdAt);
     expect(await getDataVersion(db)).toBe(2);

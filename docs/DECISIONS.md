@@ -41,6 +41,8 @@
 | 033 | Catalog pipeline: pinned sources offline, network facts in CI only | Accepted (M2) |
 | 034 | Simplified Chinese names converted from the official Traditional ones | Accepted (M2; amends ADR-021) |
 | 035 | Catalog URLs and search: cards under their set, ids with colons, one worker index | Accepted (M2) |
+| 036 | Collection lists without a table library: one domain pipeline + TanStack Virtual | Accepted (M3) |
+| 037 | Startup bundle hygiene: route-owned features and a lean shell | Accepted (M3; amends ADR-030) |
 
 ---
 
@@ -312,4 +314,24 @@
   - Search runs in one module worker over `search-index.json` (MiniSearch, ARCHITECTURE.md §7), built once per catalog version from MiniSearch's serialized form (≈ 0.4 s for 20k cards). Names are indexed in a Latin and a CJK field (the n-grams of Chinese and Japanese names would otherwise drown Latin matches), German umlauts both folded and expanded, katakana folded to hiragana, and card numbers in every written form (`025/128`, `25`, `#025`). The command palette (APP-05) and Katalog › Karten share it; without worker support it runs on the main thread.
 - **Consequences:** shareable, readable URLs; global search stays fast as sets are added. The search engine depends on MiniSearch 7's serialized format (pinned; the engine tests catch a break on upgrade).
 - **Alternatives:** `/catalog/cards/$cardId` with an id → set lookup through the search index (an extra load per card page), a search index per set (global search would load every set).
+
+### ADR-036 · Collection lists without a table library: one domain pipeline + TanStack Virtual (Accepted, M3)
+- **Context:** `ARCHITECTURE.md` planned TanStack Table 9 with TanStack Virtual for the collection table. Sammlung › Karten / Sealed shows the same lots as a grid or a table, with the same search, filters, sort, grouping and selection, all in the URL (UX_SPEC.md §4.6). A table library keeps sorting, filtering and grouping inside its table instance, which the grid can't use, and its stable mutable instance needs the React Compiler's opt-out anyway.
+- **Decision:**
+  - One pure pipeline in `domain/collection/view.ts` (`matchesFilter` → `sortRows` → `groupRows`, plus `summarize`) over lot rows that the feature resolves from the catalog, custom items or the lot's snapshot. The URL state is `collectionSearchSchema`.
+  - The grid and the table are hand-written and virtualized with TanStack Virtual's window virtualizer: the grid by rows of tiles (its column count follows the measured width), the table by rows with spacer rows. Groups are heading rows in both.
+  - Table columns are plain config (label, sort key, width, the table width from which a column shows). Which columns render is decided from the measured table width, so group and spacer rows always span exactly the rendered columns.
+  - Components that read the virtualizer opt out of compiler memoization (`'use no memo'`).
+- **Consequences:** grid, table, summary and the coming CSV export (M5) and price session for a selection (M4) share one tested pipeline, and no table library ships (TanStack Table would be one more lazy dependency). Configurable columns arrive with M4's price columns as more config, not a library feature.
+- **Alternatives:** TanStack Table 9 (a second pipeline beside the grid's), AG Grid (heavy, own look), CSS-only hiding of columns (container queries leave hidden cells counted by `colspan`, so rows no longer line up).
+
+### ADR-037 · Startup bundle hygiene: route-owned features and a lean shell (Accepted, M3; amends ADR-030)
+- **Context:** the initial JS budget is 230 KB gzip (ADR-030). Rolldown puts a module in the chunk of every entry that reaches it: a feature barrel imported by several lazy routes merges everything it re-exports into one shared chunk, and a module the startup code imports brings all of its code along. During M3 the startup bundle reached 230.1 KB and the shared collection chunk 81 KB, both over budget.
+- **Decision:**
+  - Startup modules hold only startup code: `db/core.ts` (settings, meta, holding count) apart from the collection repositories; money-input parsing and collection labels apart from `i18n/format.ts` and `i18n/labels.ts`; URL schemas apart from the pipelines they feed (`domain/collection/search.ts`, loaded by the route tree).
+  - Code only some routes need gets its own feature and barrel: `features/entry` (the add, edit, quick-add, sell and open sheets with TanStack Form, loaded by the lazy sheet host) and `features/library` (the Sammlung lists with TanStack Virtual, loaded by the two collection routes). `features/collection` keeps what catalog pages share.
+  - Route components are feature components that read their route through `getRouteApi`; route files don't declare components, because a split component that references `Route` pulls the route module into its chunk and splinters shared startup code into extra chunks.
+  - The always-loaded shell (sidebar, tab bar, toolbar, backup pill, toasts) draws its icons as single-weight inline SVG (`components/ui/glyphs.tsx`, Phosphor's paths, MIT). Each Phosphor component carries all six weights; pages keep using Phosphor.
+- **Consequences:** after M3 the startup JS is 219.6 KB gzip (about 10 KB headroom for M4), the collection chunk 48 KB and the library chunk 32 KB. A new shell icon goes into `glyphs.tsx` with the one weight it shows. `pnpm size` stays the gate; a source-map attribution of the entry and its preloads explains any jump.
+- **Alternatives:** raising the budget (hides regressions), manual chunk rules (brittle across Rolldown releases), Zod Mini instead of Zod's classic API (about 4 KB of JSON-schema code would leave startup, but every schema changes; kept in reserve).
 

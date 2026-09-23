@@ -1,17 +1,17 @@
-import {
-  DotsThreeOutlineIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  MagnifyingGlassIcon,
-  MoonIcon,
-  PlusIcon,
-  SunIcon,
-} from '@phosphor-icons/react';
 import { useMatches } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Button, IconButton } from '@/components/ui/Button';
+import {
+  DotsThreeOutlineGlyph,
+  EyeGlyph,
+  EyeSlashGlyph,
+  MagnifyingGlassGlyph,
+  MoonGlyph,
+  PlusGlyph,
+  SunGlyph,
+} from '@/components/ui/glyphs';
 import { Kbd } from '@/components/ui/Kbd';
-import { db, updateSettings, useSettings } from '@/db';
+import { db, updateSettings, useSettings } from '@/db/core';
 import { applyDisplay, resolvedTheme } from '@/features/appearance';
 import { m } from '@/i18n';
 import { usePrivacy } from '../privacy';
@@ -51,7 +51,7 @@ function ThemeToggle() {
   };
   return (
     <IconButton className="max-md:hidden" label={label} onClick={toggle}>
-      {dark ? <SunIcon size={20} aria-hidden /> : <MoonIcon size={20} aria-hidden />}
+      {dark ? <SunGlyph size={20} aria-hidden /> : <MoonGlyph size={20} aria-hidden />}
     </IconButton>
   );
 }
@@ -64,7 +64,7 @@ function PrivacyToggle() {
       aria-pressed={on}
       onClick={toggle}
     >
-      {on ? <EyeSlashIcon size={20} aria-hidden /> : <EyeIcon size={20} aria-hidden />}
+      {on ? <EyeSlashGlyph size={20} aria-hidden /> : <EyeGlyph size={20} aria-hidden />}
     </IconButton>
   );
 }
@@ -75,9 +75,11 @@ function PrivacyToggle() {
  */
 export function Toolbar({
   onOpenSearch,
+  onAdd,
   onOpenMore,
 }: {
   onOpenSearch: () => void;
+  onAdd: () => void;
   onOpenMore: () => void;
 }) {
   const title = usePageTitle();
@@ -91,20 +93,20 @@ export function Toolbar({
         onClick={onOpenSearch}
         className="hidden h-11 w-[340px] shrink items-center gap-2.5 rounded-pill bg-hover pr-2 pl-3.5 text-left type-small text-ink-muted transition-colors duration-(--dur-fast) hover:bg-hover-strong lg:flex"
       >
-        <MagnifyingGlassIcon size={18} aria-hidden />
+        <MagnifyingGlassGlyph size={18} aria-hidden />
         <span className="flex-1 truncate">{m.toolbar_search()}</span>
         <Kbd>{isApple ? m.toolbar_shortcut_mac() : m.toolbar_shortcut_windows()}</Kbd>
       </button>
       <IconButton className="lg:hidden" label={m.toolbar_search_label()} onClick={onOpenSearch}>
-        <MagnifyingGlassIcon size={20} aria-hidden />
+        <MagnifyingGlassGlyph size={20} aria-hidden />
       </IconButton>
       <ThemeToggle />
       <PrivacyToggle />
       <IconButton className="md:hidden" label={m.nav_more()} onClick={onOpenMore}>
-        <DotsThreeOutlineIcon size={20} weight="fill" aria-hidden />
+        <DotsThreeOutlineGlyph size={20} aria-hidden />
       </IconButton>
-      <Button variant="primary" className="max-md:hidden" onClick={onOpenSearch}>
-        <PlusIcon size={18} weight="bold" aria-hidden />
+      <Button variant="primary" className="max-md:hidden" onClick={onAdd}>
+        <PlusGlyph size={18} aria-hidden />
         {m.nav_add()}
       </Button>
     </header>

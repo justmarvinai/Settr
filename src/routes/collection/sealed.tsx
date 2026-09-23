@@ -1,9 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ComingSoon } from '@/components/ui/ComingSoon';
-import { m } from '@/i18n';
+import { manifestQuery } from '@/catalog';
+import { collectionSearchSchema } from '@/domain/collection/search';
+import { CatalogErrorPage } from '@/features/catalog';
+import { CollectionSealedPage } from '@/features/library';
 
-export const Route = createFileRoute('/collection/sealed')({ component: CollectionSealedPage });
-
-function CollectionSealedPage() {
-  return <ComingSoon badge={m.page_coming_title()} body={m.page_coming_collection()} />;
-}
+export const Route = createFileRoute('/collection/sealed')({
+  validateSearch: collectionSearchSchema,
+  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(manifestQuery),
+  component: CollectionSealedPage,
+  errorComponent: CatalogErrorPage,
+});
