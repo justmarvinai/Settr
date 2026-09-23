@@ -58,6 +58,8 @@ export interface SetConfig {
   japaneseRarityMarks?: boolean;
   /** Names for sections that aren't a subset of their own. */
   sectionNames?: Partial<Record<CardSection, LocalizedText>>;
+  /** Local id of the card shown on the set's tile. */
+  coverCard?: string;
   /**
    * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group-name fragment, to find the
    * set's sealed products on TCGCSV for their pictures (DATA_SOURCES.md §4).
@@ -87,6 +89,7 @@ export const CATALOG_SETS: SetConfig[] = [
         idPrefix: 'intl:mee',
       },
     ],
+    coverCard: '150', // Pikachu-ex, Special Illustration Rare
     cardmarket: { expansion: 6601 },
     tcgplayer: { category: 3, groupName: '30th Celebration' },
   },
@@ -131,6 +134,7 @@ export const CATALOG_SETS: SetConfig[] = [
     // 6628 is MF, the premium deck set's own expansion (its cards stay out of the v1 catalog).
     // The international print keeps these 30 reprints in a subset of its own (intl:30th-c).
     sectionNames: { subset: { de: 'Klassische Sammlung', en: 'Classic Collection' } },
+    coverCard: '127', // ピカチュウex SAR, the same artwork as intl:30th:150
     cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603, sealedExpansions: [6628] },
     tcgplayer: { category: 85, groupName: '30th Celebration' },
     japaneseRarityMarks: true,

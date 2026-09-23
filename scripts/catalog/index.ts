@@ -70,7 +70,30 @@ const cm = network ? loadCardmarket() : null;
 if (cm) cardmarket = applyCardmarket(sets, cm, curated, overlays, problems);
 else carryOverCardmarket(sets, previous, overlays);
 
+// The same expansion in the other print: the main set most counterparts point to.
+const mainOf = new Map(
+  sets.flatMap((s) => s.cards.map((c) => [c.id, s.config.parentSetId ?? s.config.id] as const)),
+);
+for (const set of sets.filter((s) => s.config.kind === 'main')) {
+  const votes = new Map<string, number>();
+  for (const card of sets
+    .filter((s) => (s.config.parentSetId ?? s.config.id) === set.config.id)
+    .flatMap((s) => s.cards))
+    for (const partner of card.counterparts ?? []) {
+      const main = mainOf.get(partner);
+      if (main && main !== set.config.id) votes.set(main, (votes.get(main) ?? 0) + 1);
+    }
+  const best = [...votes].toSorted((a, b) => b[1] - a[1])[0];
+  if (best) set.summary.otherPrint = best[0];
+}
+
 const images = await resolveImages(sets, previous, { verify: network });
+for (const set of sets) {
+  const cover = set.cards.find((c) => c.localId === set.config.coverCard);
+  if (set.config.coverCard && !cover)
+    problems.errors.push(`${set.config.id}: cover card ${set.config.coverCard} not found`);
+  if (cover) set.summary.cover = { cardId: cover.id, images: cover.images };
+}
 
 // Sealed pictures (EN/JP) from TCGplayer via TCGCSV; a TCGCSV outage keeps the last ones.
 let tcgplayer: TcgplayerReport | null = null;

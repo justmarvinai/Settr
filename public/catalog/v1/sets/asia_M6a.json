@@ -33,6 +33,27 @@
         "de": "Klassische Sammlung",
         "en": "Classic Collection"
       }
+    },
+    "otherPrint": "intl:30th",
+    "cover": {
+      "cardId": "asia:M6a:127",
+      "images": {
+        "ja": {
+          "url": "https://assets.tcgdex.net/en/me/30th/150",
+          "lang": "en",
+          "counterpart": true
+        },
+        "zh-cn": {
+          "url": "https://assets.tcgdex.net/en/me/30th/150",
+          "lang": "en",
+          "counterpart": true
+        },
+        "zh-tw": {
+          "url": "https://assets.tcgdex.net/en/me/30th/150",
+          "lang": "en",
+          "counterpart": true
+        }
+      }
     }
   },
   "subsets": [],

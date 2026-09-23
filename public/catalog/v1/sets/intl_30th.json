@@ -25,6 +25,20 @@
     "counts": {
       "official": 128,
       "total": 169
+    },
+    "otherPrint": "asia:M6a",
+    "cover": {
+      "cardId": "intl:30th:150",
+      "images": {
+        "de": {
+          "url": "https://assets.tcgdex.net/de/me/30th/150",
+          "lang": "de"
+        },
+        "en": {
+          "url": "https://assets.tcgdex.net/en/me/30th/150",
+          "lang": "en"
+        }
+      }
     }
   },
   "subsets": [

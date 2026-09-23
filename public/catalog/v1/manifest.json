@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.23.5",
-  "generatedAt": "2026-09-23T15:26:24.224Z",
+  "catalogVersion": "2026.09.23.6",
+  "generatedAt": "2026-09-23T15:28:30.333Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
@@ -9,21 +9,21 @@
   ],
   "imagesVerified": true,
   "sets": [
-    {"id":"intl:30th","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"30 Jahre","en":"30th Celebration"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":128,"total":169}},
+    {"id":"intl:30th","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"30 Jahre","en":"30th Celebration"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":128,"total":169},"otherPrint":"asia:M6a","cover":{"cardId":"intl:30th:150","images":{"de":{"url":"https://assets.tcgdex.net/de/me/30th/150","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en"}}}},
     {"id":"intl:30th-c","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"subset","parentSetId":"intl:30th","name":{"de":"30 Jahre: Klassische Sammlung","en":"30th Classic Collection"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":30,"total":30}},
-    {"id":"asia:M6a","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"30th CELEBRATION","zh-tw":"30th CELEBRATION","zh-cn":"30周年庆典","de":"30th CELEBRATION","en":"30th CELEBRATION"},"code":"M6a","languages":["ja","zh-cn","zh-tw"],"releaseDates":{"ja":"2026-09-16"},"counts":{"official":103,"total":176},"sectionNames":{"subset":{"de":"Klassische Sammlung","en":"Classic Collection"}}}
+    {"id":"asia:M6a","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"30th CELEBRATION","zh-tw":"30th CELEBRATION","zh-cn":"30周年庆典","de":"30th CELEBRATION","en":"30th CELEBRATION"},"code":"M6a","languages":["ja","zh-cn","zh-tw"],"releaseDates":{"ja":"2026-09-16"},"counts":{"official":103,"total":176},"sectionNames":{"subset":{"de":"Klassische Sammlung","en":"Classic Collection"}},"otherPrint":"intl:30th","cover":{"cardId":"asia:M6a:127","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en","counterpart":true},"zh-cn":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en","counterpart":true}}}}
   ],
   "files": {
     "sets": {
       "intl:30th": {
         "path": "sets/intl_30th.json",
-        "sha256": "193e5fd3e692a204704d08a8b87f8e10f6c2459a637637179a0b5c562f36f2be",
-        "bytes": 115519
+        "sha256": "986b23f5147f5f5636a6721461fd6255a4dd471dc78e230473abbe3dab13b99d",
+        "bytes": 115851
       },
       "asia:M6a": {
         "path": "sets/asia_M6a.json",
-        "sha256": "16965af9f84e3c54664bcf11f93b7fa635625fc160835d648d46eace0ac5a67d",
-        "bytes": 152997
+        "sha256": "a71969d402f78d0260edbde7ac963a7397263b0c2a3e54d97c40a1150a771a19",
+        "bytes": 153539
       }
     },
     "sealed": {
@@ -33,7 +33,7 @@
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "36cf0fefc9e5db0ea612745464f7859ae89d7c131b864d7d802a7e0997e33fe6",
+      "sha256": "c3e86a10f3e1c6f89a8dd494e6bddba7eafe350f652c9b9cbdb4374133e94536",
       "bytes": 155959
     }
   }
