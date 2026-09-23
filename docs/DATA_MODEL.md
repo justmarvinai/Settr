@@ -445,6 +445,8 @@ remainingCost(h)    = costTotal(h) − Σ costOfUnits(disposed units)
   - Each pull's share is `productCostOfOpenedUnits × value(pull at opening) ÷ Σ value(all pulls at opening)`.
   - Pulls without a price share the rest **evenly**.
   - Allocation uses the largest-remainder method on minor units, so the sum is exact. The result is written into each pull's `acquisition.priceTotal` (with `fromHoldingId`), and the product's opened units show as consumed.
+  - **As built (M3):** a pull's value is the latest price of its series (language, variant, grade) in `priceLatest`, times its quantity. When at least one pull has a value, the cost goes to the priced pulls by value and unpriced pulls get 0: the formula above leaves no rest for them. When no pull has a value, the cost is split evenly per card. Whether unpriced pulls should get a share in the mixed case is R5.3. Until prices exist (M4), every split is even.
+  - Quick adds (＋ on a tile, Schnellerfassung) record a price only when one is typed and a date only when the defaults carry one; lists then show the day the lot was entered (`createdAt`).
 
 ### 6.3 Valuation (as of date *d*)
 

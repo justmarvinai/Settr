@@ -2,14 +2,39 @@
 
 > Last updated: 2026-09-23.
 > **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). M1 (Foundation) and M2 (Catalog) are built and wait for your check.
-> **Round 4 (M2): open**, nothing blocking. These are data points to check when you have a moment; until then my recommendation (⭐) applies.
+> **Coding: approved on 2026-09-23** ("You can start"). M1 (Foundation), M2 (Catalog) and M3 (Collection) are built and wait for your check.
+> **Rounds 4 (M2) and 5 (M3): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 5: collection details (M3, open, nothing blocking)
+
+**R5.1 · Condition in the add sheet.** Language, source and Lagerort start with what you used last; the condition always starts at your default from Einstellungen (NM).
+- [ ] ⭐ Keep NM as the start (most cards you add are NM; an LP copy is a deliberate choice).
+- [ ] Start with the last-used condition, like the source.
+
+**R5.2 · Lots in a binder.** A lot of several copies (e.g. ×3) takes one pocket, as a stack. *Verschieben* into a binder gives every selected lot the next free pocket, in the order of the list; lots already in that binder keep theirs.
+- [ ] ⭐ Keep one pocket per lot. If you want copies in separate pockets, split the lot (edit the quantity, then duplicate).
+- [ ] One pocket per copy: moving a ×3 lot into a binder splits it into three lots.
+
+**R5.3 · Opening costs when only some pulls have a price.** *Abschließen* splits the product's cost by the pulls' current prices. If none has a price, it splits evenly per card. If some have one, the unpriced pulls get 0 € (the spec's "the rest evenly" leaves no rest).
+- [ ] ⭐ Keep it that way. Unpriced pulls are usually bulk.
+- [ ] Unpriced pulls count as the average of the priced ones.
+- [ ] Split evenly unless every pull has a price.
+
+**R5.4 · Missing cards on set pages.** Missing cards appear faded with a dashed outline once you own at least one card of the set, in any language; which cards count as missing follows the language shown (or any language with *Alle Sprachen*). Sets you don't collect keep normal tiles.
+- [ ] ⭐ Keep it.
+- [ ] Always show owned/missing, even for sets you don't collect.
+
+**R5.5 · Columns in Sammlung › Tabelle.** Now: Karte (with set and variant), Nr., Sprache, Zustand, Menge, Einkauf/Stk., Investiert, Kaufdatum, Lagerort; narrower windows drop the last ones first. M4 adds Wert/Stk., Wert, G/V, G/V % and Preis vom, and lets you choose columns.
+- [ ] ⭐ OK. Tell me if a column you need is missing or in the wrong place.
+- [ ] Other: **Antwort:**
 
 ---
 

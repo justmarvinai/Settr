@@ -72,8 +72,8 @@
 | Dates | **date-fns 4** + `Intl` | 4.4 | Temporal isn't Baseline yet (no Safari). Revisit later | Temporal polyfill (size) |
 | Search | **MiniSearch** in a Web Worker | 7.2 | Prefix + fuzzy search, serializable index, custom tokenizer for CJK bigrams | FlexSearch (switch if the index exceeds tens of thousands of docs), Orama (heavier), Fuse.js (no index; fine for palette-only) |
 | UI state | **Zustand** (only for small ephemeral state) | 5.0 | Tiny. Filters live in the URL and data in Dexie | Jotai 3, Redux |
-| Toasts / command palette | **sonner** · **cmdk** *or* Base UI Autocomplete | 2.0 · 1.1 | cmdk is stable but dormant, so we prefer the Base UI Autocomplete-based palette and keep cmdk only if it's clearly better in prototyping | — |
-| Tables / virtualization | **TanStack Table 9** + **TanStack Virtual 3** | 9.2 · 3.14 | Headless, tree-shakable, virtualized grids and tables | AG Grid (heavy) |
+| Toasts / command palette | **Base UI** Toast · Autocomplete (as built, M1/M2) | 1.8 | One primitive library; the palette is Base UI's inline Autocomplete | sonner, cmdk (stable but dormant) |
+| Lists / virtualization | **TanStack Virtual 3** (window virtualizer); **no table library** (ADR-036) | 3.14 | The grid and the table share one pure filter → sort → group pipeline (`domain/collection/view.ts`); columns are plain config | TanStack Table 9 (a second pipeline beside the grid's), AG Grid (heavy) |
 | PWA | **vite-plugin-pwa** (Workbox) | 1.3 · Workbox 7.4 | Precache, runtime caching, update prompt, manifest | Serwist (v10 still preview) |
 | File I/O | **browser-fs-access**, Web Share, `CompressionStream` | 0.38 | Save/open pickers with fallbacks. In Brave, where the pickers are off by default, it falls back to downloads and `<input type=file>` (ADR-027, §8.2) | — |
 | Share images | **modern-screenshot** | 4.7 | Active. Needs CORS-clean images (see §8.3) | html-to-image (stale) |
@@ -109,7 +109,7 @@
 - `components/ui/` (design-system primitives) has no domain knowledge.
 - These rules are enforced with Oxlint import restrictions (`no-restricted-imports` patterns) and reviewed in PRs.
 
-### 4.2 Folder structure (planned)
+### 4.2 Folder structure (as built through M3, plus planned folders)
 
 ```
 settr/
@@ -127,7 +127,9 @@ settr/
 │  ├─ routes/                   # TanStack Router file routes (thin: compose features)
 │  ├─ features/
 │  │  ├─ catalog/               # sets, set detail, card detail, sealed catalog, search UI
-│  │  ├─ collection/            # holdings CRUD, views, filters, completion, quick-add
+│  │  ├─ collection/            # what catalog pages share: ownership + completion, holdings panel, lot menu, item info, Lagerorte
+│  │  ├─ entry/                 # add/edit, Schnellerfassung, sell, open + pulls, custom items (TanStack Form; loaded by the sheet host, ADR-037)
+│  │  ├─ library/               # Sammlung › Karten / Sealed: filters, grid, table, bulk actions (TanStack Virtual; loaded by those routes, ADR-037)
 │  │  ├─ prices/                # price entry, history, charts, price session
 │  │  ├─ portfolio/             # dashboard, analytics
 │  │  ├─ wishlist/
@@ -138,14 +140,14 @@ settr/
 │  │  ├─ overview/              # Übersicht (the dashboard grows here in M4)
 │  │  └─ onboarding/
 │  ├─ components/
-│  │  ├─ ui/                    # hand-written shadcn-style primitives on Base UI, one module each (ADR-031)
+│  │  ├─ ui/                    # hand-written shadcn-style primitives on Base UI, one module each (ADR-031); glyphs.tsx = the shell's single-weight icons (ADR-037)
 │  │  └─ domain/                # CardImage, CardTile, HoloCard, PLDelta, PriceChart …
 │  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, merge, schemas (Zod)
-│  ├─ db/                       # Dexie schema, migrations, repositories, hooks
+│  ├─ db/                       # Dexie schema, migrations, repositories, live-query hooks, backup export; core.ts = what the shell needs at startup (ADR-037)
 │  ├─ catalog/                  # catalog loader, image URL builder, search client
 │  ├─ workers/                  # search.worker.ts, analytics.worker.ts (Comlink)
 │  ├─ i18n/                     # Paraglide project (messages/de.json, en.json), format helpers
-│  ├─ lib/                      # small generic utilities
+│  ├─ lib/                      # small generic utilities (sheets.ts: the sheet request store, useElementBox for virtualizers)
 │  └─ styles/                   # tokens.css, globals.css
 ├─ tests/
 │  ├─ e2e/                      # Playwright specs (+ axe, console/CSP guard in fixtures.ts)
@@ -173,10 +175,11 @@ settr/
 ## 6. Key data flows
 
 **Add a holding**
-1. The sheet (TanStack Form + Zod) validates the input.
-2. `holdingsRepo.create()` runs a Dexie `rw` transaction that writes the holding, bumps `dataVersion` and records an undo entry in memory.
-3. Live queries on the set grid, collection and dashboard re-render automatically.
-4. A toast offers *Rückgängig*, which calls `holdingsRepo.delete()` plus a tombstone cleanup.
+1. A page asks for a sheet through `lib/sheets.ts` (`openSheet({ type: 'add', item })`); the shell mounts the lazy sheet host, which loads `features/entry`.
+2. The sheet (TanStack Form + Zod) validates the input.
+3. `createHolding()` runs a Dexie `rw` transaction that writes the holding and bumps `dataVersion`.
+4. Live queries on the set grid, the card page, Sammlung and (M4) the dashboard re-render automatically.
+5. A toast offers *Rückgängig* for 8 s, backed by the inverse repository call (`deleteHolding`, `restoreHoldings`, …). Bulk actions return the lots as they were, so one call undoes them all.
 
 **Record a price**
 1. `pricesRepo.add()` runs in a transaction that writes the `prices` row and upserts `priceLatest` (if the entry is the newest in its series).
@@ -202,7 +205,7 @@ settr/
 - **Fields and boosts:** name (all languages) ×3, number ×3 (exact `025`, `25`, `025/128`), set name/code ×2, illustrator ×1, rarity ×1.
 - **Query syntax (power users):** `set:30c`, `lang:ja`, `rarity:sar`, `#025`, and `owned:yes|no` (applied as filters after the text search).
 - Optional pinyin search for Chinese names (`pinyin-pro`) is deferred to post-v1.
-- **As built (M2, ADR-035):** `src/catalog/search` (engine, query parser, normalization, worker client) and `src/workers/search.worker.ts`. The worker builds the index once per catalog version from MiniSearch's serialized form; names sit in a Latin and a CJK field, CJK runs index bigrams plus each run's last character, and a query term that equals a card number ranks first. `useCatalogSearch` (TanStack Query) serves the palette and Katalog › Karten. `owned:` is parsed but applied by the collection (M3).
+- **As built (M2, ADR-035):** `src/catalog/search` (engine, query parser, normalization, worker client) and `src/workers/search.worker.ts`. The worker builds the index once per catalog version from MiniSearch's serialized form; names sit in a Latin and a CJK field, CJK runs index bigrams plus each run's last character, and a query term that equals a card number ranks first. `useCatalogSearch` (TanStack Query) serves the palette and Katalog › Karten. `owned:ja|nein` is applied after the search against the ids of items with copies left (`useOwnedItemIds`, M3); the catalog layer itself never reads user data.
 
 ---
 

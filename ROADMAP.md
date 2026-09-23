@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-23 · Current phase: **M2 · Catalog** ✅ built, waiting for your check (together with M1: Vercel, Brave, iPhone) · next: **M3 · Collection**
+> Last updated: 2026-09-23 · Current phase: **M3 · Collection** ✅ built, waiting for your check (M1 and M2 are merged; Vercel, Brave and iPhone checks still open) · next: **M4 · Prices & Portfolio**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -11,9 +11,9 @@
 | Milestone | Goal | Version | Status |
 |---|---|---|---|
 | **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ✅ |
-| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ built · 🔒 your check |
-| **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ built · 🔒 your check |
-| **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | 🔒 |
+| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
+| **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
+| **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ built · 🔒 your check |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | 🔒 |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | 🔒 |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | 🔒 |
@@ -93,20 +93,25 @@
 
 ---
 
-## M3 · Collection 🔒 → v0.3.0
+## M3 · Collection ✅ → v0.3.0 (built 2026-09-23, waiting for your check)
 
-- [ ] Add/edit card holdings (COL-01) and sealed holdings (COL-02) with MoneyInput/DateInput
-- [ ] Edit / duplicate / delete + undo (COL-03)
-- [ ] My cards / My sealed: grid + virtualized table, filters, sort, group-by, summary bar, bulk actions (COL-04, COL-05)
-- [ ] Set completion Basis / Komplett / Master per language (COL-07)
-- [ ] Quick-add mode (COL-06)
-- [ ] Tags and **binder-aware storage locations**: 3×3 / 3×4 / 4×3 layouts, page + slot, next-free-slot suggestion (COL-09, ADR-023)
-- [ ] Sell/trade/gift disposals (COL-11, Q6.5)
-- [ ] Open sealed + optional pull logging with proportional cost allocation (COL-12, Q5.8)
-- [ ] Custom items (CAT-08)
-- [ ] **DAT-01 lite:** raw JSON export, so development data is safe from day one
+- [x] Add/edit card holdings (COL-01) and sealed holdings (COL-02) with money and date inputs: one sheet from ＋ Hinzufügen, `N` on a tile and the card/product pages; ＋ quick add on set tiles (R2.1)
+- [x] Edit / duplicate / delete + undo (COL-03)
+- [x] My cards / My sealed: grid + virtualized table, filters, sort, group-by, summary bar, bulk actions (COL-04, COL-05): filters in a sheet with chips, everything in the URL; tags, move and delete for a selection (ADR-036)
+- [x] Set completion Basis / Komplett / Master per language (COL-07), with the owned/missing filter and faded missing cards on set pages
+- [x] Quick-add mode (COL-06): number grammar, sticky defaults, running list with undo, `Q` on set pages
+- [x] Tags and **binder-aware storage locations**: 3×3 / 3×4 / 4×3 layouts, page + slot, next-free-slot suggestion (COL-09, ADR-023); Lagerorte in Einstellungen
+- [x] Sell/trade/gift disposals (COL-11, Q6.5)
+- [x] Open sealed + optional pull logging with proportional cost allocation (COL-12, Q5.8; mixed priced/unpriced case is R5.3)
+- [x] Custom items (CAT-08)
+- [x] **DAT-01 lite:** the full backup as one JSON download in Einstellungen › Daten, so development data is safe from day one
+- [x] `owned:ja|nein` in card search and the palette
+- [x] e2e + axe for the collection flows (desktop and phone Chromium; WebKit in CI)
+- [ ] **You:** check M1–M3 in Brave and on the iPhone, answer rounds 4 and 5 in `USER_QUESTIONS.md` when convenient
 
 **Exit:** the whole personal collection can be entered comfortably. Completion numbers match the manual counts.
+
+**Carried forward:** price columns and choosing columns in the table, price filters and the price session for a selection (M4); CSV for a selection (M5); a palette entry for Schnellerfassung and arrow-key grid navigation (M6); the binder view (v1.1).
 
 ---
 
@@ -123,6 +128,7 @@
 - [ ] Per-lot value override for LP/damaged copies (PRC-07)
 - [ ] Portfolio page: allocation and performance (PRT-02, PRT-03)
 - [ ] Realized P/L (PRT-04)
+- [ ] Sammlung: value and P/L in the summary, tiles and table; price columns and a column chooser; *Bepreist*, *Preis veraltet* and *G/V* filters; the price session for a selection (from M3)
 
 **Exit:** 30 prices can be updated in ≤ 5 min. Dashboard numbers reconcile with a hand-calculated fixture.
 
@@ -130,9 +136,9 @@
 
 ## M5 · Data Safety 🔒 → v0.5.0
 
-- [ ] Full backup export with checksum, embedded photos option (DAT-01)
+- [ ] Full backup export with checksum, embedded photos option (DAT-01; the export itself ships with M3, M5 adds the options and the ⌘K entry)
 - [ ] Import: parse in a worker → migrate → validate → preview → replace/merge → snapshot → undo (DAT-02)
-- [ ] CSV export (Excel-DE dialect) (DAT-03)
+- [ ] CSV export (Excel-DE dialect) (DAT-03), also for a selection in Sammlung
 - [ ] Backup reminders + status pill (DAT-04), storage usage display (DAT-05)
 - [ ] Delete all data (DAT-09)
 - [ ] Round-trip, migration-fixture and merge property tests in CI
@@ -145,6 +151,7 @@
 
 - [ ] Holo card viewer (DSN-01), shared-element transitions (DSN-02), foil progress rings (DSN-03)
 - [ ] Onboarding (APP-06, no demo data), empty states, microcopy pass (German review)
+- [ ] Palette commands (Schnellerfassung, Backup exportieren) and arrow-key navigation in grids (UX_SPEC.md §7)
 - [ ] PWA polish: install prompts (iOS guidance), offline indicator, update flow
 - [ ] Accessibility audit (axe + manual keyboard/screen-reader pass), performance audit (Lighthouse CI budgets)
 - [ ] "Über & Rechtliches": disclaimer, credits (TCGdex, PokéAPI, Cardmarket data), privacy note. No Impressum while private (APP-08, ADR-022)
