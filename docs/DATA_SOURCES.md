@@ -89,7 +89,7 @@
   - **DE:** main sets from BW to Mega Evolution are 100 % covered, **but `mee` and `30th-c` are at 0 %** (as of 2026-09-20).
   - **JA:** the **M-series (M2–M6) has 0 images** (2026-09-13), so assume **no JP images for `M6a`** at launch.
   - **ZH-TW:** partial. **ZH-CN:** none.
-- **Conclusion:** image availability is computed **at build time** from `datas.json` plus GET checks in CI, stored per card and language in the catalog, and refreshed weekly (§6).
+- **Conclusion:** image availability is computed **at build time** by GET checks against the image server in CI, stored per card and language in the catalog, and refreshed weekly (§6). `datas.json` isn't used: it lags behind new sets (on 2026-09-23 it listed none of `30th`, `30th-c`, `mee` or `M6a`).
 
 ### 3.4 API (reference only; not used at runtime)
 
@@ -141,20 +141,20 @@ Decision (Q4.6): **no official publisher images**. The chain is TCGdex → cross
 | Input | Form |
 |---|---|
 | `catalog.config.ts` | Which sets to include, e.g. `{ print: 'intl', tcgdex: ['30th', '30th-c'], energies: { set: 'mee', localIds: ['009'…'016'] } }` and `{ print: 'asia', tcgdex: ['M6a'] }` |
-| TCGdex | `tcgdex/cards-database` at a **pinned commit** (git clone, sparse, ~8 s), compiled with its own compiler (Bun) into per-language JSON. The asset index `datas.json` is fetched in CI |
-| Cardmarket | `products_nonsingles_6.json` (sealed skeleton) + `products_singles_6.json` (`idMetacard` links, e.g. to map JP M6a cards to their **Simplified Chinese products in expansion 6603**), downloaded in CI |
+| TCGdex | `tcgdex/cards-database` at a **pinned commit** (`scripts/catalog/sources.lock.json`; shallow git fetch). The pipeline imports the set's TypeScript card files directly (tsx), so it needs neither Bun nor TCGdex's compiler |
+| Cardmarket | `products_nonsingles_6.json` (sealed skeleton) + `products_singles_6.json` (`idMetacard` links between the **Japanese products in expansion 6602** and the **Simplified Chinese products in expansion 6603**), downloaded in CI |
 | Cardmarket price guide | `price_guide_6.json`, fetched **daily** by a separate job (§8.3; committed or built at deploy time per ADR-029) |
 | PokéAPI | species-name CSV (derived names and search aliases) |
 | Curated overlays (`data/curated/`) | YAML/JSON, human-edited and reviewed in PRs (§6.3) |
 
 ### 6.2 Steps
 
-1. **Fetch:** check out the TCGdex commit, download the Cardmarket files and `datas.json` (and TCGCSV groups when sealed images are needed).
-2. **Compile:** run the TCGdex compiler for the configured languages.
+1. **Fetch:** check out the pinned TCGdex, PTCG-database and PokéAPI commits; in CI (`--network`) also download the Cardmarket files (and TCGCSV groups when sealed images are needed).
+2. **Load:** import the configured sets' card files from the TCGdex checkout.
 3. **Normalize** into Settr's schema (`DATA_MODEL.md` §4): Settr IDs, `print`, `section`, `sort`, `printedNumber`, controlled vocabularies (English values → Settr IDs), variants (`variantId` → Settr `VariantId`, with overrides), and per-variant Cardmarket IDs.
 4. **Overlay** curated data: sealed products (DE/EN/JP/TC/SC), Chinese names (TC from `type-null/PTCG-database` or derived from PokéAPI `zh-Hant`; SC derived from PokéAPI `zh-Hans`; Trainer/Energy names curated), printed numbers (Classic Collection), SC printed rarity marks, promos, rarity-display rules, name fixes, and Cardmarket ID corrections.
-   **Per-language Cardmarket IDs:** for `asia` cards, the JP product (expansion 6602) goes into `byLanguage.ja`, and the SC product with the same `idMetacard` (expansion 6603) into `byLanguage['zh-cn']`. Traditional Chinese copies use the JP product with Cardmarket's T-Chinese language filter.
-5. **Resolve images:** apply the §5 chain. Keep only URLs that are listed in `datas.json` **and** pass a CI GET check.
+   **Per-language Cardmarket IDs:** TCGdex keeps one Cardmarket ID per `asia` card, and for `M6a` it points at the **Simplified Chinese** product. The product's expansion decides the language: a JP product (expansion 6602) goes into `byLanguage.ja`, an SC product (6603) into `byLanguage['zh-cn']`, and the other language is found through the shared `idMetacard` (several prints of one card pair in number order, only when both sides have the same count). Traditional Chinese copies use the JP product with Cardmarket's T-Chinese language filter. Offline builds keep the IDs of the last CI build.
+5. **Resolve images:** apply the §5 chain. In CI, keep only URLs that pass a GET check (the same for set logos and symbols). Offline builds keep the pictures of the last CI build; cards it didn't know get their exact-language URL, unverified (`imagesVerified: false` in the manifest).
 6. **Validate:** Zod schemas, counts vs official counts (e.g. `30th` = 161, `30th-c` = 30, `M6a` = 176), unique IDs, every sealed product has ≥ 1 set, and every `idProduct` exists in the Cardmarket file.
 7. **Emit** `public/catalog/v1/manifest.json` (set summaries grouped by series), one `sets/*.json` chunk per set, `sealed.json` and the slim global `search-index.json` (ADR-028), with SHA-256 hashes and `catalogVersion`.
 8. **Report:** a Markdown diff summary (new/changed/removed cards and products, image coverage per language, and ID changes, which **must** be aliased) posted to the PR.

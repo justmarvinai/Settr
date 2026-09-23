@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { BuildProblems, BuiltSet } from './build';
+import type { BuildProblems, BuiltCard, BuiltSet } from './build';
 import type { CuratedProduct } from './curated';
 import { dirs } from './paths';
+import type { PreviousCatalog } from './previous';
 
 export interface CardmarketProduct {
   idProduct: number;
@@ -37,16 +38,22 @@ export function loadCardmarket(): CardmarketIndex | null {
 
 export interface CardmarketReport {
   checked: number;
-  simplifiedChinese: { mapped: number; unresolved: string[] };
+  /** Singles per configured expansion, to spot an expansion Cardmarket hasn't filled yet. */
+  singlesPerExpansion: Record<number, number>;
+  /** Asian prints: ids found per card language, and cards left without one. */
+  asia: { ja: number; 'zh-cn': number; unresolved: string[] };
   /** Sealed products listed for the configured expansions, to curate `refs.cardmarket`. */
   sealedCandidates: CardmarketProduct[];
 }
 
+type AsianLanguage = 'ja' | 'zh-cn';
+
 /**
- * Checks every card's Cardmarket id against the product file and adds Simplified Chinese product
- * ids for Asian cards via `idMetacard` (JP expansion ↔ SC expansion, DATA_SOURCES.md §6.2).
- * Several prints of one card share a metacard (30 Pikachus), so those pair in number order, and
- * only when both sides have the same count.
+ * Checks every card's Cardmarket id against the product file and sorts the Asian ids into
+ * `byLanguage` (DATA_SOURCES.md §6.2). TCGdex keeps one id per Asian card, and for M6a it points
+ * at the Simplified Chinese product, so the expansion decides the language and the other one is
+ * found through `idMetacard`. Several prints of one card share a metacard (30 Pikachus), so those
+ * pair in number order, and only when both sides have the same count.
  */
 export function applyCardmarket(
   sets: BuiltSet[],
@@ -56,81 +63,141 @@ export function applyCardmarket(
 ): CardmarketReport {
   const report: CardmarketReport = {
     checked: 0,
-    simplifiedChinese: { mapped: 0, unresolved: [] },
+    singlesPerExpansion: {},
+    asia: { ja: 0, 'zh-cn': 0, unresolved: [] },
     sealedCandidates: [],
   };
   const expansions = new Set<number>();
+  const sealedExpansions = new Set<number>();
   for (const set of sets) {
     const expected = set.config.cardmarket;
     if (!expected) continue;
     expansions.add(expected.expansion);
     if (expected.simplifiedChineseExpansion) expansions.add(expected.simplifiedChineseExpansion);
-    for (const card of set.cards) {
-      const refs = card.variants[0]?.refs?.cardmarket;
-      const id = refs?.default ?? refs?.byLanguage?.ja;
-      if (!id) continue;
-      report.checked++;
-      const product = cm.singles.get(id);
-      if (!product)
-        problems.warnings.push(
-          `${card.id}: Cardmarket product ${id} not in products_singles_6.json`,
-        );
-      else if (product.idExpansion !== expected.expansion && card.section !== 'energy') {
-        problems.warnings.push(
-          `${card.id}: Cardmarket product ${id} is in expansion ${product.idExpansion}, expected ${expected.expansion}`,
-        );
+    for (const id of expected.sealedExpansions ?? []) sealedExpansions.add(id);
+  }
+  const sealedIn = (expansion: number) =>
+    expansions.has(expansion) || sealedExpansions.has(expansion);
+  for (const p of cm.singles.values())
+    if (expansions.has(p.idExpansion))
+      report.singlesPerExpansion[p.idExpansion] =
+        (report.singlesPerExpansion[p.idExpansion] ?? 0) + 1;
+
+  for (const set of sets) {
+    const expected = set.config.cardmarket;
+    if (!expected) continue;
+    if (set.config.print === 'intl') {
+      for (const card of set.cards) {
+        const id = card.variants[0]?.refs?.cardmarket?.default;
+        if (!id) continue;
+        report.checked++;
+        const product = cm.singles.get(id);
+        if (!product)
+          problems.warnings.push(
+            `${card.id}: Cardmarket product ${id} not in products_singles_6.json`,
+          );
+        else if (product.idExpansion !== expected.expansion && card.section !== 'energy')
+          problems.warnings.push(
+            `${card.id}: Cardmarket product ${id} is in expansion ${product.idExpansion}, expected ${expected.expansion}`,
+          );
       }
+      continue;
     }
 
-    const scExpansion = expected.simplifiedChineseExpansion;
-    if (!scExpansion) continue;
-    const scByMetacard = new Map<number, number[]>();
-    for (const p of cm.singles.values()) {
-      if (p.idExpansion === scExpansion && p.idMetacard)
-        scByMetacard.set(p.idMetacard, [...(scByMetacard.get(p.idMetacard) ?? []), p.idProduct]);
-    }
-    const jpByMetacard = new Map<number, typeof set.cards>();
+    const expansionOf: Record<AsianLanguage, number | undefined> = {
+      ja: expected.expansion,
+      'zh-cn': expected.simplifiedChineseExpansion,
+    };
+    const byMetacard = (expansion: number | undefined) => {
+      const map = new Map<number, number[]>();
+      for (const p of cm.singles.values())
+        if (p.idExpansion === expansion && p.idMetacard)
+          map.set(p.idMetacard, [...(map.get(p.idMetacard) ?? []), p.idProduct]);
+      return map;
+    };
+    const catalog = { ja: byMetacard(expansionOf.ja), 'zh-cn': byMetacard(expansionOf['zh-cn']) };
+    const found = new Map<BuiltCard, Partial<Record<AsianLanguage, number>>>();
+    // Cards whose known product shares a metacard, per language of that product.
+    const groups = new Map<
+      string,
+      { known: AsianLanguage; metacard: number; cards: BuiltCard[] }
+    >();
     for (const card of set.cards) {
-      const ja = card.variants[0]?.refs?.cardmarket?.byLanguage?.ja;
-      const metacard = ja ? cm.singles.get(ja)?.idMetacard : undefined;
-      if (metacard) jpByMetacard.set(metacard, [...(jpByMetacard.get(metacard) ?? []), card]);
-      else report.simplifiedChinese.unresolved.push(`${card.id} (no JP product/metacard)`);
+      const id = card.source.cardmarket;
+      if (!id) {
+        report.asia.unresolved.push(`${card.id}: no Cardmarket id in TCGdex`);
+        continue;
+      }
+      report.checked++;
+      const product = cm.singles.get(id);
+      const known = (['ja', 'zh-cn'] as const).find((l) => expansionOf[l] === product?.idExpansion);
+      if (!product || !known) {
+        problems.warnings.push(
+          product
+            ? `${card.id}: Cardmarket product ${id} is in expansion ${product.idExpansion}, expected ${expected.expansion} or ${expected.simplifiedChineseExpansion}`
+            : `${card.id}: Cardmarket product ${id} not in products_singles_6.json`,
+        );
+        continue;
+      }
+      found.set(card, { [known]: id });
+      if (!product.idMetacard) continue;
+      const key = `${known}:${product.idMetacard}`;
+      const group = groups.get(key) ?? { known, metacard: product.idMetacard, cards: [] };
+      group.cards.push(card);
+      groups.set(key, group);
     }
-    for (const [metacard, cards] of jpByMetacard) {
-      const sc = (scByMetacard.get(metacard) ?? []).toSorted((a, b) => a - b);
-      if (sc.length !== cards.length) {
-        report.simplifiedChinese.unresolved.push(
-          `${cards.map((c) => c.id).join(', ')}: ${cards.length} JP vs ${sc.length} SC products`,
+    for (const { known, metacard, cards } of groups.values()) {
+      const other: AsianLanguage = known === 'ja' ? 'zh-cn' : 'ja';
+      if (!expansionOf[other]) continue;
+      const candidates = (catalog[other].get(metacard) ?? []).toSorted((a, b) => a - b);
+      if (candidates.length !== cards.length) {
+        report.asia.unresolved.push(
+          `${cards.map((c) => c.id).join(', ')}: ${cards.length} ${known} vs ${candidates.length} ${other} products`,
         );
         continue;
       }
       cards
         .toSorted((a, b) => a.sort - b.sort)
         .forEach((card, i) => {
-          const variant = card.variants[0];
-          const cardmarket = variant?.refs?.cardmarket;
-          if (cardmarket)
-            cardmarket.byLanguage = { ...cardmarket.byLanguage, 'zh-cn': sc[i] as number };
-          report.simplifiedChinese.mapped++;
+          const ids = found.get(card);
+          if (ids) ids[other] = candidates[i];
         });
+    }
+    for (const [card, byLanguage] of found) {
+      const variant = card.variants[0];
+      if (!variant) continue;
+      variant.refs = { ...variant.refs, cardmarket: { byLanguage } };
+      if (byLanguage.ja) report.asia.ja++;
+      if (byLanguage['zh-cn']) report.asia['zh-cn']++;
     }
   }
 
   for (const product of products) {
     const id = product.refs?.cardmarket;
     if (!id) continue;
-    const found = cm.nonsingles.get(id);
-    if (!found)
+    const match = cm.nonsingles.get(id);
+    if (!match)
       problems.errors.push(
         `${product.id}: Cardmarket product ${id} not in products_nonsingles_6.json`,
       );
-    else if (!expansions.has(found.idExpansion))
+    else if (!sealedIn(match.idExpansion))
       problems.warnings.push(
-        `${product.id}: Cardmarket product ${id} is in expansion ${found.idExpansion}`,
+        `${product.id}: Cardmarket product ${id} is in expansion ${match.idExpansion}`,
       );
   }
-  report.sealedCandidates = [...cm.nonsingles.values()].filter(
-    (p) => expansions.has(p.idExpansion) || p.idExpansion === 6628,
-  );
+  report.sealedCandidates = [...cm.nonsingles.values()].filter((p) => sealedIn(p.idExpansion));
   return report;
+}
+
+/** Offline builds keep the Asian ids the last network build sorted out (see applyCardmarket). */
+export function carryOverCardmarket(sets: BuiltSet[], previous: PreviousCatalog): void {
+  for (const set of sets.filter((s) => s.config.print === 'asia')) {
+    for (const card of set.cards) {
+      const before = previous.cards.get(card.id);
+      for (const variant of card.variants) {
+        const cardmarket = before?.variants.find((v) => v.id === variant.id)?.refs?.cardmarket;
+        if (cardmarket) variant.refs = { ...variant.refs, cardmarket };
+      }
+    }
+  }
 }

@@ -1,6 +1,7 @@
 /**
- * Catalog pipeline (DATA_SOURCES.md §6): `pnpm catalog:sync` (offline: GitHub sources only) or
- * `pnpm catalog:sync --network` (CI: + Cardmarket files, TCGdex asset index and image checks).
+ * Catalog pipeline (DATA_SOURCES.md §6): `pnpm catalog:sync` (offline: GitHub sources only; keeps
+ * the pictures and Asian Cardmarket ids of the last network build) or `pnpm catalog:sync --network`
+ * (CI: + Cardmarket's product files and image checks against TCGdex's server).
  * Writes public/catalog/v1 and .cache/catalog/report.md. Never hand-edit the output.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -14,13 +15,19 @@ import {
   type CatalogProduct,
 } from '../../src/domain/catalog';
 import { buildSets, type BuildProblems } from './build';
-import { applyCardmarket, loadCardmarket, type CardmarketReport } from './cardmarket';
+import {
+  applyCardmarket,
+  carryOverCardmarket,
+  loadCardmarket,
+  type CardmarketReport,
+} from './cardmarket';
 import { loadCardOverlays, loadIdAliases, loadSealed } from './curated';
 import { emitCatalog } from './emit';
 import { fetchSources, updateLock } from './fetch';
-import { loadAssetIndex, resolveImages } from './images';
+import { resolveImages } from './images';
 import { loadSpeciesNames } from './names';
 import { CACHE, REPORT } from './paths';
+import { loadPrevious } from './previous';
 import { loadTraditionalChineseNames } from './ptcg';
 import { renderReport } from './report';
 
@@ -35,6 +42,7 @@ if (args.has('--update-sources')) {
   );
 }
 await fetchSources({ network });
+const previous = loadPrevious();
 const species = loadSpeciesNames();
 const sets = await buildSets(
   {
@@ -56,11 +64,11 @@ for (const product of products) {
 }
 
 let cardmarket: CardmarketReport | null = null;
-const cm = loadCardmarket();
+const cm = network ? loadCardmarket() : null;
 if (cm) cardmarket = applyCardmarket(sets, cm, curated, problems);
+else carryOverCardmarket(sets, previous);
 
-const assets = loadAssetIndex();
-const images = await resolveImages(sets, assets, { verify: network });
+const images = await resolveImages(sets, previous, { verify: network });
 
 // Strict checks the runtime schema leaves open (vocab.ts) and catalog-wide invariants.
 const seen = new Set<string>();
@@ -90,14 +98,15 @@ if (problems.errors.length) {
   process.exit(1);
 }
 
-const result = emitCatalog(sets, products, species, {
+const manifest = emitCatalog(sets, products, species, {
   imagesVerified: images.verified,
   generatedAt: new Date().toISOString(),
+  previous: previous.manifest,
 });
 
 // Catalog ids are permanent (DATA_MODEL.md §3): a vanished id needs an alias.
 const aliases = loadIdAliases();
-const removed = [...result.previousCardIds].filter((id) => !seen.has(id) && !aliases[id]);
+const removed = [...previous.cards.keys()].filter((id) => !seen.has(id) && !aliases[id]);
 if (removed.length) {
   console.error(
     `Card ids disappeared without an alias in data/curated/id-aliases.json:\n  ${removed.join('\n  ')}`,
@@ -109,8 +118,8 @@ mkdirSync(CACHE, { recursive: true });
 const report = renderReport({
   sets,
   products,
-  manifest: result.manifest,
-  previousCardIds: result.previousCardIds,
+  manifest,
+  previousCardIds: new Set(previous.cards.keys()),
   images,
   cardmarket,
   problems,

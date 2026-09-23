@@ -44,8 +44,16 @@ export interface SetConfig {
   /** Rarity for every card of the set (TCGdex leaves the Classic Collection at "None"). */
   forceRarity?: RarityId;
   extras?: ExtraCards[];
-  /** Cardmarket expansion ids, checked when the product files are available (CI). */
-  cardmarket?: { expansion: number; simplifiedChineseExpansion?: number };
+  /**
+   * Cardmarket expansion ids, checked when the product files are available (CI). `expansion` holds
+   * the singles (Japanese ones for Asian prints); `sealedExpansions` are extra expansions that only
+   * sell this set's sealed products.
+   */
+  cardmarket?: {
+    expansion: number;
+    simplifiedChineseExpansion?: number;
+    sealedExpansions?: number[];
+  };
   /** Japanese rarity marks: only RR/AR/SAR/FUR are printed (DATA_SOURCES.md §2). */
   japaneseRarityMarks?: boolean;
 }
@@ -112,7 +120,8 @@ export const CATALOG_SETS: SetConfig[] = [
       if (n <= 103) return 'main';
       return n >= 136 && n <= 165 ? 'subset' : 'secret';
     },
-    cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603 },
+    // 6628 is MF, the premium deck set's own expansion (its cards stay out of the v1 catalog).
+    cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603, sealedExpansions: [6628] },
     japaneseRarityMarks: true,
   },
 ];

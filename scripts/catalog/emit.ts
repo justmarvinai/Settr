@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import {
   CATALOG_SCHEMA_VERSION,
@@ -103,30 +103,15 @@ function write(relative: string, content: string) {
   return { path: relative, sha256: sha256(content), bytes: Buffer.byteLength(content) };
 }
 
-export interface EmitResult {
-  manifest: CatalogManifest;
-  previous: CatalogManifest | null;
-  previousCardIds: Set<string>;
-}
-
 /** Validates and writes public/catalog/v1 (DATA_SOURCES.md §6.2 steps 6–7). */
 export function emitCatalog(
   sets: BuiltSet[],
   products: CatalogProduct[],
   species: Map<number, SpeciesNames>,
-  options: { imagesVerified: boolean; generatedAt: string },
-): EmitResult {
+  options: { imagesVerified: boolean; generatedAt: string; previous: CatalogManifest | null },
+): CatalogManifest {
+  const { previous } = options;
   const manifestFile = join(OUT, 'manifest.json');
-  const previous = existsSync(manifestFile)
-    ? (catalogManifestSchema.safeParse(JSON.parse(readFileSync(manifestFile, 'utf8'))).data ?? null)
-    : null;
-  const previousCardIds = new Set<string>();
-  for (const ref of Object.values(previous?.files.sets ?? {})) {
-    const file = join(OUT, ref.path);
-    if (existsSync(file))
-      for (const c of (JSON.parse(readFileSync(file, 'utf8')) as CatalogSetFile).cards)
-        previousCardIds.add(c.id);
-  }
   rmSync(join(OUT, 'sets'), { recursive: true, force: true });
 
   const setFiles: CatalogManifest['files']['sets'] = {};
@@ -196,5 +181,5 @@ export function emitCatalog(
     files: { sets: setFiles, sealed, search },
   });
   writeFileSync(manifestFile, `${stableJson(manifest)}\n`);
-  return { manifest, previous, previousCardIds };
+  return manifest;
 }

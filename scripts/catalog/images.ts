@@ -1,29 +1,20 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import type { CardLanguage } from '../../src/domain/catalog-types';
 import type { CatalogImage } from '../../src/domain/catalog/schema';
 import type { BuiltCard, BuiltSet } from './build';
-import { dirs } from './paths';
+import type { PreviousCatalog } from './previous';
 import { assetBase } from './tcgdex';
-
-type Datas = Record<string, Record<string, Record<string, Record<string, unknown>>>>;
-
-/** TCGdex's asset index (`datas.json`: lang → serie → set → card/logo). Only available with network. */
-export function loadAssetIndex(): Datas | null {
-  const file = join(dirs.tcgdexAssets, 'datas.json');
-  return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as Datas) : null;
-}
 
 /** Languages TCGdex may hold pictures in, per print, best first. */
 const POOL: Record<'intl' | 'asia', CardLanguage[]> = {
   intl: ['en', 'de', 'fr', 'it', 'es', 'pt'],
-  asia: ['ja', 'zh-tw'],
+  asia: ['ja', 'zh-tw', 'zh-cn'],
 };
 
-async function isReachable(url: string): Promise<boolean> {
+/** GET (the body is dropped) with one retry on network errors. */
+async function answers(url: string): Promise<boolean> {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const response = await fetch(`${url}/low.webp`, { signal: AbortSignal.timeout(15_000) });
+      const response = await fetch(url, { signal: AbortSignal.timeout(15_000) });
       await response.body?.cancel();
       return response.ok;
     } catch {
@@ -33,41 +24,24 @@ async function isReachable(url: string): Promise<boolean> {
   return false;
 }
 
-export interface ImageStats {
-  verified: boolean;
-  checked: number;
-  /** Per card language: exact · other language · counterpart · none. */
-  coverage: Record<
-    string,
-    { exact: number; otherLanguage: number; counterpart: number; none: number }
-  >;
-}
-
 /**
- * Picks the best picture per card language (DATA_SOURCES.md §5): the exact language, another
- * language of the same print, the counterpart from the other print, or nothing (placeholder).
- * With the asset index, a URL must be listed there and answer a GET; offline, only the exact
- * language is emitted, unverified.
+ * Asks TCGdex's image server whether a file exists, once per URL and eight at a time. TCGdex's
+ * asset index (`datas.json`) lags behind new sets (its own API special-cases 30th), so the server
+ * answer decides, not the index.
  */
-export async function resolveImages(
-  sets: BuiltSet[],
-  index: Datas | null,
-  options: { verify: boolean },
-): Promise<ImageStats> {
-  const cards = sets.flatMap((s) => s.cards);
-  const byId = new Map(cards.map((c) => [c.id, c]));
-  const printOf = (card: BuiltCard) =>
-    sets.find((s) => s.config.id === card.setId)?.config.print ?? 'intl';
-  const reachable = new Map<string, Promise<boolean>>();
-  let checked = 0;
+function createChecker() {
+  const results = new Map<string, Promise<boolean>>();
   const queue: (() => void)[] = [];
   let running = 0;
-  const limited = (url: string) =>
-    new Promise<boolean>((resolve) => {
+  let checked = 0;
+  const check = (url: string): Promise<boolean> => {
+    const known = results.get(url);
+    if (known) return known;
+    const result = new Promise<boolean>((resolve) => {
       const run = () => {
         running++;
         checked++;
-        void isReachable(url).then((ok) => {
+        void answers(url).then((ok) => {
           running--;
           resolve(ok);
           queue.shift()?.();
@@ -76,38 +50,103 @@ export async function resolveImages(
       if (running < 8) run();
       else queue.push(run);
     });
-  const exists = (card: BuiltCard, lang: CardLanguage): Promise<boolean> => {
-    const { set, localId } = card.source;
-    if (!index) return Promise.resolve(false);
-    if (!index[lang]?.[set.serie.id]?.[set.id]?.[localId]) return Promise.resolve(false);
-    if (!options.verify) return Promise.resolve(true);
-    const url = assetBase(lang, set, localId);
-    if (!reachable.has(url)) reachable.set(url, limited(url));
-    return reachable.get(url) as Promise<boolean>;
+    results.set(url, result);
+    return result;
+  };
+  return { check, count: () => checked };
+}
+
+export interface ImageStats {
+  /** Every picture was checked by a network build (this one or, carried over, the last one). */
+  verified: boolean;
+  checked: number;
+  /** Offline: cards whose pictures came from the last network build. */
+  carried: number;
+  /** Per card language: exact · other language · counterpart · none. */
+  coverage: Record<
+    string,
+    { exact: number; otherLanguage: number; counterpart: number; none: number }
+  >;
+  /** Set logos and symbols found. */
+  logos: number;
+  symbols: number;
+}
+
+/**
+ * Picks the best picture per card language (DATA_SOURCES.md §5): the exact language, another
+ * language of the same print, the counterpart from the other print, or nothing (placeholder).
+ * With network, every URL must answer a GET. Offline, pictures and logos of the last network
+ * build are kept; cards it didn't know get their exact-language candidate, unverified.
+ */
+export async function resolveImages(
+  sets: BuiltSet[],
+  previous: PreviousCatalog,
+  options: { verify: boolean },
+): Promise<ImageStats> {
+  const cards = sets.flatMap((s) => s.cards);
+  const byId = new Map(cards.map((c) => [c.id, c]));
+  const printOf = (card: BuiltCard) =>
+    sets.find((s) => s.config.id === card.setId)?.config.print ?? 'intl';
+  const checker = createChecker();
+  const exists = (card: BuiltCard, lang: CardLanguage) =>
+    checker.check(`${assetBase(lang, card.source.set, card.source.localId)}/low.webp`);
+  const stats: ImageStats = {
+    verified: options.verify,
+    checked: 0,
+    carried: 0,
+    coverage: {},
+    logos: 0,
+    symbols: 0,
+  };
+  const count = (lang: CardLanguage, picked: CatalogImage | undefined) => {
+    const bucket = (stats.coverage[lang] ??= {
+      exact: 0,
+      otherLanguage: 0,
+      counterpart: 0,
+      none: 0,
+    });
+    if (!picked) bucket.none++;
+    else if (picked.counterpart) bucket.counterpart++;
+    else if (picked.lang === lang) bucket.exact++;
+    else bucket.otherLanguage++;
   };
 
-  const stats: ImageStats = {
-    verified: Boolean(index) && options.verify,
-    checked: 0,
-    coverage: {},
-  };
+  if (!options.verify) {
+    const carried = previous.manifest?.imagesVerified ? previous.cards : null;
+    for (const card of cards) {
+      const before = carried?.get(card.id);
+      if (before) {
+        card.images = before.images;
+        stats.carried++;
+      } else {
+        const own = POOL[printOf(card)];
+        card.images = Object.fromEntries(
+          card.languages
+            .filter((lang) => own.includes(lang))
+            .map((lang) => [
+              lang,
+              { url: assetBase(lang, card.source.set, card.source.localId), lang },
+            ]),
+        );
+      }
+      for (const lang of card.languages) count(lang, card.images[lang]);
+    }
+    stats.verified = carried !== null && stats.carried === cards.length;
+    for (const set of sets) {
+      const before = carried ? previous.sets.get(set.config.id) : undefined;
+      if (before?.logo) set.summary.logo = before.logo;
+      if (before?.symbol) set.summary.symbol = before.symbol;
+      if (set.summary.logo) stats.logos++;
+      if (set.summary.symbol) stats.symbols++;
+    }
+    return stats;
+  }
+
   await Promise.all(
     cards.map(async (card) => {
       const own = POOL[printOf(card)];
       const images: Partial<Record<CardLanguage, CatalogImage>> = {};
       for (const lang of card.languages) {
-        const bucket = (stats.coverage[lang] ??= {
-          exact: 0,
-          otherLanguage: 0,
-          counterpart: 0,
-          none: 0,
-        });
-        if (!index) {
-          // Offline build: the exact-language candidate only, verified later in CI.
-          if (own.includes(lang))
-            images[lang] = { url: assetBase(lang, card.source.set, card.source.localId), lang };
-          continue;
-        }
         let picked: CatalogImage | undefined;
         for (const candidate of [lang, ...own.filter((l) => l !== lang)]) {
           if (await exists(card, candidate)) {
@@ -133,27 +172,33 @@ export async function resolveImages(
           }
           if (picked) break;
         }
-        if (!picked) bucket.none++;
-        else if (picked.counterpart) bucket.counterpart++;
-        else if (picked.lang === lang) bucket.exact++;
-        else bucket.otherLanguage++;
+        count(lang, picked);
         if (picked) images[lang] = picked;
       }
       card.images = images;
     }),
   );
-  stats.checked = checked;
 
-  for (const set of sets) {
-    const { raw } = set;
-    const logos: Partial<Record<CardLanguage, string>> = {};
-    for (const lang of set.config.languages) {
-      if (index?.[lang]?.[raw.serie.id]?.[raw.id]?.logo)
-        logos[lang] = `https://assets.tcgdex.net/${lang}/${raw.serie.id}/${raw.id}/logo`;
-    }
-    if (Object.keys(logos).length) set.summary.logo = logos;
-    if (index?.univ?.[raw.serie.id]?.[raw.id]?.symbol)
-      set.summary.symbol = `https://assets.tcgdex.net/univ/${raw.serie.id}/${raw.id}/symbol`;
-  }
+  const base = 'https://assets.tcgdex.net';
+  await Promise.all(
+    sets.map(async (set) => {
+      const { raw } = set;
+      const logos: Partial<Record<CardLanguage, string>> = {};
+      for (const lang of set.config.languages) {
+        const url = `${base}/${lang}/${raw.serie.id}/${raw.id}/logo`;
+        if (await checker.check(`${url}.webp`)) logos[lang] = url;
+      }
+      if (Object.keys(logos).length) {
+        set.summary.logo = logos;
+        stats.logos++;
+      }
+      const symbol = `${base}/univ/${raw.serie.id}/${raw.id}/symbol`;
+      if (await checker.check(`${symbol}.webp`)) {
+        set.summary.symbol = symbol;
+        stats.symbols++;
+      }
+    }),
+  );
+  stats.checked = checker.count();
   return stats;
 }

@@ -69,14 +69,8 @@ export function updateLock(): string[] {
   return changed;
 }
 
-export interface FetchResult {
-  /** Network inputs that could be downloaded (CI); missing ones are skipped offline. */
-  cardmarket: boolean;
-  tcgdexAssets: boolean;
-}
-
-/** Brings all inputs into the cache. GitHub sources are required; the rest is optional (offline). */
-export async function fetchSources(options: { network: boolean }): Promise<FetchResult> {
+/** Brings all inputs into the cache. GitHub sources are required; Cardmarket's files need network. */
+export async function fetchSources(options: { network: boolean }): Promise<void> {
   const lock = readLock();
   if (!process.env.TCGDEX_DIR) checkout('tcgdex', dirs.tcgdex);
   if (!process.env.PTCG_DIR) checkout('ptcgDatabase', dirs.ptcgDatabase, ['data_tc/M6a']);
@@ -92,9 +86,7 @@ export async function fetchSources(options: { network: boolean }): Promise<Fetch
     }
   }
 
-  const result: FetchResult = { cardmarket: false, tcgdexAssets: false };
-  if (!options.network) return result;
-
+  if (!options.network) return;
   mkdirSync(dirs.cardmarket, { recursive: true });
   const cm = 'https://downloads.s3.cardmarket.com/productCatalog/productList';
   await download(`${cm}/products_singles_6.json`, join(dirs.cardmarket, 'products_singles_6.json'));
@@ -102,10 +94,4 @@ export async function fetchSources(options: { network: boolean }): Promise<Fetch
     `${cm}/products_nonsingles_6.json`,
     join(dirs.cardmarket, 'products_nonsingles_6.json'),
   );
-  result.cardmarket = true;
-
-  mkdirSync(dirs.tcgdexAssets, { recursive: true });
-  await download('https://assets.tcgdex.net/datas.json', join(dirs.tcgdexAssets, 'datas.json'));
-  result.tcgdexAssets = true;
-  return result;
 }

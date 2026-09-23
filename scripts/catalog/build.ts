@@ -27,8 +27,12 @@ import {
 } from './vocab-map';
 
 export interface BuiltCard extends CatalogCard {
-  /** Pipeline-only: where the card came from (for images and reports). */
-  source: { set: RawSet; localId: string; raw: RawCard };
+  /**
+   * Pipeline-only: where the card came from (for images and reports). `cardmarket` is TCGdex's
+   * product id; for Asian prints it may be the Japanese or the Simplified Chinese product, so
+   * cardmarket.ts sorts it into `refs.cardmarket.byLanguage`.
+   */
+  source: { set: RawSet; localId: string; raw: RawCard; cardmarket?: number };
 }
 
 export interface BuiltSet {
@@ -141,16 +145,11 @@ function toCard(
     variants: [
       {
         id: STANDARD_VARIANT,
-        ...(cardmarket || tcgplayerIds.size
+        ...((cardmarket && config.print === 'intl') || tcgplayerIds.size
           ? {
               refs: {
-                ...(cardmarket
-                  ? {
-                      cardmarket:
-                        config.print === 'asia'
-                          ? { byLanguage: { ja: cardmarket } }
-                          : { default: cardmarket },
-                    }
+                ...(cardmarket && config.print === 'intl'
+                  ? { cardmarket: { default: cardmarket } }
                   : {}),
                 ...(tcgplayerIds.size ? { tcgplayer: [...tcgplayerIds][0] } : {}),
               },
@@ -161,7 +160,7 @@ function toCard(
     languages: [...config.languages],
     images: {},
     refs: { tcgdex: `${rawSet.id}-${localId}` },
-    source: { set: rawSet, localId, raw },
+    source: { set: rawSet, localId, raw, ...(cardmarket ? { cardmarket } : {}) },
   };
   return card;
 }

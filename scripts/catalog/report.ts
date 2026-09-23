@@ -20,7 +20,7 @@ export function renderReport(input: {
   const lines = [
     `# Catalog ${manifest.catalogVersion}`,
     '',
-    `Mode: ${input.network ? 'network (Cardmarket, TCGdex assets, image checks)' : 'offline (GitHub sources only; images unverified)'}`,
+    `Mode: ${input.network ? 'network (Cardmarket product files, image checks)' : 'offline (GitHub sources; pictures and Asian Cardmarket ids kept from the last network build)'}`,
     '',
     '| Set | Print | Languages | Cards | Official |',
     '|---|---|---|---|---|',
@@ -46,32 +46,33 @@ export function renderReport(input: {
   lines.push(
     '## Images',
     '',
-    images.verified
-      ? `Verified with ${images.checked} GET checks.`
-      : 'Not verified (offline build).',
+    input.network
+      ? `Checked with ${images.checked} GET requests.`
+      : images.verified
+        ? `Kept from the last network build for all ${images.carried} cards.`
+        : `Not verified: ${images.carried} cards kept from the last network build, the rest are unchecked candidates.`,
+    `Set logos: ${images.logos} of ${sets.length}. Set symbols: ${images.symbols} of ${sets.length}.`,
+    '',
+    '| Language | exact | other language | other print | none |',
+    '|---|---|---|---|---|',
+    ...Object.entries(images.coverage).map(
+      ([lang, c]) => `| ${lang} | ${c.exact} | ${c.otherLanguage} | ${c.counterpart} | ${c.none} |`,
+    ),
     '',
   );
-  if (images.verified) {
-    lines.push(
-      '| Language | exact | other language | other print | none |',
-      '|---|---|---|---|---|',
-    );
-    for (const [lang, c] of Object.entries(images.coverage))
-      lines.push(`| ${lang} | ${c.exact} | ${c.otherLanguage} | ${c.counterpart} | ${c.none} |`);
-    lines.push('');
-  }
 
   if (cardmarket) {
     lines.push(
       '## Cardmarket',
       '',
-      `Card ids checked: ${cardmarket.checked}. Simplified Chinese ids mapped: ${cardmarket.simplifiedChinese.mapped}.`,
-      ...(cardmarket.simplifiedChinese.unresolved.length
-        ? [
-            '',
-            'Unresolved SC mappings:',
-            ...cardmarket.simplifiedChinese.unresolved.map((u) => `- ${u}`),
-          ]
+      `Card ids checked: ${cardmarket.checked}. Singles per expansion: ${
+        Object.entries(cardmarket.singlesPerExpansion)
+          .map(([id, n]) => `${id}: ${n}`)
+          .join(', ') || 'none'
+      }.`,
+      `Asian cards with a Japanese product: ${cardmarket.asia.ja}; with a Simplified Chinese product: ${cardmarket.asia['zh-cn']}.`,
+      ...(cardmarket.asia.unresolved.length
+        ? ['', 'Unresolved:', ...cardmarket.asia.unresolved.map((u) => `- ${u}`)]
         : []),
       '',
       '<details><summary>Sealed products on Cardmarket for these expansions</summary>',
