@@ -130,6 +130,8 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await filters.getByRole('button', { name: '2 Positionen anzeigen' }).click();
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
   await page.getByRole('button', { name: 'Alle Filter entfernen' }).click();
+  await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
+  await expect(table.getByRole('row')).toHaveCount(6); // the header and all five lots
 
   // Delete everything shown, then take it back.
   await table.getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' }).click();
