@@ -57,6 +57,20 @@ export function formatPercent(ratio: number | null | undefined): string {
   return trueMinus(percentFormatter.format(ratio));
 }
 
+const shareFormatter = new Intl.NumberFormat(LOCALE, {
+  style: 'percent',
+  maximumFractionDigits: 0,
+});
+
+/**
+ * Progress as a whole percentage, rounded down so it reads 100 % only when complete
+ * (set completion: `64 %`, 198 of 199 = `99 %`).
+ */
+export function formatShare(ratio: number): string {
+  const clamped = Math.min(1, Math.max(0, Number.isFinite(ratio) ? ratio : 0));
+  return shareFormatter.format(clamped === 1 ? 1 : Math.floor(clamped * 100) / 100);
+}
+
 const countFormatter = new Intl.NumberFormat(LOCALE);
 export function formatCount(n: number): string {
   return trueMinus(countFormatter.format(n));

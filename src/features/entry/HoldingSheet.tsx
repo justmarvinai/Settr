@@ -17,8 +17,8 @@ import { pickLanguage, pickText } from '@/domain/catalog';
 import type { CardLanguage, ItemRef } from '@/domain/catalog-types';
 import { todayIso } from '@/domain/ids';
 import type { Holding } from '@/domain/schemas';
-import { languageCode, m } from '@/i18n';
-import { closeSheet, openSheet } from '@/lib/sheets';
+import { m } from '@/i18n';
+import { closeSheet } from '@/lib/sheets';
 import { HoldingForm } from './HoldingForm';
 import {
   addPrefsSchema,
@@ -33,28 +33,14 @@ import {
   customIdOf,
   customInfo,
   isCustomId,
+  lotLabel,
   offeredLanguages,
   productInfo,
   snapshotInfo,
+  toastError,
+  toastWithUndo,
   type ItemInfo,
-} from './item';
-import { toastError, toastWithUndo } from './toasts';
-
-/** `150/128 Pikachu-ex · DE · NM` for toasts. */
-export function lotLabel(
-  info: ItemInfo,
-  lot: Pick<HoldingFormValues, 'language' | 'condition' | 'quantity'>,
-): string {
-  const name = info.name(lot.language).text;
-  const head = [info.ref.kind === 'card' ? info.number : undefined, name].filter(Boolean).join(' ');
-  return [
-    lot.quantity > 1 ? `${lot.quantity} × ${head}` : head,
-    languageCode(lot.language),
-    info.ref.kind === 'card' ? lot.condition : undefined,
-  ]
-    .filter(Boolean)
-    .join(' · ');
-}
+} from '@/features/collection';
 
 // ── Item resolution ─────────────────────────────────────────────────────────────────────────────
 
@@ -302,9 +288,4 @@ function EditForm({ info, holding }: { info: ItemInfo; holding: Holding }) {
       onSubmit={save}
     />
   );
-}
-
-/** Opens the add sheet for an item (card pages, set grid `N`, search results). */
-export function openAdd(item: ItemRef, setId?: string, language?: CardLanguage): void {
-  openSheet({ type: 'add', item, setId, language });
 }

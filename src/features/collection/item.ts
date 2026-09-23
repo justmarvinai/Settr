@@ -13,6 +13,7 @@ import {
 } from '@/domain/catalog';
 import type { CardLanguage, ItemRef, Print } from '@/domain/catalog-types';
 import type { CustomItem, Holding, ItemSnapshot } from '@/domain/schemas';
+import { languageCode } from '@/i18n';
 
 /**
  * What a lot is about, whether a catalog card, a sealed product or a custom item (CAT-08), in one
@@ -151,4 +152,20 @@ export function offeredLanguages(
 ): CardLanguage[] {
   const mine = info.languages.filter((l) => collected.includes(l) || l === keep);
   return mine.length ? mine : [...info.languages];
+}
+
+/** `150/128 Pikachu-ex · DE · NM` for toasts. */
+export function lotLabel(
+  info: ItemInfo,
+  lot: { language: CardLanguage; condition?: string | undefined; quantity: number },
+): string {
+  const name = info.name(lot.language).text;
+  const head = [info.ref.kind === 'card' ? info.number : undefined, name].filter(Boolean).join(' ');
+  return [
+    lot.quantity > 1 ? `${lot.quantity} × ${head}` : head,
+    languageCode(lot.language),
+    info.ref.kind === 'card' ? lot.condition : undefined,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 }

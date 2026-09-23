@@ -36,3 +36,31 @@ export const sealedStateLabel = /* @__PURE__ */ lookup<'sealed' | 'damaged' | 'o
 /** Grading companies are brand names; only "other" is translated. */
 export const gradingCompanyLabel = (company: string): string =>
   company === 'other' ? m.grading_other() : company;
+
+const DISPOSALS = {
+  sale: m.disposal_sale,
+  trade: m.disposal_trade,
+  gift: m.disposal_gift,
+  opened: m.disposal_opened,
+  lost: m.disposal_lost,
+} as const;
+
+/** "2 verkauft am 20.09.2026" */
+export function disposalText(
+  type: keyof typeof DISPOSALS,
+  values: { quantity: string; date: string },
+): string {
+  return DISPOSALS[type](values);
+}
+
+/** "PSA 10 Gem Mint" */
+export function gradingText(grading: {
+  company: string;
+  companyName?: string | undefined;
+  grade: string;
+  qualifier?: string | undefined;
+}): string {
+  const company =
+    grading.company === 'other' ? (grading.companyName ?? m.grading_other()) : grading.company;
+  return [company, grading.grade, grading.qualifier].filter(Boolean).join(' ');
+}

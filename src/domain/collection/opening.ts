@@ -1,4 +1,5 @@
-import { allocate, money, type Money } from '../money';
+import { allocate } from '../allocation';
+import { money, type Money } from '../money';
 
 /**
  * Cost of an opened product split across the pulls (COL-12, Q5.8, DATA_MODEL.md §6.2): in

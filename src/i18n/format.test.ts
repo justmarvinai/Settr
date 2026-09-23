@@ -8,6 +8,7 @@ import {
   formatMoney,
   formatPercent,
   formatRelative,
+  formatShare,
 } from './format';
 import { formatAmountInput, parseMoneyInput } from './money-input';
 
@@ -110,5 +111,15 @@ describe('formatAmountInput', () => {
         minor,
       });
     }
+  });
+});
+
+describe('formatShare', () => {
+  it('rounds progress down and never shows 100 % early', () => {
+    expect(formatShare(0)).toBe('0\u00a0%');
+    expect(formatShare(0.641)).toBe('64\u00a0%');
+    expect(formatShare(198 / 199)).toBe('99\u00a0%');
+    expect(formatShare(1)).toBe('100\u00a0%');
+    expect(formatShare(Number.NaN)).toBe('0\u00a0%');
   });
 });

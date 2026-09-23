@@ -16,6 +16,10 @@ export function CardTile({
   rarity,
   badge,
   missingLabel,
+  owned,
+  ownedText,
+  ownedLabel,
+  ghost = false,
 }: {
   image: CatalogImage | undefined;
   number: string;
@@ -25,11 +29,32 @@ export function CardTile({
   /** Small note on the picture, e.g. `EN` when it shows another language. */
   badge?: ReactNode;
   missingLabel: string;
+  /** Copies you own (a "×2" badge); 0 or undefined shows none. */
+  owned?: number | undefined;
+  /** The badge text ("×2") and its screen-reader text ("2 im Besitz"). */
+  ownedText?: string | undefined;
+  ownedLabel?: string | undefined;
+  /** A card you don't own yet in a set you collect: faded, with a dashed outline. */
+  ghost?: boolean;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <div className="relative transition-transform duration-(--dur-fast) group-hover:-translate-y-0.5">
-        <CardImage image={image} size="small" alt="" label={missingLabel} />
+        <div
+          className={
+            ghost
+              ? 'rounded-[4.2%/3%] opacity-40 outline-2 outline-offset-[-2px] outline-line-strong outline-dashed grayscale'
+              : undefined
+          }
+        >
+          <CardImage image={image} size="small" alt="" label={missingLabel} />
+        </div>
+        {owned ? (
+          <span className="absolute top-[4%] left-[5%] rounded-pill bg-ink px-2 py-0.5 font-mono text-[12px] leading-4 font-bold text-canvas shadow-[0_4px_10px_-4px_oklch(0_0_0/0.5)]">
+            <span aria-hidden>{ownedText ?? owned}</span>
+            {ownedLabel ? <span className="sr-only">{ownedLabel}</span> : null}
+          </span>
+        ) : null}
         {badge ? (
           <span className="absolute bottom-[4%] left-[5%] rounded-pill bg-[color-mix(in_oklch,var(--bg)_86%,transparent)] px-1.5 py-0.5 font-mono text-[11px] leading-none font-semibold text-ink-muted">
             {badge}

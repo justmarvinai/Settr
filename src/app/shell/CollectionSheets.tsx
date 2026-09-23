@@ -3,7 +3,7 @@ import { Sheet } from '@/components/ui/Sheet';
 import { m } from '@/i18n';
 import { useSheets, type SheetRequest } from '@/lib/sheets';
 import { useMediaQuery } from '@/lib/useMediaQuery';
-import { AddHoldingBody, EditHoldingBody, SheetLoading } from '@/features/collection';
+import { AddHoldingBody, EditHoldingBody, SheetLoading } from '@/features/entry';
 
 function titleOf(request: SheetRequest): string {
   if (request.type === 'add') {

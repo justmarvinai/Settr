@@ -1,4 +1,5 @@
-import { allocateEvenly, money, type Money } from '../money';
+import { allocateEvenly } from '../allocation';
+import { money, type Money } from '../money';
 import type { Disposal, Holding } from '../schemas/holding';
 
 /**

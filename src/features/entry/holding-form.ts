@@ -13,7 +13,7 @@ import { money, type Money } from '@/domain/money';
 import type { Holding, Location, Settings } from '@/domain/schemas';
 import { m } from '@/i18n';
 import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
-import { snapshotOf, type ItemInfo } from './item';
+import { snapshotOf, type ItemInfo } from '@/features/collection';
 
 /**
  * The add/edit sheet's form (COL-01, COL-02, UX_SPEC.md §4.7): values as typed, validation with

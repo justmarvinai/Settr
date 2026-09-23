@@ -40,7 +40,7 @@ import {
   type PriceMode,
   type SealedState,
 } from './holding-form';
-import type { ItemInfo } from './item';
+import type { ItemInfo } from '@/features/collection';
 
 const SOURCE_SUGGESTIONS = ['Cardmarket', 'eBay', 'Kleinanzeigen', 'Pokémon Center'] as const;
 

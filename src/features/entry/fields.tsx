@@ -11,8 +11,7 @@ import { db, ensureTag, useHoldingsInLocation, useLocations, useTags } from '@/d
 import { isOccupied, nextFreeSlot, occupiedSlots, type SlotPosition } from '@/domain/collection';
 import type { CardLanguage } from '@/domain/catalog-types';
 import { htmlLang, m } from '@/i18n';
-import type { ItemInfo } from './item';
-import { toastError } from './toasts';
+import { toastError, type ItemInfo } from '@/features/collection';
 
 /** Thumbnail, name, set and number of the item a lot is about (UX_SPEC.md §4.7 header). */
 export function ItemHeader({ info, language }: { info: ItemInfo; language: CardLanguage }) {
