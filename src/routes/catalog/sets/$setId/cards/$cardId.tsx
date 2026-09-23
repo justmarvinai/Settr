@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { manifestQuery, setQuery } from '@/catalog';
+import { cardSearchSchema, manifestQuery, setQuery } from '@/catalog';
 import { pickText } from '@/domain/catalog';
-import { CardPage, cardSearchSchema } from '@/features/catalog';
+import { CardPage } from '@/features/catalog';
 
 export const Route = createFileRoute('/catalog/sets/$setId/cards/$cardId')({
   validateSearch: cardSearchSchema,

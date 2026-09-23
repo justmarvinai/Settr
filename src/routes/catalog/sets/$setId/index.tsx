@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, redirect } from '@tanstack/react-router';
-import { manifestQuery, setQuery } from '@/catalog';
+import { manifestQuery, setQuery, setSearchSchema } from '@/catalog';
 import { pickText } from '@/domain/catalog';
-import { SetPage, setSearchSchema } from '@/features/catalog';
+import { SetPage } from '@/features/catalog';
 
 export const Route = createFileRoute('/catalog/sets/$setId/')({
   validateSearch: setSearchSchema,

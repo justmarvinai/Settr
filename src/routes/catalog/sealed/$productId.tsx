@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { manifestQuery, sealedQuery } from '@/catalog';
+import { manifestQuery, productSearchSchema, sealedQuery } from '@/catalog';
 import { pickText } from '@/domain/catalog';
-import { ProductPage, productSearchSchema } from '@/features/catalog';
+import { ProductPage } from '@/features/catalog';
 
 export const Route = createFileRoute('/catalog/sealed/$productId')({
   validateSearch: productSearchSchema,

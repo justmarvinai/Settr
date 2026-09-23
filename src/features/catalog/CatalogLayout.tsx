@@ -2,7 +2,7 @@ import { Outlet, useLocation } from '@tanstack/react-router';
 import { SectionNav } from '@/components/ui/SectionNav';
 import { m } from '@/i18n';
 
-const TAB_PATHS = new Set(['/catalog', '/catalog/cards', '/catalog/sealed']);
+const TAB_PATHS = /* @__PURE__ */ new Set(['/catalog', '/catalog/cards', '/catalog/sealed']);
 
 /**
  * Katalog with its three views, Sets | Karten | Sealed (UX_SPEC.md §2.1). Detail pages (a set, a

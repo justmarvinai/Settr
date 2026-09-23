@@ -33,8 +33,3 @@ export function CatalogErrorPage({ error, reset }: ErrorComponentProps) {
     </Panel>
   );
 }
-
-/** Shown when loading a catalog file takes longer than a moment (router `pendingMs`). */
-export function CatalogPending() {
-  return <output className="type-body m-0 block px-1 text-ink-muted">{m.catalog_loading()}</output>;
-}

@@ -94,7 +94,7 @@ Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Be
 
 | Metric | Budget |
 |---|---|
-| Initial JS (entry + modulepreloads, gzip) | ≤ 220 KB (re-baselined on the M1 build, ADR-030; M1: 209 KB) |
+| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB) |
 | Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
 | CSS (gzip) | ≤ 35 KB |
 | Web fonts on first render | ≤ 2 files, ≤ 125 KB total (latin subsets, variable; ADR-030). CJK fonts load lazily and only when CJK text is rendered |

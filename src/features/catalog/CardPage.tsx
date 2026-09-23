@@ -35,7 +35,7 @@ import { cardmarketFilters } from './cardmarket';
 import { pickLanguage } from './language';
 import { cardName, otherNames } from './names';
 
-const route = getRouteApi('/catalog/sets/$setId/cards/$cardId');
+const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/cards/$cardId');
 
 /** Arrow keys belong to text fields and to widgets that use them (radio groups, tabs, menus). */
 const ownsArrows = (target: EventTarget | null) =>

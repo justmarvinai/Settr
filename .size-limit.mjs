@@ -13,7 +13,7 @@ const lazy = readdirSync('dist/assets')
   );
 
 export default [
-  { name: 'Initial JS (entry + modulepreloads)', path: initial, gzip: true, limit: '220 kB' },
+  { name: 'Initial JS (entry + modulepreloads)', path: initial, gzip: true, limit: '230 kB' },
   ...lazy.map((file) => ({
     name: `Lazy chunk ${file.slice(12)}`,
     path: file,

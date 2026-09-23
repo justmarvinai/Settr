@@ -1,7 +1,7 @@
 import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { getRouteApi } from '@tanstack/react-router';
 import { useState } from 'react';
-import { useSealed } from '@/catalog';
+import { useSealed, type SealedSearch } from '@/catalog';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
 import { firstRelease, PRODUCT_TYPES, type CatalogProduct } from '@/domain/catalog';
@@ -9,10 +9,9 @@ import { ACTIVE_CARD_LANGUAGES, type CardLanguage } from '@/domain/catalog-types
 import { languageLabel, m, printLabel, productTypeLabel } from '@/i18n';
 import { formatCount } from '@/i18n/format';
 import { ProductTile } from './ProductTile';
-import type { SealedSearch } from './search-params';
 import type { PrintFilter } from './SetsPage';
 
-const route = getRouteApi('/catalog/sealed/');
+const route = /* @__PURE__ */ getRouteApi('/catalog/sealed/');
 
 const typeRank = (type: string) => {
   const index = (PRODUCT_TYPES as readonly string[]).indexOf(type);

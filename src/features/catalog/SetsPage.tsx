@@ -7,7 +7,7 @@ import { languageCode, m, printLabel } from '@/i18n';
 import { formatCount } from '@/i18n/format';
 import { setReleaseText } from './dates';
 
-const route = getRouteApi('/catalog/');
+const route = /* @__PURE__ */ getRouteApi('/catalog/');
 
 export type PrintFilter = 'all' | 'intl' | 'asia';
 

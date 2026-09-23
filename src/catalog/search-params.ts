@@ -4,7 +4,8 @@ import { CARD_SECTIONS } from '@/domain/catalog';
 
 /**
  * URL search params of the catalog pages (ARCHITECTURE.md §5: filters, sort and view live in the
- * URL). Unknown or broken values fall back to the defaults instead of an error page.
+ * URL). Unknown or broken values fall back to the defaults instead of an error page. They live
+ * here, not in the feature, so route files import them without pulling the pages into the entry.
  */
 const optional = <T extends z.ZodType>(schema: T) => schema.optional().catch(undefined);
 

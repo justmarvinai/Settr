@@ -7,7 +7,13 @@ import {
 } from '@phosphor-icons/react';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { useState } from 'react';
-import { useCatalogSet, useManifest, type LoadedSet } from '@/catalog';
+import {
+  useCatalogSet,
+  useManifest,
+  type LoadedSet,
+  type SetSearch,
+  type SetSort,
+} from '@/catalog';
 import { CardTile } from '@/components/domain/CardTile';
 import { IconButton } from '@/components/ui/Button';
 import { cn } from '@/components/ui/cn';
@@ -37,9 +43,8 @@ import { formatCount } from '@/i18n/format';
 import { setReleaseText } from './dates';
 import { pickLanguage, visibleLanguages } from './language';
 import { cardName, type NameMode } from './names';
-import type { SetSearch, SetSort } from './search-params';
 
-const route = getRouteApi('/catalog/sets/$setId/');
+const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/');
 
 type Density = 's' | 'm' | 'l';
 const DENSITY_KEY = 'settr.catalog.density';
@@ -54,8 +59,10 @@ function readDensity(): Density {
   }
 }
 
-const ABBREVIATIONS = new Map<string, string>(Object.entries(RARITY_ABBR));
-const RARITY_ORDER = new Map<string, number>(RARITY_IDS.map((id, index) => [id, index]));
+const ABBREVIATIONS = /* @__PURE__ */ new Map<string, string>(Object.entries(RARITY_ABBR));
+const RARITY_ORDER = /* @__PURE__ */ new Map<string, number>(
+  RARITY_IDS.map((id, index) => [id, index]),
+);
 const rarityAbbr = (rarity: string | undefined) => ABBREVIATIONS.get(rarity ?? '');
 const rarityRank = (rarity: string | undefined) =>
   RARITY_ORDER.get(rarity ?? '') ?? RARITY_IDS.length;

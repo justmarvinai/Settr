@@ -22,7 +22,7 @@ import { cardmarketFilters } from './cardmarket';
 import { pickLanguage } from './language';
 import { ProductTile } from './ProductTile';
 
-const route = getRouteApi('/catalog/sealed/$productId');
+const route = /* @__PURE__ */ getRouteApi('/catalog/sealed/$productId');
 
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (

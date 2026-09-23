@@ -31,13 +31,13 @@ const LANGUAGES: Labels<ActiveCardLanguage> = {
   'zh-tw': m.language_zh_tw,
 };
 /** `Deutsch`, `Chinesisch (traditionell)` … */
-export const languageLabel = lookup(LANGUAGES);
+export const languageLabel = /* @__PURE__ */ lookup(LANGUAGES);
 /** `DE`, `ZH-TW`: compact language chips. */
 export const languageCode = (lang: string): string => lang.toUpperCase();
 
-export const printLabel = lookup<Print>({ intl: m.print_intl, asia: m.print_asia });
+export const printLabel = /* @__PURE__ */ lookup<Print>({ intl: m.print_intl, asia: m.print_asia });
 
-export const rarityLabel = lookup<RarityId>({
+export const rarityLabel = /* @__PURE__ */ lookup<RarityId>({
   common: m.rarity_common,
   uncommon: m.rarity_uncommon,
   rare: m.rarity_rare,
@@ -55,7 +55,7 @@ export const rarityLabel = lookup<RarityId>({
   promo: m.rarity_promo,
 });
 
-export const typeLabel = lookup<EnergyType>({
+export const typeLabel = /* @__PURE__ */ lookup<EnergyType>({
   grass: m.type_grass,
   fire: m.type_fire,
   water: m.type_water,
@@ -69,13 +69,13 @@ export const typeLabel = lookup<EnergyType>({
   colorless: m.type_colorless,
 });
 
-export const categoryLabel = lookup<CardCategory>({
+export const categoryLabel = /* @__PURE__ */ lookup<CardCategory>({
   pokemon: m.category_pokemon,
   trainer: m.category_trainer,
   energy: m.category_energy,
 });
 
-export const stageLabel = lookup<StageId>({
+export const stageLabel = /* @__PURE__ */ lookup<StageId>({
   basic: m.stage_basic,
   stage1: m.stage_stage1,
   stage2: m.stage_stage2,
@@ -90,7 +90,7 @@ export const stageLabel = lookup<StageId>({
   'v-union': m.stage_v_union,
 });
 
-export const trainerTypeLabel = lookup<TrainerType>({
+export const trainerTypeLabel = /* @__PURE__ */ lookup<TrainerType>({
   item: m.trainer_item,
   supporter: m.trainer_supporter,
   stadium: m.trainer_stadium,
@@ -99,12 +99,12 @@ export const trainerTypeLabel = lookup<TrainerType>({
   'technical-machine': m.trainer_technical_machine,
 });
 
-export const energyKindLabel = lookup<EnergyKind>({
+export const energyKindLabel = /* @__PURE__ */ lookup<EnergyKind>({
   basic: m.energy_basic,
   special: m.energy_special,
 });
 
-export const sectionLabel = lookup<CardSection>({
+export const sectionLabel = /* @__PURE__ */ lookup<CardSection>({
   main: m.section_main,
   secret: m.section_secret,
   subset: m.section_subset,
@@ -112,7 +112,7 @@ export const sectionLabel = lookup<CardSection>({
   promo: m.section_promo,
 });
 
-export const productTypeLabel = lookup<ProductType>({
+export const productTypeLabel = /* @__PURE__ */ lookup<ProductType>({
   'booster-pack': m.product_booster_pack,
   'sleeved-booster': m.product_sleeved_booster,
   'booster-display': m.product_booster_display,
@@ -144,7 +144,7 @@ export const productTypeLabel = lookup<ProductType>({
   other: m.product_other,
 });
 
-export const exclusiveLabel = lookup<ProductExclusive>({
+export const exclusiveLabel = /* @__PURE__ */ lookup<ProductExclusive>({
   'pokemon-center': m.exclusive_pokemon_center,
   retailer: m.exclusive_retailer,
   event: m.exclusive_event,
