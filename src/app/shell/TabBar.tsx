@@ -1,5 +1,5 @@
-import { PlusIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
+import { PlusGlyph } from '@/components/ui/glyphs';
 import { m } from '@/i18n';
 import { TAB_ITEMS, type NavItem } from './nav';
 
@@ -33,7 +33,7 @@ export function TabBar({ onAdd }: { onAdd: () => void }) {
         aria-label={m.nav_add()}
         className="inline-flex size-14 items-center justify-center rounded-pill bg-accent text-accent-contrast shadow-[0_10px_24px_-10px_oklch(0_0_0/0.45)]"
       >
-        <PlusIcon size={24} weight="bold" aria-hidden />
+        <PlusGlyph size={24} aria-hidden />
       </button>
       {rest.map((item) => (
         <TabLink key={item.to} item={item} />

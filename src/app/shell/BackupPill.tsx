@@ -1,5 +1,5 @@
-import { DatabaseIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
+import { DatabaseGlyph } from '@/components/ui/glyphs';
 import { useHoldingCount, useMeta, useSettings } from '@/db/core';
 import { m } from '@/i18n';
 import { formatRelative } from '@/i18n/format';
@@ -39,7 +39,7 @@ export function BackupPill({
           : 'text-ink-muted hover:bg-hover hover:text-ink',
       )}
     >
-      <DatabaseIcon size={20} weight={due ? 'bold' : 'regular'} aria-hidden className="shrink-0" />
+      <DatabaseGlyph size={20} weight={due ? 'bold' : 'regular'} aria-hidden className="shrink-0" />
       <span className={cn('min-w-0 flex-col gap-0.5', expanded ? 'flex' : 'hidden lg:flex')}>
         <span className="type-ui">{due ? m.backup_pill_due() : m.backup_pill_label()}</span>
         <span className="type-label font-semibold">
