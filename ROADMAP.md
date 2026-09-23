@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-23 · Current phase: **M1 · Foundation** ⏳ (spec v0.3; rounds 1–3 answered; coding approved 2026-09-23)
+> Last updated: 2026-09-23 · Current phase: **M1 · Foundation** ✅ built, waiting for your check (Vercel, Brave, iPhone) · next: **M2 · Catalog**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -11,7 +11,7 @@
 | Milestone | Goal | Version | Status |
 |---|---|---|---|
 | **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ✅ |
-| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ⏳ |
+| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ built · 🔒 your check |
 | **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | 🔒 |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | 🔒 |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | 🔒 |
@@ -46,22 +46,24 @@
 
 ---
 
-## M1 · Foundation ⏳ → v0.1.0
+## M1 · Foundation ✅ built → v0.1.0 (waiting for your check)
 
-- [ ] Repository setup: `main` as the default branch (R3.3), visibility per R3.2 (ADR-029)
-- [ ] Scaffold: Vite + React + TypeScript (strict) + TanStack Router (file-based) + Tailwind CSS v4 (`ARCHITECTURE.md` §3)
-- [ ] Tooling: pnpm, Oxlint (type-aware) + oxfmt, Vitest 5 (+ Browser Mode), Playwright, size-limit, lefthook pre-commit
-- [ ] CI (`ci.yml`), Vercel project + preview deployments + security headers (CSP) (`QUALITY.md` §6–7)
-- [ ] Design tokens for direction **D · Bold Studio** (`tokens.css`, light + dark, accent per R3.1), **Liquid Glass materials** + reduced-transparency fallback, self-hosted fonts, and base primitives (Button, Input, Sheet, Dialog, Tabs, Toast, Tooltip). See `DESIGN_SYSTEM.md`
-- [ ] App shell: **floating glass sidebar** / rail / glass tab bar, glass toolbar, theme switch, privacy toggle (APP-01, APP-03, PRT-05, DSN-05)
-- [ ] i18n setup: **German** message catalog (translation-ready), typed messages, `de-DE` formatting helpers, lint rule against hard-coded strings (APP-02, `I18N.md`)
-- [ ] Private deployment: `noindex` meta tag + `X-Robots-Tag` + `robots.txt` (APP-08)
-- [ ] Dexie database v1 schema, repositories, tombstones, `priceLatest` (`DATA_MODEL.md` §7)
-- [ ] Domain core: `Money`, allocation, IDs (UUIDv7), Zod schemas, with unit tests (`DATA_MODEL.md` §5–6)
-- [ ] PWA skeleton: manifest, icons, service worker with app-shell precache, update toast (APP-04)
-- [ ] Settings page skeleton (APP-07) and persistent-storage request (DAT-05)
+- [x] Repository setup: `main` created from the reviewed spec (R3.3), repository stays public (R3.2, ADR-029)
+  - [ ] **You:** make `main` the default branch (GitHub → Settings → General → Default branch)
+- [x] Scaffold: Vite + React + TypeScript (strict) + TanStack Router (file-based) + Tailwind CSS v4 (`ARCHITECTURE.md` §3)
+- [x] Tooling: pnpm, Oxlint (type-aware, layer boundaries) + oxfmt, Vitest 5 (+ Browser Mode), Playwright (+ axe), size-limit, lefthook pre-commit/pre-push
+- [x] CI (`ci.yml`: checks, components, build, CSP hash, budgets, audit, e2e on Chromium desktop/phone + WebKit iPhone) and security headers (CSP) in `vercel.json` (`QUALITY.md` §6–7)
+  - [ ] **You:** import the repository in Vercel (Hobby, framework preset *Vite*, settings come from `vercel.json`), production branch `main`; previews for every other branch
+- [x] Design tokens for direction **D · Bold Studio** (`tokens.css`, light + dark, Indigo accent per R3.1), **Liquid Glass materials** + reduced-transparency fallback, self-hosted fonts, and base primitives (Button, Input, Sheet, Dialog, Tabs, Toast, Tooltip, plus SegmentedControl, Switch, ChipGroup). See `DESIGN_SYSTEM.md`
+- [x] App shell: **floating glass sidebar** / rail / glass tab bar with "Mehr", glass toolbar, theme switch, privacy toggle (APP-01, APP-03, PRT-05, DSN-05)
+- [x] i18n setup: **German** message catalog (translation-ready), typed messages, `de-DE` formatting helpers, lint rule against hard-coded strings (APP-02, `I18N.md`)
+- [x] Private deployment: `noindex` meta tag + `X-Robots-Tag` + `robots.txt` (APP-08)
+- [x] Dexie database v1 schema, repositories, tombstones, `priceLatest` (`DATA_MODEL.md` §7)
+- [x] Domain core: `Money`, allocation, IDs (UUIDv7), Zod schemas, with unit tests (`DATA_MODEL.md` §5–6)
+- [x] PWA skeleton: manifest, icons, service worker with app-shell precache, update toast (APP-04), install button in Brave
+- [x] Settings page skeleton (APP-07) and persistent-storage request (DAT-05)
 
-**Exit:** the app deploys on Vercel (not indexed), loads offline, switches themes and transparency, CI is green, budgets hold, and it looks right on Windows Brave (Chromium) and iPhone.
+**Exit:** the app deploys on Vercel (not indexed), loads offline, switches themes and transparency, CI is green, budgets hold, and it looks right on Windows Brave (Chromium) and iPhone. *Status:* offline, themes, transparency, budgets (ADR-030) and CI are verified; **the Vercel deployment and your look on Brave and the iPhone are open.**
 
 ---
 

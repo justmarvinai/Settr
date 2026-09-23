@@ -21,7 +21,9 @@ function ToastList() {
           <Toast.Description className="type-small text-ink-muted" />
         </div>
         <Toast.Action className="h-10 shrink-0 rounded-pill px-4 type-ui text-ink shadow-[inset_0_0_0_1.5px_var(--border-strong)] hover:shadow-[inset_0_0_0_1.5px_var(--text-subtle)]" />
+        {/* Always visible here, so never aria-hidden (Base UI hides it until the stack expands). */}
         <Toast.Close
+          aria-hidden={false}
           aria-label={m.dialog_close()}
           className="inline-flex size-10 shrink-0 items-center justify-center rounded-pill text-ink-muted hover:bg-hover hover:text-ink"
         >

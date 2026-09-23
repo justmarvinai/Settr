@@ -14,7 +14,7 @@
 | 006 | Lots with disposals, integer money, UUIDv7, tombstones | Accepted |
 | 007 | Manual price series and carry-forward valuation | Accepted |
 | 008 | Paraglide JS 2 for i18n | Accepted |
-| 009 | shadcn/ui on Base UI + Tailwind v4 + OKLCH tokens | Accepted |
+| 009 | shadcn/ui on Base UI + Tailwind v4 + OKLCH tokens | Accepted (amended by ADR-031) |
 | 010 | Recharts 3 as the single chart library | Accepted |
 | 011 | TypeScript 7 + Oxlint/oxfmt + Vitest 5 + Playwright | Accepted |
 | 012 | MiniSearch in a worker with CJK bigram tokenization | Accepted |
@@ -35,6 +35,9 @@
 | 027 | Brave (Chromium) as the primary browser | Accepted (R2.9) |
 | 028 | Catalog growth: 30 Jahre first, then set by set and era by era; no Collectr import | Accepted (R2.5) |
 | 029 | Public repository: what may be committed | Accepted (R3.2) |
+| 030 | Performance budgets re-baselined on the measured M1 build | Accepted (M1) |
+| 031 | UI primitives hand-written on Base UI (no shadcn CLI under TypeScript 7) | Accepted (M1; amends ADR-009) |
+| 032 | Pre-paint UI state in localStorage (theme mirror, privacy mode) | Accepted (M1) |
 
 ---
 
@@ -259,3 +262,25 @@
 - **Decision (R3.2, 2026-09-23):** the repository **stays public for now**, so the "If it stays public" rules above apply.
 - **Either way:** no secrets and no personal collection data are committed (CLAUDE.md), and `main` is the default branch from M1 on (R3.3).
 
+### ADR-030 · Performance budgets re-baselined on the measured M1 build (Accepted, M1)
+- **Context:** `QUALITY.md` §4 set *initial JS ≤ 170 KB gzip* and *fonts on first render ≤ 2 files, ≤ 90 KB* before any code existed. The M1 build (initial JS = entry script + its modulepreloads) measures **209 KB gzip**: react-dom 64, Dexie 31, Zod 25, TanStack Router 25, Base UI 15 (mostly the toast layer), app code 14, Phosphor icons 12, tailwind-merge 9. Fonts: Mona Sans latin with both axes (weight + width, needed for the wide display type) is 98 KB; Geist Mono latin is 23 KB and renders on first paint on desktop (the `Strg K` hint, later card numbers).
+- **Already applied:** route-level code splitting; the search dialog and the phone "Mehr" sheet load on first use; one module per UI primitive, so settings-only controls stay in the settings chunk; startup code never imports a feature barrel that re-exports pages (`features/appearance` and `features/pwa` are separate small features).
+- **Decision:** initial JS **≤ 220 KB** gzip, fonts on first render **≤ 2 files, ≤ 125 KB**. Per-route chunks (≤ 80 KB) and CSS (≤ 35 KB) are unchanged. `size-limit` enforces them in CI; `.size-limit.mjs` reads the built `index.html` to find the entry and its modulepreloads.
+- **Levers, cheapest first, when the budget gets tight:** load the toast layer on the first toast (≈ 12 KB), a generated icon subset with only the Phosphor weights in use (≈ 8 KB), `zod/mini` (≈ 8–11 KB), dropping tailwind-merge (≈ 9 KB). TanStack Query (≈ 12 KB) joins the initial bundle with the M2 catalog loader.
+- **Consequences:** about 10 ms more parse time on a phone than the original target, for an app the service worker serves from cache after the first visit. The budget still catches regressions.
+- **Alternatives:** pulling all four levers now (less readable code for little user benefit), dropping budgets (regressions go unnoticed).
+
+### ADR-031 · UI primitives hand-written on Base UI (no shadcn CLI under TypeScript 7) (Accepted, M1; amends ADR-009)
+- **Context:** ADR-009 planned shadcn CLI v4 components on Base UI. The CLI transforms component source with the TypeScript compiler API (ts-morph). TypeScript 7 is the Go-native compiler and no longer ships that JavaScript API.
+- **Decision:** primitives in `src/components/ui/` are written by hand in shadcn's style: owned source, one module per component, Base UI underneath, `cva` variants and `cn()` (clsx + tailwind-merge). Base UI's bundled docs (`node_modules/@base-ui/react/docs`) are the reference.
+- **Consequences:** same ownership and accessibility as planned, no CLI dependency. New primitives are written, not generated (a few minutes each, with a browser-mode test).
+- **Alternatives:** running the CLI with TypeScript 5 side by side (two compilers in one repo), Radix-based components (ADR-009 reasons still hold).
+
+### ADR-032 · Pre-paint UI state in localStorage (theme mirror, privacy mode) (Accepted, M1)
+- **Context:** IndexedDB is asynchronous, so the app can only read settings after its JavaScript has loaded. Applying the theme, transparency and motion settings, or privacy mode, only then would flash the wrong theme or show amounts that should be hidden.
+- **Decision:**
+  - Display settings live in `kv.settings` (backed up like every setting) and are **mirrored** to `localStorage['settr:display']` whenever they change.
+  - **Privacy mode is per device** and lives only in `localStorage['settr:privacy']`. It is not part of backups (like `kv ui:*`, `IMPORT_EXPORT.md` §2).
+  - A small inline script in `index.html` reads both keys and sets `data-theme`, `data-transparency`, `data-motion` and `data-privacy` on `<html>` before first paint. The CSP allows exactly this script by its SHA-256 hash; `pnpm csp` checks the hash against `index.html` and the built `dist/index.html` in CI.
+- **Consequences:** no theme flash and no amount flash, including on the very first frame of an installed app. Clearing site data resets privacy mode to off, which is the safe direction for a local app (the collection is gone too in that case).
+- **Alternatives:** `kv ui:*` in IndexedDB (async, so it flashes), cookies (sent nowhere, but pointless without a server), a blocking script without CSP hash (weaker CSP).

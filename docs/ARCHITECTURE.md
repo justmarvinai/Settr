@@ -63,7 +63,7 @@
 | Routing | **TanStack Router** (file-based) | 1.170 | Type-safe routes. **Zod-validated URL search params** for all filters. Built-in view-transition support | React Router 7 (weaker typed search params) |
 | Catalog fetching | **TanStack Query** | 5.103 | Caching and deduplication of static catalog JSON. Keyed by `catalogVersion` | Hand-rolled fetch cache |
 | Local database | **Dexie** + dexie-react-hooks | 4.4 | Mature IndexedDB layer: indexes, versioned migrations, transactions and **live queries** (reactive UI) | idb (too low-level), RxDB (paid storage plugins), TinyBase (in-memory), SQLite-wasm/PGlite (heavy, and COOP/COEP would block card images), Evolu/Jazz (API churn) |
-| UI primitives | **shadcn/ui** (CLI v4) on **Base UI** | CLI 4.21 · Base UI 1.8 | We own the component code and restyle it fully. Base UI is shadcn's default since July 2026, actively maintained, and includes Drawer/Toast/Combobox/NumberField | Radix (development slowed), vaul (unmaintained), MUI/Chakra (opinionated look) |
+| UI primitives | shadcn-style primitives on **Base UI**, written by hand (ADR-031: the shadcn CLI needs the TS JS API that TS 7 dropped) | Base UI 1.8 | We own the component code and restyle it fully. Base UI is shadcn's default since July 2026, actively maintained, and includes Drawer/Toast/Combobox/NumberField | Radix (development slowed), vaul (unmaintained), MUI/Chakra (opinionated look) |
 | Styling | **Tailwind CSS** v4 + CSS custom properties (OKLCH tokens) | 4.3 | Tokens-first theming, container queries, tiny CSS output | CSS-in-JS (runtime cost) |
 | Motion | **Motion** (`motion/react`, LazyMotion) + CSS (`@starting-style`, View Transitions) | 13.4 | Layout/gesture animation. Initial cost about 4.6 KB with LazyMotion | GSAP (license, size) |
 | Charts | **Recharts 3** via shadcn chart components | 3.10 | One library for line/area/step, donut, treemap, bars and sparklines. Themed by the same CSS variables. SVG, so accessible | *Fallback:* TradingView Lightweight Charts 5 for time series (fast, finance-grade crosshair, but requires TradingView attribution). ECharts 6 (heavy). visx (too low-level for the timeline) |
@@ -79,9 +79,9 @@
 | Share images | **modern-screenshot** | 4.7 | Active. Needs CORS-clean images (see §8.3) | html-to-image (stale) |
 | IDs | **UUIDv7** (`uuidv7` package or a 30-line in-house implementation) | — | Time-sortable, merge-safe | nanoid (not sortable), UUIDv4 |
 | Lint / format | **Oxlint** (+ `oxlint-tsgolint` type-aware) + **oxfmt** | 1.85 · 0.70 | Works with TS 7 (typescript-eslint doesn't). Very fast. React Compiler lint rules. *Fallback:* Biome 2.5 if oxfmt's beta causes friction | ESLint 10 + typescript-eslint (stuck below TS 6.1), Prettier |
-| Unit/component tests | **Vitest 5** (+ Browser Mode) + Testing Library + fake-indexeddb + fast-check | 5.0 | Same config as Vite, real-browser component tests | Jest |
+| Unit/component tests | **Vitest 5** (+ Browser Mode with the Playwright provider and `vitest-browser-react`) + fake-indexeddb + fast-check | 5.0 | Same config as Vite, real-browser component tests | Jest |
 | E2E | **Playwright** | 1.63 | Chromium, Firefox and WebKit, visual snapshots | Cypress |
-| Package manager / runtime | **pnpm** (pinned via `packageManager`) · **Node 24 LTS** | 11.x or 12.x | Fast and strict. Pin 11.x if Vercel's pnpm 12 support is unconfirmed at M1 | npm, bun |
+| Package manager / runtime | **pnpm** (pinned via `packageManager`) · **Node 24 LTS** (CI, Vercel; `engines` ≥ 22.12) | 10.33 | Fast and strict. M1 pins 10.33 (lockfile v9, installs on Vercel without extra setup); moving to 11/12 is a separate, verified change | npm, bun |
 | Hosting | **Vercel** (static), GitHub integration (already connected), preview deployments | Hobby plan | Required by the brief. **Hobby = non-commercial only**, which fits: no monetization (Q8.2). Hobby also deploys from a private repository (ADR-029) | Cloudflare Pages / Netlify (backup options) |
 
 \* Versions as of 2026-09-23. Exact versions are pinned at scaffold time (M1).
@@ -119,7 +119,9 @@ settr/
 ├─ data/
 │  └─ curated/                  # hand-maintained: sealed products, overrides, zh supplement, id aliases
 ├─ scripts/
-│  └─ catalog/                  # catalog pipeline (Node 24, TypeScript via tsx)
+│  ├─ catalog/                  # catalog pipeline (Node 24, TypeScript via tsx)
+│  ├─ csp-hash.mjs              # CSP hash of the inline pre-paint script (ADR-032)
+│  └─ icons.mjs                 # renders the PWA icons
 ├─ src/
 │  ├─ app/                      # providers, router creation, error boundaries, app shell
 │  ├─ routes/                   # TanStack Router file routes (thin: compose features)
@@ -129,11 +131,14 @@ settr/
 │  │  ├─ prices/                # price entry, history, charts, price session
 │  │  ├─ portfolio/             # dashboard, analytics
 │  │  ├─ wishlist/
-│  │  ├─ data/                  # import/export/CSV/backups/storage
-│  │  ├─ settings/
+│  │  ├─ data/                  # import/export/CSV/backups/storage, install section
+│  │  ├─ settings/              # settings layout and sections
+│  │  ├─ appearance/            # theme, transparency, motion (loaded at startup, ADR-030)
+│  │  ├─ pwa/                   # install prompt, update toast (loaded at startup)
+│  │  ├─ overview/              # Übersicht (the dashboard grows here in M4)
 │  │  └─ onboarding/
 │  ├─ components/
-│  │  ├─ ui/                    # restyled shadcn/Base UI primitives
+│  │  ├─ ui/                    # hand-written shadcn-style primitives on Base UI, one module each (ADR-031)
 │  │  └─ domain/                # CardImage, CardTile, HoloCard, PLDelta, PriceChart …
 │  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, merge, schemas (Zod)
 │  ├─ db/                       # Dexie schema, migrations, repositories, hooks
@@ -143,11 +148,11 @@ settr/
 │  ├─ lib/                      # small generic utilities
 │  └─ styles/                   # tokens.css, globals.css
 ├─ tests/
-│  ├─ e2e/                      # Playwright specs
+│  ├─ e2e/                      # Playwright specs (+ axe, console/CSP guard in fixtures.ts)
 │  ├─ fixtures/                 # catalog + backup fixtures (per schema version)
 │  └─ factories.ts
 ├─ docs/                        # this planning suite
-└─ vercel.json, vite.config.ts, tsconfig.json, oxlintrc.json, package.json …
+└─ vercel.json, vite.config.ts, tsconfig.json, .oxlintrc.json, .size-limit.mjs, lefthook.yml, playwright.config.ts, package.json …
 ```
 
 ---
@@ -160,7 +165,7 @@ settr/
 | **Catalog** | Static JSON → memory | TanStack Query with `staleTime: Infinity`, key `[catalogVersion, file]`. The manifest (every set, grouped by series) loads at startup. Per-set chunks load lazily, only for the sets being shown (§9.1). Derived indexes (by id, by set) are memoized |
 | **Filters, sort, view, tabs** | URL search params | TanStack Router + Zod `validateSearch`, so views are shareable, bookmarkable and restorable |
 | **Settings** | Dexie `kv.settings` | Read via a `useSettings()` live query with Zod defaults merged in |
-| **Ephemeral UI** (privacy mode, palette open, sheet stack) | Zustand (tiny stores) or component state | Privacy mode is also persisted per device (`kv ui:*`) |
+| **Ephemeral UI** (privacy mode, palette open, sheet stack, install prompt) | Zustand (tiny stores) or component state | Privacy mode is persisted per device in `localStorage`, and display settings are mirrored there, so an inline script applies both before first paint (ADR-032) |
 | **Derived analytics** | Memoized selectors / worker | Keyed by a `dataVersion` counter that's bumped on every write transaction |
 
 ---

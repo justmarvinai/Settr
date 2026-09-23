@@ -25,8 +25,7 @@ export function UpdatePrompt() {
     const id = toastManager.add({
       title: m.pwa_update_title(),
       description: m.pwa_update_body(),
-      timeout: 0,
-      priority: 'high',
+      timeout: 0, // polite and persistent: it waits until you're ready to reload
       actionProps: {
         children: m.pwa_update_action(),
         onClick: () => void updateServiceWorker(true),

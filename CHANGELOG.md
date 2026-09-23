@@ -8,7 +8,22 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 
 ## [Unreleased]
 
+### Added
+- **M1 · Foundation (v0.1.0 candidate, 2026-09-23).**
+  - **Scaffold:** Vite 8 (Rolldown), React 19.3 with the React Compiler, TypeScript 7 (strict), TanStack Router file routes, Tailwind CSS 4.3, pnpm 10.33, Node 24 in CI.
+  - **Design system D · Bold Studio in code:** OKLCH tokens for light and dark with the Indigo accent, glass materials with a reduced-transparency fallback, self-hosted Mona Sans and Geist Mono, the type scale, and motion tokens that honor `prefers-reduced-motion` and an in-app switch.
+  - **Primitives on Base UI:** Button, IconButton, Input/TextField, Dialog, Sheet, Tabs, Toast, Tooltip, SegmentedControl (track or chips), Switch, ChipGroup, SectionNav and Panel.
+  - **App shell:** floating glass sidebar (icon rail on tablets), glass toolbar with the page title, search placeholder (`Strg K`), theme and privacy toggles and *＋ Hinzufügen*; on phones a glass tab bar with the center ＋ and a *Mehr* sheet (Portfolio, Einstellungen, backup status); backup status in the sidebar; skip link, 404 and error pages.
+  - **Pages:** Übersicht (welcome and next steps), and Sammlung (Karten | Sealed), Katalog, Preise and Portfolio as honest placeholders. Einstellungen has *Allgemein* (card languages, default language), *Darstellung* (theme, transparency, motion), *Preise* (summary), *Lagerorte* (placeholder), *Daten* (persistent storage, install, delete-on-exit warning) and *Über*.
+  - **i18n:** Paraglide JS with the German catalog; `de-DE` formatting for money (true minus sign), percent, dates, relative dates and bytes; money input parsing; a lint rule that rejects hard-coded UI strings.
+  - **Domain core:** money in integer minor units with largest-remainder allocation (property-tested), UUIDv7 IDs, price-series keys, and Zod schemas for every stored record and the settings (with defaults).
+  - **Database:** Dexie schema v1 as in `DATA_MODEL.md` §7, with repositories for settings, meta, holdings (tombstones, restore) and prices (`priceLatest` kept in the same transaction), plus a `dataVersion` counter.
+  - **PWA:** manifest, icons (two layered cards, the front one glass), precached app shell, an update toast with *Neu laden*, offline start, and a one-click *Settr installieren* button in Brave/Chromium.
+  - **Private deployment:** `noindex` meta tag, `X-Robots-Tag` and `robots.txt`; CSP and security headers in `vercel.json`, with the inline pre-paint script allowed by its hash (ADR-032).
+  - **Quality:** Oxlint (type-aware, layer boundaries) + oxfmt, Vitest unit/integration tests and Browser Mode component tests, Playwright e2e on Chromium (desktop, phone) and WebKit (iPhone) with axe in light and dark plus a console/CSP guard, size-limit budgets, lefthook hooks, and GitHub Actions CI.
+
 ### Docs
+- **M1 notes:** ADR-030 (budgets re-baselined on the measured build: initial JS ≤ 220 KB, fonts ≤ 125 KB), ADR-031 (primitives hand-written on Base UI because the shadcn CLI needs the TypeScript JS API that TS 7 dropped) and ADR-032 (pre-paint UI state in `localStorage`). Updated `QUALITY.md` (budgets, test layers, CI steps, hooks), `ARCHITECTURE.md` (versions, folders, state), `UX_SPEC.md` (settings routes incl. *Lagerorte*, the phone *Mehr* sheet), `DATA_MODEL.md` (`PriceLatest.createdAt`), `I18N.md` (Paraglide build) and `CLAUDE.md` (phase, commands, sandbox notes).
 - **Round 3 answered, M0 complete, coding approved (2026-09-23).** Direction D is confirmed with the *Indigo* accent (R3.1). The repository stays public for now, so ADR-029 is accepted with its public-repo rules (R3.2). `main` is created from the reviewed spec (R3.3). Marvin's Brave keeps site data (R3.4), and `minCondition=2` = Near Mint or better is verified (R3.5). `CLAUDE.md`, `AGENTS.md` and the roadmap now show M1 in progress.
 - **Spec v0.3: round-2 answers incorporated, 2026-09-23.**
   - **Design (R2.1):** direction **D · Bold Studio** chosen and built on the design canvas in light and dark (Übersicht, Set, Kartendetail, iPhone set). It takes C's heavy, wide type and B's floating glass sidebar, with neutral surfaces, one restrained accent (Indigo by default) and balanced glass. "Usability and user experience is always #1" is now the first design principle. `DESIGN_SYSTEM.md` has D's tokens for both themes (ADR-015 accepted).

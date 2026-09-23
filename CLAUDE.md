@@ -4,7 +4,7 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M1 · FOUNDATION ⏳** — **coding approved on 2026-09-23** (Marvin: "You can start"), starting with M1 per `ROADMAP.md`.
+**Current phase: M1 · FOUNDATION ✅ built, waiting for Marvin's check** — **coding approved on 2026-09-23** (Marvin: "You can start"). M1 lives on `claude/great-edison-uri1z0` (not merged into `main` yet). Open on Marvin's side: connect the repo to Vercel, make `main` the default branch, look at the app in Brave and on the iPhone, then say whether to open the M1 PR and start **M2 · Catalog**.
 
 - Rounds 1–3 are answered and incorporated (spec v0.3). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
@@ -49,25 +49,28 @@ Settr is a **local-first Pokémon TCG collection tracker** for **singles and sea
 
 - **Core:** Vite 8 (Rolldown) · React 19.3 + React Compiler · TypeScript 7 (strict) · TanStack Router (file routes, Zod search params) · TanStack Query (catalog JSON).
 - **Data:** Dexie 4.4 + `useLiveQuery` (user data).
-- **UI:** Tailwind 4.3 + OKLCH tokens · shadcn/ui (CLI v4) on **Base UI** · Motion 13 · Recharts 3 · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
+- **UI:** Tailwind 4.3 + OKLCH tokens · shadcn-style primitives on **Base UI**, hand-written (ADR-031) · Motion 13 · Recharts 3 · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
 - **Libraries:** Paraglide JS 2 (i18n, DE base) · TanStack Form + Zod 4 · TanStack Table 9 / Virtual 3 · MiniSearch (worker) · Zustand (tiny UI state) · vite-plugin-pwa.
-- **Tooling:** Oxlint (type-aware) + oxfmt · Vitest 5 (+ Browser Mode) + Playwright · pnpm · Node 24 LTS.
-- **Jobs (GitHub Actions):** `ci.yml` · `catalog-sync.yml` (weekly TCGdex/Cardmarket catalog PR) · `price-guide.yml` (daily `cm-prices.json`).
+- **Tooling:** Oxlint (type-aware) + oxfmt · Vitest 5 (+ Browser Mode) + Playwright + axe · size-limit · lefthook · pnpm 10.33 · Node 24 LTS.
+- **Jobs (GitHub Actions):** `ci.yml` (M1) · `catalog-sync.yml` (M2, weekly catalog PR) · `price-guide.yml` (daily; a deploy hook while the repo is public, ADR-029).
 
-## Commands (planned; available after M1)
+## Commands
 
 ```bash
 pnpm dev             # Vite dev server
-pnpm build           # production build → dist/
-pnpm preview         # serve dist/
-pnpm typecheck       # tsc --noEmit (TS 7)
-pnpm lint            # oxlint --type-aware
-pnpm format          # oxfmt
-pnpm test            # vitest (unit + integration)
-pnpm test:browser    # vitest browser mode (components)
-pnpm e2e             # playwright
-pnpm catalog:sync    # regenerate public/catalog/v1 from TCGdex + data/curated
-pnpm size            # size-limit budgets
+pnpm build           # production build → dist/ (also regenerates src/routeTree.gen.ts)
+pnpm preview         # serve dist/ with the production security headers (CSP)
+pnpm typecheck       # Paraglide compile + tsc --noEmit (TS 7)
+pnpm lint            # oxlint --type-aware (incl. layer boundaries, no hard-coded strings)
+pnpm format          # oxfmt (format:check in CI)
+pnpm test            # vitest unit + integration (Node, fake-indexeddb)
+pnpm test:browser    # vitest browser mode (components, *.test.tsx)
+pnpm e2e             # playwright against the built app (run pnpm build first)
+pnpm size            # size-limit budgets (after build)
+pnpm csp             # CSP hash of the inline pre-paint script (--write to update vercel.json)
+pnpm icons           # re-render the PWA icons
+pnpm check           # everything CI's first job runs
+pnpm catalog:sync    # (M2) regenerate public/catalog/v1 from TCGdex + data/curated
 ```
 
 ## Architecture rules
@@ -113,6 +116,8 @@ pnpm size            # size-limit budgets
   - Use a **pinned `git clone` of `tcgdex/cards-database`** for the catalog pipeline.
   - Image checks run in GitHub Actions or after Marvin allows those hosts (Q8.5).
 - Node's built-in `fetch` needs `NODE_USE_ENV_PROXY=1` to use the proxy.
+- jsDelivr is blocked too, so Paraglide's plugin loads from `node_modules` (`src/i18n/project.inlang/settings.json`).
+- Browsers: set `CHROMIUM_PATH=/opt/pw-browsers/chromium` for `pnpm e2e` and `pnpm test:browser`. The sandbox has no WebKit; CI runs the iPhone WebKit project.
 
 ## Working style for Claude
 

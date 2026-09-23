@@ -303,10 +303,10 @@ Several entries per series per day are allowed. The latest `createdAt` on a date
 ### 5.4 `priceLatest`: materialized cache (derived)
 
 ```ts
-interface PriceLatest { seriesKey: string; entryId: string; date: ISODate; price: ForeignMoney; }
+interface PriceLatest { seriesKey: string; entryId: string; date: ISODate; createdAt: string; price: ForeignMoney; }
 ```
 
-This is updated in the same transaction as every price write or delete, and it's rebuildable at any time. It makes valuing 10k holdings an O(n) key lookup. **It's not exported**; it's rebuilt after import.
+This is updated in the same transaction as every price write or delete, and it's rebuildable at any time. `createdAt` (copied from the entry) breaks ties between entries on the same date, so the rule above holds without reading the entry. It makes valuing 10k holdings an O(n) key lookup. **It's not exported**; it's rebuilt after import.
 
 ### 5.5 `wishlist`
 
@@ -332,9 +332,6 @@ interface Location extends RecordBase {
 ```
 
 **Slots:** `slot` is 1-based, left→right, top→bottom within a page. The "next free slot" is the first `(page, slot)` not occupied by an open holding. Occupancy is a warning, not a constraint, since a slot can hold a stack of identical cards. v1 stores binder, page and slot per copy; the virtual binder view that shows them ships in v1.1 (COL-08, R2.4) without a data change.
-
-```ts
-```
 
 ### 5.7 `customItems`: user-defined catalog entries
 

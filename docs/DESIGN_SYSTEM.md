@@ -251,9 +251,9 @@ Everything above is disabled under `prefers-reduced-motion: reduce` or the in-ap
 
 ## 8. Component inventory
 
-Built on **shadcn/ui** source components (copied in, fully restyled to these tokens) on accessible headless primitives.
+Built in **shadcn's style** (owned source in `src/components/ui/`, one module per component, fully styled with these tokens) on **Base UI**'s accessible headless primitives. They're written by hand, because the shadcn CLI needs the TypeScript JS API that TypeScript 7 dropped (ADR-031).
 
-**Primitives:** Button (primary · secondary · ghost · destructive · icon; sm/md/lg) · Input · **MoneyInput** · **DateInput** (German format, keyboard-friendly) · Select · Combobox · SegmentedControl · Chip · Checkbox · Switch · Slider · Tabs · Tooltip · Popover · DropdownMenu · ContextMenu · Dialog · Sheet (side/bottom) · Toast · **CommandPalette** · Skeleton · Badge · Kbd (platform-aware: `Strg` on Windows) · Table (virtualized) · EmptyState · ErrorState.
+**Primitives:** Button (primary · quiet · outline · ghost, plus destructive with the first delete flow in M3; IconButton at 44 px; sm/md/lg) · Input · **MoneyInput** · **DateInput** (German format, keyboard-friendly) · Select · Combobox · SegmentedControl · Chip · Checkbox · Switch · Slider · Tabs · Tooltip · Popover · DropdownMenu · ContextMenu · Dialog · Sheet (side/bottom) · Toast · **CommandPalette** · Skeleton · Badge · Kbd (platform-aware: `Strg` on Windows) · Table (virtualized) · EmptyState · ErrorState.
 
 **Glass primitives (§3.5):** `GlassPanel` (regular/thick) · `GlassSidebar` · `GlassToolbar` (materialize-on-scroll) · `GlassFilterBar` (sticky on list pages) · `GlassTabBar` (mobile floating pill) · `GlassSheet` · `GlassToast`. They all fall back to solid under reduced transparency.
 

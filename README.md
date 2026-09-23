@@ -36,9 +36,22 @@ Settr is a local-first collection tracker for Pokémon TCG **singles and sealed 
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Architecture decision log |
 | [`CLAUDE.md`](CLAUDE.md) · [`AGENTS.md`](AGENTS.md) | Instructions for AI coding agents |
 
-## Planned stack
+## Stack
 
-Vite 8 · React 19 · TypeScript 7 · TanStack Router/Query/Table/Form · Dexie (IndexedDB) · Tailwind CSS 4 · shadcn/ui on Base UI · Motion · Recharts · Paraglide JS · MiniSearch · vite-plugin-pwa · Vitest · Playwright. It deploys to Vercel as static files. Details and rationale are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Vite 8 · React 19 · TypeScript 7 · TanStack Router/Query/Table/Form · Dexie (IndexedDB) · Tailwind CSS 4 · Base UI · Motion · Recharts · Paraglide JS · MiniSearch · vite-plugin-pwa · Vitest · Playwright. It deploys to Vercel as static files. Details and rationale are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Development
+
+Needs Node 22.12+ (CI uses 24) and pnpm 10 (`corepack enable` picks the pinned version).
+
+```bash
+pnpm install      # also installs the git hooks (lefthook)
+pnpm dev          # http://localhost:5173
+pnpm check        # typecheck, lint, format, unit + component tests, build, CSP, budgets
+pnpm e2e          # Playwright against the built app
+```
+
+All commands are listed in [`CLAUDE.md`](CLAUDE.md#commands).
 
 ## Credits
 

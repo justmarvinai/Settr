@@ -55,8 +55,12 @@ Route slugs are English and language-neutral. Labels are localized.
 /prices/session?scope=…             Price-update session (focus mode)
 /portfolio                          Portfolio           (tabs: Entwicklung | Aufteilung | Performance | Ausgaben)
 /wishlist                           Wunschliste         (post-v1, I-06)
-/settings                           Einstellungen       (sections: Allgemein | Darstellung | Preise | Daten | Über)
-/settings/data                      Daten               (export, import, CSV, storage, reset)
+/settings                           Einstellungen › Allgemein  (sections: Allgemein | Darstellung | Preise | Lagerorte | Daten | Über)
+/settings/appearance                Darstellung         (theme, transparency, motion)
+/settings/prices                    Preise              (defaults of price entry)
+/settings/locations                 Lagerorte           (binders and boxes, M3)
+/settings/data                      Daten               (storage, install, export, import, CSV, reset)
+/settings/about                     Über                (version, credits, disclaimer)
 /onboarding                         First-run flow (only until completed)
 ```
 
@@ -107,7 +111,7 @@ Route slugs are English and language-neutral. Labels are localized.
 
 ```
 ┌───────────────────────────┐
-│ Sammlung            ⌕  👁 │  ← top app bar (large title collapses on scroll)
+│ Sammlung         ⌕  👁  ••• │  ← top app bar (large title collapses on scroll)
 ├───────────────────────────┤
 │                           │
 │        content            │
@@ -118,7 +122,7 @@ Route slugs are English and language-neutral. Labels are localized.
 ```
 
 - **＋** opens a bottom sheet with a search field (autofocus): pick a card or product and the add form follows.
-- Portfolio and Einstellungen are reached via the **"Mehr"** item or from the Übersicht tiles.
+- Portfolio and Einstellungen are reached via **"Mehr"** (•••, top app bar), a bottom sheet that also shows the backup status, or from the Übersicht tiles. On phones the theme is chosen in *Einstellungen → Darstellung* (default: System).
 - The tab bar is a **floating glass pill** (safe-area aware on iPhone).
 - Bottom sheets use snap points (50 % / 92 %), and drag-to-dismiss is supported.
 

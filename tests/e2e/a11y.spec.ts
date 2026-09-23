@@ -22,6 +22,17 @@ for (const scheme of ['light', 'dark'] as const) {
   });
 }
 
+test('toasts are accessible', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'the offline-ready toast needs a service worker install');
+  await page.goto('/');
+  const toast = page.getByRole('dialog', { name: 'Settr ist jetzt offline verfügbar.' });
+  await expect(toast).toBeVisible({ timeout: 15_000 });
+  await expect(toast.getByRole('button', { name: 'Schließen' })).toBeVisible();
+  expect(await axeViolations(page)).toEqual([]);
+  await toast.getByRole('button', { name: 'Schließen' }).click();
+  await expect(toast).toBeHidden();
+});
+
 test('no violations with reduced transparency', async ({ page }) => {
   await page.goto('/settings/appearance');
   await page.getByRole('switch', { name: 'Transparenz reduzieren' }).click();

@@ -4,6 +4,7 @@ import {
   conditionSchema,
   foreignMoneySchema,
   isoDateSchema,
+  isoTimestampSchema,
   itemRefSchema,
   itemSnapshotSchema,
   recordBaseSchema,
@@ -42,7 +43,7 @@ export const priceLatestSchema = z.object({
   seriesKey: z.string().min(1),
   entryId: uuidV7Schema,
   date: isoDateSchema,
-  createdAt: z.string(),
+  createdAt: isoTimestampSchema, // copied from the entry: breaks ties on the same date
   price: foreignMoneySchema,
 });
 

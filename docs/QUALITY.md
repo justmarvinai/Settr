@@ -31,8 +31,8 @@ A change is **done** only when all of the following hold:
 | **Unit** | Vitest 5 | `src/domain/**` (money, allocation, valuation, P/L, time series, completion, series keys, CSV, migrations) and `src/lib/**` | ≥ 95 % branch coverage on `src/domain` |
 | **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed |
 | **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
-| **Component** | Vitest Browser Mode (Playwright provider) + Testing Library | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
-| **E2E** | Playwright | Critical journeys (below). **Every PR:** Chromium desktop (the engine of Marvin's Brave on Windows) + WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation | All journeys green before merge to `main` |
+| **Component** | Vitest Browser Mode (Playwright provider, `vitest-browser-react`), `*.test.tsx` next to the component | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
+| **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. Every test also fails on console errors and CSP violations (the preview server sends the production CSP) | All journeys green before merge to `main` |
 | **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
 | **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
@@ -94,10 +94,10 @@ Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Be
 
 | Metric | Budget |
 |---|---|
-| Initial JS (app shell, gzip) | ≤ 170 KB |
+| Initial JS (entry + modulepreloads, gzip) | ≤ 220 KB (re-baselined on the M1 build, ADR-030; M1: 209 KB) |
 | Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
 | CSS (gzip) | ≤ 35 KB |
-| Web fonts on first render | ≤ 2 files, ≤ 90 KB total (latin subsets, variable). CJK fonts load lazily and only when CJK text is rendered |
+| Web fonts on first render | ≤ 2 files, ≤ 125 KB total (latin subsets, variable; ADR-030). CJK fonts load lazily and only when CJK text is rendered |
 | LCP (Lighthouse mobile, simulated 4G) | ≤ 2.0 s |
 | INP (P75) | ≤ 200 ms |
 | CLS | ≤ 0.05 (image slots have a fixed aspect ratio of 63∶88) |
@@ -154,12 +154,14 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 
 | Workflow | Trigger | Steps |
 |---|---|---|
-| `ci.yml` | PR, push to `main` | pnpm install (cached) → `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → build → size-limit → Playwright (Chromium + WebKit on PR; all engines on `main`) → upload reports |
+| `ci.yml` | PR, push to `main`, manual | pnpm install (cached) → Paraglide compile + `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → components (Vitest Browser Mode, Chromium) → build → CSP hash check (`pnpm csp`) → size-limit → `pnpm audit` (prod, high) → Playwright on the built app: desktop and phone on Chromium, iPhone on WebKit → reports uploaded on failure |
 | `e2e-nightly.yml` | nightly | Full browser matrix + visual regression + random-seed property tests |
 | `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
 | `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
 | Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |
 | `lighthouse.yml` | PR (after the Vercel preview is ready) | Lighthouse CI against the preview URL with budgets |
+
+Local git hooks (`lefthook.yml`, installed by `pnpm install`): **pre-commit** formats and lints the staged files, **pre-push** runs the typecheck and the unit tests.
 
 Branch protection on `main` requires green CI and a review (`main` is the default branch from M1 on, R3.3). Before each release, the manual Brave smoke test (§3.1) must pass.
 
