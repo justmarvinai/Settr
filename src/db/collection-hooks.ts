@@ -4,11 +4,14 @@ import {
   type CustomItem,
   type Holding,
   type Location,
+  type PriceEntry,
+  type PriceLatest,
   type Tag,
 } from '@/domain/schemas';
 import { db } from './instance';
 import { getUiPref } from './repositories/collection-meta';
 import { listHoldingsInSets, listHoldingsOfItem } from './repositories/holdings';
+import { listPricesOfItem, listSeries } from './repositories/prices';
 
 /** Live queries of the collection (ARCHITECTURE.md §5), loaded with the pages that use them. */
 
@@ -85,4 +88,33 @@ export function useOwnedItemIds(): ReadonlySet<string> | undefined {
     });
     return ids;
   }, []);
+}
+
+/** Every entry of one price series, oldest first (PRC-02, PRC-03); undefined while loading. */
+export function usePriceSeries(seriesKey: string): PriceEntry[] | undefined {
+  return useLiveQuery(
+    async () =>
+      (await listSeries(db, seriesKey)).toSorted(
+        (a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt),
+      ),
+    [seriesKey],
+  );
+}
+
+/** Every entry of one card or product across its series (language compare in the chart). */
+export function useItemPrices(itemId: string): PriceEntry[] | undefined {
+  return useLiveQuery(() => listPricesOfItem(db, itemId), [itemId]);
+}
+
+/** The latest price of every series, for valuation (DATA_MODEL.md §5.4); undefined while loading. */
+export function useLatestPrices(): ReadonlyMap<string, PriceLatest> | undefined {
+  return useLiveQuery(
+    async () => new Map((await db.priceLatest.toArray()).map((p) => [p.seriesKey, p])),
+    [],
+  );
+}
+
+/** Every price entry, for the portfolio over time (DATA_MODEL.md §6.5). */
+export function useAllPrices(): PriceEntry[] | undefined {
+  return useLiveQuery(() => db.prices.toArray(), []);
 }
