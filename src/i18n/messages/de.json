@@ -98,7 +98,6 @@
   "settings_data_exit_title": "Achtung bei „Daten beim Beenden löschen“",
   "settings_data_exit_body": "Browser-Einstellungen, die Websitedaten beim Schließen löschen, löschen auch deine Sammlung. In Brave sind das „Forget me when I close this site“ und „Delete data on exit“. Beide sind ab Werk aus.",
   "settings_data_backup": "Backup",
-  "settings_data_backup_coming": "Export und Import deiner Daten kommen mit Meilenstein 3 (Export) und 5 (Import und Zusammenführen).",
   "settings_about_version": "Version {version}",
   "settings_about_catalog": "Katalog {version} vom {date}",
   "settings_about_credits": "Kartendaten und Kartenbilder: TCGdex (MIT-Lizenz). Traditionell-chinesische Namen: PTCG-database von type-null (MIT-Lizenz). Pokémon-Namen für Übersetzungen: PokéAPI (BSD-Lizenz). Produktbilder: TCGplayer, über TCGCSV.",
@@ -739,5 +738,13 @@
       }
     }
   ],
-  "bulk_move_no_locations": "Noch keine Lagerorte. Du legst sie hier an:"
+  "bulk_move_no_locations": "Noch keine Lagerorte. Du legst sie hier an:",
+  "settings_data_backup_intro": "Sichert alles in einer Datei: Positionen, Preise, Tags, Lagerorte, eigene Einträge und Einstellungen. Brave fragt, wo die Datei hin soll, so liegen deine Backups in einem Ordner.",
+  "settings_data_backup_last": "Letztes Backup {ago}, am {date}",
+  "settings_data_backup_never": "Noch kein Backup.",
+  "settings_data_backup_action": "Backup exportieren",
+  "settings_data_backup_import_later": "Ein Backup wieder einspielen, auch zusammenführen, kommt mit Meilenstein 5.",
+  "toast_backup_started": "Backup-Download gestartet",
+  "toast_backup_shared": "Backup gesichert",
+  "toast_backup_again": "Erneut speichern"
 }

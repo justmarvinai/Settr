@@ -7,7 +7,7 @@ import { useManifest } from '@/catalog';
 import { useCatalogSearch } from '@/catalog/useCatalogSearch';
 import { CardImage } from '@/components/domain/CardImage';
 import { ProductImage } from '@/components/domain/ProductImage';
-import { useCustomItems } from '@/db';
+import { useCustomItems, useOwnedItemIds } from '@/db';
 import { pickText } from '@/domain/catalog';
 import { languageCode, m, printLabel, productTypeLabel, rarityLabel } from '@/i18n';
 import { openSheet } from '@/lib/sheets';
@@ -69,7 +69,13 @@ export default function SearchDialog({
   const [query, setQuery] = useState('');
   const adding = mode === 'add';
   const text = query.trim();
-  const { results, pending } = useCatalogSearch(text, { limit: 30 }, open && text.length > 0);
+  const owned = useOwnedItemIds();
+  const { results, pending } = useCatalogSearch(
+    text,
+    { limit: 30 },
+    open && text.length > 0,
+    owned,
+  );
 
   const q = fold(text);
   const items: PaletteItem[] = [];

@@ -46,7 +46,8 @@ export function CardTile({
         <div
           className={
             ghost
-              ? 'rounded-[4.2%/3%] opacity-40 outline-2 outline-offset-[-2px] outline-line-strong outline-dashed grayscale'
+              ? // Only the picture fades: a placeholder's text keeps its contrast (WCAG 1.4.3).
+                'rounded-[4.2%/3%] outline-2 outline-offset-[-2px] outline-line-strong outline-dashed [&_img]:opacity-40 [&_img]:grayscale'
               : undefined
           }
         >

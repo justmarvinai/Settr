@@ -1,5 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import type { CustomItem, Holding, Location, Tag } from '@/domain/schemas';
+import {
+  remaining,
+  type CustomItem,
+  type Holding,
+  type Location,
+  type Tag,
+} from '@/domain/schemas';
 import { db } from './instance';
 import { getUiPref } from './repositories/collection-meta';
 import { listHoldingsInSets, listHoldingsOfItem } from './repositories/holdings';
@@ -68,4 +74,15 @@ export function useHoldingsInLocation(locationId: string): Holding[] | undefined
 
 export function useCustomItem(id: string | undefined): CustomItem | undefined {
   return useLiveQuery(async () => (id ? db.customItems.get(id) : undefined), [id]);
+}
+
+/** Items (cards, products) with copies left, for `owned:` in search; undefined while loading. */
+export function useOwnedItemIds(): ReadonlySet<string> | undefined {
+  return useLiveQuery(async () => {
+    const ids = new Set<string>();
+    await db.holdings.each((h) => {
+      if (remaining(h) > 0) ids.add(h.item.id);
+    });
+    return ids;
+  }, []);
 }

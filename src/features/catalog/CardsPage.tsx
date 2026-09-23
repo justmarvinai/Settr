@@ -7,6 +7,7 @@ import { CardTile } from '@/components/domain/CardTile';
 import { Button } from '@/components/ui/Button';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
+import { useOwnedItemIds } from '@/db';
 import { RARITY_ABBR, RARITY_IDS, type SearchDoc } from '@/domain/catalog';
 import { ACTIVE_CARD_LANGUAGES, type CardLanguage } from '@/domain/catalog-types';
 import { ENERGY_TYPES } from '@/domain/catalog';
@@ -16,7 +17,7 @@ import type { PrintFilter } from './SetsPage';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/cards');
 const PAGE = 60;
-const EXAMPLES = ['Glurak', 'ピカチュウ', '皮卡丘', '#150', 'rarity:sir', 'set:m6a'];
+const EXAMPLES = ['Glurak', 'ピカチュウ', '皮卡丘', '#150', 'rarity:sir', 'set:m6a', 'owned:nein'];
 const ABBREVIATIONS = /* @__PURE__ */ new Map<string, string>(Object.entries(RARITY_ABBR));
 
 /**
@@ -34,6 +35,7 @@ export function CardsPage() {
     setShown(PAGE);
     void navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
   };
+  const owned = useOwnedItemIds();
   const hasFilter = Boolean(search.print || search.lang || search.rarity || search.type);
   const active = Boolean(search.q?.trim()) || hasFilter;
   const { results, pending } = useCatalogSearch(
@@ -51,6 +53,7 @@ export function CardsPage() {
         : {}),
     },
     active,
+    owned,
   );
 
   return (
