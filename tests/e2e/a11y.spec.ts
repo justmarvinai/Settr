@@ -22,15 +22,17 @@ test.describe('pages', () => {
   // axe measures contrast. Toasts get their own test below, once they're fully visible.
   test.use({ serviceWorkers: 'block' });
 
+  // One test per page and scheme, so each page has its own time budget (axe takes a while on a
+  // full set page in WebKit) and a failure names its page.
   for (const scheme of ['light', 'dark'] as const) {
-    test(`no WCAG A/AA violations (${scheme})`, async ({ page }) => {
-      await page.emulateMedia({ colorScheme: scheme });
-      for (const path of PAGES) {
+    for (const path of PAGES) {
+      test(`no WCAG A/AA violations: ${path} (${scheme})`, async ({ page }) => {
+        await page.emulateMedia({ colorScheme: scheme });
         await page.goto(path);
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-        expect(await axeViolations(page), `${path} (${scheme})`).toEqual([]);
-      }
-    });
+        expect(await axeViolations(page)).toEqual([]);
+      });
+    }
   }
 
   test('no violations with reduced transparency', async ({ page }) => {

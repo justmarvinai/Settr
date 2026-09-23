@@ -51,8 +51,9 @@ test('card page: names, Cardmarket link per language, prev/next', async ({ page 
   await expect(cardmarket).toHaveAttribute('href', /&language=1&/);
 
   // Arrows inside the language switch pick a language; elsewhere they step through the set.
-  await expect(page.getByRole('heading', { name: 'Pikachu ex', level: 2 })).toBeVisible();
-  await page.getByRole('heading', { level: 2 }).click();
+  const title = page.getByRole('heading', { name: 'Pikachu ex', level: 2 });
+  await expect(title).toBeVisible();
+  await title.click();
   await page.keyboard.press('ArrowRight');
   await expect(page).toHaveURL(/cards\/intl:30th:151/);
   await page.keyboard.press('ArrowLeft');
