@@ -1,7 +1,7 @@
 # Sealed products of 30 Jahre / 30th Celebration, international print (DE/EN), DATA_SOURCES.md §7.1.
 # Names marked "to confirm" aren't verified against pokemon.de yet. MSRP: UVP (EUR) where known,
-# otherwise the US price. Cardmarket ids (refs.cardmarket) come from the catalog-sync report; one
-# Cardmarket product covers every language of a product.
+# otherwise the US price. Cardmarket and TCGplayer ids (refs) come from the catalog-sync report; one
+# Cardmarket product covers every language of a product, TCGplayer's gives the (English) picture.
 source: PokéBeach English set guide, pokemon.com product gallery, Cardmarket product list (research 2026-09-23)
 products:
   - id: intl:30th-booster
@@ -16,7 +16,7 @@ products:
       description:
         de: 5 Folienkarten (eine davon immer ein Pikachu), 1 Folien-Energie und eine Code-Karte. Nur in Produkten erhältlich.
         en: 5 foil cards (one always a Pikachu), 1 foil Energy and a code card. Only sold inside products.
-    refs: { cardmarket: 890360 }
+    refs: { cardmarket: 890360, tcgplayer: 696613 }
 
   - id: intl:30th-c-booster
     print: intl
@@ -34,7 +34,7 @@ products:
       description:
         de: 3 Karten der Klassischen Sammlung. Liegt den Ultra-Premium-Kollektionen bei.
         en: 3 Classic Collection cards. Comes with the Ultra-Premium Collections.
-    refs: { cardmarket: 895603 }
+    refs: { cardmarket: 895603, tcgplayer: 704192 }
     note: German product name to confirm.
 
   - id: intl:30th-etb
@@ -52,7 +52,7 @@ products:
         de: 9 Booster, Full-Art-Promokarte Nidorina, 65 Kartenhüllen, 16 Energiekarten, Würfel und Leitfaden.
         en: 9 booster packs, full-art Nidorina promo, 65 sleeves, 16 Energy cards, dice and a player's guide.
     msrp: { de: { minor: 5499, currency: EUR }, en: { minor: 4999, currency: USD } }
-    refs: { cardmarket: 895551 }
+    refs: { cardmarket: 895551, tcgplayer: 704143 }
 
   - id: intl:30th-pc-etb
     print: intl
@@ -71,7 +71,7 @@ products:
       cardsPerPack: 6
       promos: ['Nidorina (MEP 101)', 'Nidorina (MEP 101, Pokémon-Center-Stempel)']
     msrp: { en: { minor: 5999, currency: USD } }
-    refs: { cardmarket: 895552 }
+    refs: { cardmarket: 895552, tcgplayer: 704144 }
     note: A German version isn't confirmed; add `de` once it is.
 
   - id: intl:30th-ex-box-sylveon
@@ -84,7 +84,7 @@ products:
     releaseDates: { de: 2026-09-16, en: 2026-09-16 }
     contents: { packs: 4, cardsPerPack: 6, promos: [Feelinara-ex (Promo und Übergröße)] }
     msrp: { en: { minor: 2199, currency: USD } }
-    refs: { cardmarket: 895557 }
+    refs: { cardmarket: 895557, tcgplayer: 704155 }
     note: German product name to confirm.
 
   - id: intl:30th-ex-box-greninja
@@ -97,7 +97,7 @@ products:
     releaseDates: { de: 2026-09-16, en: 2026-09-16 }
     contents: { packs: 4, cardsPerPack: 6, promos: [Quajutsu-ex (Promo und Übergröße)] }
     msrp: { en: { minor: 2199, currency: USD } }
-    refs: { cardmarket: 895558 }
+    refs: { cardmarket: 895558, tcgplayer: 704168 }
     note: German product name to confirm.
 
   - id: intl:30th-poster-collection
@@ -109,7 +109,7 @@ products:
     releaseDates: { de: 2026-09-16, en: 2026-09-16 }
     contents: { packs: 3, cardsPerPack: 6, promos: [Arktos, Zapdos, Lavados] }
     msrp: { en: { minor: 1499, currency: USD } }
-    refs: { cardmarket: 895553 }
+    refs: { cardmarket: 895553, tcgplayer: 704153 }
 
   - id: intl:30th-tech-sticker-exeggutor
     print: intl
@@ -125,7 +125,7 @@ products:
     releaseDates: { de: 2026-09-16, en: 2026-09-16 }
     contents: { packs: 3, cardsPerPack: 6, promos: [Alola-Kokowei] }
     msrp: { en: { minor: 1499, currency: USD } }
-    refs: { cardmarket: 895554 }
+    refs: { cardmarket: 895554, tcgplayer: 704145 }
     note: German product name to confirm.
 
   - id: intl:30th-tech-sticker-lucario
@@ -138,7 +138,7 @@ products:
     releaseDates: { de: 2026-09-16, en: 2026-09-16 }
     contents: { packs: 3, cardsPerPack: 6, promos: [Lucario] }
     msrp: { en: { minor: 1499, currency: USD } }
-    refs: { cardmarket: 895555 }
+    refs: { cardmarket: 895555, tcgplayer: 704146 }
     note: German product name to confirm.
 
   - id: intl:30th-2-pack-blister
@@ -156,7 +156,7 @@ products:
         description: { de: '2 Booster, Folien-Promokarte Evoli und eine Münze.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895556 }
+    refs: { cardmarket: 895556, tcgplayer: 704148 }
 
   - id: intl:30th-knock-out-collection
     print: intl
@@ -173,7 +173,7 @@ products:
         description: { de: '2 Booster, Folien-Promokarte Evoli und eine Münze.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895559 }
+    refs: { cardmarket: 895559, tcgplayer: 704152 }
     note: German product name to confirm.
 
   - id: intl:30th-booster-bundle
@@ -185,7 +185,7 @@ products:
     releaseDates: { de: 2026-10-02, en: 2026-10-02 }
     contents: { packs: 6, cardsPerPack: 6 }
     msrp: { en: { minor: 2694, currency: USD } }
-    refs: { cardmarket: 895561 }
+    refs: { cardmarket: 895561, tcgplayer: 704171 }
 
   - id: intl:30th-mini-tin-mew-alolan-exeggutor
     print: intl
@@ -206,7 +206,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895564 }
+    refs: { cardmarket: 895564, tcgplayer: 704178 }
     note: Ten designs whose fronts form a day and a night picture. Names follow Cardmarket; German names to confirm.
 
   - id: intl:30th-mini-tin-espeon-meowth
@@ -228,7 +228,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895565 }
+    refs: { cardmarket: 895565, tcgplayer: 704176 }
 
   - id: intl:30th-mini-tin-greninja-volbeat
     print: intl
@@ -249,7 +249,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895566 }
+    refs: { cardmarket: 895566, tcgplayer: 704185 }
 
   - id: intl:30th-mini-tin-lapras-drifloon
     print: intl
@@ -270,7 +270,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895567 }
+    refs: { cardmarket: 895567, tcgplayer: 704179 }
 
   - id: intl:30th-mini-tin-mewtwo-scraggy
     print: intl
@@ -291,7 +291,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895568 }
+    refs: { cardmarket: 895568, tcgplayer: 704183 }
 
   - id: intl:30th-mini-tin-moltres-articuno
     print: intl
@@ -312,7 +312,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895569 }
+    refs: { cardmarket: 895569, tcgplayer: 704180 }
 
   - id: intl:30th-mini-tin-pikachu-toxtricity
     print: intl
@@ -354,7 +354,7 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895571 }
+    refs: { cardmarket: 895571, tcgplayer: 704182 }
 
   - id: intl:30th-mini-tin-pikachu-vivillon
     print: intl
@@ -396,7 +396,17 @@ products:
         description: { de: '2 Booster, Stickerbogen und passende Illustrationskarte.' },
       }
     msrp: { en: { minor: 999, currency: USD } }
-    refs: { cardmarket: 895573 }
+    refs: { cardmarket: 895573, tcgplayer: 704181 }
+
+  - id: intl:30th-mini-tin-display
+    print: intl
+    setIds: [intl:30th]
+    type: other
+    name: { de: Mini-Tin-Display 30 Jahre, en: 30th Celebration Mini Tin Display }
+    languages: [de, en]
+    releaseDates: { de: 2026-10-02, en: 2026-10-02 }
+    refs: { cardmarket: 895584, tcgplayer: 704186 }
+    note: Retail display of the mini tins; German product name to confirm.
 
   - id: intl:30th-battle-deck-espeon
     print: intl
@@ -412,7 +422,7 @@ products:
         description: { de: 'Vollfolien-Deck mit 60 Karten, Spielmatte, Deckbox und Münze.' },
       }
     msrp: { en: { minor: 1999, currency: USD } }
-    refs: { cardmarket: 895562 }
+    refs: { cardmarket: 895562, tcgplayer: 704187 }
     note: Which deck carries Victini and which Zeraora is to confirm.
 
   - id: intl:30th-battle-deck-umbreon
@@ -429,7 +439,7 @@ products:
         description: { de: 'Vollfolien-Deck mit 60 Karten, Spielmatte, Deckbox und Münze.' },
       }
     msrp: { en: { minor: 1999, currency: USD } }
-    refs: { cardmarket: 895563 }
+    refs: { cardmarket: 895563, tcgplayer: 704188 }
 
   - id: intl:30th-upc-day
     print: intl
@@ -450,7 +460,7 @@ products:
         de: 29 Booster und 1 Booster der Klassischen Sammlung, Spielmatte, 65 Kartenhüllen, Deckbox, Metallmünze, 6 Würfel und Code-Karte.
         en: 29 booster packs and 1 Classic Collection booster pack, playmat, 65 sleeves, deck box, metal coin, 6 dice and a code card.
     msrp: { en: { minor: 17999, currency: USD } }
-    refs: { cardmarket: 895577 }
+    refs: { cardmarket: 895577, tcgplayer: 704190 }
     note: German product name to confirm.
 
   - id: intl:30th-upc-night
@@ -472,7 +482,7 @@ products:
         de: 29 Booster und 1 Booster der Klassischen Sammlung, Spielmatte, 65 Kartenhüllen, Deckbox, Metallmünze, 6 Würfel und Code-Karte.
         en: 29 booster packs and 1 Classic Collection booster pack, playmat, 65 sleeves, deck box, metal coin, 6 dice and a code card.
     msrp: { en: { minor: 17999, currency: USD } }
-    refs: { cardmarket: 895578 }
+    refs: { cardmarket: 895578, tcgplayer: 704191 }
 
   - id: intl:30th-ditto-premium
     print: intl
@@ -483,7 +493,7 @@ products:
     releaseDates: { de: 2026-11-06, en: 2026-11-06 }
     contents: { packs: 8, cardsPerPack: 6, description: { de: 8 Booster und Acryl-Display. } }
     msrp: { en: { minor: 3999, currency: USD } }
-    refs: { cardmarket: 895574 }
+    refs: { cardmarket: 895574, tcgplayer: 704189 }
     note: German product name to confirm.
 
   - id: intl:30th-figure-collection-mewtwo
@@ -503,7 +513,7 @@ products:
         description: { de: '5 Booster, Folien-Promokarte und Übergröße-Karte Mewtu, Figur.' },
       }
     msrp: { en: { minor: 2999, currency: USD } }
-    refs: { cardmarket: 895575 }
+    refs: { cardmarket: 895575, tcgplayer: 704194 }
     note: German product name to confirm.
 
   - id: intl:30th-figure-collection-mew
@@ -522,7 +532,7 @@ products:
         description: { de: '5 Booster, Folien-Promokarte und Übergröße-Karte Mew, Figur.' },
       }
     msrp: { en: { minor: 2999, currency: USD } }
-    refs: { cardmarket: 895576 }
+    refs: { cardmarket: 895576, tcgplayer: 704193 }
     note: German product name to confirm.
 
   - id: intl:30th-binder-collection
@@ -534,7 +544,7 @@ products:
     releaseDates: { de: 2026-12-04, en: 2026-12-04 }
     contents: { packs: 5, cardsPerPack: 6, description: { de: 5 Booster und ein Sammelalbum. } }
     msrp: { en: { minor: 3199, currency: USD } }
-    refs: { cardmarket: 895560 }
+    refs: { cardmarket: 895560, tcgplayer: 704169 }
     note: German product name to confirm.
 
   - id: intl:30th-ex-tin-sylveon
@@ -547,7 +557,7 @@ products:
     releaseDates: { de: 2026-12-04, en: 2026-12-04 }
     contents: { packs: 4, cardsPerPack: 6, promos: [Feelinara-ex] }
     msrp: { en: { minor: 2199, currency: USD } }
-    refs: { cardmarket: 895746 }
+    refs: { cardmarket: 895746, tcgplayer: 704149 }
 
   - id: intl:30th-ex-tin-greninja
     print: intl
@@ -559,4 +569,4 @@ products:
     releaseDates: { de: 2026-12-04, en: 2026-12-04 }
     contents: { packs: 4, cardsPerPack: 6, promos: [Quajutsu-ex] }
     msrp: { en: { minor: 2199, currency: USD } }
-    refs: { cardmarket: 895745 }
+    refs: { cardmarket: 895745, tcgplayer: 704150 }

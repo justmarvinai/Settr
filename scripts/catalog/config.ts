@@ -56,6 +56,8 @@ export interface SetConfig {
   };
   /** Japanese rarity marks: only RR/AR/SAR/FUR are printed (DATA_SOURCES.md §2). */
   japaneseRarityMarks?: boolean;
+  /** Names for sections that aren't a subset of their own. */
+  sectionNames?: Partial<Record<CardSection, LocalizedText>>;
   /**
    * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group-name fragment, to find the
    * set's sealed products on TCGCSV for their pictures (DATA_SOURCES.md §4).
@@ -127,6 +129,8 @@ export const CATALOG_SETS: SetConfig[] = [
       return n >= 136 && n <= 165 ? 'subset' : 'secret';
     },
     // 6628 is MF, the premium deck set's own expansion (its cards stay out of the v1 catalog).
+    // The international print keeps these 30 reprints in a subset of its own (intl:30th-c).
+    sectionNames: { subset: { de: 'Klassische Sammlung', en: 'Classic Collection' } },
     cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603, sealedExpansions: [6628] },
     tcgplayer: { category: 85, groupName: '30th Celebration' },
     japaneseRarityMarks: true,

@@ -101,6 +101,8 @@ export const catalogSetSummarySchema = z.object({
     official: z.number().int().nonnegative(),
     total: z.number().int().nonnegative(),
   }),
+  /** Names of sections that aren't a set of their own (e.g. M6a's Classic Collection, 136–165). */
+  sectionNames: z.partialRecord(z.enum(CARD_SECTIONS), localizedTextSchema).optional(),
   logo: z.partialRecord(languageSchema, z.url()).optional(),
   symbol: z.url().optional(),
 });

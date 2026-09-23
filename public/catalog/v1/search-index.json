@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.23.2",
+  "catalogVersion": "2026.09.23.4",
   "docs": [
     {"id":"intl:30th:001","kind":"card","setId":"intl:30th","print":"intl","name":"Owei","names":["Owei","Exeggcute","タマタマ","蛋蛋"],"number":"001/128","sort":1,"rarity":"common","types":["grass"],"category":"pokemon","illustrator":"Nelnal","languages":["de","en"],"image":{"url":"https://assets.tcgdex.net/de/me/30th/001","lang":"de"}},
     {"id":"intl:30th:002","kind":"card","setId":"intl:30th","print":"intl","name":"Alola-Kokowei","names":["Alola-Kokowei","Alolan Exeggutor","ナッシー","椰蛋樹","Kokowei","Exeggutor","椰蛋树"],"number":"002/128","sort":2,"rarity":"common","types":["grass"],"category":"pokemon","illustrator":"Oswaldo KATO","languages":["de","en"],"image":{"url":"https://assets.tcgdex.net/de/me/30th/002","lang":"de"}},
@@ -418,6 +418,7 @@
     {"id":"intl:30th-mini-tin-umbreon-alolan-meowth","kind":"sealed","setId":"intl:30th","print":"intl","name":"Mini-Tin Tag & Nacht: Nachtara & Alola-Mauzi","names":["Mini-Tin Tag & Nacht: Nachtara & Alola-Mauzi","30th Celebration Mini Tin: Umbreon & Alolan Meowth"],"category":"mini-tin","languages":["de","en"]},
     {"id":"intl:30th-mini-tin-pikachu-vivillon","kind":"sealed","setId":"intl:30th","print":"intl","name":"Mini-Tin Tag & Nacht: Pikachu & Vivillon","names":["Mini-Tin Tag & Nacht: Pikachu & Vivillon","30th Celebration Mini Tin: Pikachu & Vivillon"],"category":"mini-tin","languages":["de","en"]},
     {"id":"intl:30th-mini-tin-zapdos-hisuian-zorua","kind":"sealed","setId":"intl:30th","print":"intl","name":"Mini-Tin Tag & Nacht: Zapdos & Hisui-Zorua","names":["Mini-Tin Tag & Nacht: Zapdos & Hisui-Zorua","30th Celebration Mini Tin: Zapdos & Hisuian Zorua"],"category":"mini-tin","languages":["de","en"]},
+    {"id":"intl:30th-mini-tin-display","kind":"sealed","setId":"intl:30th","print":"intl","name":"Mini-Tin-Display 30 Jahre","names":["Mini-Tin-Display 30 Jahre","30th Celebration Mini Tin Display"],"category":"other","languages":["de","en"]},
     {"id":"intl:30th-battle-deck-espeon","kind":"sealed","setId":"intl:30th","print":"intl","name":"Kampfdeck 30 Jahre: Psiana-ex","names":["Kampfdeck 30 Jahre: Psiana-ex","30th Celebration Battle Deck: Espeon ex"],"category":"deck","languages":["de","en"]},
     {"id":"intl:30th-battle-deck-umbreon","kind":"sealed","setId":"intl:30th","print":"intl","name":"Kampfdeck 30 Jahre: Nachtara-ex","names":["Kampfdeck 30 Jahre: Nachtara-ex","30th Celebration Battle Deck: Umbreon ex"],"category":"deck","languages":["de","en"]},
     {"id":"intl:30th-upc-day","kind":"sealed","setId":"intl:30th","print":"intl","name":"Ultra-Premium-Kollektion Tag (Psiana-ex)","names":["Ultra-Premium-Kollektion Tag (Psiana-ex)","30th Celebration Ultra-Premium Collection: Day (Espeon ex)"],"category":"ultra-premium-collection","languages":["de","en"]},

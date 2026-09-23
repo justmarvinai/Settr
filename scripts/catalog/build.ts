@@ -217,6 +217,7 @@ export async function buildSets(inputs: BuildInputs, problems: BuildProblems): P
       languages: [...config.languages],
       releaseDates: releaseDates(config, raw),
       counts: { official: raw.cardCount.official, total: cards.length },
+      ...(config.sectionNames ? { sectionNames: config.sectionNames } : {}),
     };
     sets.push({ config, summary, raw, cards });
   }

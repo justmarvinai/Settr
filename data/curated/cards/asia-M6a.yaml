@@ -19,3 +19,9 @@ cards:
   FIG: { namesFrom: 'intl:mee:014' }
   DAR: { namesFrom: 'intl:mee:015' }
   MET: { namesFrom: 'intl:mee:016' }
+  # The three RGB-rare Mews have no Cardmarket id in TCGdex. Cardmarket lists three "Mew [Psychic |
+  # 30C]" products per expansion with consecutive ids; the order R, G, B is inferred from the
+  # international ones (909509–909511 = R, G, B). To verify on Cardmarket.
+  R: { cardmarket: { ja: 909512, zh-cn: 909518 }, note: 'Order inferred (R, G, B); to verify.' }
+  G: { cardmarket: { ja: 909513, zh-cn: 909519 }, note: 'Order inferred (R, G, B); to verify.' }
+  B: { cardmarket: { ja: 909514, zh-cn: 909520 }, note: 'Order inferred (R, G, B); to verify.' }

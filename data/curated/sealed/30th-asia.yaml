@@ -20,7 +20,7 @@ products:
     releaseDates: { ja: 2026-09-16 }
     contents: { cardsPerPack: 6, description: { de: '6 Karten, alle mit Folie.' } }
     msrp: { ja: { minor: 360, currency: JPY } }
-    refs: { cardmarket: 890359 }
+    refs: { cardmarket: 890359, tcgplayer: 718621 }
 
   - id: asia:m6a-box
     print: asia
@@ -37,7 +37,7 @@ products:
     exclusive: lottery
     contents: { packs: 20, cardsPerPack: 6, description: { de: 20 Booster. Verkauf per Lotterie. } }
     msrp: { ja: { minor: 7200, currency: JPY } }
-    refs: { cardmarket: 891464 }
+    refs: { cardmarket: 891464, tcgplayer: 718620 }
 
   - id: asia:m6a-premium-deck-set
     print: asia
@@ -54,7 +54,7 @@ products:
     contents:
       { description: { de: '2 Decks mit je 60 Karten, Marker, Münzen, Spielmatte und Tin-Box.' } }
     msrp: { ja: { minor: 6200, currency: JPY } }
-    refs: { cardmarket: 891488 }
+    refs: { cardmarket: 891488, tcgplayer: 716802 }
     note: Its cards form the separate Japanese set MF (Cardmarket expansion 6628), not part of the v1 card catalog.
 
   - id: asia:m6a-futuristic-box
@@ -74,7 +74,7 @@ products:
           },
       }
     msrp: { ja: { minor: 27500, currency: JPY } }
-    refs: { cardmarket: 891473 }
+    refs: { cardmarket: 891473, tcgplayer: 696837 }
 
   - id: asia:m6a-card-set
     print: asia
