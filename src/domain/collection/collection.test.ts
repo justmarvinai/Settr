@@ -244,6 +244,14 @@ describe('binder slots (DATA_MODEL §5.6)', () => {
     expect(nextFreeSlot(firstPage, nine, 1)).toBeUndefined(); // a full one-page binder
   });
 
+  it('fills a 12-pocket page (3×4) before the next one', () => {
+    const twelve = { columns: 3, rows: 4 };
+    const taken = Array.from({ length: 11 }, (_, i) => ({ page: 1, slot: i + 1 }));
+    expect(nextFreeSlot(taken, twelve)).toEqual({ page: 1, slot: 12 });
+    expect(nextFreeSlot([...taken, { page: 1, slot: 12 }], twelve)).toEqual({ page: 2, slot: 1 });
+    expect(slotCell(12, twelve)).toEqual({ row: 4, column: 3 });
+  });
+
   it('lists free pockets in reading order for bulk moves', () => {
     const taken = [
       { page: 1, slot: 1 },

@@ -7,7 +7,7 @@ import {
   SquaresFourIcon,
 } from '@phosphor-icons/react';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useCatalogSet,
   useManifest,
@@ -57,6 +57,8 @@ import {
   type SetOwnership,
 } from '@/features/collection';
 import { useCjkFonts } from '@/components/domain/cjk';
+import { isTyping } from '@/lib/keys';
+import { useSheets } from '@/lib/sheets';
 import { setReleaseText } from './dates';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/');
@@ -158,6 +160,18 @@ export function SetPage() {
   const isFiltered = filtered.length !== loaded.cards.length;
   const other = set.otherPrint ? manifest.sets.find((s) => s.id === set.otherPrint) : undefined;
 
+  // Q opens Schnellerfassung for this set in the language shown (UX_SPEC.md §7).
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'q' || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.defaultPrevented || isTyping(event.target) || useSheets.getState().open) return;
+      event.preventDefault();
+      openQuickAdd(set.id, lang);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [set.id, lang]);
+
   const changeDensity = (next: Density) => {
     setDensity(next);
     try {
@@ -247,7 +261,11 @@ export function SetPage() {
               options={languages.map((l) => ({ value: l, label: languageCode(l) }))}
             />
           ) : null}
-          <Button variant="outline" onClick={() => openQuickAdd(set.id, lang)}>
+          <Button
+            variant="outline"
+            aria-keyshortcuts="Q"
+            onClick={() => openQuickAdd(set.id, lang)}
+          >
             <LightningIcon size={18} weight="bold" aria-hidden />
             {m.catalog_quick_entry()}
           </Button>

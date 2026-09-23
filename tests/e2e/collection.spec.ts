@@ -42,6 +42,13 @@ test('quick add on a set tile: one copy, a toast with undo and the badge', async
   await expect(page.getByRole('link', { name: /^025\/128, Pikachu, [^,]+$/ })).toBeVisible();
 });
 
+test('Q opens Schnellerfassung on a set page', async ({ page }) => {
+  await page.goto('/catalog/sets/intl:30th');
+  await expect(page.getByRole('heading', { name: '30 Jahre', level: 2 })).toBeVisible();
+  await page.keyboard.press('q');
+  await expect(page.getByRole('dialog', { name: 'Schnellerfassung' })).toBeVisible();
+});
+
 test('add sheet with a price: Enter saves, the card page lists the lot', async ({ page }) => {
   await page.goto('/catalog/sets/intl:30th/cards/intl:30th:150');
   await holdings(page).getByRole('button', { name: 'Hinzufügen' }).click();

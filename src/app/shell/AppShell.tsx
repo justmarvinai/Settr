@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { ToastViewport } from '@/components/ui/Toasts';
 import { m } from '@/i18n';
+import { isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
@@ -13,14 +14,6 @@ const MoreSheet = lazy(() => import('./MoreSheet'));
 const CollectionSheets = lazy(() => import('./CollectionSheets'));
 
 export type SearchMode = 'go' | 'add';
-
-/** Typing in a field (or a composed key) never triggers the single-key shortcuts. */
-function isTyping(target: EventTarget | null): boolean {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
-  );
-}
 
 /**
  * Global layout (UX_SPEC.md §3): floating glass sidebar/rail, floating toolbar, content that scrolls
