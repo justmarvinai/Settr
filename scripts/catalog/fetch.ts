@@ -43,7 +43,7 @@ function checkout(name: SourceName, dir: string, sparse?: string[]): string {
   return commit;
 }
 
-async function download(url: string, file: string): Promise<void> {
+export async function download(url: string, file: string): Promise<void> {
   const response = await fetch(url, {
     headers: { 'user-agent': 'settr-catalog-pipeline (+https://github.com/justmarvinai/Settr)' },
   });

@@ -2,6 +2,7 @@ import type { CatalogManifest, CatalogProduct } from '../../src/domain/catalog';
 import type { BuildProblems, BuiltSet } from './build';
 import type { CardmarketReport } from './cardmarket';
 import type { ImageStats } from './images';
+import type { TcgplayerReport } from './tcgcsv';
 
 /** Markdown summary for the sync PR (DATA_SOURCES.md §6.2 step 8). */
 export function renderReport(input: {
@@ -10,11 +11,14 @@ export function renderReport(input: {
   manifest: CatalogManifest;
   previousCardIds: Set<string>;
   images: ImageStats;
+  productImages: TcgplayerReport['images'];
   cardmarket: CardmarketReport | null;
+  tcgplayer: TcgplayerReport | null;
   problems: BuildProblems;
   network: boolean;
 }): string {
-  const { sets, products, manifest, previousCardIds, images, cardmarket, problems } = input;
+  const { sets, products, manifest, previousCardIds, images, cardmarket, tcgplayer, problems } =
+    input;
   const cards = sets.flatMap((s) => s.cards);
   const added = cards.filter((c) => previousCardIds.size > 0 && !previousCardIds.has(c.id));
   const lines = [
@@ -74,6 +78,22 @@ export function renderReport(input: {
       ...(cardmarket.asia.unresolved.length
         ? ['', 'Unresolved:', ...cardmarket.asia.unresolved.map((u) => `- ${u}`)]
         : []),
+      ...(cardmarket.unmatchedSingles.length
+        ? [
+            '',
+            '<details><summary>Asian singles no card points to (curate `cardmarket` in data/curated/cards)</summary>',
+            '',
+            '| idProduct | Expansion | Metacard | Name |',
+            '|---|---|---|---|',
+            ...cardmarket.unmatchedSingles
+              .toSorted((a, b) => a.idExpansion - b.idExpansion || a.idProduct - b.idProduct)
+              .map(
+                (p) => `| ${p.idProduct} | ${p.idExpansion} | ${p.idMetacard ?? ''} | ${p.name} |`,
+              ),
+            '',
+            '</details>',
+          ]
+        : []),
       '',
       '<details><summary>Sealed products on Cardmarket for these expansions</summary>',
       '',
@@ -82,6 +102,36 @@ export function renderReport(input: {
       ...cardmarket.sealedCandidates
         .toSorted((a, b) => a.idExpansion - b.idExpansion || a.idProduct - b.idProduct)
         .map((p) => `| ${p.idProduct} | ${p.idExpansion} | ${p.categoryName ?? ''} | ${p.name} |`),
+      '',
+      '</details>',
+      '',
+    );
+  }
+  lines.push(
+    '## Sealed pictures (TCGplayer)',
+    '',
+    `Products with a TCGplayer id: ${input.productImages.curated}; with a picture: ${input.productImages.found}.`,
+    ...(input.productImages.missing.length
+      ? ['', 'No picture:', ...input.productImages.missing.map((m) => `- ${m}`)]
+      : []),
+    '',
+  );
+  if (tcgplayer) {
+    const curated = new Set(products.flatMap((p) => (p.refs?.tcgplayer ? [p.refs.tcgplayer] : [])));
+    const groupName = new Map(tcgplayer.groups.map((g) => [g.groupId, g.name]));
+    lines.push(
+      `Groups: ${tcgplayer.groups.map((g) => `${g.name} (${g.categoryId}/${g.groupId})`).join(', ') || 'none'}.`,
+      '',
+      '<details><summary>Sealed products on TCGplayer for these groups (curate `refs.tcgplayer`)</summary>',
+      '',
+      '| productId | Group | Name | Curated |',
+      '|---|---|---|---|',
+      ...tcgplayer.sealedCandidates
+        .toSorted((a, b) => a.groupId - b.groupId || a.productId - b.productId)
+        .map(
+          (p) =>
+            `| ${p.productId} | ${groupName.get(p.groupId) ?? p.groupId} | ${p.name} | ${curated.has(p.productId) ? 'yes' : ''} |`,
+        ),
       '',
       '</details>',
       '',

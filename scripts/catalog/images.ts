@@ -29,7 +29,7 @@ async function answers(url: string): Promise<boolean> {
  * asset index (`datas.json`) lags behind new sets (its own API special-cases 30th), so the server
  * answer decides, not the index.
  */
-function createChecker() {
+export function createChecker() {
   const results = new Map<string, Promise<boolean>>();
   const queue: (() => void)[] = [];
   let running = 0;

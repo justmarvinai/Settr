@@ -56,6 +56,11 @@ export interface SetConfig {
   };
   /** Japanese rarity marks: only RR/AR/SAR/FUR are printed (DATA_SOURCES.md §2). */
   japaneseRarityMarks?: boolean;
+  /**
+   * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group-name fragment, to find the
+   * set's sealed products on TCGCSV for their pictures (DATA_SOURCES.md §4).
+   */
+  tcgplayer?: { category: number; groupName: string };
 }
 
 const numeric = (localId: string) => (/^\d+$/.test(localId) ? Number(localId) : null);
@@ -81,6 +86,7 @@ export const CATALOG_SETS: SetConfig[] = [
       },
     ],
     cardmarket: { expansion: 6601 },
+    tcgplayer: { category: 3, groupName: '30th Celebration' },
   },
   {
     id: 'intl:30th-c',
@@ -122,6 +128,7 @@ export const CATALOG_SETS: SetConfig[] = [
     },
     // 6628 is MF, the premium deck set's own expansion (its cards stay out of the v1 catalog).
     cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603, sealedExpansions: [6628] },
+    tcgplayer: { category: 85, groupName: '30th Celebration' },
     japaneseRarityMarks: true,
   },
 ];

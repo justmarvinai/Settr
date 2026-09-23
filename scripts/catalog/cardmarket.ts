@@ -1,7 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import type { CardLanguage } from '../../src/domain/catalog-types';
 import type { BuildProblems, BuiltCard, BuiltSet } from './build';
-import type { CuratedProduct } from './curated';
+import type { CardOverlay, CuratedProduct } from './curated';
 import { dirs } from './paths';
 import type { PreviousCatalog } from './previous';
 
@@ -42,6 +43,8 @@ export interface CardmarketReport {
   singlesPerExpansion: Record<number, number>;
   /** Asian prints: ids found per card language, and cards left without one. */
   asia: { ja: number; 'zh-cn': number; unresolved: string[] };
+  /** Singles of the Asian expansions that no card points to, to curate `cardmarket` overlays. */
+  unmatchedSingles: CardmarketProduct[];
   /** Sealed products listed for the configured expansions, to curate `refs.cardmarket`. */
   sealedCandidates: CardmarketProduct[];
 }
@@ -59,12 +62,14 @@ export function applyCardmarket(
   sets: BuiltSet[],
   cm: CardmarketIndex,
   products: CuratedProduct[],
+  overlays: Map<string, Map<string, CardOverlay>>,
   problems: BuildProblems,
 ): CardmarketReport {
   const report: CardmarketReport = {
     checked: 0,
     singlesPerExpansion: {},
     asia: { ja: 0, 'zh-cn': 0, unresolved: [] },
+    unmatchedSingles: [],
     sealedCandidates: [],
   };
   const expansions = new Set<number>();
@@ -163,13 +168,28 @@ export function applyCardmarket(
           if (ids) ids[other] = candidates[i];
         });
     }
+    const used = new Set<number>();
     for (const [card, byLanguage] of found) {
       const variant = card.variants[0];
       if (!variant) continue;
       variant.refs = { ...variant.refs, cardmarket: { byLanguage } };
-      if (byLanguage.ja) report.asia.ja++;
-      if (byLanguage['zh-cn']) report.asia['zh-cn']++;
+      for (const id of Object.values(byLanguage)) used.add(id);
     }
+    for (const id of Object.values(curatedIds(set, overlays)).flatMap((ids) => Object.values(ids)))
+      used.add(id);
+    report.unmatchedSingles.push(
+      ...[...cm.singles.values()].filter(
+        (p) =>
+          (p.idExpansion === expansionOf.ja || p.idExpansion === expansionOf['zh-cn']) &&
+          !used.has(p.idProduct),
+      ),
+    );
+  }
+  applyCuratedCardmarket(sets, overlays);
+  for (const card of sets.filter((s) => s.config.print === 'asia').flatMap((s) => s.cards)) {
+    const byLanguage = card.variants[0]?.refs?.cardmarket?.byLanguage;
+    if (byLanguage?.ja) report.asia.ja++;
+    if (byLanguage?.['zh-cn']) report.asia['zh-cn']++;
   }
 
   for (const product of products) {
@@ -189,8 +209,35 @@ export function applyCardmarket(
   return report;
 }
 
+/** Curated `cardmarket` overlays of a set: card id → product per language. */
+function curatedIds(set: BuiltSet, overlays: Map<string, Map<string, CardOverlay>>) {
+  const ids: Record<string, Partial<Record<CardLanguage, number>>> = {};
+  for (const card of set.cards) {
+    const curated = overlays.get(set.config.id)?.get(card.localId)?.cardmarket;
+    if (curated) ids[card.id] = curated;
+  }
+  return ids;
+}
+
+/** Curated ids win over TCGdex and the metacard match (both builds, so offline edits show up). */
+function applyCuratedCardmarket(sets: BuiltSet[], overlays: Map<string, Map<string, CardOverlay>>) {
+  for (const set of sets.filter((s) => s.config.print === 'asia')) {
+    const curated = curatedIds(set, overlays);
+    for (const card of set.cards) {
+      const variant = card.variants[0];
+      if (!variant || !curated[card.id]) continue;
+      const byLanguage = { ...variant.refs?.cardmarket?.byLanguage, ...curated[card.id] };
+      variant.refs = { ...variant.refs, cardmarket: { byLanguage } };
+    }
+  }
+}
+
 /** Offline builds keep the Asian ids the last network build sorted out (see applyCardmarket). */
-export function carryOverCardmarket(sets: BuiltSet[], previous: PreviousCatalog): void {
+export function carryOverCardmarket(
+  sets: BuiltSet[],
+  previous: PreviousCatalog,
+  overlays: Map<string, Map<string, CardOverlay>>,
+): void {
   for (const set of sets.filter((s) => s.config.print === 'asia')) {
     for (const card of set.cards) {
       const before = previous.cards.get(card.id);
@@ -200,4 +247,5 @@ export function carryOverCardmarket(sets: BuiltSet[], previous: PreviousCatalog)
       }
     }
   }
+  applyCuratedCardmarket(sets, overlays);
 }

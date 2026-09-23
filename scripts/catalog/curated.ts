@@ -21,6 +21,8 @@ const cardOverlaySchema = z
     counterpart: z.string().optional(),
     /** Take translated names from this card without linking artwork (e.g. basic Energy). */
     namesFrom: z.string().optional(),
+    /** Cardmarket product per card language, where TCGdex's id or the metacard match fails. */
+    cardmarket: z.partialRecord(z.enum(CARD_LANGUAGES), z.number().int().positive()).optional(),
     note: z.string().optional(),
   })
   .strict();

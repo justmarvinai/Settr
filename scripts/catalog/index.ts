@@ -24,12 +24,13 @@ import {
 import { loadCardOverlays, loadIdAliases, loadSealed } from './curated';
 import { emitCatalog } from './emit';
 import { fetchSources, updateLock } from './fetch';
-import { resolveImages } from './images';
+import { createChecker, resolveImages } from './images';
 import { loadSpeciesNames } from './names';
 import { CACHE, REPORT } from './paths';
 import { loadPrevious } from './previous';
 import { loadTraditionalChineseNames } from './ptcg';
 import { renderReport } from './report';
+import { loadTcgcsv, resolveProductImages, type TcgplayerReport } from './tcgcsv';
 
 const args = new Set(process.argv.slice(2));
 const network = args.has('--network');
@@ -44,10 +45,11 @@ if (args.has('--update-sources')) {
 await fetchSources({ network });
 const previous = loadPrevious();
 const species = loadSpeciesNames();
+const overlays = loadCardOverlays();
 const sets = await buildSets(
   {
     species,
-    overlays: loadCardOverlays(),
+    overlays,
     traditionalChinese: new Map([['M6a', loadTraditionalChineseNames('M6a')]]),
   },
   problems,
@@ -65,10 +67,26 @@ for (const product of products) {
 
 let cardmarket: CardmarketReport | null = null;
 const cm = network ? loadCardmarket() : null;
-if (cm) cardmarket = applyCardmarket(sets, cm, curated, problems);
-else carryOverCardmarket(sets, previous);
+if (cm) cardmarket = applyCardmarket(sets, cm, curated, overlays, problems);
+else carryOverCardmarket(sets, previous, overlays);
 
 const images = await resolveImages(sets, previous, { verify: network });
+
+// Sealed pictures (EN/JP) from TCGplayer via TCGCSV; a TCGCSV outage keeps the last ones.
+let tcgplayer: TcgplayerReport | null = null;
+let productChecker = network ? createChecker() : null;
+if (network) {
+  try {
+    tcgplayer = { ...(await loadTcgcsv(sets)), images: { curated: 0, found: 0, missing: [] } };
+  } catch (error) {
+    problems.warnings.push(
+      `TCGCSV unavailable, sealed pictures kept from the last build: ${String(error)}`,
+    );
+    productChecker = null;
+  }
+}
+const productImages = await resolveProductImages(products, previous, productChecker);
+if (tcgplayer) tcgplayer.images = productImages;
 
 // Strict checks the runtime schema leaves open (vocab.ts) and catalog-wide invariants.
 const seen = new Set<string>();
@@ -121,7 +139,9 @@ const report = renderReport({
   manifest,
   previousCardIds: new Set(previous.cards.keys()),
   images,
+  productImages,
   cardmarket,
+  tcgplayer,
   problems,
   network,
 });

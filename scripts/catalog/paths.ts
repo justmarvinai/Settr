@@ -25,4 +25,5 @@ export const dirs = {
   ptcgDatabase: process.env.PTCG_DIR ?? join(CACHE, 'ptcg-database'),
   pokeapi: join(CACHE, 'pokeapi'),
   cardmarket: join(CACHE, 'cardmarket'),
+  tcgcsv: join(CACHE, 'tcgcsv'),
 };
