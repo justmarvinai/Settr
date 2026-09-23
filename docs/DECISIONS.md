@@ -18,12 +18,18 @@
 | 010 | Recharts 3 as the single chart library | Accepted |
 | 011 | TypeScript 7 + Oxlint/oxfmt + Vitest 5 + Playwright | Accepted |
 | 012 | MiniSearch in a worker with CJK bigram tokenization | Accepted |
-| 013 | Image delivery: direct CORS vs same-origin proxy | Proposed (decide in M1) |
+| 013 | Image delivery: direct CORS for TCGdex, same-origin proxy for non-CORS hosts | Accepted (Q8.4) |
 | 014 | Clean-room holo effect (no GPL code) | Accepted |
-| 015 | "Vault" design direction | Proposed (Q9.1) |
+| 015 | Design direction: Liquid Glass × bold minimalism (A/B/C on the canvas) | Proposed (⟶ R2.1) |
 | 016 | Versioned JSON backup, LWW merge with tombstones | Accepted |
 | 017 | TanStack Form + Zod 4 | Accepted |
-| 018 | Chinese data strategy for v1 | Proposed (Q3.2, Q3.5) |
+| 018 | Chinese data strategy for v1 | Superseded by ADR-021 |
+| 019 | German-only UI, translation-ready | Accepted (Q3.1) |
+| 020 | Cardmarket price-guide suggestions via a daily static snapshot | Accepted (Q6.6) |
+| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; source permission ⟶ R2.8) |
+| 022 | Private deployment: unlisted + noindex, no Impressum while private | Accepted (Q1.2) |
+| 023 | Binder-aware storage locations (layout, page, slot) | Accepted (Q5.7) |
+| 024 | Liquid Glass as a material for chrome only | Accepted (Q9.5) |
 
 ---
 
@@ -89,10 +95,10 @@
   - **Unpriced holdings are excluded and counted.**
   - A `priceLatest` materialized table makes valuation fast.
 - **Consequences:** Honest numbers, fast dashboards, and step-shaped portfolio curves.
-- **Alternatives:** Per-holding prices only (duplicate effort for identical copies), automatic prices (contradicts the brief; offered only as an optional import ⟶ Q6.6).
+- **Alternatives:** Per-holding prices only (duplicate effort for identical copies), automatic prices (contradicts the brief). *Suggestions* from Cardmarket's price guide were later accepted as an explicit, confirm-to-save aid (ADR-020).
 
 ### ADR-008 · Paraglide JS 2 for i18n
-- **Decision:** Paraglide JS 2 with German as the base locale, English as the second, and compile-time typed messages.
+- **Decision:** Paraglide JS 2 with German as the base locale and compile-time typed messages. v1 ships German only (ADR-019), and English can be added later as a second locale.
 - **Consequences:** Smallest bundle, and missing parameters are type errors. The locale switch needs `{ reload: false }` plus a React re-render.
 - **Alternatives:** i18next + react-i18next (runtime and size), Lingui 6 (needs Babel macros under Vite 8), react-intl (churn).
 
@@ -123,9 +129,9 @@
 - **Consequences:** Instant multi-script search off the main thread. Switch to FlexSearch if the catalog grows to tens of thousands of docs.
 - **Alternatives:** Fuse.js (no index), Orama (heavier), FlexSearch (more complex API).
 
-### ADR-013 · Image delivery: direct CORS vs same-origin proxy (Proposed)
+### ADR-013 · Image delivery: direct CORS for TCGdex, proxy for non-CORS hosts (Accepted)
 - **Context:** Service-worker caching of **opaque** cross-origin responses costs about 7 MB of quota each in Chrome. Canvas features need CORS-clean images. Hotlinking also sends visitors' IPs to a third party.
-- **Proposal:** TCGdex sends `Access-Control-Allow-Origin: *` on successful responses (third-party measurement; confirm in M1). So: **load TCGdex images directly** with `crossorigin="anonymous"` and add a privacy notice. Proxy through a Vercel rewrite `/img/*` only for hosts without CORS headers, or for everything if you prefer maximum privacy (⟶ Q8.4).
+- **Decision (Q8.4):** TCGdex sends `Access-Control-Allow-Origin: *` on successful responses (third-party measurement; confirm in M1). So **TCGdex images load directly** with `crossorigin="anonymous"`, and the privacy note names the host. Hosts without CORS headers go through a same-origin Vercel rewrite; in v1 that's `/img/tcgp/*` for TCGplayer sealed images.
 - **Consequences:** Image URLs are centralized in `catalog/images.ts`, so switching is trivial.
 
 ### ADR-014 · Clean-room holo effect
@@ -133,9 +139,13 @@
 - **Decision:** No code from it. We implement our own layered-gradient/blend-mode effect. MIT helpers are allowed (e.g. react-parallax-tilt).
 - **Consequences:** No license contamination. A one-card-at-a-time performance policy.
 
-### ADR-015 · "Vault" design direction (Proposed)
-- **Proposal:** A dark-first premium gallery aesthetic with a single gold accent and a holo-foil signature (`DESIGN_SYSTEM.md` §1).
-- **Alternatives:** "Terminal", "Foil Pop". Your choice is pending (⟶ Q9.1), optionally after clickable mockups.
+### ADR-015 · Design direction: Liquid Glass × bold minimalism (Proposed)
+- **Context (Q9.5):** References are Revolut, Apple and Wise, with bold fonts, clean designs, Apple minimalism and Apple's Liquid Glass. Desktop first (Q9.8).
+- **Proposal:** All candidates share the bold type, minimal layout and glass-chrome foundation (`DESIGN_SYSTEM.md` §1.1). They're built as a clickable design canvas:
+  - **A · Vault Glass** (dark, gold; recommended)
+  - **B · Studio Glass** (light, Apple-minimal)
+  - **C · Bold** (Revolut/Wise energy, cobalt)
+- **Decision pending:** Marvin picks on the canvas (⟶ R2.1). v0.1's "Terminal" and "Foil Pop" directions were dropped because they didn't match the stated taste.
 
 ### ADR-016 · Versioned JSON backup, LWW merge with tombstones
 - **Decision:** A single `.settr.json` envelope with `formatVersion`, `schemaVersion` and a checksum. Import supports *replace* and *merge* (last write wins by `updatedAt`, plus tombstones), and takes a pre-import snapshot (`IMPORT_EXPORT.md`).
@@ -145,11 +155,49 @@
 - **Decision:** TanStack Form 1.x with Zod 4 schemas, shared with import validation. Zod's German error locale is used.
 - **Alternatives:** react-hook-form 7 (v8 still beta).
 
-### ADR-018 · Chinese data strategy for v1 (Proposed)
+### ADR-018 · Chinese data strategy for v1 (Superseded by ADR-021)
 - **Context:** TCGdex has **no** `zh-tw`/`zh-cn` data for Mega-era sets yet (its zh-tw data ends at SV10, May 2025, and zh-cn at CSV9.5C, Jun 2026). The Traditional Chinese 30th CELEBRATION mirrors the JP `M6a` structure. The Simplified Chinese version's structure and count are unconfirmed.
 - **Options:**
   - (a) A curated `zh-tw` supplement: `M6a` card list + TC names, with images only if a legitimate source exists.
   - (b) Allow ZH holdings on `M6a` cards with JP images and names until data arrives.
   - (c) Postpone ZH to post-v1.
   - (d) Custom items.
-- **Proposal:** (b) at launch, since it's cheap and lets you track TC copies immediately, plus (a) as data becomes available. ⟶ Q3.2 / Q3.5.
+- **Proposal (v0.1):** (b) at launch plus (a) as data becomes available. Superseded after Q3.2 chose **Simplified** Chinese, see ADR-021.
+
+### ADR-019 · German-only UI, translation-ready (Accepted, Q3.1)
+- **Decision:** v1 ships only German UI text. Paraglide stays, with `de` as the base and only locale, and **every** string lives in `messages/de.json` (lint rule against hard-coded text).
+- **Consequences:** No English maintenance cost now. Adding English later is purely additive (one message file + a locale switch).
+- **Alternatives:** Hard-coded German strings (cheaper today, costly refactor later).
+
+### ADR-020 · Cardmarket price-guide suggestions via a daily static snapshot (Accepted, Q6.6)
+- **Context:** Marvin wants suggestions from Cardmarket's public price guide. The file has no CORS headers (browser fetch impossible) and is 15.5 MB, and Settr has no backend.
+- **Decision:** A daily GitHub Action (`price-guide.yml`) downloads the file, filters it to catalog products (a few KB) and commits `public/catalog/v1/cm-prices.json` only if it changed, which triggers a Vercel deploy. The UI shows *ab* and *Trend* as **suggestions** (dated, scope-labeled) that are **never saved without confirmation**. Accepted values are stored with `origin: 'guide'`.
+- **Consequences:** Static, private and free. At most one commit/deploy per day. The guide is global for international products (all languages and countries), which the UI states explicitly.
+- **Alternatives:** Vercel Function proxy (a backend, violates the brief), the user uploading the 15 MB file manually (clunky), scraping (ToS).
+
+### ADR-021 · Simplified Chinese as a language of M6a, with derived names (Accepted, Q3.2/Q3.5)
+- **Context:** Marvin collects **Simplified** Chinese cards. The SC *30周年庆典* mirrors JP `M6a` (176 cards on Cardmarket expansion 6603 and in `duanxr/PTCG-CHS-Datasets`). TCGdex has no SC data.
+- **Decision:**
+  - `asia:M6a.languages = ['ja', 'zh-cn']`. SC printed rarity marks are handled via `printedRarity`.
+  - Chinese Pokémon names are **derived** from PokéAPI species names (+ `ex` suffix), labeled *übersetzt*. The few Trainer/Energy names are curated.
+  - SC Cardmarket product IDs are mapped via `idMetacard` (6602 ↔ 6603).
+  - The complete SC dataset is used **only with the maintainer's written permission** (⟶ R2.8).
+- **Consequences:** SC copies are trackable at launch with correct numbers and Cardmarket links. Names and images improve without migrations.
+- **Alternatives:** Waiting for TCGdex (unknown timeline), scraping pokemon.cn (ToS and fragility).
+
+### ADR-022 · Private deployment (Accepted, Q1.2)
+- **Decision:** An unlisted `*.vercel.app` URL shared only with friends. `noindex` via meta tag, `X-Robots-Tag` header and `robots.txt`. An "Über & Rechtliches" page with the disclaimer, credits and privacy note. **No Impressum while private.**
+- **Caveat:** not legal advice. Sharing with friends goes beyond the strict "personal/family" exemption, so the residual risk is low but not zero. If Settr ever goes public, an Impressum is added first.
+
+### ADR-023 · Binder-aware storage locations (Accepted, Q5.7)
+- **Decision:** `Location` has `layout {columns, rows}` and `pages`. A holding's `location` stores `{id, page, slot}`, and Settr suggests the next free slot (occupancy is a warning, not a constraint).
+- **Consequences:** Matches Marvin's Withyu 12-pocket and VaultX 9-pocket binders, and enables the virtual binder view later (COL-08, ⟶ R2.4) without data changes.
+
+### ADR-024 · Liquid Glass as a material for chrome only (Accepted, Q9.5)
+- **Decision:**
+  - Glass (backdrop blur + saturation + translucent tint + specular edge) is used **only** for floating chrome: sidebar, toolbar, tab bar, sheets, popovers and the command palette.
+  - Content stays solid.
+  - Reduced transparency (OS preference or the in-app toggle) switches to solid surfaces.
+  - At most 3 blurred layers are visible at once.
+- **Consequences:** It delivers the macOS/iOS 26 feel Marvin likes without sacrificing legibility or performance on Windows laptops.
+- **Alternatives:** Glass everywhere (illegible, slow), no glass (misses the stated taste).

@@ -1,6 +1,7 @@
 # Settr: Architecture
 
-> Status: **Draft v0.1 (planning)** · Last updated: 2026-09-23 · Versions verified against the npm registry on 2026-09-23.
+> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23 · Versions verified against the npm registry on 2026-09-23.
+> **Primary platform:** Windows desktop, Chrome/Edge (⟶ R2.9). **Secondary:** iPhone Safari as an installed PWA. **UI language:** German only (translation-ready).
 > Decisions and their alternatives are logged in [`DECISIONS.md`](./DECISIONS.md). Data shapes → [`DATA_MODEL.md`](./DATA_MODEL.md). Data origins → [`DATA_SOURCES.md`](./DATA_SOURCES.md).
 
 ---
@@ -24,14 +25,16 @@
  │ scripts/catalog  ──reads──▶ TCGdex cards-database (git, pinned commit)        │
  │                  ──reads──▶ data/curated/* (sealed products, overrides, zh)   │
  │                  ──writes─▶ public/catalog/v1/*.json (+ manifest, hashes)     │
+ │ price-guide.yml (daily) ──▶ Cardmarket price_guide_6.json ──filter──▶         │
+ │                              public/catalog/v1/cm-prices.json (commit if changed)│
  └──────────────────────────────────────────────────────────────────────────────┘
                                    │  git push → Vercel build (vite build)
                                    ▼
  ┌────────────────────────────── Vercel (static) ───────────────────────────────┐
  │  /index.html, /assets/* (immutable), /sw.js, /manifest.webmanifest            │
- │  /catalog/v1/*  (catalog JSON)                                                 │
- │  /img/*  ──rewrite (optional proxy, see §8.3)──▶ https://assets.tcgdex.net/*  │
- │  Security headers (CSP etc.), SPA fallback rewrite                             │
+ │  /catalog/v1/*  (catalog JSON + daily cm-prices.json)                          │
+ │  /img/tcgp/*  ──rewrite (proxy for non-CORS hosts, §8.3)──▶ TCGplayer CDN      │
+ │  Security headers (CSP, noindex), SPA fallback rewrite                          │
  └──────────────────────────────────────────────────────────────────────────────┘
                                    │ HTTPS
                                    ▼
@@ -63,7 +66,7 @@
 | Motion | **Motion** (`motion/react`, LazyMotion) + CSS (`@starting-style`, View Transitions) | 13.4 | Layout/gesture animation. Initial cost about 4.6 KB with LazyMotion | GSAP (license, size) |
 | Charts | **Recharts 3** via shadcn chart components | 3.10 | One library for line/area/step, donut, treemap, bars and sparklines. Themed by the same CSS variables. SVG, so accessible | *Fallback:* TradingView Lightweight Charts 5 for time series (fast, finance-grade crosshair, but requires TradingView attribution). ECharts 6 (heavy). visx (too low-level for the timeline) |
 | Forms | **TanStack Form** + **Zod 4** | 1.33 · 4.6 | Strong typing. Zod schemas shared with import validation. Zod ships German error messages | react-hook-form 7 (v8 still beta) |
-| i18n | **Paraglide JS 2** (inlang) | 2.25 | Compile-time, typed, tree-shakable messages. German base locale. `setLocale(..., { reload: false })` | i18next (runtime and bundle size), Lingui 6 (needs Babel macros), react-intl (high churn) |
+| i18n | **Paraglide JS 2** (inlang) | 2.25 | Compile-time, typed, tree-shakable messages. **German only in v1** (Q3.1), but every string lives in the catalog, so adding English later needs no refactor | i18next (runtime and bundle size), Lingui 6 (needs Babel macros), react-intl (high churn) |
 | Dates | **date-fns 4** + `Intl` | 4.4 | Temporal isn't Baseline yet (no Safari). Revisit later | Temporal polyfill (size) |
 | Search | **MiniSearch** in a Web Worker | 7.2 | Prefix + fuzzy search, serializable index, custom tokenizer for CJK bigrams | FlexSearch (switch if the index exceeds tens of thousands of docs), Orama (heavier), Fuse.js (no index; fine for palette-only) |
 | UI state | **Zustand** (only for small ephemeral state) | 5.0 | Tiny. Filters live in the URL and data in Dexie | Jotai 3, Redux |
@@ -77,7 +80,7 @@
 | Unit/component tests | **Vitest 5** (+ Browser Mode) + Testing Library + fake-indexeddb + fast-check | 5.0 | Same config as Vite, real-browser component tests | Jest |
 | E2E | **Playwright** | 1.63 | Chromium, Firefox and WebKit, visual snapshots | Cypress |
 | Package manager / runtime | **pnpm** (pinned via `packageManager`) · **Node 24 LTS** | 11.x or 12.x | Fast and strict. Pin 11.x if Vercel's pnpm 12 support is unconfirmed at M1 | npm, bun |
-| Hosting | **Vercel** (static), GitHub integration, preview deployments | Hobby plan | Required by the brief. **Hobby = non-commercial only** ⟶ Q8.2 | Cloudflare Pages / Netlify (backup options) |
+| Hosting | **Vercel** (static), GitHub integration (already connected), preview deployments | Hobby plan | Required by the brief. **Hobby = non-commercial only**, which fits: no monetization (Q8.2) | Cloudflare Pages / Netlify (backup options) |
 
 \* Versions as of 2026-09-23. Exact versions are pinned at scaffold time (M1).
 
@@ -203,6 +206,7 @@ settr/
 |---|---|---|
 | App shell (`index.html`, JS/CSS chunks, fonts, icons) | **Precache** (revisioned) | `index.html` and `sw.js` are served with `no-cache` so updates are detected |
 | `/catalog/v1/manifest.json` | **NetworkFirst** (timeout 3 s) → cache | Detects new catalog versions quickly |
+| `/catalog/v1/cm-prices.json` | **StaleWhileRevalidate** | Daily price-guide snapshot (PRC-09). The UI shows its date and hides suggestions older than 3 days |
 | `/catalog/v1/sets/*`, `sealed.json` | **CacheFirst** keyed by content hash (from the manifest) | Immutable once hashed |
 | Card/product images | **CacheFirst**, max ~3 000 entries, 180-day expiry, **CORS-mode only** (see §8.3) | "Set offline verfügbar machen" pre-caches a whole set (CAT-09) |
 
@@ -228,7 +232,8 @@ Chrome counts every **opaque** (non-CORS) cross-origin response stored by a serv
 
 **Rule:**
 - **Default: A for TCGdex.** It already sends CORS headers. Confirm in M1.
-- **B** for any image host **without** CORS headers (e.g. official publisher images, if Q4.6 enables them), or for everything if you choose maximum privacy (⟶ Q8.4).
+- **B** for image hosts **without** CORS headers. In v1 that means TCGplayer product images for EN/JP sealed products, via `/img/tcgp/*`. Official publisher images aren't used (Q4.6).
+- **Decision (Q8.4): TCGdex images load directly (A).** The privacy note names `assets.tcgdex.net`.
 - All image URLs are built in one place (`catalog/images.ts`), so switching is a one-line change.
 
 ---
@@ -265,20 +270,24 @@ Details are in `DATA_SOURCES.md` §6.
   ```jsonc
   {
     "rewrites": [
-      // { "source": "/img/:path*", "destination": "https://assets.tcgdex.net/:path*" },  // only if §8.3 → B
+      { "source": "/img/tcgp/:path*", "destination": "https://tcgplayer-cdn.tcgplayer.com/:path*" },  // sealed EN/JP images (§8.3 → B)
       { "source": "/((?!assets/|catalog/|img/|fonts/|icons/|sw\\.js|manifest\\.webmanifest).*)", "destination": "/index.html" }
     ],
     "headers": [
       { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
       { "source": "/catalog/v1/sets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }] },
       { "source": "/(sw\\.js|index\\.html)", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-      { "source": "/(.*)", "headers": [ /* CSP & security headers, see QUALITY.md §6 */ ] }
+      { "source": "/(.*)", "headers": [
+          { "key": "X-Robots-Tag", "value": "noindex, nofollow" },           // private deployment (Q1.2)
+          /* CSP & security headers, see QUALITY.md §6 */ ] }
     ]
   }
   ```
 - **Environments:** every PR gets a **preview deployment**, and `main` goes to **production**. There are no secrets and no environment variables at runtime.
-- **Plan constraint:** Vercel **Hobby is for non-commercial use only** (no ads, no paid features; donations are allowed). Any monetization means Vercel Pro or another host ⟶ **Q8.2**.
-- **Domain:** a custom domain (e.g. `settr.app`) is optional ⟶ **Q1.4**.
+- **Plan constraint:** Vercel **Hobby is for non-commercial use only** (no ads, no paid features; donations are allowed). Settr stays non-commercial (Q8.2).
+- **Domain:** no custom domain for now (Q1.4). It lives at `settr.vercel.app`, or the closest free `*.vercel.app` name.
+- **Private deployment (Q1.2):** `<meta name="robots" content="noindex, nofollow">`, the `X-Robots-Tag` header above, and a `robots.txt` with `Disallow: /`. The URL is shared only with friends.
+- **Daily price-guide deploys:** the `price-guide.yml` job commits `cm-prices.json` only when it changed, so at most one production deploy per day (well within Hobby limits).
 
 ---
 
@@ -297,6 +306,8 @@ Details are in `DATA_SOURCES.md` §6.
 | `Intl.Segmenter` | (optional) CJK tokenization | Baseline | Bigram tokenizer (default) |
 | `CompressionStream` | gzip backups (future) | Baseline | Uncompressed JSON |
 | Temporal | — | Not Baseline (no Safari) | date-fns |
+| `backdrop-filter` (Liquid Glass) | Glass chrome | Baseline | Solid surfaces |
+| `prefers-reduced-transparency` | Honor the OS transparency setting | Chromium only | In-app toggle *Transparenz reduzieren* (all browsers) |
 
 ---
 
@@ -304,7 +315,7 @@ Details are in `DATA_SOURCES.md` §6.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| **Chinese card data missing** from TCGdex for the v1 set | ZH language incomplete at launch | Curated `zh-tw` supplement (same structure as `M6a`), custom items, or ship ZH later ⟶ Q3.5 |
+| **Simplified Chinese data missing** from TCGdex | Chinese names/images incomplete at launch | SC copies trackable on the M6a list from day one. Names derived from PokéAPI + curated Trainer names. Full data after permission (⟶ R2.8) |
 | **Card images missing** for some languages (a brand-new set, released 16 Sep 2026) | Placeholders instead of art | Verify via HEAD in the pipeline. Fall back to another language of the same print, then the card-back placeholder. Re-sync weekly |
 | TCGdex upstream changes or outages | Build-time only (runtime uses our static copy) | Pinned commit, schema validation, id-alias map |
 | Browser storage eviction | Data loss | Persistence request, PWA install, backups, reminders, auto-backup (Chromium) |
@@ -313,3 +324,5 @@ Details are in `DATA_SOURCES.md` §6.
 | oxfmt still beta | Formatting churn | Biome 2.5 as a drop-in fallback |
 | Dependency churn (fast-moving 2026 ecosystem) | Maintenance | Pinned versions, grouped weekly Renovate PRs, CI gates |
 | GPL contamination (holo CSS) | License conflict | Clean-room implementation (`DESIGN_SYSTEM.md` §7) |
+| **Glass performance** (many `backdrop-filter` layers over image grids) | Jank on weaker GPUs / Windows laptops | ≤ 3 simultaneous blurred layers. No blur on elements that animate size. Automatic solid fallback when *Transparenz reduzieren* is on. Profiled on Windows in M1/M6 |
+| Price-guide scope confusion (global vs "German sellers") | Misleading suggestions | Explicit labels, never auto-saved, `origin: 'guide'` in history |

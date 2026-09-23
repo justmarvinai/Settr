@@ -1,488 +1,230 @@
-# Settr: Questions for Marvin
+# Settr: Questions and Decisions
 
-> Last updated: 2026-09-23 · Status: **waiting for your answers** · No code will be written until you explicitly say so.
+> Last updated: 2026-09-23.
+> **Round 1: answered ✓** (decisions below, incorporated into spec v0.2).
+> **Round 2: open** (9 short questions).
+> **Coding: not started.** It needs your explicit **"Go"**.
 
 ## How to answer
 
-- Tick options with `[x]`, or write under **Antwort:**. German or English is fine.
-- ⭐ = **my recommendation**. ★ = **needed before coding starts**. Everything else can be answered later.
-- **Fast path:** if you agree with all my recommendations, write **"Alle Empfehlungen OK"** at the top and answer only what you want to change, plus the ★ questions that have no recommendation.
-- You can also answer in chat. I'll transfer the answers into the docs (spec v0.2).
+- Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
+- ⭐ = my recommendation. ★ = needed before coding starts.
+- As before: anything you leave open, I'll take my recommendation.
 
 ---
 
-## 0. What I found (context for your answers)
+## Round 2: open questions
 
-1. **Your set exists and is fresh.** The 30th-anniversary expansion is *Pokémon-Sammelkartenspiel: 30 Jahre* (EN *30th Celebration*, JP *30th CELEBRATION* / M6a). It released **worldwide on 16 Sep 2026**, the first set ever released on the same day in all languages.
-   - **EN/DE:** 128 official cards + 33 secret rares (incl. 3 new **RGB Rare** Mews R/G/B), a 30-card **Classic Collection** subset, and 8 foil Energies.
-   - **JP:** 176 cards with a *different* list and numbering.
-   - **Every card is foil. There are no reverse holos.**
-2. **Card data:** **TCGdex** (free, open source, multilingual) already has EN/DE (`30th`, `30th-c`) and JP (`M6a`) data, including **Cardmarket product IDs** per card. That makes exact "open on Cardmarket" links possible. It has **no Chinese data** for this set yet.
-3. **Images have gaps at launch.** TCGdex has German/English images for the main set, but so far **none for the Classic Collection and the 30th Energies**, and **no Japanese images for the whole Mega era (incl. M6a)**. Settr will show a designed placeholder or another language's image until they appear (see Q4.6).
-4. **Sealed:** there's no free API for sealed products. I'll build the catalog from Cardmarket's public product list (66 products for this expansion, with Cardmarket IDs) and curate German names, contents and dates by hand. **Note:** EN/DE 30 Jahre has **no booster display**. Packs come only in products (Top-Trainer-Box, Booster-Bundle, Blister, Kollektionen, Tins, Kampfdecks, UPCs). Products keep releasing until Dec 2026. Japan sells a 20-pack BOX.
-5. **Hosting:** Vercel's free *Hobby* plan is **non-commercial only**.
-6. **Data safety:** browser storage can be deleted, especially **Safari/iOS after 7 days without a visit** unless the app is installed to the home screen. That's why backups and the installable app are central in the plan.
-7. **Killer idea from research:** Cardmarket's own purchase export (CSV with `idProduct`, price, language, condition) can be matched to Settr's catalog through the Cardmarket IDs. **Your Cardmarket purchases could be imported automatically, with real purchase prices** (see I-14).
+**R2.1 ★ Design direction.** Open the **design canvas** (link in chat, "Settr Design Directions"). It shows three glass-based directions built from your references (Revolut, Apple, Wise; bold type; Apple minimalism; Liquid Glass): dashboard and card detail on desktop, plus the set grid on mobile. Which one should Settr get?
+- [ ] ⭐ **A · Vault Glass**: dark, gold accent, smoked glass
+- [ ] **B · Studio Glass**: light, Apple minimalism, frosted glass
+- [ ] **C · Bold**: Revolut/Wise energy, heavy type, cobalt "wallet" cards
+- [ ] Mix (e.g. "A, but with C's big numbers"): …
 
----
-
-## 1. Vision and usage
-
-**Q1.1 ★ Who will use Settr?**
-- [ ] Only me
-- [ ] Me + family/friends
-- [ ] Public (anyone can use it with their own local data)
-- ⭐ Build it to public quality, but launch it for yourself first.
+How much glass?
+- [ ] Subtle
+- [ ] ⭐ Balanced (floating sidebar, toolbar, tab bar, sheets)
+- [ ] Strong
 
 Antwort:
 
-**Q1.2 ★ Will the site be publicly reachable/shared?** In Germany, a publicly offered website generally needs an **Impressum** (§ 5 DDG / § 18 MStV) and a **privacy notice**. There's a narrow exemption for purely personal/family use. *This is not legal advice.*
-- [ ] Private: unlisted URL, `noindex`, only for me and people I give the link to
-- [ ] Public: with Impressum + Datenschutzerklärung (I'll prepare templates; you provide name/address)
+**R2.2 Condition filter for your "lowest price" check.** Your rule is: the cheapest offer in the card's language from German sellers. Should Settr's Cardmarket links also filter by condition?
+- [ ] Any condition (literally the cheapest offer)
+- [ ] ⭐ Near Mint or better. The reference price then means "NM", and your LP/damaged copies get a per-copy value when you want one
+- [ ] Excellent or better
 
 Antwort:
 
-**Q1.3 Which devices will you mainly use?** For example: Windows PC + Chrome, MacBook + Safari, iPhone, Android.
-
-Antwort:
-
-**Q1.4 Domain and accounts:** Do you want a custom domain (e.g. `settr.app`, `settr.de`) or is `settr.vercel.app` fine? Is your Vercel account already connected to GitHub?
-
-Antwort:
-
-**Q1.5 Roughly how big is your collection?** Number of cards and sealed products today, and expected in 2 years. This sizes performance testing.
-
-Antwort:
-
-**Q1.6 Do you already track your collection somewhere** (Excel, Google Sheets, Collectr, TCG Collector, Cardmarket order history)? Would you like to import it at launch? (see Q7.4, I-14, I-16)
-
-Antwort:
-
----
-
-## 2. Navigation, naming, tone
-
-**Q2.1 ★ In your brief you wrote "card libraries" and "Sealed library". What does "library" mean for you?**
-- [ ] ⭐ **My own collection** (what I own), with separate **search** across *all* cards and products in the database
-- [ ] The **catalog** of all existing cards/products (and my collection is something separate)
-
-Antwort:
-
-**Q2.2 Main navigation (German UI).** Is this OK? *Übersicht · Sammlung (Karten | Sealed) · Katalog (Sets | Karten | Sealed) · Preise · Portfolio · Wunschliste · Einstellungen*
-- [ ] ⭐ Yes
-- [ ] Change: …
-
-Antwort:
-
-**Q2.3 What should Settr open to?**
-- [ ] ⭐ Übersicht (dashboard with value, P/L, stale prices)
-- [ ] My collection
-- [ ] The set page
-
-Antwort:
-
-**Q2.4 How should Settr address you in German?**
-- [ ] ⭐ *du* (informal, typical for collector apps)
-- [ ] *Sie*
-
-Antwort:
-
----
-
-## 3. Languages
-
-**Q3.1 ★ UI languages (the app's own text):**
-- [ ] German only
-- [ ] ⭐ German (default) + English
-- [ ] Also Japanese / Chinese UI later
-
-Antwort:
-
-**Q3.2 ★ "Chinese": which Chinese cards do you collect?**
-- [ ] Traditional Chinese (Taiwan/Hong Kong; same card list as Japanese)
-- [ ] Simplified Chinese (mainland China; own products and sometimes own sets)
-- [ ] Both
-
-Antwort:
-
-**Q3.3 Do you own or want other card languages too?** They're cheap to add for the international print (TCGdex has FR/IT/ES/PT names).
-- [ ] French · [ ] Italian · [ ] Spanish · [ ] Portuguese · [ ] Korean · [ ] No, only DE/EN/JA/ZH
-
-Antwort:
-
-**Q3.4 Default card language when adding a card:**
-- [ ] ⭐ German, but Settr remembers the last language used per session
-- [ ] Always ask
-
-Antwort:
-
-**Q3.5 ★ Chinese data gap.** TCGdex has **no Chinese data** for 30th CELEBRATION yet. What should v1 do?
-- [ ] (a) I curate a Traditional-Chinese card list (names from official Chinese sources, JP structure)
-- [ ] (b) ⭐ Allow Chinese copies on the Japanese card list immediately (JP images/names shown), and upgrade automatically when Chinese data arrives
-- [ ] (c) Postpone Chinese to after v1
-- [ ] ⭐ (b) now + (a) as soon as data is reliable
-
-Antwort:
-
-**Q3.6 How should card names be shown by default?**
-- [ ] ⭐ In the language of *my copy* in my collection, and in German in the catalog
-- [ ] Always German where available
-- [ ] Always the original print language
-
-Antwort:
-
----
-
-## 4. Catalog scope (v1)
-
-**Q4.1 ★ Confirm the v1 set: "30 Jahre / 30th Celebration"** with these parts:
-- [ ] ⭐ International (DE/EN): main set 001–158 + R/G/B **+ Classic Collection (30) + 8 foil Energies**, shown as sections of one set
-- [ ] ⭐ Japanese M6a (176, incl. its Classic Collection)
-- [ ] Only the main set, without the Classic Collection/Energies
-
-Antwort:
-
-**Q4.2 Related 30th-anniversary promos?**
-- Black Star promos from products: Nidorina (Top-Trainer-Box), Sylveon ex / Greninja ex, Arktos/Zapdos/Lavados, Alola-Kokowei / Lucario, Evoli, Victini / Zeraora, Pikachu ex + Psiana-ex / Nachtara-ex (UPC), Ditto.
-- JP card-set promos, gym promos, the stamped Pokémon Day 2026 Pikachu.
-
-- [ ] ⭐ Yes, as a "Promos" section, added as data becomes available
-- [ ] No, core set only
-
-Antwort:
-
-**Q4.3 Sealed catalog: which regions and products?**
-- [ ] ⭐ German + English + Japanese products in v1
-- [ ] Also Traditional/Simplified Chinese products
-- [ ] Include Pokémon Center exclusives (e.g. PC Top-Trainer-Box)
-- [ ] Include Japanese lottery/specialty items (e.g. FUTURISTIC BOX, Card Sets)
-
-Antwort:
-
-**Q4.4 Should the Japanese "Premium Deck Set Espeon & Umbreon" (TCGdex `MF`, 49 cards) be in the catalog too?**
-- [ ] Yes · [ ] ⭐ Later · [ ] No
-
-Antwort:
-
-**Q4.5 Which sets should come after v1?** This helps me size the architecture.
-- [ ] ⭐ The rest of the *Mega-Entwicklung* era (DE/EN + JP)
-- [ ] All Scarlet & Violet sets
-- [ ] Vintage (WotC era)
-- [ ] Specific sets: …
-
-Antwort:
-
-**Q4.6 Missing card images:** when TCGdex has no image for a card/language (e.g. all Japanese M6a cards right now), what should Settr show?
-- [ ] ⭐ The image of another language of the same print (marked "Bild in Englisch"), or the same artwork from the other print (e.g. the English version of a Japanese card, clearly labeled), else a designed placeholder, plus the option to add my own photo
-- [ ] Additionally use the **official publisher images** (pokemon-card.com for JP, the official Taiwan site for Traditional Chinese), linked directly from their servers
-- [ ] Placeholder only
-
-Antwort:
-
----
-
-## 5. Collection details
-
-**Q5.1 Which card attributes do you want to track?**
-- [ ] ⭐ Condition (Cardmarket scale MT/NM/EX/GD/LP/PL/PO)
-- [ ] ⭐ Grading (company, grade, certificate number)
-- [ ] Signed · [ ] Altered · [ ] Misprint/error
-- [ ] ⭐ Notes · [ ] ⭐ Tags · [ ] ⭐ Storage location (binder/box/page)
-- [ ] Photos of my own copies (I-12)
-
-Antwort:
-
-**Q5.2 Condition:** Do you usually care about condition, or is almost everything Near Mint? Default = NM?
-
-Antwort:
-
-**Q5.3 Graded cards:** Do you own or plan graded cards? Which companies (PSA, BGS, CGC, TAG, ACE, GSG, …)?
-
-Antwort:
-
-**Q5.4 Quantities:**
-- [ ] ⭐ Lots: "3× German Pikachu, bought together for 4,50 € each" (one entry with quantity)
-- [ ] Every single copy as its own entry
-
-Antwort:
-
-**Q5.5 ★ Set completion: what counts for you?**
-- [ ] Basis-Set (the 128 numbered cards)
-- [ ] Komplett-Set (incl. secret rares → 161)
-- [ ] Master-Set (everything incl. Classic Collection + Energies)
-- [ ] ⭐ Show all three
-- Per language (e.g. "German master set") or any language?
-  - [ ] ⭐ Per language, with an "any language" toggle
-
-Antwort:
-
-**Q5.6 Sealed product states:** Is *versiegelt / beschädigt / geöffnet* enough? Anything else (e.g. "graded sealed", "damaged shrink")?
-
-Antwort:
-
-**Q5.7 Do you use binders/boxes you'd like to map in Settr** (e.g. "Binder A, Seite 3")?
-
-Antwort:
-
-**Q5.8 When you open a sealed product:**
-- [ ] Just mark it opened (its cost counts as spent)
-- [ ] ⭐ Mark it opened **and optionally log the pulls** (I-11)
-- How should the product's cost be split onto pulled cards?
-  - [ ] Not at all (pulls = 0 €)
-  - [ ] Evenly
-  - [ ] ⭐ Proportional to card value at opening
-
-Antwort:
-
----
-
-## 6. Prices and profit/loss
-
-**Q6.1 ★ Currencies:** Do you buy in other currencies (JPY from Japan, USD, CNY/TWD)?
-- [ ] ⭐ EUR only (simplest)
-- [ ] Multiple currencies with automatic conversion to EUR at the purchase date (ECB rates via a free API; this would be Settr's **only** runtime network call besides images)
-- [ ] Multiple currencies, I enter the rate myself
-
-Antwort:
-
-**Q6.2 ★ What does one price refer to?**
-- [ ] ⭐ One reference price (NM) per card + language (graded copies get their own price series)
-- [ ] Separate prices per condition
-- [ ] Reference price + automatic condition discounts (e.g. EX 85 %, LP 60 %)
-- [ ] ⭐ Plus an optional per-copy override for special pieces
-
-Antwort:
-
-**Q6.3 Which Cardmarket value do you usually write down?**
-- [ ] ⭐ Preis-Trend
-- [ ] "ab" (cheapest offer)
-- [ ] 30-Tages-Durchschnitt
-- [ ] Other: …
-
-Settr stores the price type with each entry. Your answer sets the default.
-
-Antwort:
-
-**Q6.4 Purchase costs:** Should shipping/fees count toward the purchase price?
-- [ ] ⭐ Yes, an optional "fees/shipping" field per entry
-- [ ] Yes, and split the shipping of one order across all its cards automatically ("orders")
+**R2.3 Traditional Chinese cards.** You collect **Simplified** Chinese cards but also want **Traditional** Chinese sealed products. If you open a Traditional Chinese booster, should those cards be trackable too?
+- [ ] ⭐ Yes, enable ZH-TW as a card language as well (no extra effort)
 - [ ] No
 
 Antwort:
 
-**Q6.5 ★ Do you sell or trade cards and want realized profit tracked?**
-- [ ] ⭐ Yes: sell/trade (also partially) with sale price and fees, plus realized P/L
-- [ ] No, only current holdings
+**R2.4 Binder view.** You use a Withyu 12-pocket and a VaultX 9-pocket binder, and Settr will store binder, page and slot for every card. A virtual binder view could mirror your real binders page by page. When?
+- [ ] Already in v1
+- [ ] ⭐ Right after v1 (v1.1)
+- [ ] Later
 
 Antwort:
 
-**Q6.6 ★ Stay 100 % manual?** Your brief says prices are entered entirely by hand. Cardmarket publishes a free daily price-guide file. A daily build job could extract the ~300 relevant prices, and the price session would show them as a *suggestion* (e.g. "Trend vom 22.09.: 12,34 € übernehmen?") that you confirm or overwrite.
-- [ ] ⭐ 100 % manual (as in the brief), fast thanks to the price session
-- [ ] Optional "suggest prices from the Cardmarket price guide", always confirmed by me
+**R2.5 Your Collectr collection.** Which sets are your ~200 cards from, roughly? Do you have **Collectr Pro**? It's needed for Collectr's CSV export, which a Settr importer would read. v1 only contains *30 Jahre*, so your other cards would need their sets first:
+- [ ] ⭐ Add the sets I own right after v1 (v1.1), plus a Collectr import
+- [ ] Before v1 goes live
+- [ ] No hurry
+
+Sets / Collectr Pro:
+
+**R2.6 Collectr as a benchmark.** What do you like most about Collectr, and what annoys you? This tells me exactly what Settr has to beat.
 
 Antwort:
 
-**Q6.7 When is a price "stale" and should be refreshed?**
-- [ ] 7 days · [ ] ⭐ 14 days · [ ] 30 days · [ ] Other: …
+**R2.7 Short tagline** (next to *"Jede Karte. Jedes Set. Jeder Cent."*):
+- [ ] ⭐ *"Jede Karte zählt."*
+- [ ] *"Sammeln mit System."*
+- [ ] *"Dein Set. Dein Wert."*
+- [ ] Own idea: …
 
 Antwort:
 
-**Q6.8 Items without any price yet:**
-- [ ] ⭐ Excluded from total value, shown as "X unbepreist"
-- [ ] Counted at purchase price until priced
+**R2.8 Simplified Chinese data.** TCGdex has no Simplified Chinese data. The only complete source (the GitHub dataset `duanxr/PTCG-CHS-Datasets`, 176 cards for this set, with images) forbids redistribution without the maintainer's permission.
+- [ ] ⭐ Yes: draft a short, polite permission request (non-commercial, private tool) that you send from your GitHub account. Until then, Settr uses auto-derived Chinese Pokémon names plus manual names for the few Trainer cards
+- [ ] No, manual/auto-derived names only
 
 Antwort:
 
-**Q6.9 "Open on Cardmarket" links:** which filters should be preset?
-- [ ] ⭐ Language of my copy
-- [ ] Minimum condition (e.g. NM)
-- [ ] Seller country Germany
-- [ ] Other: …
+**R2.9 Which browser on your Windows PC?**
+- [ ] Chrome · [ ] Edge · [ ] Firefox · [ ] Other: …
+
+Chrome and Edge also allow automatic backups into a folder (I-15).
 
 Antwort:
+
+**Ready?** When the plan and the design direction look right, write **"Go"** and I'll start milestone **M1 (Foundation)**.
 
 ---
 
-## 7. Data, backups, devices
+## Round 1: decisions (answered 2026-09-23)
 
-**Q7.1 Backup reminder:** remind me when my last backup is older than
-- [ ] 3 days · [ ] ⭐ 7 days · [ ] 14 days · [ ] Never
+Source: **M** = your answer · **E** = my recommendation (you chose "go with your recommendation") · **M+** = your answer plus a small addition by me (explained).
 
-Antwort:
+### 1. Vision and usage
 
-**Q7.2 Automatic backup into a folder** (e.g. a Dropbox/OneDrive/iCloud folder on your PC)? Works in Chrome/Edge on desktop only. (I-15)
-- [ ] ⭐ Yes, later (post-v1) · [ ] Yes, in v1 · [ ] No
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q1.1 | Users | Me + a few friends, but mainly me. Everyone keeps their own data locally in their browser | M |
+| Q1.2 | Visibility | **Private**: unlisted URL, `noindex`, not advertised. No Impressum while it stays private. A small "Über & Rechtliches" page carries the disclaimer and privacy note. *(Not legal advice: if Settr ever goes public, add an Impressum.)* | M |
+| Q1.3 | Devices | **Windows PC (primary)** + iPhone (secondary, installed to the home screen) | M |
+| Q1.4 | Domain | No custom domain for now: `*.vercel.app`. Vercel is already connected to GitHub | M |
+| Q1.5 | Size | ≈ 200 cards today, growing | M |
+| Q1.6 | Current tool | **Collectr**. A Collectr CSV import comes after v1 (I-16; see R2.5) | M |
 
-Antwort:
+### 2. Navigation, naming, tone
 
-**Q7.3 Do you need the same data on several devices** (PC + phone) at the same time?
-- [ ] No, one main device + backup file is fine
-- [ ] ⭐ Occasionally: moving via export/import (+ merge) is enough for v1
-- [ ] Yes, regularly: I'd like sync later via my own cloud storage (I-18)
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q2.1 | "Library" | = **your own collection** (Sammlung › Karten / Sealed). Catalog search across all cards and products is separate | E |
+| Q2.2 | Navigation | Übersicht · Sammlung · Katalog · Preise · Portfolio · Einstellungen (Wunschliste appears once I-06 ships) | E |
+| Q2.3 | Start page | Übersicht | E |
+| Q2.4 | Address | *du* | E |
 
-Antwort:
+### 3. Languages
 
-**Q7.4 Existing data to import:** If you have files (Collectr CSV, TCG Collector CSV, Cardmarket "ArticlesFromShipment" CSVs, Excel), please describe them or put samples in the repo (with no private data you don't want in Git). I'll build import presets for exactly those.
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q3.1 | UI language | **German only** for now. The code stays translation-ready, so English can be added later without rework | M |
+| Q3.2 | Chinese | **Simplified Chinese** (mainland) | M |
+| Q3.3 | Card languages | **DE, EN, JA, ZH (Simplified)**. No FR/IT/ES/PT/KO | M |
+| Q3.4 | Default card language | German. Settr remembers the last language used | E |
+| Q3.5 | Chinese data gap | Simplified Chinese copies can be tracked **from day one** on the M6a card list (the Simplified Chinese set mirrors it: 176 cards on Cardmarket and in the only SC dataset). Chinese Pokémon names are auto-derived from open data. Full names and images follow once a source is cleared (R2.8) | E (adapted to Simplified) |
+| Q3.6 | Name display | Your copy's language in the collection. German in the catalog, including derived German names for Japanese/Chinese cards | E |
 
-Antwort:
+### 4. Catalog scope (v1)
 
-**Q7.5 Password-protected (encrypted) backups?** (I-17)
-- [ ] Yes · [ ] ⭐ Not needed (the files stay on my devices)
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q4.1 | v1 set | *30 Jahre*: EN/DE main set 001–158 + R/G/B, **Classic Collection (30)** and **8 Energies** as sections. Japanese/Simplified Chinese **M6a** (176) | E |
+| Q4.2 | Promos | Yes, as a "Promos" section as data becomes available | E |
+| Q4.3 | Sealed | **DE + EN + JP + Traditional & Simplified Chinese products.** I also include Pokémon Center exclusives and Japanese lottery/specialty items, because they come with Cardmarket's product list at no extra cost | M+ |
+| Q4.4 | JP Premium Deck Set (MF) | Later | E |
+| Q4.5 | Sets after v1 | The rest of the *Mega-Entwicklung* era, re-prioritized by the sets you actually own (R2.5) | E |
+| Q4.6 | Missing images | Another language of the same print → the same artwork from the other print (labeled) → your own photo → a designed placeholder. No official publisher images | E |
 
-Antwort:
+### 5. Collection details
 
----
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q5.1 | Attributes | Condition, grading, notes, tags, storage location. Signed/altered/misprint aren't in the v1 UI. Photos come later | E |
+| Q5.2 | Condition | **Default NM**, with the full Cardmarket scale for your LP/damaged copies ("Damaged" ≈ *Poor (PO)*) | M |
+| Q5.3 | Grading | **Planned**: grading fields (company, grade, certificate) in v1. Graded copies get their own price series | M |
+| Q5.4 | Quantities | Lots with quantity | E |
+| Q5.5 | Completion | Basis, Komplett and Master, per language with an "any language" toggle | E |
+| Q5.6 | Sealed states | versiegelt / beschädigt / geöffnet | M |
+| Q5.7 | Binders | **Withyu 12-pocket + VaultX 9-pocket.** Storage locations know the page layout (9 = 3×3, 12 = 3×4 or 4×3) and store **page + slot** per copy. Settr suggests the next free slot | M |
+| Q5.8 | Opening sealed | Mark as opened and optionally log the pulls. The product's cost is split proportionally to the cards' values at opening (evenly for unpriced pulls) | E |
 
-## 8. Tech, hosting, legal
+### 6. Prices and profit/loss
 
-**Q8.1 Tech stack:** I recommend Vite 8 + React 19 + TypeScript 7 + TanStack Router + Dexie (IndexedDB) + Tailwind 4 + shadcn/Base UI + Paraglide (i18n) + Recharts, as a PWA on Vercel (see `docs/ARCHITECTURE.md`). Any preferences or no-gos?
-- [ ] ⭐ Fine
-- [ ] Changes: …
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q6.1 | Currency | EUR only | E |
+| Q6.2 | Price reference | One reference price per card + language (graded copies separate), plus an optional per-copy value, e.g. for your LP/damaged copies | E |
+| Q6.3 | Price you record | **The lowest offer in the card's language from sellers in Germany.** The default price type is "ab (DE)", and Cardmarket links open with those filters preset | M |
+| Q6.4 | Fees | Optional fees/shipping per entry | E |
+| Q6.5 | Sales | Yes: sell/trade (also partially) with realized profit/loss | E |
+| Q6.6 | Price-guide suggestions | **Yes.** A daily snapshot of Cardmarket's public price guide feeds *suggestions* on card pages and in the price session. They're never saved without your confirmation. Note: for DE/EN cards the guide mixes all languages and countries, so it's labeled as such | M |
+| Q6.7 | Stale after | 14 days | E |
+| Q6.8 | Unpriced items | Excluded from totals and shown as "X unbepreist" | E |
+| Q6.9 | Link filters | Language of your copy + seller country Germany (from Q6.3). Condition filter → R2.2 | M/E |
 
-Antwort:
+### 7. Data and devices
 
-**Q8.2 ★ Monetization:** Vercel's free plan forbids commercial use (ads, paid features; donations are OK). Any plans to earn money with Settr?
-- [ ] ⭐ No, it stays free and non-commercial (Hobby plan is fine)
-- [ ] Maybe donations
-- [ ] Maybe paid features/ads later (then Vercel Pro ≈ $20/month or another host)
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q7.1 | Backup reminder | After 7 days | E |
+| Q7.2 | Auto-backup to folder | Later (post-v1) | E |
+| Q7.3 | Several devices | Export/import (+ merge) in v1. Sync later | E |
+| Q7.4 | Import files | None yet | M |
+| Q7.5 | Encrypted backups | Not needed | E |
 
-Antwort:
+### 8. Tech, hosting, legal
 
-**Q8.3 Analytics and error tracking:**
-- [ ] ⭐ None. Maximum privacy, no cookie banner needed
-- [ ] Cookieless page-view stats (Vercel Web Analytics)
-- [ ] Error reporting (e.g. Sentry)
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q8.1 | Stack | As recommended (`docs/ARCHITECTURE.md`) | E |
+| Q8.2 | Monetization | None, so the Vercel Hobby plan fits | E |
+| Q8.3 | Analytics | None | E |
+| Q8.4 | Images | Loaded directly from TCGdex (mentioned in the privacy note) | E |
+| Q8.5 | Network for jobs | Catalog sync and price-guide snapshot run in **GitHub Actions** | E |
+| Q8.6 | Git workflow | One PR per milestone with Vercel preview links, plus GitHub Actions CI | E |
+| Q8.7 | License | Private repository, all rights reserved | E |
 
-Antwort:
+### 9. Design
 
-**Q8.4 Card images:** TCGdex's image server allows cross-origin loading, so both options work technically, including offline caching.
-- [ ] ⭐ Load images directly from TCGdex's server (zero cost; the image host sees visitors' IP addresses, which the privacy notice mentions)
-- [ ] Route images through your own Vercel domain (more private; uses some of Vercel's 100 GB/month free bandwidth)
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| Q9.1 | Direction | Mockups first: a design canvas with three glass-based directions. Your pick → **R2.1** | E |
+| Q9.2 | Theme | Follows the system setting; both themes are designed | E |
+| Q9.3 | Fonts/colors | Mona Sans in **bold** weights. Colors per direction (R2.1) | E |
+| Q9.4 | Brand | Wordmark **"Settr"**. Tagline *"Jede Karte. Jedes Set. Jeder Cent."* plus a short one → R2.7 | M |
+| Q9.5 | References | **Revolut, Apple, Wise.** Bold fonts, clean designs, Apple minimalism, Apple's new **Liquid Glass** look | M |
+| Q9.6 | Motion | Signature moments only | E |
+| Q9.7 | Pokémon references | Subtle (type colors in chips) | E |
+| Q9.8 | Priority | **Desktop first**, with mobile fully supported | M |
 
-Antwort:
+### 10. Feature ideas
 
-**Q8.5 Network access for the coding phase:** this Claude Code environment's network policy **blocked** the data hosts the catalog pipeline needs: `api.tcgdex.net`, `assets.tcgdex.net`, `downloads.s3.cardmarket.com` and (optionally) `tcgcsv.com`. GitHub and npm work, so I could read TCGdex's source data. This only affects *development*: the finished app itself only loads card images.
-- To let me verify images and run the catalog sync directly in these sessions: allow the hosts above in the environment's network settings (the cloud environment menu in the session title bar → Edit → Network access).
-- Otherwise the sync runs in GitHub Actions, which has open internet access.
-- [ ] I'll allow these hosts
-- [ ] ⭐ Run the sync in GitHub Actions (works either way)
-
-Antwort:
-
-**Q8.6 Git workflow:**
-- [ ] ⭐ One pull request per milestone (M1…M6) that you review/merge, with Vercel preview links
-- [ ] Push directly to a development branch
-- [ ] Set up GitHub Actions CI? ⭐ yes
-
-Antwort:
-
-**Q8.7 Source code license:**
-- [ ] ⭐ Private repository, all rights reserved (decide later)
-- [ ] Open source (e.g. MIT), so others can contribute or self-host
-
-Antwort:
-
----
-
-## 9. Design
-
-**Q9.1 ★ Design direction** (details in `docs/DESIGN_SYSTEM.md` §1.2):
-- [ ] ⭐ **A · Vault**: premium dark gallery with finance precision, one gold accent, holo foil for special moments
-- [ ] **B · Terminal**: ultra-dense, monochrome, pro-trader look
-- [ ] **C · Foil Pop**: vibrant, playful, colorful
-- [ ] Mix: …
-
-And:
-- [ ] ⭐ **Before coding, build 2–3 clickable HTML mockups** (dashboard, set page, card detail) so I can compare directions. These are design prototypes only, not app code.
-- [ ] Not needed, go with my choice above
-
-Antwort:
-
-**Q9.2 Theme:**
-- [ ] ⭐ Follow system setting (dark and light both designed; dark is the "hero" look)
-- [ ] Dark only · [ ] Light only
-
-Antwort:
-
-**Q9.3 Fonts and colors:** I propose **Mona Sans** (a modern variable grotesk with a width axis) and a **gold** accent. Any fonts or colors you love or hate?
-
-Antwort:
-
-**Q9.4 Brand:** Is the tagline *"Jede Karte. Jedes Set. Jeder Cent."* OK? Any logo ideas? Wordmark in lowercase "settr" or "Settr"?
-
-Antwort:
-
-**Q9.5 Which apps/websites do you find beautiful?** Any domain: finance apps, Apple, Linear, Collectr, …
-
-Antwort:
-
-**Q9.6 How much motion and holo magic?**
-- [ ] Minimal
-- [ ] ⭐ Signature moments only (holo on card detail, smooth transitions)
-- [ ] Rich (more animation everywhere)
-
-Antwort:
-
-**Q9.7 Pokémon visual references in the UI** (type colors, energy icons)?
-- [ ] ⭐ Subtle: type colors in filter chips, otherwise a brand-neutral premium look
-- [ ] Strong Pokémon theming
-
-Antwort:
-
-**Q9.8 Design priority:**
-- [ ] Desktop first · [ ] Mobile first · [ ] ⭐ Both equally (desktop for price sessions, mobile for browsing and adding)
-
-Antwort:
-
----
-
-## 10. Feature ideas: do you want them?
-
-Tick per row: **v1** = in the first release · **later** = after v1 · **no** = never. ⭐ marks my recommendation.
-
-| ID | Idea | Why it's valuable | Effort | My rec. | v1 | later | no |
-|---|---|---|---|---|---|---|---|
-| I-01 | **Price session**: keyboard-driven queue through stale prices, with Cardmarket links | Makes manual pricing fast (30 prices in < 5 min) | M | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-02 | **Binder view**: virtual 9-pocket pages in set order | Collector joy, shows gaps visually | M | later | [ ] | [ ] | [ ] |
-| I-03 | **Command palette ⌘K** + keyboard shortcuts | Everything reachable in 2 keystrokes | S | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-04 | **Holo card viewer** + smooth grid→detail transitions | The "wow" moment | M | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-05 | **Privacy mode**: one click blurs all € values | Show your collection without showing its worth | S | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-06 | **Wishlist** with target prices + "target reached" | Buy at the right price | S | later | [ ] | [ ] | [ ] |
-| I-07 | **Quick-add mode** (`25⏎ 26x2⏎`) | Enter a whole booster box in minutes | S | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-08 | **Exact Cardmarket links** (right product, language filter) | Saves searching on Cardmarket | S | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-09 | **Grading tracker**: submissions, costs, returned grades | For PSA/CGC submitters | S–M | later | [ ] | [ ] | [ ] |
-| I-10 | **Barcode scan** for sealed products (EAN) | Add a Top-Trainer-Box by scanning it | M | later | [ ] | [ ] | [ ] |
-| I-11 | **Pack-opening log** + pull ROI ("was opening worth it?") | Fun + honest accounting | M | later | [ ] | [ ] | [ ] |
-| I-12 | **Photos of your own copies** (stored locally) | Proof for insurance, graded slabs | M | later | [ ] | [ ] | [ ] |
-| I-13 | **Camera card scanning** (experimental, on-device) | Fastest possible entry | L | no (for now) | [ ] | [ ] | [ ] |
-| I-14 | **Import Cardmarket purchases** (shipment CSV → holdings with real prices, language, condition) | Your purchase history in seconds, a unique feature | M | ⭐ v1 or right after | [ ] | [ ] | [ ] |
-| I-15 | **Auto-backup to a folder** (Chrome/Edge desktop) | Never think about backups again | S–M | later | [ ] | [ ] | [ ] |
-| I-16 | **CSV import wizard** (Collectr, TCG Collector, Excel) | Easy migration from other apps | M–L | later | [ ] | [ ] | [ ] |
-| I-17 | **Encrypted backups** (password) | Extra safety for cloud-stored backups | S | later | [ ] | [ ] | [ ] |
-| I-18 | **Sync via your own cloud** (Google Drive/Dropbox/WebDAV), no Settr server | Same data on PC + phone | L | later | [ ] | [ ] | [ ] |
-| I-19 | **Demo data** to explore the app before entering your own | Try every screen instantly | S | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-20 | **Tags + storage locations** | Find any card physically | S | ⭐ v1 | [ ] | [ ] | [ ] |
-| I-21 | **Spending analytics** (per month, per shop) | Know where the money goes | S | later | [ ] | [ ] | [ ] |
-| I-22 | **Make set available offline** (pre-download all images) | Browse your set on a plane | S | later | [ ] | [ ] | [ ] |
-| I-23 | **Share images**: set progress / top cards / binder page as a beautiful PNG | Social sharing | S–M | later | [ ] | [ ] | [ ] |
-| I-24 | **Duplicates & trade list** ("Doppelte"), shareable via link/QR | Trading with friends | S–M | later | [ ] | [ ] | [ ] |
-| I-25 | **Insurance list (PDF)** of the collection with values | Hausrat insurance proof | M | later | [ ] | [ ] | [ ] |
-| I-26 | **Tax holding-period hint** (German § 23 EStG: sale after > 1 year; *not tax advice*) | Know when a sale is tax-free | S | later | [ ] | [ ] | [ ] |
-| I-27 | **Printable checklists** / missing-card lists / binder placeholders | Offline collecting at events | S–M | later | [ ] | [ ] | [ ] |
-| I-28 | **Box EV & pull statistics** (expected value of a product from *your* prices) | Decide "open or keep sealed" | M | later | [ ] | [ ] | [ ] |
-| I-29 | **Multiple profiles** in one browser (e.g. you + partner) | Separate collections, one device | M | no | [ ] | [ ] | [ ] |
-| I-30 | **Goals** ("5.000 € portfolio", "German master set") with progress | Motivation | S | later | [ ] | [ ] | [ ] |
-| I-31 | **Watchlist check reminders** ("check these 10 cards weekly") | Keep key prices fresh | S | later | [ ] | [ ] | [ ] |
-| I-32 | **JP ↔ EN counterpart links** (same artwork in other print) | Compare prices across languages | L | later | [ ] | [ ] | [ ] |
-
-**Your own ideas or must-haves I missed:**
-
-Antwort:
-
----
-
-## 11. Anything else?
-
-Things you definitely **want**, definitely **don't want**, or inspiration (screenshots/links) you'd like me to see:
-
-Antwort:
+| ID | Idea | Decision | Src |
+|---|---|---|---|
+| I-01 | Price session | **v1** | E |
+| I-02 | Binder view | Later → R2.4 | E |
+| I-03 | Command palette + shortcuts | **v1** | E |
+| I-04 | Holo viewer + transitions | **v1** | E |
+| I-05 | Privacy mode | **v1** | E |
+| I-06 | Wishlist | Later | E |
+| I-07 | Quick-add mode | **v1** | E |
+| I-08 | Exact Cardmarket links | **v1** | E |
+| I-09 | Grading tracker | Later | E |
+| I-10 | Barcode scan | Later | E |
+| I-11 | Pack-opening log + ROI | Basic opening + pull logging in **v1** (Q5.8). ROI analytics later | E |
+| I-12 | Own photos | Later | E |
+| I-13 | Camera scanning | No (for now) | E |
+| I-14 | Cardmarket purchase import | **Not yet** (post-v1) | M |
+| I-15 | Auto-backup to folder | Later | E |
+| I-16 | CSV import wizard | Later (Collectr preset first) | E |
+| I-17 | Encrypted backups | Later | E |
+| I-18 | Sync via own cloud | Later | E |
+| I-19 | Demo data | **No** | M |
+| I-20 | Tags + storage locations | **v1** (binder-aware, Q5.7) | E |
+| I-21 | Spending analytics | Later | E |
+| I-22 | Offline set download | Later | E |
+| I-23 | Share images | Later | E |
+| I-24 | Duplicates & trade list | Later | E |
+| I-25 | Insurance list (PDF) | Later | E |
+| I-26 | Tax holding-period hint | Later | E |
+| I-27 | Printable checklists | Later | E |
+| I-28 | Box EV & pull statistics | Later | E |
+| I-29 | Multiple profiles | No | E |
+| I-30 | Goals | Later | E |
+| I-31 | Watchlist reminders | Later | E |
+| I-32 | JP ↔ EN counterpart links | Later | E |

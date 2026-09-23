@@ -1,25 +1,27 @@
-# settr
+# Settr
 
 **Jede Karte. Jedes Set. Jeder Cent.**
 
-Settr is a local-first collection tracker for Pokémon TCG **singles and sealed products**, covering German, English, Japanese and Chinese cards. You record the prices you check on Cardmarket, and Settr turns them into price trends, portfolio value and profit/loss against what you paid. Everything stays private in your browser. There are no accounts and no server database, and you get full import/export.
+Settr is a local-first collection tracker for Pokémon TCG **singles and sealed products**, covering German, English, Japanese and Simplified Chinese cards, with a German interface. You record the prices you check on Cardmarket, and Settr turns them into price trends, portfolio value and profit/loss against what you paid. Everything stays private in your browser. There are no accounts and no server database, and you get full import/export.
 
-> **Status: 🚧 M0 · Planning.** This repository currently contains the complete product and technical plan. **No application code exists yet.** Coding starts after the open questions are answered and Marvin gives explicit approval.
+> **Status: 🚧 M0 · Planning (spec v0.2).** This repository contains the complete product and technical plan, with round-1 answers incorporated. The design directions are on the design canvas. **No application code exists yet.** Coding starts after the design pick and Marvin's explicit approval.
+>
+> Private project: unlisted deployment, not indexed, shared with a few friends.
 
 ## Highlights (planned v1)
 
-- **Catalog:** the 30th-anniversary expansion *30 Jahre / 30th Celebration* (EN/DE incl. Classic Collection, JP *30th CELEBRATION* M6a, and Chinese per Q3.5). Card data comes from TCGdex; sealed products are curated.
-- **Collection:** singles and sealed, with language, condition, grading, quantity, purchase price, fees, tags and storage location.
-- **Prices:** fast manual entry, a keyboard-driven price session, exact Cardmarket links, and price history charts.
+- **Catalog:** the 30th-anniversary expansion *30 Jahre / 30th Celebration* (EN/DE incl. Classic Collection and Energies; JP and Simplified Chinese *30th CELEBRATION* M6a). Card data comes from TCGdex; sealed DE/EN/JP/TC/SC products are curated.
+- **Collection:** singles and sealed, with language, condition, grading, quantity, purchase price, fees and tags, plus **binder, page and slot** for your 9- and 12-pocket binders. Sales and sealed openings are tracked.
+- **Prices:** fast manual entry (the cheapest offer in your language from German sellers), a keyboard-driven price session, exact Cardmarket links with filters preset, daily Cardmarket price-guide *suggestions*, and price history charts.
 - **Portfolio:** value over time, invested capital, unrealized/realized P/L, allocation, and set completion (Basis / Komplett / Master).
 - **Data safety:** versioned backups (replace or merge), CSV export, persistent storage and backup reminders. It's an installable, offline-capable PWA.
-- **Design:** a premium "Vault" aesthetic with a holo card viewer, scrubbable finance-grade charts, a German-first UI and a light theme.
+- **Design:** Liquid Glass × bold minimalism (references: Revolut, Apple, Wise), with a holo card viewer and scrubbable finance-grade charts. Desktop first, and it works great on iPhone.
 
 ## Documentation
 
 | Document | Purpose |
 |---|---|
-| [`USER_QUESTIONS.md`](USER_QUESTIONS.md) | **Open questions and feature ideas; please answer these** |
+| [`USER_QUESTIONS.md`](USER_QUESTIONS.md) | **Round-2 questions (open)** + the decision record of round 1 |
 | [`ROADMAP.md`](ROADMAP.md) | Milestones M0–M6 and the post-v1 backlog |
 | [`CHANGELOG.md`](CHANGELOG.md) | Changes per version |
 | [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md) | Vision, scope, feature catalogue, acceptance criteria |

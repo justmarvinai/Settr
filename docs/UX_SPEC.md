@@ -1,9 +1,10 @@
 # Settr: UX Specification
 
-> Status: **Draft v0.1 (planning)** · Last updated: 2026-09-23
+> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
 > Covers the information architecture, navigation, screen specifications, key flows, states and keyboard model.
 > Visual language (colors, type, motion) lives in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md). Feature IDs (`CAT-02`, `PRC-04`, …) refer to [`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md).
-> Items marked **⟶ Qn** depend on an answer in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md).
+> References like (Q6.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R2.x** marks a still-open round-2 question.
+> **Platform priority:** Windows desktop (Chrome/Edge) first, then iPhone (installed PWA). **UI language:** German only (Q3.1).
 
 ---
 
@@ -30,10 +31,10 @@
 | Catalog | **Katalog** (tabs: *Sets*, *Karten*, *Sealed*) | Catalog | Everything that exists in Settr's database, whether you own it or not |
 | Prices | **Preise** | Prices | Price capture hub, price-update session, stale prices |
 | Analytics | **Portfolio** | Portfolio | Value over time, P/L, allocation |
-| Wishlist | **Wunschliste** | Wishlist | Wanted items with target prices (feature idea ⟶ I-06) |
+| Wishlist | **Wunschliste** | Wishlist | Wanted items with target prices. **Post-v1** (I-06); hidden in v1 |
 | Settings | **Einstellungen** | Settings | Preferences, data (import/export), about/legal |
 
-> ⟶ **Q2.1** asks whether "library" in the brief means *my collection* (assumed) or *the catalog*. The IA supports both readings. Only labels would change.
+> Decision (Q2.1): the brief's "card library" and "sealed library" = **your own collection** (Sammlung). "Card search" and "sealed search" = the **catalog**. The UI shows German labels only (Q3.1); the English column documents the future translation.
 
 ### 2.2 Sitemap and routes
 
@@ -52,7 +53,7 @@ Route slugs are English and language-neutral. Labels are localized.
 /prices                             Preise hub          (stale items, recent entries, start session)
 /prices/session?scope=…             Price-update session (focus mode)
 /portfolio                          Portfolio           (tabs: Entwicklung | Aufteilung | Performance | Ausgaben)
-/wishlist                           Wunschliste
+/wishlist                           Wunschliste         (post-v1, I-06)
 /settings                           Einstellungen       (sections: Allgemein | Darstellung | Preise | Daten | Über)
 /settings/data                      Daten               (export, import, CSV, storage, reset)
 /onboarding                         First-run flow (only until completed)
@@ -78,14 +79,13 @@ Route slugs are English and language-neutral. Labels are localized.
 
 ```
 ┌──────────────┬──────────────────────────────────────────────────────────────────┐
-│ ◆ settr      │  Sammlung › Karten             [ ⌕  Suchen…        ⌘K ]  ◐  👁  [＋ Hinzufügen] │
+│ ◆ Settr      │  Sammlung › Karten           [ ⌕  Suchen…     Strg K ]  ◐  👁  [＋ Hinzufügen] │
 │              ├──────────────────────────────────────────────────────────────────┤
 │ ▣ Übersicht  │                                                                  │
 │ ▤ Sammlung   │                          page content                            │
 │ ▦ Katalog    │                                                                  │
 │ € Preise   3 │                                                                  │
 │ ↗ Portfolio  │                                                                  │
-│ ♡ Wunschliste│                                                                  │
 │              │                                                                  │
 │              │                                                                  │
 │ ─────────────│                                                                  │
@@ -95,7 +95,8 @@ Route slugs are English and language-neutral. Labels are localized.
 └──────────────┴──────────────────────────────────────────────────────────────────┘
 ```
 
-- **Top bar:** page title/breadcrumb · global search (opens the command palette) · theme toggle (◐) · **privacy toggle (👁)**, which blurs every money value (PRT-05) · primary **＋ Hinzufügen**.
+- **Liquid Glass chrome (DSN-05):** the sidebar is a **floating glass panel** (inset 12 px from the window edges, 20 px radius), and the top bar is a floating glass toolbar. Content scrolls **beneath** both, so card art tints the glass. It's solid when *Transparenz reduzieren* is on. Details in `DESIGN_SYSTEM.md` §3.5.
+- **Top bar:** page title/breadcrumb · global search (opens the command palette; shortcut labels are platform-aware, e.g. **Strg K** on Windows and ⌘K on Mac/iPad) · theme toggle (◐) · **privacy toggle (👁)**, which blurs every money value (PRT-05) · primary **＋ Hinzufügen**.
 - **Sidebar footer:** backup status pill. It turns amber after N days without a backup and links to `/settings/data`.
 - The badge on **Preise** shows the number of stale prices.
 
@@ -114,7 +115,8 @@ Route slugs are English and language-neutral. Labels are localized.
 ```
 
 - **＋** opens a bottom sheet with a search field (autofocus): pick a card or product and the add form follows.
-- Portfolio, Wunschliste and Einstellungen are reached via the avatar-less **"Mehr"** item or from the Übersicht tiles.
+- Portfolio and Einstellungen are reached via the **"Mehr"** item or from the Übersicht tiles.
+- The tab bar is a **floating glass pill** (safe-area aware on iPhone).
 - Bottom sheets use snap points (50 % / 92 %), and drag-to-dismiss is supported.
 
 ---
@@ -151,7 +153,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 - **Allocation tile:** a donut split by singles, sealed and graded. Drilldown goes to Portfolio › Aufteilung.
 - **Recently added tile:** a horizontal strip of the last 10 holdings.
 - **Unpriced notice:** when holdings have no price, a subtle line such as "12 Positionen ohne Preis. Nicht im Gesamtwert enthalten." links to a filtered collection.
-- **Empty state (first run):** a 3-step welcome ("Set öffnen → Karte hinzufügen → Preis eintragen"), an optional "Demo-Daten laden" button (⟶ I-19), and the backup/persistence explainer.
+- **Empty state (first run):** a 3-step welcome ("Set öffnen → Karte hinzufügen → Preis eintragen") and the backup/persistence explainer. There's no demo data (I-19 = no).
 
 ### 4.2 Katalog › Sets · CAT-01
 
@@ -181,8 +183,8 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
   - *Owned:* full color, a quantity badge ("×3"), and **variant dots** (normal, reverse, special patterns) that are filled when owned.
   - *Missing:* a desaturated 35 % "ghost" with a dashed outline. It can be toggled to fully hidden.
   - *Hover (desktop):* a subtle lift and tilt with a **＋** quick-add button and a **€** quick-price button.
-  - *Long-press (mobile):* a context sheet with Hinzufügen, Preis eintragen, Zur Wunschliste and Details.
-- **Progress definitions** (⟶ Q5.5): *Basis* counts numbered cards up to the printed total, *Komplett* adds secret rares, and *Master* covers every card × variant. They're computed per selected language, with an "any language" option.
+  - *Long-press (mobile):* a context sheet with Hinzufügen, Preis eintragen and Details (+ Zur Wunschliste once I-06 ships).
+- **Progress definitions** (Q5.5, all three shown): *Basis* counts the numbered main set, *Komplett* adds secret rares, and *Master* adds subsets and energies (every card × variant). They're computed per selected language, with an "any language" toggle.
 - **Density control:** S / M / L tile sizes, persisted per device.
 - **Sealed tab:** the set's products in the same tile language, showing product images.
 - **Statistik tab:** a rarity distribution of owned vs total, the set's value in the collection, and the most valuable cards.
@@ -213,8 +215,9 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 
 - **Holo viewer (DSN-01):** pointer and gyroscope tilt, glare, and a rarity-driven foil layer. Click for fullscreen. Only languages available in this print are offered.
 - **Series selector:** the language and variant chips (plus a grade selector when graded copies exist) choose which **price series** is shown and edited.
-- **Inline price entry (PRC-01):** amount with a German decimal comma, date (default today) and type (default from settings). Enter saves, and the entry pulses into the chart.
-- **Cardmarket button (PRC-06):** opens a Cardmarket search/product URL pre-filtered by language (and optionally condition) in a new tab.
+- **Inline price entry (PRC-01):** amount with a German decimal comma, date (default today) and type (default **"ab (DE)"**, i.e. the lowest offer in this language from German sellers, Q6.3). Enter saves, and the entry pulses into the chart.
+- **Price-guide suggestion (PRC-09):** a quiet chip under the input: *"Cardmarket-Guide 22.09.: ab 89,00 € · Trend 97,40 €"*. Its info tooltip reads *"alle Sprachen & Länder"* for international cards. Clicking a value copies it into the input, and Enter saves it (`origin: guide`). It's never saved automatically.
+- **Cardmarket button (PRC-06):** opens the exact Cardmarket product in a new tab, pre-filtered by **the copy's language + seller country Germany** (+ minimum condition per ⟶ R2.2).
 - **Holdings list:** every lot of this card shows its cost, current value and P/L, with inline edit and a context menu (Bearbeiten, Verkaufen…, Duplizieren, Löschen).
 - **Prev/next:** ← / → keys and swipe on mobile, in set order.
 - **Shared-element transition (DSN-02):** the tile image morphs into the hero image.
@@ -225,7 +228,7 @@ This screen uses the same structure as card detail, but:
 - The hero is a product image with a light 3D parallax and no foil. A placeholder with product-type iconography is shown when no image exists.
 - **Details:** product type (e.g. *Display*, *Top-Trainer-Box*, *Booster-Bundle*), contents (e.g. "36 Booster à 10 Karten"), release date per language, MSRP (*UVP*) where known, and EAN when curated.
 - **Holdings:** language · status (*versiegelt / geöffnet / beschädigt*) · qty · cost → value.
-- **Öffnen…** action (COL-12, ⟶ Q5.8 / I-11) turns a sealed holding into an opened one and optionally continues into pull logging.
+- **Öffnen…** action (COL-12, Q5.8) turns a sealed holding into an opened one and optionally continues into pull logging. The product's cost is split proportionally to the pulls' values.
 
 ### 4.6 Sammlung › Karten / Sealed · COL-04, COL-05
 
@@ -233,7 +236,7 @@ This screen uses the same structure as card detail, but:
 - **Views:**
   - *Raster* (grid): tiles as in set detail, plus value and P/L chips.
   - *Tabelle* (table): virtualized. Default columns are Karte (thumb + name), Set, Nr., Sprache, Variante, Zustand, Menge, Einkauf/Stk., Wert/Stk., Wert, G/V, G/V %, and Preis vom. Columns are configurable and sortable.
-  - *Binder* (COL-08, ⟶ I-02): 3×3 pocket pages in set order with page flip and missing-pocket placeholders.
+  - *Binder* (COL-08, post-v1 ⟶ R2.4): your real binders page by page (3×3 VaultX, 3×4/4×3 Withyu), or set order with missing-pocket placeholders.
 - **Filters** (chips + popover): Set, Sprache, Seltenheit, Variante, Zustand, Gradiert, Tags, Lagerort, Bepreist/Unbepreist, Preis veraltet, G/V positiv/negativ, and Kaufdatum range.
 - **Group by:** none · Set · Sprache · Seltenheit · Lagerort.
 - **Multi-select:** tag, move location, start a price session for the selection, export the selection as CSV, or delete (with undo).
@@ -247,25 +250,27 @@ This screen uses the same structure as card detail, but:
 │                                                     │
 │ Sprache    [DE] [EN]                                 │  ← only languages of this print
 │ Variante   (Holo) (Reverse Holo) (…)                 │  ← only variants that exist
-│ Zustand    MT [NM] EX GD LP PL PO                     │  ← Cardmarket scale; tooltips
+│ Zustand    MT [NM] EX GD LP PL PO                     │  ← Cardmarket scale; tooltips ("PO ≈ Damaged")
 │ Menge      [ − 1 + ]                                  │
 │ Kaufpreis  [ 4,50 € ]  ( pro Stück | gesamt )         │
 │ Kaufdatum  [ 23.09.2026 ]   Quelle [ Cardmarket  ▾ ]  │
-│ ▸ Mehr Details (Gebühren/Versand, Grading, Lagerort, Tags, Notiz, Fotos) │
+│ Lagerort   [ VaultX 9er ▾ ] Seite [4] Platz [7]  ✓ nächster freier │
+│ ▸ Mehr Details (Gebühren/Versand, Grading, Tags, Notiz) │
 │                                                     │
 │        [Hinzufügen & nächste]   [ Hinzufügen ⏎ ]     │
 └─────────────────────────────────────────────────────┘
 ```
 
 - **Defaults** come from settings and the last-used values: language, condition, source, and variant (the first existing one).
-- **Money input** accepts `4,5`, `4,50`, `4.50` and `4,50 €`, and stores **integer cents**. The currency selector appears only when multi-currency is enabled (⟶ Q6.1).
+- **Money input** accepts `4,5`, `4,50`, `4.50` and `4,50 €`, and stores **integer cents**. Currency is EUR only (Q6.1).
+- **Lagerort (COL-09, Q5.7):** binder (with its page layout) + page + slot. Settr pre-fills the **next free slot** of the last-used binder. Occupied slots are warned about, not blocked (a slot can hold a stack).
 - **"Hinzufügen & nächste"** keeps the sheet open and advances to the next card number, which gives a fast sequential entry mode.
 - **Validation:** quantity ≥ 1, price ≥ 0, and date not in the future. A warning (not an error) appears when the price is far above the latest known price.
 - **Sealed variant:** no variant or condition. It has *Status* (versiegelt/beschädigt) instead.
 
 ### 4.8 Quick-add mode · COL-06
 
-- Entry points: set detail → "Schnellerfassung", or ⌘K → "Schnellerfassung".
+- Entry points: set detail → "Schnellerfassung", or the command palette (Strg K) → "Schnellerfassung".
 - A focus-mode panel with sticky defaults at the top (Sprache, Variante, Zustand, Quelle, Kaufdatum). The main input takes a **card number**: typing `25` shows the card preview, and `Enter` adds 1 copy.
   - Modifiers: `25x3` adds 3 copies, `25r` adds a reverse holo, and `25 4,50` adds one with a purchase price.
 - A running list below shows each added item with undo.
@@ -291,7 +296,8 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 │                                                                            │
 │                 [↗ Auf Cardmarket öffnen  (C)]                             │
 │                                                                            │
-│                 Neuer Preis  [ 34,90 € ]  Typ: Trend ▾                      │
+│                 Neuer Preis  [ 34,90 € ]  Typ: ab (DE) ▾                    │
+│                 Guide 22.09.: ab 29,90 € · Trend 33,10 €  (V = übernehmen)  │
 │                 → +10,8 % seit letztem Preis                               │
 │                                                                            │
 │   [Überspringen (S)]   [Unverändert (U)]            [Speichern & weiter ⏎] │
@@ -300,7 +306,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 - **Scopes:** all holdings · stale only (> N days) · a set · a selection · the wishlist · top-N by value.
 - **Order:** by value descending (default), staleness, or set order.
-- **Keyboard:** `C` opens Cardmarket in a background tab when the browser allows it, `Enter` saves and advances, `U` keeps the price unchanged, `S` skips, `←` goes back, and `Esc` pauses. The session can be resumed, and its state persists.
+- **Keyboard:** `C` opens Cardmarket (exact product, language + seller country DE preset) in a new tab, `V` copies the price-guide suggestion into the input, `Enter` saves and advances, `U` keeps the price unchanged, `S` skips, `←` goes back, and `Esc` pauses. The session can be resumed, and its state persists.
 - **On desktop,** a tip suggests arranging Settr and Cardmarket side by side. Cardmarket can't be embedded in an iframe.
 - **Summary screen:** number updated, portfolio delta caused by this session, the biggest movers, and "Fertig" or "Weitere veraltete Preise".
 
@@ -308,27 +314,28 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 - **Entwicklung:** a large value-over-time chart (value, invested and P/L modes) with range selector and scrubbing. Filters for singles, sealed, sets and languages.
 - **Aufteilung:** allocation by category (singles/sealed/graded), set, language and rarity, shown as a donut plus a ranked bar list (treemap optional).
-- **Performance:** a sortable best/worst list (abs and %), P/L per set and per language, and a realized P/L section if sales tracking is enabled (⟶ Q6.5).
+- **Performance:** a sortable best/worst list (abs and %), P/L per set and per language, and a realized P/L section (sales tracking is on, Q6.5).
 - **Ausgaben:** spend per month (bars), spend by source, and average price per card by rarity.
 
-### 4.12 Wunschliste · WSH-01 (⟶ I-06)
+### 4.12 Wunschliste · WSH-01 (post-v1, I-06)
 
 - Tiles with a target price and the latest known price, and a "Ziel erreicht" badge when latest ≤ target.
-- Actions: start a price session for the wishlist, move to collection ("Gekauft"), and export as plain text for a Cardmarket wants list (⟶ I-06).
+- Actions: start a price session for the wishlist, move to collection ("Gekauft"), and export as plain text for a Cardmarket wants list.
 
 ### 4.13 Einstellungen · APP-07
 
 | Section | Settings |
 |---|---|
-| **Allgemein** | UI language (DE/EN) · card-name display (*Sprache meiner Karte* / *immer Deutsch* / *Originalsprache*) · default card language · base currency (EUR) · number/date format (auto from locale) · anrede (*du*) |
-| **Darstellung** | Theme (System/Dunkel/Hell) · accent · card-tile density · holo/animation level (*voll / reduziert / aus*) · colorblind-safe P/L colors |
-| **Preise** | Default price type · stale threshold (days, default 14) · Cardmarket link options (language filter, min. condition) · valuation of unpriced items (*ausschließen* / *Einkaufspreis verwenden*) |
+| **Allgemein** | Card-name display (*Sprache meiner Karte* / *immer Deutsch* / *Originalsprache*) · default card language · active card languages (DE, EN, JA, ZH-CN; ZH-TW per ⟶ R2.3). The UI language is German (a selector appears once English exists) |
+| **Darstellung** | Theme (System/Dunkel/Hell) · card-tile density · holo/animation level (*voll / reduziert / aus*) · **Transparenz reduzieren** (solid instead of glass) · colorblind-safe P/L colors |
+| **Preise** | Default price type (**ab (DE)**) · Cardmarket link filters (**seller country: Deutschland**, **language: like the copy**, min. condition ⟶ R2.2) · price-guide suggestions (on/off) · stale threshold (14 days) · valuation of unpriced items (*ausschließen* / *Einkaufspreis verwenden*) |
+| **Lagerorte** | Binders and boxes: name, layout (3×3 / 3×4 / 4×3 / custom), page count, sort order |
 | **Daten** | Export backup · import backup · CSV export · backup reminder interval · storage status (persistent? used/quota) · request persistence · delete all data |
 | **Über** | App version · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
 
 ### 4.14 Onboarding · APP-06
 
-1. **Willkommen:** a one-line value proposition, UI language and base currency.
+1. **Willkommen:** a one-line value proposition and the short tagline. Pick the card languages you collect (preset: DE, EN, JA, ZH-CN).
 2. **Deine Daten bleiben bei dir:** explains local storage and asks for **persistent storage** (`navigator.storage.persist()`). On iOS it recommends **"Zum Home-Bildschirm"**, since Safari may clear site data after 7 days without a visit (see `ARCHITECTURE.md` §8).
 3. **Los geht's:** pick your default card language(s) and open the 30th Anniversary set.
 
@@ -339,12 +346,12 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 | # | Flow | Steps (happy path) |
 |---|---|---|
 | F1 | Add a card from set page | Set detail → hover tile → **＋** → sheet (defaults prefilled) → type price → **Enter** → toast "Hinzugefügt · Rückgängig" → tile shows badge |
-| F2 | Add via search | **⌘K** → type "pika 25" → pick result → **Enter** opens add sheet → **Enter** |
+| F2 | Add via search | **Strg K** → type "pika 25" → pick result → **Enter** opens add sheet → **Enter** |
 | F3 | Quick-add many | Set detail → **Schnellerfassung** → set defaults once → `1⏎ 4⏎ 7x2⏎ 25r⏎` … |
 | F4 | Record one price | Card detail → price input → `34,9` **Enter** → chart animates the new point |
 | F5 | Price session | Übersicht "37 veraltet" → session → `C` (check Cardmarket) → type → **Enter** … → summary |
-| F6 | Sell part of a lot | Holding menu → **Verkaufen…** → qty 1 of 3, price, fees, date → lot splits into *sold ×1* + *owned ×2*; realized P/L recorded (⟶ Q6.5) |
-| F7 | Open sealed | Sealed holding → **Öffnen…** → confirm → optional "Pulls erfassen" (quick-add bound to the product's set) → cost allocation per setting (⟶ Q5.8) |
+| F6 | Sell part of a lot | Holding menu → **Verkaufen…** → qty 1 of 3, price, fees, date → the lot records a **disposal** of 1 (remaining ×2); realized P/L recorded (Q6.5) |
+| F7 | Open sealed | Sealed holding → **Öffnen…** → confirm → optional "Pulls erfassen" (quick-add bound to the product's set) → **Abschließen** splits the product cost proportionally to the pulls' values (evenly if unpriced) (Q5.8) |
 | F8 | Export / import | Einstellungen › Daten → **Backup exportieren** → file saved. On another device: **Backup importieren** → preview (counts, date, app version) → *Ersetzen* or *Zusammenführen* → safety snapshot → done |
 | F9 | First run | Onboarding (3 steps) → set detail |
 | F10 | App/catalog update | Service worker finds a new version → non-blocking toast "Neue Version verfügbar · Neu laden" |
@@ -373,12 +380,13 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 | Keys | Action |
 |---|---|
-| `⌘K` / `Ctrl K` / `/` | Command palette (search catalog, collection, actions, settings) |
+| `Strg K` (Windows) / `⌘K` (Mac, iPad) / `/` | Command palette (search catalog, collection, actions, settings) |
 | `N` | New holding (add sheet for the focused card, or palette otherwise) |
 | `P` | Record a price for the focused/selected item |
 | `Q` | Quick-add mode (in set context) |
 | `← / →` | Previous / next card on detail pages |
-| `G` then `O / S / K / P / F / W` | Go to Übersicht / Sammlung / Katalog / Preise / Portfolio / Wunschliste |
+| `G` then `O / S / K / P / F` | Go to Übersicht / Sammlung / Katalog / Preise / Portfolio |
+| `V` (price session / price input) | Copy the preselected price-guide suggestion into the input |
 | `V` then `G / T / B` | Switch view: grid / table / binder |
 | `H` | Toggle privacy mode (hide values) |
 | `?` | Shortcut cheat sheet |
@@ -390,7 +398,7 @@ Shortcuts are suppressed while typing in inputs, and every action is also reacha
 
 ## 8. Microcopy and tone
 
-- **German first**, informal **"du"** (⟶ Q2.4), and concise. Collector jargon is used naturally: *Display*, *Top-Trainer-Box*, *Reverse Holo*, *Pull*, *Master Set*.
+- **German only** (Q3.1), informal **"du"** (Q2.4), and concise. Collector jargon is used naturally: *Display*, *Top-Trainer-Box*, *Reverse Holo*, *Pull*, *Master Set*.
 - Numbers use German formatting: `1.234,56 €`, `+14,6 %`, `23.09.2026`. See `I18N.md`.
 - No exclamation-mark spam and no emoji in UI chrome. Celebrations (set complete) are visual, not verbal.
 - Examples:

@@ -1,9 +1,9 @@
 # Settr: Data Model and Domain Rules
 
-> Status: **Draft v0.1 (planning)** · Last updated: 2026-09-23
+> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
 > The single source of truth for entities, IDs, the IndexedDB schema, valuation and P/L formulas, and set-completion rules.
 > Backup file format → [`IMPORT_EXPORT.md`](./IMPORT_EXPORT.md). Where catalog data comes from → [`DATA_SOURCES.md`](./DATA_SOURCES.md).
-> Items marked **⟶ Qn** depend on an answer in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md).
+> References like (Q6.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R2.x** marks a still-open round-2 question.
 
 ---
 
@@ -27,7 +27,8 @@ Pokémon cards are **not** the same card list translated into every language. Th
 
 - **International print (`intl`):** English, German, French, Italian, Spanish, Portuguese, etc. share *one* card list and numbering per set. A German and an English copy of `025/128` are the same catalog card in two **languages**. Example: TCGdex set `30th` (*30th Celebration* / *30 Jahre*).
 - **Asian print (`asia`):** Japanese sets have their own card lists, numbering and release schedule. International sets are often built from several Japanese sets and differ in content. For 30th Celebration, EN has 25 main-set cards that Japan put in a deck product instead. *Traditional Chinese* (`zh-tw`), Korean, Thai, Indonesian and often *Simplified Chinese* (`zh-cn`) releases **mirror** the Japanese set with the same list and numbering, so they're modeled as **languages of the same set** (TCGdex does the same: set `SV10` carries `ja`, `zh-tw` and `zh-cn` names). Example: TCGdex set `M6a` (*30th CELEBRATION*).
-- **Mainland-China-exclusive sets** (e.g. TCGdex `CSV…C` sets) are separate `asia` sets whose only language is `zh-cn`. ⟶ **Q3.2** (which Chinese the user collects).
+- **Mainland-China-exclusive sets** (e.g. TCGdex `CSV…C` sets) are separate `asia` sets whose only language is `zh-cn`.
+- **Decision (Q3.2): Settr's Chinese focus is Simplified Chinese (`zh-cn`).** The Simplified Chinese *30周年庆典* mirrors `M6a` (176 cards, both on Cardmarket (expansion 6603) and in the only SC dataset), so `asia:M6a` carries the languages `['ja', 'zh-cn']`. Its one difference is that SC prints C/R rarity marks that JP doesn't, which is handled by `printedRarity` per language (§4.1). Traditional Chinese (`zh-tw`) is used for TC sealed products, and for cards if ⟶ R2.3 = yes.
 
 Therefore:
 
@@ -54,7 +55,7 @@ PriceEntry ──> PriceSeries(card|product, language, variant, grade)
 | Entity | Format | Example | Notes |
 |---|---|---|---|
 | Print | enum | `intl`, `asia` | |
-| Card language | enum | `de`, `en`, `ja`, `zh-tw`, `zh-cn` (+ `fr`, `it`, `es`, `pt`, `ko` ⟶ Q3.3) | Uses TCGdex language codes to avoid mapping friction |
+| Card language | enum | **Active in v1:** `de`, `en`, `ja`, `zh-cn`, plus `zh-tw` for sealed products (cards per ⟶ R2.3). `fr`, `it`, `es`, `pt`, `ko` stay valid enum values but are disabled (Q3.3) | Uses TCGdex language codes to avoid mapping friction |
 | `SetId` | `<print>:<sourceSetId>` | `intl:30th`, `intl:30th-c`, `asia:M6a` | Opaque. **Never parse IDs**; store foreign keys explicitly (TCGdex IDs can contain dots, e.g. `sv03.5`) |
 | `CardId` | `<SetId>:<localId>` | `intl:30th:025`, `intl:30th:R`, `asia:M6a:017` | `localId` = TCGdex local ID as a string. The *printed* number is a separate field (it differs for the Classic Collection) |
 | `ProductId` (sealed) | `<print>:<slug>` | `intl:30th-etb`, `intl:30th-pc-etb`, `asia:m6a-box` | Curated slugs |
@@ -75,6 +76,7 @@ public/catalog/v1/
   manifest.json          # CatalogManifest: version, sources, prints, set summaries, file hashes
   sets/<setId>.json      # CatalogSet incl. all cards (filename = encoded setId)
   sealed.json            # all CatalogProducts
+  cm-prices.json         # PriceGuideSnapshot: daily Cardmarket price-guide values for catalog products (PRC-09)
   i18n/<lang>.json       # localized labels for rarities, types, variants, product types (if not inline)
 ```
 
@@ -116,8 +118,10 @@ interface CatalogCard {
   section: 'main' | 'secret' | 'subset' | 'energy' | 'promo';
   sort: number;                  // numeric sort key (handles '025', 'TG01', 'R', …)
   name: LocalizedText;
+  nameSource?: Partial<Record<CardLanguage, 'official' | 'curated' | 'derived-pokeapi' | 'derived-crossprint'>>; // derived names are labeled "übersetzt"
   category: 'pokemon' | 'trainer' | 'energy';
   rarity?: string;               // RarityId (controlled vocabulary, labels in i18n)
+  printedRarity?: Partial<Record<CardLanguage, string | null>>; // e.g. SC prints C/R marks that JP omits; null = no mark printed
   types?: string[];              // EnergyType ids
   hp?: number; stage?: string; dexIds?: number[];
   illustrator?: string;
@@ -130,7 +134,10 @@ interface CatalogCard {
 interface CardVariant {
   id: VariantId;
   languages?: CardLanguage[];    // restrict when a variant exists only in some languages
-  refs?: { cardmarket?: number; tcgplayer?: number; cardtrader?: number }; // per-variant product IDs (from TCGdex)
+  refs?: {
+    cardmarket?: { default?: number; byLanguage?: Partial<Record<CardLanguage, number>> }; // JP (exp. 6602) and SC (exp. 6603) are separate Cardmarket products
+    tcgplayer?: number; cardtrader?: number;
+  };
 }
 
 interface VariantDef { id: VariantId; kind: 'finish' | 'pattern' | 'stamp' | 'edition'; label: LocalizedText; }
@@ -152,10 +159,23 @@ interface CatalogProduct {
   msrp?: Partial<Record<CardLanguage, Money>>;   // "UVP", where known
   ean?: Partial<Record<CardLanguage, string>>;   // for barcode scanning (I-10)
   images?: Partial<Record<CardLanguage, string>>;
-  exclusive?: 'pokemon-center' | 'retailer' | 'event' | null;
+  exclusive?: 'pokemon-center' | 'retailer' | 'event' | 'lottery' | null;
   refs?: { cardmarket?: number; tcgplayer?: number };
 }
+
+// PRC-09: produced daily by a GitHub Action from Cardmarket's public price guide, filtered to catalog products
+interface PriceGuideSnapshot {
+  source: 'cardmarket-price-guide';
+  guideCreatedAt: string;        // Cardmarket's own timestamp
+  fetchedAt: string;
+  prices: Record<number /* idProduct */, {
+    low?: number; trend?: number; avg1?: number; avg7?: number; avg30?: number;   // EUR, decimals as published
+    lowHolo?: number; trendHolo?: number;                                         // Cardmarket's "-holo" fields (= reverse holo for Pokémon)
+  }>;
+}
 ```
+
+**Semantics of guide values (shown to the user):** for international products, one Cardmarket product covers **all languages and seller countries**, so `low` is the global cheapest offer, not "cheapest German seller in German". Japanese and Simplified Chinese products are separate Cardmarket products, so their values are language-specific. The UI labels suggestions accordingly (`UX_SPEC.md` §4.4).
 
 ### 4.2 Display snapshot on user records
 
@@ -186,7 +206,7 @@ type ItemRef = { kind: 'card' | 'sealed'; id: string }; // catalog id or custom:
 ```
 
 - **Money is never a float.** All arithmetic runs on integer minor units. Rounding uses banker's-rounding-free *largest remainder* allocation when splitting totals.
-- **Base currency** is EUR by default (setting). Amounts in other currencies carry the FX rate used at entry time (`fx`) so historical P/L never shifts retroactively ⟶ **Q6.1**.
+- **Base currency** is EUR. **v1 is EUR-only (Q6.1).** The `fx` field stays in the model so multi-currency (PRC-08) can be added later without a migration: amounts in other currencies would carry the FX rate used at entry time, so historical P/L never shifts retroactively.
 
 ```ts
 interface ForeignMoney extends Money { fx?: { rate: number; date: ISODate; source: 'ecb' | 'manual' }; }
@@ -223,7 +243,7 @@ interface Holding extends RecordBase {
   valueOverride?: { price: Money; date: ISODate; note?: string }; // per-lot manual value (PRC-07)
 
   tags: string[];                 // Tag ids
-  locationId?: string; locationNote?: string; // e.g. binder + "Seite 3"
+  location?: { id: string; page?: number; slot?: number; note?: string }; // e.g. VaultX binder, page 4, slot 7 (Q5.7)
   mediaIds: string[];             // photos (I-12)
   note?: string;
 }
@@ -263,8 +283,10 @@ interface PriceEntry extends RecordBase {
   snapshot: ItemSnapshot;
   date: ISODate;                  // observation date (not time)
   price: ForeignMoney;            // price per ONE unit
-  priceType: 'trend' | 'from' | 'avg30' | 'avg7' | 'avg1' | 'sold' | 'manual'; // default from settings ⟶ Q6.3
+  priceType: 'from' | 'trend' | 'avg30' | 'avg7' | 'avg1' | 'sold' | 'manual'; // default 'from' = "ab" (Q6.3)
   source: 'cardmarket' | 'ebay' | 'tcgplayer' | 'local' | 'other';
+  context?: { sellerCountry?: string; language?: CardLanguage; minCondition?: Condition }; // how the price was looked up (default: DE sellers, copy's language)
+  origin: 'manual' | 'guide';     // 'guide' = accepted price-guide suggestion (PRC-09)
   note?: string;
 }
 type GradeKey = 'raw' | `${Lowercase<Grading['company']>}-${string}`; // 'raw', 'psa-10', 'bgs-9.5', 'cgc-10-pristine'
@@ -294,7 +316,18 @@ interface WishlistItem extends RecordBase {
 
 ```ts
 interface Tag extends RecordBase { name: string; color?: string; }
-interface Location extends RecordBase { name: string; kind: 'binder' | 'box' | 'case' | 'display' | 'other'; parentId?: string; sort?: number; }
+interface Location extends RecordBase {
+  name: string;                                   // "VaultX 9er", "Withyu 12er"
+  kind: 'binder' | 'box' | 'case' | 'display' | 'other';
+  layout?: { columns: number; rows: number };     // binders: 3×3 (9 pockets), 3×4 or 4×3 (12 pockets), custom
+  pages?: number;                                 // binder page count (a page = one side)
+  parentId?: string; sort?: number;
+}
+```
+
+**Slots:** `slot` is 1-based, left→right, top→bottom within a page. The "next free slot" is the first `(page, slot)` not occupied by an open holding. Occupancy is a warning, not a constraint, since a slot can hold a stack of identical cards.
+
+```ts
 ```
 
 ### 5.7 `customItems`: user-defined catalog entries
@@ -324,7 +357,7 @@ Images are downscaled client-side before storing (max 1600 px long edge, WebP q�
 
 | key | value |
 |---|---|
-| `settings` | `Settings` object (Zod schema with defaults; merged on read so new settings appear automatically) |
+| `settings` | `Settings` object (Zod schema with defaults; merged on read so new settings appear automatically). Key v1 defaults: `cardLanguages: ['de','en','ja','zh-cn']`, `defaultCardLanguage: 'de'`, `defaultCondition: 'NM'`, `price: { defaultType: 'from', cardmarket: { sellerCountry: 'DE', matchLanguage: true, minCondition: 'NM' /* ⟶ R2.2 */ }, guideSuggestions: true, staleAfterDays: 14, unpriced: 'exclude' }`, `display: { theme: 'system', reduceTransparency: false, motion: 'full' }`, `backup: { remindAfterDays: 7 }` |
 | `meta` | `{ installId, createdAt, schemaVersion, lastBackupAt?, lastImportAt?, catalogVersionSeen }` |
 | `priceSession` | resumable price-session state (queue, cursor, scope) |
 | `ui:*` | per-device UI prefs (density, last-used defaults, collapsed panels) |
@@ -342,7 +375,7 @@ Deleting a record removes the row **and** writes a tombstone in one transaction.
 
 - `packOpenings` (I-11): product holding, date, packs, pulled holding ids, cost-allocation method.
 - `gradingSubmissions` (I-09): company, service level, dates, costs, holding ids, status.
-- `orders` (⟶ Q6.4): multi-lot purchases with shipping allocated across lots.
+- `orders`: multi-lot purchases with shipping allocated across lots. Not in v1: per-entry fees suffice (Q6.4).
 
 ---
 
@@ -358,7 +391,8 @@ seriesKey(sealed) = `sealed|${productId}|${language}`
 gradeKey          = holding.grading ? `${company}-${grade}${qualifier ? '-' + qualifier : ''}` (lowercased, slugified) : 'raw'
 ```
 
-- All raw copies of the same card/language/variant **share one price series**. The recorded price is the market reference, typically NM. ⟶ **Q6.2**: optional condition multipliers (e.g. EX 85 %, GD 70 %, LP 60 %, PL 40 %, PO 25 %) or per-lot `valueOverride`.
+- All raw copies of the same card/language/variant **share one price series**. The recorded price is the market reference: the cheapest offer in that language from German sellers, with the condition filter per ⟶ R2.2.
+- **Decision (Q6.2):** copies worth noticeably less (LP, damaged) or more (special pieces) get a per-lot `valueOverride`. Automatic condition multipliers are **not** planned.
 - Graded copies have **their own series per company+grade**.
 
 ### 6.2 Cost basis
@@ -371,7 +405,10 @@ remainingCost(h)    = costTotal(h) − Σ costOfUnits(disposed units)
 ```
 
 - `acquisition.type = 'pull' | 'gift'` defaults to cost 0 (P/L % then shows "—").
-- Pulls from an opened sealed product *may* inherit an allocated cost ⟶ **Q5.8** (options: none, even split, or proportional to value at opening).
+- **Decision (Q5.8):** pulls logged from an opened sealed product inherit an allocated cost when the user presses *Abschließen*:
+  - Each pull's share is `productCostOfOpenedUnits × value(pull at opening) ÷ Σ value(all pulls at opening)`.
+  - Pulls without a price share the rest **evenly**.
+  - Allocation uses the largest-remainder method on minor units, so the sum is exact. The result is written into each pull's `acquisition.priceTotal` (with `fromHoldingId`), and the product's opened units show as consumed.
 
 ### 6.3 Valuation (as of date *d*)
 
@@ -390,7 +427,7 @@ value(h, d)          = remaining(h, d) × unitValue(h, d)
 ```
 unrealizedPL        = Σ_priced holdings (value(h) − remainingCost(h))
 unrealizedPL%       = unrealizedPL / Σ_priced remainingCost(h)            // "—" if denominator = 0
-realizedPL (sale)   = proceedsTotal − feesTotal − costOfUnits(disposed)   // if sales tracking enabled ⟶ Q6.5
+realizedPL (sale)   = proceedsTotal − feesTotal − costOfUnits(disposed)   // sales tracking is on (Q6.5)
 totalPL             = unrealizedPL + realizedPL
 invested (display)  = Σ remainingCost(all open holdings, priced or not)
 ```
@@ -419,7 +456,7 @@ For a set *S*, a language filter *L* (a specific language or "any") and "owned" 
 
 For 30th Celebration (EN/DE) that means: **Basis = 128**, **Komplett = 161**, **Master = 199** (161 + 30 Classic Collection + 8 Energies; exactly one variant per card). For JP M6a: Basis = 103, Komplett = 138 (incl. 20 AR, 10 SAR, 2 FUR and 3 RGB), Master = 176 (+ Classic Collection 136–165 + 8 Energies, which are sections inside M6a).
 
-Graded copies count as owned (setting). ⟶ **Q5.5** confirms which metrics the user cares about.
+Graded copies count as owned (setting). Decision (Q5.5): all three metrics are shown, per language with an "any language" toggle.
 
 ### 6.7 Price change metrics
 
@@ -434,7 +471,7 @@ Graded copies count as owned (setting). ⟶ **Q5.5** confirms which metrics the 
 ```ts
 // src/db/schema.ts (planned)
 db.version(1).stores({
-  holdings:    'id, item.id, setId, print, language, [item.id+language], locationId, *tags, acquisition.date, updatedAt',
+  holdings:    'id, item.id, setId, print, language, [item.id+language], location.id, *tags, acquisition.date, updatedAt',
   prices:      'id, seriesKey, [seriesKey+date], item.id, date, updatedAt',
   priceLatest: 'seriesKey, date',
   wishlist:    'id, item.id, updatedAt',
@@ -483,15 +520,17 @@ db.version(1).stores({
   "quantity": 2,
   "acquisition": { "type": "purchase", "date": "2026-09-22", "priceTotal": { "minor": 17800, "currency": "EUR" },
                    "feesTotal": { "minor": 125, "currency": "EUR" }, "source": "Cardmarket" },
+  "location": { "id": "0192f0aa-…", "page": 4, "slot": 7 },   // "VaultX 9er", page 4, slot 7
   "disposals": [], "tags": [], "mediaIds": []
 }
-// prices: Cardmarket trend price for that series
+// prices: lowest German-language offer from German sellers ("ab (DE)") for that series
 {
   "id": "0192f1c4-…", "createdAt": "…", "updatedAt": "…",
   "seriesKey": "card|intl:30th:150|de|std|raw",
   "item": { "kind": "card", "id": "intl:30th:150" }, "language": "de", "variant": "std", "grade": "raw",
   "snapshot": { "name": "Pikachu-ex", "localId": "150" },
-  "date": "2026-09-23", "price": { "minor": 9490, "currency": "EUR" }, "priceType": "trend", "source": "cardmarket"
+  "date": "2026-09-23", "price": { "minor": 9490, "currency": "EUR" }, "priceType": "from", "source": "cardmarket",
+  "context": { "sellerCountry": "DE", "language": "de", "minCondition": "NM" }, "origin": "manual"
 }
 // holdings: 1× German Top-Trainer-Box (sealed)
 {

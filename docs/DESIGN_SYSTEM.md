@@ -1,59 +1,75 @@
 # Settr: Design System
 
-> Status: **Draft v0.1 (planning)**. The direction is a *recommendation* awaiting your choice (⟶ **Q9.1**). Last updated: 2026-09-23.
-> Screens and flows → [`UX_SPEC.md`](./UX_SPEC.md). Accessibility requirements → [`QUALITY.md`](./QUALITY.md) §5.
+> Status: **Draft v0.2**. It's rebuilt around your references (Q9.5: Revolut, Apple, Wise; bold fonts; Apple minimalism; Liquid Glass). The final direction is picked on the design canvas (⟶ **R2.1**). Last updated: 2026-09-23.
+> Screens and flows → [`UX_SPEC.md`](./UX_SPEC.md). Accessibility requirements → [`QUALITY.md`](./QUALITY.md) §5. Platform priority: **Windows desktop first**, iPhone second (Q9.8).
 
 ---
 
-## 1. Direction: **"Vault"** (recommended)
+## 1. Direction: **Liquid Glass × bold minimalism**
 
-> *A private gallery for your collection, with the precision of a trading terminal.*
+> *Your collection as a luminous gallery: bold numbers, calm space, and glass chrome floating above the cards.*
 
-**Three words:** **Precise · Luminous · Calm.**
+**Three words:** **Bold · Clear · Luminous.**
 
 | Principle | What it means in practice |
 |---|---|
-| **Precise** | Tabular numerals everywhere, a strict 4 px grid, hairline borders, exact dates on every price, and no rounding surprises |
-| **Luminous** | The UI is a dark, quiet "vault". The **cards bring the color**: foil, rim light and an ambient glow sampled from the artwork. One signature accent and a holo-foil gradient reserved for special moments |
-| **Calm** | Generous spacing, few surfaces, restrained motion. Density where it helps (tables), air where it's emotional (card detail) |
+| **Bold** | Heavy, wide display type for numbers and headlines (the Revolut/Wise punch). Confident hierarchy, where one glance tells you the value, the change and the next action |
+| **Clear** | Apple-style minimalism: generous whitespace, one accent, no ornament. Tabular numerals, exact dates, honest data |
+| **Luminous** | The **cards bring the color**. The UI is quiet, and **Liquid Glass chrome** (sidebar, toolbar, tab bar, sheets) floats above the content, tinted by the card art scrolling beneath it |
 
-### 1.1 What we deliberately avoid (the "generic AI app" look)
+### 1.1 Shared foundation (all directions)
 
-- Purple-to-blue gradients, gradient-filled headline text, sparkle icons.
-- Glassmorphism on every surface. Blur is reserved for overlays.
+- **Typography:** Mona Sans at **800–900** for display and numbers (wide `wdth`), and 440–560 for UI text (§4).
+- **Glass is a material for chrome only** (§3.5): navigation, toolbars, sheets, popovers and the command palette. Content surfaces (card tiles, tables, text) stay solid for legibility.
+- **Cards are the hero:** large, crisp, luminous, with a holo viewer on detail pages.
+- **Finance-grade charts:** scrubbable, minimal, and honest (§9).
+
+### 1.2 The three candidate directions (on the design canvas, pick in ⟶ R2.1)
+
+| | **A · Vault Glass** (recommended) | **B · Studio Glass** | **C · Bold** |
+|---|---|---|---|
+| Feel | Premium dark vault: Revolut's dark mode meets Apple Pro apps | Apple.com minimalism: bright, airy, precise | Wise/Revolut energy: loud type, chunky shapes |
+| Hero theme | Dark ink `#0A0B0F` | Light: soft grey canvas `#F2F2F4`, white surfaces | Dark navy `#0B0D1A` |
+| Accent | **Settr Gold** `#F2C14E` | **Settr Blue** `#2F6BFF` + ink-black buttons | **Cobalt** `#4353FF` |
+| Glass | Smoked dark glass | Frosted light glass | Glass top pill navigation; solid bold tiles |
+| Navigation | Floating glass sidebar | Floating glass sidebar | Floating glass pill bar (top) |
+| Display type | Mona Sans 800, `wdth` 120 | Mona Sans 780, `wdth` 105, tight tracking | Mona Sans 900, `wdth` 125 |
+| Radius (panel / tile) | 20 / 14 | 24 / 16 | 28 / 22 |
+| Risk | Must keep the light theme equally good | Can feel "generic Apple" without the card art | Can get loud; tables need restraint |
+
+Whichever direction wins gets a complete **light + dark pair** in M1. The canvas shows each in its hero theme.
+
+### 1.3 What we deliberately avoid (the "generic AI app" look)
+
+- Purple-to-blue gradients, gradient-filled headline text, sparkle icons, decorative background gradient washes.
+- **Glass on everything** or text over busy glass. Glass is only for floating chrome, and every text/background pair must meet contrast against the worst-case backdrop.
 - Big drop shadows on every card, inconsistent radii, and five accent colors.
 - Centered marketing heroes with vague slogans inside an app.
 - Emoji as UI icons, stock 3D blobs, rainbow charts.
 - Default-everything shadcn look (same Lucide icons, same slate palette, same 0.5 rem radius).
-
-### 1.2 Alternative directions (for your decision ⟶ Q9.1)
-
-| | **A · Vault** (recommended) | **B · Terminal** | **C · Foil Pop** |
-|---|---|---|---|
-| Mood | Premium gallery + finance precision | Pro trading terminal, maximum density | Playful, vibrant, collector energy |
-| Base | Ink-dark, warm-paper light mode | Pure black/white, monospace numerals | Colorful surfaces, bold type-color blocks |
-| Accent | *Settr Gold* + holo foil for moments | Single neon (lime) | Energy-type colors everywhere |
-| Cards | Hero, with ambient glow and holo viewer | Small, data-first | Big, stickers, bouncy motion |
-| Risk | Needs polish to shine | Can feel cold | Can feel childish or cluttered |
+- Copying any real company's proprietary design. We borrow *principles* from Revolut, Apple and Wise, not their assets.
 
 ---
 
 ## 2. Brand
 
-- **Name:** "Settr". The wordmark is lowercase **settr**.
-- **Tagline:** DE *"Jede Karte. Jedes Set. Jeder Cent."* · EN *"Every card. Every set. Every cent."* (⟶ Q9.4)
-- **Logo concept:** a monogram **S** formed by the negative space of two offset card silhouettes (63∶88 ratio, rounded corners), with a thin holo-foil edge on the front card. The wordmark is set in the display font at wide width, semibold, with −2 % tracking.
+- **Name and wordmark: "Settr"** (capital S, Q9.4), set in Mona Sans 800 at wide width (`wdth` 118) with −2 % tracking.
+- **Taglines:**
+  - Long: DE *"Jede Karte. Jedes Set. Jeder Cent."* · EN *"Every card. Every set. Every cent."*
+  - Short (⟶ R2.7, default): *"Jede Karte zählt."*
+- **Logo concept:** a monogram **S** formed by the negative space of two offset card silhouettes (63∶88 ratio, rounded corners), with a thin holo-foil edge on the front card.
+- **App icon (PWA, iPhone home screen):** the monogram as **layered glass cards** on ink, in the spirit of the 2025/26 layered icon style, with the front card catching a gold edge light.
 - **No Pokémon IP in the brand** (no Poké Ball, no characters, no official energy symbols). It's safer legally and more premium.
 
 ---
 
 ## 3. Color
 
-All colors are **OKLCH design tokens** (CSS custom properties) mapped into Tailwind v4 via `@theme`. Components only use **semantic** tokens.
+All colors are **OKLCH design tokens** (CSS custom properties) mapped into Tailwind v4 via `@theme`. Components only use **semantic** tokens. The table shows **direction A**. B and C swap the values (§1.2) but keep the token names, so switching directions is a token change, not a refactor.
 
-### 3.1 Semantic tokens
+### 3.1 Semantic tokens (direction A · Vault Glass)
 
-| Token | Dark "Ink" (default ⟶ Q9.2) | Light "Paper" | Use |
+| Token | Dark (hero; follows the system setting, Q9.2) | Light | Use |
 |---|---|---|---|
 | `--bg` | `oklch(0.145 0.008 265)` | `oklch(0.985 0.004 85)` | App background |
 | `--surface-1` | `oklch(0.180 0.009 265)` | `oklch(1 0 0)` | Panels, tiles |
@@ -107,6 +123,28 @@ Desaturated to sit calmly in the UI. Chips use the color as a dot plus a 14 % ti
 
 Eight categorical hues at equal perceived lightness (dark L≈0.74, light L≈0.58): hues 250 · 190 · 150 · 95 · 60 · 25 · 330 · 290. Series order is fixed so colors stay stable across charts. Gain/loss colors are **never** reused as categorical colors.
 
+### 3.5 Liquid Glass materials (DSN-05)
+
+Glass is Settr's signature *material* for floating chrome (Q9.5: Apple's Liquid Glass). It's built from `backdrop-filter`, a translucent tint, a specular edge and a soft shadow.
+
+| Token | A dark (smoked) | A/B light (frosted) | Use |
+|---|---|---|---|
+| `--glass-fill` | `oklch(0.20 0.012 265 / 0.58)` | `oklch(1 0 0 / 0.64)` | Tint of the pane |
+| `--glass-fill-thick` | `oklch(0.20 0.012 265 / 0.78)` | `oklch(1 0 0 / 0.82)` | Sheets, popovers, command palette (text-heavy) |
+| `--glass-blur` | `28px` | `30px` | `backdrop-filter: blur()` |
+| `--glass-saturate` | `180%` | `180%` | `backdrop-filter: saturate()`, which keeps card colors vivid beneath |
+| `--glass-stroke` | `oklch(1 0 0 / 0.09)` | `oklch(0 0 0 / 0.06)` | 1 px outline |
+| `--glass-specular` | `inset 0 1px 0 oklch(1 0 0 / 0.12)` | `inset 0 1px 0 oklch(1 0 0 / 0.95)` | Top-edge light catch |
+| `--glass-shadow` | `0 24px 60px -24px oklch(0 0 0 / 0.70)` | `0 12px 40px -16px oklch(0 0 0 / 0.18)` | Lift |
+
+**Rules**
+1. **Chrome only:** floating sidebar, toolbar, mobile tab bar, sheets, popovers, command palette, segmented controls over content, and the price-session HUD. **Never** on card tiles, tables or long text.
+2. **Content scrolls beneath:** the sidebar and toolbar float with a 12 px inset over the page. Card art scrolling under them tints the glass, which is what makes it feel alive.
+3. **Legibility first:** text on glass meets WCAG AA against the **worst-case backdrop** (bright card art). This is guaranteed by the fill-opacity floor and tested with bright fixtures.
+4. **Materialize on scroll:** the toolbar is transparent at the top of a page and turns to glass once content passes beneath it (scroll-driven animation where supported, else an IntersectionObserver class toggle).
+5. **Reduced transparency:** `prefers-reduced-transparency` (Chromium) or the in-app toggle *Transparenz reduzieren* switches to solid `--surface-2` with the same stroke and radius, and no blur.
+6. **Performance:** ≤ 3 blurred layers visible at once. Never animate the size of a blurred element. Profile on Windows laptops (primary platform).
+
 ---
 
 ## 4. Typography
@@ -126,21 +164,22 @@ Eight categorical hues at equal perceived lightness (dark L≈0.74, light L≈0.
 - At most two weights (400, 600).
 - Fonts are **self-hosted**, never loaded from Google's CDN (GDPR; see `DATA_SOURCES.md` §8).
 
-*Why Mona Sans:* one variable family covers everything, with the **width axis** as a distinctive brand lever. Wide, bold figures set the hero numbers and headings, and normal width sets UI text. It's not the ubiquitous Inter or Geist look, and it's crisp at small sizes. (⟶ Q9.3 if you have a font preference.)
+*Why Mona Sans:* one variable family covers everything, with the **width axis** as a distinctive brand lever. **Heavy, wide figures** (800–900, `wdth` 115–125) give the bold look you asked for (Q9.5), and normal width keeps UI text calm. It's not the ubiquitous Inter or Geist look, and it's crisp at small sizes on Windows ClearType. It was confirmed as the default in Q9.3.
 
 ### 4.1 Scale
 
 | Token | Size / line | Weight | Width | Tracking | Use |
 |---|---|---|---|---|---|
-| `display-xl` | clamp(40px, 5vw, 60px) / 1.0 | 650 | 118 | −0.03em | Portfolio hero value |
-| `display` | 40 / 44 | 650 | 112 | −0.025em | Page heroes (set name) |
-| `h1` | 30 / 36 | 620 | 106 | −0.02em | Page titles |
-| `h2` | 22 / 28 | 600 | 100 | −0.01em | Section titles |
-| `h3` | 18 / 24 | 600 | 100 | −0.005em | Tile titles |
+| `display-xl` | clamp(44px, 5vw, 72px) / 0.95 | **800** | 120 | −0.035em | Portfolio hero value |
+| `display` | 44 / 46 | **800** | 115 | −0.03em | Page heroes (set name) |
+| `h1` | 32 / 36 | 720 | 108 | −0.02em | Page titles |
+| `h2` | 22 / 28 | 680 | 104 | −0.01em | Section titles |
+| `h3` | 17 / 22 | 640 | 100 | −0.005em | Tile titles |
 | `body` | 15 / 22 (mobile 16 / 24) | 440 | 100 | 0 | Text |
 | `small` | 13 / 18 | 450 | 100 | 0 | Meta, table cells |
 | `label` | 12 / 16 | 560 | 100 | +0.01em | Field labels, chips |
 
+- **Per direction:** B uses 780 / `wdth` 105 with tighter tracking (Apple-like headlines). C uses **900 / `wdth` 125** for display and big numbers.
 - **Numerals:** `font-variant-numeric: tabular-nums` globally for money, counts and dates. Proportional numerals only in running text.
 - **German:** `hyphens: auto` on `lang="de"` in narrow containers, `text-wrap: balance` for headings and `pretty` for paragraphs. Uppercase labels are avoided because German compounds get too wide.
 
@@ -152,7 +191,8 @@ Eight categorical hues at equal perceived lightness (dark L≈0.74, light L≈0.
 - **Layout:** a 12-column fluid grid with content max-width 1440 px. Gutters are 16 (mobile), 24 (tablet) and 32 (desktop).
 - **Radius:** `xs 4` (chips) · `sm 6` (inputs) · `md 10` (buttons, tiles) · `lg 14` (panels) · `xl 20` (sheets). **Card images:** `border-radius: 4.8% / 3.4%`, matching a physical card's corner.
 - **Depth:** in dark mode, depth comes from **luminance steps and hairlines, not shadows**. Shadows are only for floating layers (popover, sheet, dragged tile): `0 1px 0 oklch(1 0 0 / .04) inset, 0 16px 40px -12px oklch(0 0 0 / .55)`.
-- **Glass, used sparingly:** only *floating* chrome gets a translucent material (`backdrop-filter: blur(16px) saturate(1.4)` plus a 1 px specular top edge): the mobile bottom tab bar, the command palette and sheet backdrops. Everything else stays solid. It's a subtle nod to Apple's 2025 "Liquid Glass" without the gimmick. SVG-refraction variants are Chromium-only and are skipped.
+- **Glass:** floating chrome uses the Liquid Glass materials of §3.5. Content surfaces stay solid. SVG-refraction variants are Chromium-only and are skipped.
+- **Floating layout (desktop):** the sidebar is a glass panel inset 12 px from the window edges (radius 20), and the toolbar floats above the content column. The page content has 12 px breathing room, which gives a calm "app window within the window" look, as in current macOS apps.
 - **Ambient glow (card/product detail):** a duplicated, heavily blurred copy of the artwork sits behind the hero (`filter: blur(64px) saturate(1.4); opacity: .35`), so the page takes the card's colors. It needs no canvas and no CORS.
 
 ---
@@ -193,7 +233,8 @@ Eight categorical hues at equal perceived lightness (dark L≈0.74, light L≈0.
 3. **Hero number odometer:** rolls on first view only, never on every re-render.
 4. **Progress rings:** a stroke animation, with a one-time foil sweep at 100 %.
 5. **Price saved:** the new point drops into the chart, and the value briefly flashes the gain/loss color (150 ms).
-6. **Filter changes:** layout animation only for ≤ 60 visible items. Beyond that, an instant swap (performance).
+6. **Glass materialize:** the toolbar fades from transparent to glass as content scrolls beneath it (120 ms), and sheets rise with the sheet spring while their backdrop blur fades in.
+7. **Filter changes:** layout animation only for ≤ 60 visible items. Beyond that, an instant swap (performance).
 
 Everything above is disabled under `prefers-reduced-motion: reduce` or the in-app setting *Animationen: aus*.
 
@@ -203,7 +244,9 @@ Everything above is disabled under `prefers-reduced-motion: reduce` or the in-ap
 
 Built on **shadcn/ui** source components (copied in, fully restyled to these tokens) on accessible headless primitives.
 
-**Primitives:** Button (primary · secondary · ghost · destructive · icon; sm/md/lg) · Input · **MoneyInput** · **DateInput** (German format, keyboard-friendly) · Select · Combobox · SegmentedControl · Chip · Checkbox · Switch · Slider · Tabs · Tooltip · Popover · DropdownMenu · ContextMenu · Dialog · Sheet (side/bottom) · Toast · **CommandPalette** · Skeleton · Badge · Kbd · Table (virtualized) · EmptyState · ErrorState.
+**Primitives:** Button (primary · secondary · ghost · destructive · icon; sm/md/lg) · Input · **MoneyInput** · **DateInput** (German format, keyboard-friendly) · Select · Combobox · SegmentedControl · Chip · Checkbox · Switch · Slider · Tabs · Tooltip · Popover · DropdownMenu · ContextMenu · Dialog · Sheet (side/bottom) · Toast · **CommandPalette** · Skeleton · Badge · Kbd (platform-aware: `Strg` on Windows) · Table (virtualized) · EmptyState · ErrorState.
+
+**Glass primitives (§3.5):** `GlassPanel` (regular/thick) · `GlassSidebar` · `GlassToolbar` (materialize-on-scroll) · `GlassTabBar` (mobile floating pill) · `GlassSheet`. They all fall back to solid under reduced transparency.
 
 **Domain components:**
 
@@ -251,3 +294,5 @@ Built on **shadcn/ui** source components (copied in, fully restyled to these tok
 - `color-scheme` is set per theme for native controls and scrollbars.
 - **No theme flash:** a tiny inline script in `index.html` applies the stored theme before first paint. It's allowed by a CSP hash, not `unsafe-inline`.
 - Themes: *System* (default) · *Dunkel* · *Hell*.
+- **Reduced transparency:** `[data-transparency="reduced"]` (set from `prefers-reduced-transparency` or the setting) swaps every glass token for its solid equivalent.
+- **Windows polish (primary platform):** thin, token-colored scrollbars (`scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent`), focus rings visible with high-contrast themes (`forced-colors` media query), shortcut labels as `Strg`, and Mona Sans checked with ClearType at 13–15 px.

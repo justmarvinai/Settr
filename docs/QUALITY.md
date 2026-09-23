@@ -1,6 +1,6 @@
 # Settr: Quality, Testing, Performance, Accessibility and Security
 
-> Status: **Draft v0.1 (planning)** · Last updated: 2026-09-23
+> Status: **Draft v0.2** (round-1 answers incorporated) · Last updated: 2026-09-23
 > Defines what "done" means and how quality is enforced automatically. Referenced by `AGENTS.md` (Definition of Done) and CI.
 
 ---
@@ -13,7 +13,7 @@ A change is **done** only when all of the following hold:
 2. **Types:** `tsc --noEmit` passes in strict mode. There's no `any`, no `@ts-ignore`/`@ts-expect-error` without a justification comment, and no non-null `!` on external data.
 3. **Lint/format** passes: Oxlint with type-aware rules (`oxlint-tsgolint`), plus oxfmt (see `ARCHITECTURE.md` §3).
 4. **Tests:** domain logic has unit tests, and user-facing flows touched by the change have E2E coverage. All suites pass.
-5. **i18n:** every user-visible string is in the message catalogs for **DE and EN**, with no hard-coded UI text. German copy has been checked in the layout (longest-string test).
+5. **i18n:** every user-visible string is in the **German** message catalog (the only UI language in v1, Q3.1), with no hard-coded UI text. German copy has been checked in the layout (longest-string test).
 6. **Accessibility:** keyboard operable, labelled controls, axe shows zero *serious/critical* violations, and focus management in sheets/dialogs is correct.
 7. **Responsive:** verified at 375 / 768 / 1280 / 1920 px, in **light and dark** themes.
 8. **Motion:** `prefers-reduced-motion` is respected (no tilt/foil/morph).
@@ -32,7 +32,7 @@ A change is **done** only when all of the following hold:
 | **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed |
 | **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
 | **Component** | Vitest Browser Mode (Playwright provider) + Testing Library | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
-| **E2E** | Playwright | Critical journeys (below) on Chromium, Firefox and WebKit, desktop plus mobile emulation (iPhone, Pixel) | All journeys green before merge to `main` |
+| **E2E** | Playwright | Critical journeys (below). **Every PR:** Chromium desktop (Marvin's Windows setup) + WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation | All journeys green before merge to `main` |
 | **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
 | **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
@@ -50,6 +50,9 @@ A change is **done** only when all of the following hold:
 8. Search in DE / EN / JA / ZH scripts finds the expected cards.
 9. Offline: load app → go offline → navigate catalog/collection → add holding → back online, with no errors.
 10. Keyboard-only: add card, record price and run the session without a mouse.
+11. Price-guide suggestion: the chip shows the snapshot date and values, `V` copies into the input, Enter saves with `origin: guide`, and nothing is saved without confirmation.
+12. Binder slots: create a 3×3 and a 3×4 binder, add three cards, and the "next free slot" suggestions are correct.
+13. Open sealed with pulls: proportional cost allocation sums exactly to the product cost.
 
 ### 2.2 Test data
 
@@ -63,9 +66,10 @@ A change is **done** only when all of the following hold:
 
 | Platform | Supported |
 |---|---|
-| Chrome / Edge (desktop and Android) | last 2 major versions |
-| Firefox | last 2 major versions + current ESR |
-| Safari macOS / iOS / iPadOS | 17.4+ (primary test target: latest) |
+| **Chrome / Edge on Windows** (primary, Q1.3) | last 2 major versions: every PR, manual QA |
+| **Safari iOS** (secondary; installed PWA) | 17.4+: every PR (WebKit), manual QA on iPhone |
+| Chrome Android, Safari macOS/iPadOS | last 2 / 17.4+: nightly |
+| Firefox | last 2 major versions + current ESR: nightly |
 | Samsung Internet | last 2 major versions |
 
 - **Baseline target:** *Baseline widely available*, plus selected *newly available* features used as **progressive enhancements** with fallbacks: View Transitions, File System Access, BarcodeDetector, Web Share with files, device orientation for the holo tilt, and anchor positioning.
@@ -88,6 +92,7 @@ A change is **done** only when all of the following hold:
 | Valuation of 10k holdings | ≤ 50 ms |
 | Portfolio series (10k holdings, 50k prices, 3 years) | ≤ 300 ms in a worker |
 | Warm start offline (desktop) | interactive ≤ 1 s |
+| Glass layers | ≤ 3 simultaneous `backdrop-filter` layers. Scrolling a 300-card grid under the glass toolbar stays at 60 fps on a mid-range Windows laptop |
 
 **Techniques:** route-based code splitting, `loading="lazy"` + `decoding="async"` images with low-quality thumbnails in grids, `content-visibility: auto` for off-screen sections, TanStack Virtual for long lists and tables, Web Workers for search indexing and analytics, and memoization keyed by a data-version counter.
 
@@ -100,6 +105,7 @@ A change is **done** only when all of the following hold:
 - Keyboard: everything is operable, with a visible 2 px focus ring. Grids use a roving tabindex. Sheets/dialogs trap focus and restore it on close. Skip-link to the main content.
 - Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
 - Motion: `prefers-reduced-motion` disables tilt, foil animation, morph transitions and number tickers. There's also an in-app motion setting.
+- **Glass legibility:** text on Liquid Glass meets AA against the worst-case backdrop (bright card art beneath). `prefers-reduced-transparency` and the in-app toggle make glass solid. Windows `forced-colors` mode is supported.
 - Touch targets are ≥ 44 × 44 px. No hover-only functionality: every hover action has a tap/long-press or menu equivalent.
 - Language tagging: CJK card names get `lang="ja"` / `lang="zh-Hant"` / `lang="zh-Hans"` for correct font selection and screen-reader pronunciation.
 
@@ -113,18 +119,18 @@ A change is **done** only when all of the following hold:
   default-src 'self';
   script-src 'self';
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://assets.tcgdex.net <other curated image hosts>;
+  img-src 'self' data: blob: https://assets.tcgdex.net;          # sealed EN/JP images arrive same-origin via /img/tcgp/*
   font-src 'self';
-  connect-src 'self' <FX API only if Q6.1 = yes>;
+  connect-src 'self';                                              # no runtime APIs (EUR only; the price guide is a static file)
   worker-src 'self' blob:;
   manifest-src 'self';
   frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
   ```
-  Plus `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(self)` (only if scanning features ship, otherwise `camera=()`), and `Cross-Origin-Opener-Policy: same-origin`.
+  Plus `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=()`, `Cross-Origin-Opener-Policy: same-origin`, and **`X-Robots-Tag: noindex, nofollow`** (private deployment, Q1.2).
 - **Untrusted input:** imported files and CSVs are validated with Zod. Data is never rendered as HTML (no `dangerouslySetInnerHTML`). Import size is capped (200 MB) and parsing runs in a worker.
 - **External links** (Cardmarket) use `rel="noopener noreferrer"`.
 - **Dependencies:** minimal and well-maintained, with a committed lockfile, Renovate for updates (grouped weekly) and `pnpm audit` in CI.
-- **Analytics and telemetry:** none by default ⟶ **Q8.3**. Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
+- **Analytics and telemetry:** none (Q8.3). Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
 
 ---
 
