@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Jede Karte zählt." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#F4F4F7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0B10" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>Settr</title>
+    <script>
+      (function () {
+        try {
+          var e = document.documentElement,
+            s = localStorage.getItem('settr:display'),
+            d = s ? JSON.parse(s) : {},
+            m = window.matchMedia,
+            t = d.theme || 'system',
+            k = t === 'dark' || (t === 'system' && m('(prefers-color-scheme: dark)').matches);
+          e.dataset.theme = k ? 'dark' : 'light';
+          if (d.reduceTransparency || m('(prefers-reduced-transparency: reduce)').matches)
+            e.dataset.transparency = 'reduced';
+          if (d.motion && d.motion !== 'full') e.dataset.motion = d.motion;
+          if (localStorage.getItem('settr:privacy') === 'on') e.dataset.privacy = 'on';
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+/*
+ * Settr design tokens: direction D · Bold Studio (DESIGN_SYSTEM.md §3), accent Indigo (R3.1).
+ * Components use only these semantic tokens (via Tailwind utilities); never raw colors.
+ * Light is the :root default. The theme is applied as [data-theme] on <html> before first paint
+ * (index.html) and kept in sync with the settings (src/app/theme.ts).
+ */
+
+:root {
+  color-scheme: light;
+
+  --bg: oklch(0.968 0.004 286);
+  --surface-1: oklch(1 0 0);
+  --surface-2: oklch(0.953 0.005 275);
+  --text: oklch(0.174 0.027 276);
+  --text-muted: oklch(0.47 0.033 272);
+  --text-subtle: oklch(0.519 0.032 272);
+  --hover: color-mix(in oklch, var(--text) 5%, transparent);
+  --hover-strong: color-mix(in oklch, var(--text) 9%, transparent);
+  --border: color-mix(in oklch, var(--text) 8%, transparent);
+  --border-strong: color-mix(in oklch, var(--text) 16%, transparent);
+
+  --accent: oklch(0.485 0.214 271);
+  --accent-contrast: oklch(1 0 0);
+  --accent-text: var(--accent);
+  --accent-line: var(--accent);
+  --accent-soft: color-mix(in oklch, var(--accent) 10%, transparent);
+
+  --gain: oklch(0.502 0.121 154);
+  --loss: oklch(0.533 0.181 23);
+  --warn: oklch(0.52 0.121 60);
+  --gain-soft: color-mix(in oklch, var(--gain) 12%, transparent);
+  --loss-soft: color-mix(in oklch, var(--loss) 10%, transparent);
+  --warn-soft: color-mix(in oklch, var(--warn) 12%, transparent);
+  --focus: var(--accent);
+
+  /* Liquid Glass materials (§3.5): chrome only */
+  --glass-fill: oklch(1 0 0 / 0.66);
+  --glass-fill-thick: oklch(1 0 0 / 0.84);
+  --glass-blur: 24px;
+  --glass-saturate: 180%;
+  --glass-stroke: oklch(0.174 0.027 276 / 0.08);
+  --glass-specular: inset 0 1px 0 oklch(1 0 0 / 0.9);
+  --glass-shadow: 0 18px 48px -22px oklch(0.174 0.027 276 / 0.24);
+
+  --tile-shadow:
+    0 1px 2px oklch(0.174 0.027 276 / 0.04), 0 12px 32px -20px oklch(0.174 0.027 276 / 0.16);
+  --ambient-1: color-mix(in oklch, var(--accent) 10%, transparent);
+  --ambient-2: oklch(0.82 0.13 60 / 0.1);
+
+  /* motion (§7) */
+  --dur-instant: 80ms;
+  --dur-fast: 140ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: oklch(0.151 0.011 276);
+  --surface-1: oklch(0.197 0.016 274);
+  --surface-2: oklch(0.237 0.02 272);
+  --text: oklch(0.968 0.005 275);
+  --text-muted: oklch(0.733 0.027 273);
+  --text-subtle: oklch(0.655 0.031 272);
+  --hover: oklch(1 0 0 / 0.06);
+  --hover-strong: oklch(1 0 0 / 0.1);
+  --border: oklch(1 0 0 / 0.07);
+  --border-strong: oklch(1 0 0 / 0.14);
+
+  --accent: oklch(0.54 0.211 273);
+  --accent-text: oklch(0.753 0.128 278);
+  --accent-line: oklch(0.713 0.151 277);
+  --accent-soft: oklch(0.72 0.15 278 / 0.14);
+
+  --gain: oklch(0.777 0.146 162);
+  --loss: oklch(0.737 0.162 17);
+  --warn: oklch(0.821 0.142 80);
+  --gain-soft: oklch(0.777 0.146 162 / 0.12);
+  --loss-soft: oklch(0.737 0.162 17 / 0.12);
+  --warn-soft: oklch(0.821 0.142 80 / 0.13);
+
+  --glass-fill: oklch(0.212 0.02 276 / 0.62);
+  --glass-fill-thick: oklch(0.212 0.02 276 / 0.8);
+  --glass-stroke: oklch(1 0 0 / 0.08);
+  --glass-specular: inset 0 1px 0 oklch(1 0 0 / 0.1);
+  --glass-shadow: 0 24px 60px -24px oklch(0 0 0 / 0.8);
+
+  --tile-shadow: none;
+  --ambient-1: oklch(0.54 0.211 273 / 0.18);
+  --ambient-2: oklch(0.82 0.13 60 / 0.06);
+}
+
+/* Transparenz reduzieren (setting or OS preference): glass becomes solid (§3.5 rule 5) */
+[data-transparency='reduced'] {
+  --glass-fill: var(--surface-2);
+  --glass-fill-thick: var(--surface-2);
+  --glass-blur: 0px;
+  --glass-saturate: 100%;
+}
+
+@media (forced-colors: active) {
+  :root {
+    --glass-fill: Canvas;
+    --glass-fill-thick: Canvas;
+    --glass-blur: 0px;
+  }
+}

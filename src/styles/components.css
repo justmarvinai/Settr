@@ -1,0 +1,145 @@
+/* Styles for Base UI parts that need state attributes or CSS variables (tokens only). */
+
+.ui-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: oklch(0.12 0.02 276 / 0.32);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.ui-backdrop[data-starting-style],
+.ui-backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+.ui-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 61;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  translate: -50% -50%;
+  border-radius: var(--radius-sheet);
+  padding: 24px;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    scale var(--dur-base) var(--ease-out);
+}
+.ui-dialog[data-starting-style],
+.ui-dialog[data-ending-style] {
+  opacity: 0;
+  scale: 0.97;
+}
+
+.ui-sheet {
+  position: fixed;
+  z-index: 61;
+  padding: 24px;
+  overflow: auto;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.ui-sheet-bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 92dvh;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  transform: translateY(var(--drawer-swipe-movement-y, 0));
+}
+.ui-sheet-bottom[data-starting-style],
+.ui-sheet-bottom[data-ending-style] {
+  transform: translateY(100%);
+}
+.ui-sheet-right {
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: min(480px, calc(100vw - 24px));
+  border-radius: var(--radius-sheet);
+  transform: translateX(var(--drawer-swipe-movement-x, 0));
+}
+.ui-sheet-right[data-starting-style],
+.ui-sheet-right[data-ending-style] {
+  transform: translateX(calc(100% + 24px));
+}
+
+.ui-tooltip {
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 650;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.ui-tooltip[data-starting-style],
+.ui-tooltip[data-ending-style] {
+  opacity: 0;
+}
+
+.ui-toast-viewport {
+  position: fixed;
+  z-index: 70;
+  left: 50%;
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 96px);
+  width: min(460px, calc(100vw - 24px));
+  translate: -50% 0;
+}
+@media (min-width: 768px) {
+  .ui-toast-viewport {
+    bottom: 24px;
+  }
+}
+.ui-toast {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: calc(1000 - var(--toast-index));
+  min-height: 56px;
+  border-radius: var(--radius-pill);
+  transform: translateY(calc(var(--toast-swipe-movement-y) - var(--toast-index) * 10px))
+    translateX(var(--toast-swipe-movement-x)) scale(calc(1 - var(--toast-index) * 0.05));
+  transition:
+    transform var(--dur-slow) var(--ease-out),
+    opacity var(--dur-slow) var(--ease-out);
+}
+.ui-toast[data-expanded] {
+  transform: translateY(calc(var(--toast-offset-y) * -1 + var(--toast-swipe-movement-y)))
+    translateX(var(--toast-swipe-movement-x));
+}
+.ui-toast[data-starting-style],
+.ui-toast[data-ending-style] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.ui-toast [data-behind] {
+  opacity: 0;
+}
+
+/* Soft accent light behind the glass chrome, so the glass has something to refract (§3.5). */
+.ambient {
+  position: fixed;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -80px;
+  z-index: 100;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  padding: 10px 18px;
+  font-weight: 800;
+}
+.skip-link:focus {
+  top: 12px;
+}

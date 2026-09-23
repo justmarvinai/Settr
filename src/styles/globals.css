@@ -1,0 +1,190 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './components.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme inline {
+  --color-canvas: var(--bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--text);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-subtle: var(--text-subtle);
+  --color-hover: var(--hover);
+  --color-hover-strong: var(--hover-strong);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-text: var(--accent-text);
+  --color-accent-line: var(--accent-line);
+  --color-accent-soft: var(--accent-soft);
+  --color-gain: var(--gain);
+  --color-gain-soft: var(--gain-soft);
+  --color-loss: var(--loss);
+  --color-loss-soft: var(--loss-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+
+  --font-sans:
+    'Mona Sans Variable', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+/* Shape (DESIGN_SYSTEM.md §5): pills for controls, 28 px tiles, 24 px glass sidebar */
+@theme {
+  --radius-pill: 999px;
+  --radius-input: 14px;
+  --radius-card: 22px;
+  --radius-tile: 28px;
+  --radius-sidebar: 24px;
+  --radius-toolbar: 20px;
+  --radius-sheet: 28px;
+}
+
+/* Type scale (DESIGN_SYSTEM.md §4.1): heavy, wide display type from direction C */
+@utility type-display-xl {
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 0.9;
+  font-weight: 900;
+  font-stretch: 125%;
+  letter-spacing: -0.045em;
+}
+@utility type-display {
+  font-size: clamp(40px, 5vw, 76px);
+  line-height: 0.9;
+  font-weight: 900;
+  font-stretch: 125%;
+  letter-spacing: -0.045em;
+}
+@utility type-display-m {
+  font-size: clamp(30px, 4vw, 64px);
+  line-height: 0.9;
+  font-weight: 900;
+  font-stretch: 125%;
+  letter-spacing: -0.045em;
+}
+@utility type-h1 {
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 900;
+  font-stretch: 120%;
+  letter-spacing: -0.03em;
+}
+@utility type-h2 {
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 850;
+  font-stretch: 115%;
+  letter-spacing: -0.02em;
+}
+@utility type-h3 {
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+@utility type-body {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 500;
+}
+@utility type-ui {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 650;
+}
+@utility type-small {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+@utility type-label {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Materials */
+@utility glass {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-stroke);
+  box-shadow: var(--glass-specular), var(--glass-shadow);
+}
+@utility glass-thick {
+  background: var(--glass-fill-thick);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-stroke);
+  box-shadow: var(--glass-specular), var(--glass-shadow);
+}
+@utility tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-tile);
+  box-shadow: var(--tile-shadow);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--accent-soft);
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :lang(de) {
+    hyphens: manual;
+  }
+}
+
+/* Privacy mode (PRT-05): blurs every money value */
+[data-privacy='on'] .money {
+  filter: blur(10px);
+}
+
+/* Motion: OS preference or the in-app setting */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+[data-motion='off'] *,
+[data-motion='off'] ::before,
+[data-motion='off'] ::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
