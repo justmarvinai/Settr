@@ -32,6 +32,12 @@ const securityHeaders = Object.fromEntries(
   ]),
 );
 
+const tcgplayerProxy = {
+  target: 'https://tcgplayer-cdn.tcgplayer.com',
+  changeOrigin: true,
+  rewrite: (path: string) => path.replace(/^\/img\/tcgp/, ''),
+};
+
 export default defineConfig({
   plugins: [
     paraglideVitePlugin({
@@ -79,8 +85,37 @@ export default defineConfig({
             'assets/geist-mono-latin-wght-normal*.woff2',
           ],
           navigateFallback: '/index.html',
-          navigateFallbackDenylist: [/^\/catalog\//, /^\/img\//],
+          navigateFallbackDenylist: [/^\/catalog\/v1\//, /^\/img\//],
           cleanupOutdatedCaches: true,
+          // Catalog and pictures at runtime (ARCHITECTURE.md §8.1). Hashed catalog files carry
+          // their hash in the query, so CacheFirst never serves an outdated chunk.
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) => url.pathname === '/catalog/v1/manifest.json',
+              handler: 'NetworkFirst',
+              options: { cacheName: 'catalog-manifest', networkTimeoutSeconds: 3 },
+            },
+            {
+              urlPattern: ({ url }) => url.pathname.startsWith('/catalog/v1/'),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'catalog-files',
+                expiration: { maxEntries: 60 },
+                cacheableResponse: { statuses: [200] },
+              },
+            },
+            {
+              // CORS mode only (crossorigin="anonymous"): opaque responses cost ~7 MB of quota each.
+              urlPattern: ({ url }) =>
+                url.origin === 'https://assets.tcgdex.net' || url.pathname.startsWith('/img/'),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'images',
+                expiration: { maxEntries: 3000, maxAgeSeconds: 180 * 24 * 60 * 60 },
+                cacheableResponse: { statuses: [200] },
+              },
+            },
+          ],
         },
       }),
   ],
@@ -93,8 +128,11 @@ export default defineConfig({
   build: {
     target: 'es2023',
   },
+  // Same-origin proxy for TCGplayer's sealed pictures, like the rewrite in vercel.json.
+  server: { proxy: { '/img/tcgp': tcgplayerProxy } },
   preview: {
     headers: securityHeaders,
+    proxy: { '/img/tcgp': tcgplayerProxy },
   },
   test: {
     projects: [

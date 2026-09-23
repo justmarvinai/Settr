@@ -1,11 +1,26 @@
 import { AxeBuilder } from '@axe-core/playwright';
 import { test as base, expect, type Page } from '@playwright/test';
 
+/** 1×1 transparent GIF: stands in for card and product pictures. */
+const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+
 /**
  * Every test fails on console errors, uncaught exceptions and CSP violations: the preview server
  * sends the production CSP (vite.config.ts), so a blocked script or style shows up here first.
+ * Pictures from TCGdex and the TCGplayer proxy are stubbed, so tests never depend on other hosts.
  */
-export const test = base.extend<{ problems: string[] }>({
+export const test = base.extend<{ problems: string[]; pictures: void }>({
+  pictures: [
+    async ({ context }, use) => {
+      const stub = { status: 200, contentType: 'image/gif', body: PIXEL };
+      await context.route('https://assets.tcgdex.net/**', (route) =>
+        route.fulfill({ ...stub, headers: { 'access-control-allow-origin': '*' } }),
+      );
+      await context.route('**/img/tcgp/**', (route) => route.fulfill(stub));
+      await use();
+    },
+    { auto: true },
+  ],
   problems: [
     async ({ page }, use) => {
       const problems: string[] = [];

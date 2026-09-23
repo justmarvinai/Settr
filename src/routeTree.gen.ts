@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CatalogRouteRouteImport } from './routes/catalog/route'
 import { Route as CollectionRouteRouteImport } from './routes/collection/route'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as CatalogIndexRouteImport } from './routes/catalog/index'
+import { Route as CatalogCardsRouteImport } from './routes/catalog/cards'
 import { Route as CollectionIndexRouteImport } from './routes/collection/index'
 import { Route as CollectionCardsRouteImport } from './routes/collection/cards'
 import { Route as CollectionSealedRouteImport } from './routes/collection/sealed'
@@ -24,10 +26,19 @@ import { Route as SettingsAppearanceRouteImport } from './routes/settings/appear
 import { Route as SettingsDataRouteImport } from './routes/settings/data'
 import { Route as SettingsLocationsRouteImport } from './routes/settings/locations'
 import { Route as SettingsPricesRouteImport } from './routes/settings/prices'
+import { Route as CatalogSealedIndexRouteImport } from './routes/catalog/sealed/index'
+import { Route as CatalogSealedProductIdRouteImport } from './routes/catalog/sealed/$productId'
+import { Route as CatalogSetsSetIdIndexRouteImport } from './routes/catalog/sets/$setId/index'
+import { Route as CatalogSetsSetIdCardsCardIdRouteImport } from './routes/catalog/sets/$setId/cards/$cardId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogRouteRoute = CatalogRouteRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionRouteRoute = CollectionRouteRouteImport.update({
@@ -41,9 +52,14 @@ const SettingsRouteRoute = SettingsRouteRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogIndexRoute = CatalogIndexRouteImport.update({
-  id: '/catalog/',
-  path: '/catalog/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => CatalogRouteRoute,
+} as any)
+const CatalogCardsRoute = CatalogCardsRouteImport.update({
+  id: '/cards',
+  path: '/cards',
+  getParentRoute: () => CatalogRouteRoute,
 } as any)
 const CollectionIndexRoute = CollectionIndexRouteImport.update({
   id: '/',
@@ -100,11 +116,34 @@ const SettingsPricesRoute = SettingsPricesRouteImport.update({
   path: '/prices',
   getParentRoute: () => SettingsRouteRoute,
 } as any)
+const CatalogSealedIndexRoute = CatalogSealedIndexRouteImport.update({
+  id: '/sealed/',
+  path: '/sealed/',
+  getParentRoute: () => CatalogRouteRoute,
+} as any)
+const CatalogSealedProductIdRoute = CatalogSealedProductIdRouteImport.update({
+  id: '/sealed/$productId',
+  path: '/sealed/$productId',
+  getParentRoute: () => CatalogRouteRoute,
+} as any)
+const CatalogSetsSetIdIndexRoute = CatalogSetsSetIdIndexRouteImport.update({
+  id: '/sets/$setId/',
+  path: '/sets/$setId/',
+  getParentRoute: () => CatalogRouteRoute,
+} as any)
+const CatalogSetsSetIdCardsCardIdRoute =
+  CatalogSetsSetIdCardsCardIdRouteImport.update({
+    id: '/sets/$setId/cards/$cardId',
+    path: '/sets/$setId/cards/$cardId',
+    getParentRoute: () => CatalogRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRouteRouteWithChildren
   '/collection': typeof CollectionRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
+  '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
   '/settings/about': typeof SettingsAboutRoute
@@ -117,9 +156,14 @@ export interface FileRoutesByFullPath {
   '/portfolio/': typeof PortfolioIndexRoute
   '/prices/': typeof PricesIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/catalog/sealed/$productId': typeof CatalogSealedProductIdRoute
+  '/catalog/sealed/': typeof CatalogSealedIndexRoute
+  '/catalog/sets/$setId/': typeof CatalogSetsSetIdIndexRoute
+  '/catalog/sets/$setId/cards/$cardId': typeof CatalogSetsSetIdCardsCardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
   '/settings/about': typeof SettingsAboutRoute
@@ -132,12 +176,18 @@ export interface FileRoutesByTo {
   '/portfolio': typeof PortfolioIndexRoute
   '/prices': typeof PricesIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/catalog/sealed/$productId': typeof CatalogSealedProductIdRoute
+  '/catalog/sealed': typeof CatalogSealedIndexRoute
+  '/catalog/sets/$setId': typeof CatalogSetsSetIdIndexRoute
+  '/catalog/sets/$setId/cards/$cardId': typeof CatalogSetsSetIdCardsCardIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRouteRouteWithChildren
   '/collection': typeof CollectionRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
+  '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
   '/settings/about': typeof SettingsAboutRoute
@@ -150,13 +200,19 @@ export interface FileRoutesById {
   '/portfolio/': typeof PortfolioIndexRoute
   '/prices/': typeof PricesIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/catalog/sealed/$productId': typeof CatalogSealedProductIdRoute
+  '/catalog/sealed/': typeof CatalogSealedIndexRoute
+  '/catalog/sets/$setId/': typeof CatalogSetsSetIdIndexRoute
+  '/catalog/sets/$setId/cards/$cardId': typeof CatalogSetsSetIdCardsCardIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/catalog'
     | '/collection'
     | '/settings'
+    | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
     | '/settings/about'
@@ -169,9 +225,14 @@ export interface FileRouteTypes {
     | '/portfolio/'
     | '/prices/'
     | '/settings/'
+    | '/catalog/sealed/$productId'
+    | '/catalog/sealed/'
+    | '/catalog/sets/$setId/'
+    | '/catalog/sets/$setId/cards/$cardId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
     | '/settings/about'
@@ -184,11 +245,17 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/prices'
     | '/settings'
+    | '/catalog/sealed/$productId'
+    | '/catalog/sealed'
+    | '/catalog/sets/$setId'
+    | '/catalog/sets/$setId/cards/$cardId'
   id:
     | '__root__'
     | '/'
+    | '/catalog'
     | '/collection'
     | '/settings'
+    | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
     | '/settings/about'
@@ -201,13 +268,17 @@ export interface FileRouteTypes {
     | '/portfolio/'
     | '/prices/'
     | '/settings/'
+    | '/catalog/sealed/$productId'
+    | '/catalog/sealed/'
+    | '/catalog/sets/$setId/'
+    | '/catalog/sets/$setId/cards/$cardId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CatalogRouteRoute: typeof CatalogRouteRouteWithChildren
   CollectionRouteRoute: typeof CollectionRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
-  CatalogIndexRoute: typeof CatalogIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
   PricesIndexRoute: typeof PricesIndexRoute
 }
@@ -219,6 +290,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalog': {
+      id: '/catalog'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof CatalogRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collection': {
@@ -237,10 +315,17 @@ declare module '@tanstack/react-router' {
     }
     '/catalog/': {
       id: '/catalog/'
-      path: '/catalog'
+      path: '/'
       fullPath: '/catalog/'
       preLoaderRoute: typeof CatalogIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CatalogRouteRoute
+    }
+    '/catalog/cards': {
+      id: '/catalog/cards'
+      path: '/cards'
+      fullPath: '/catalog/cards'
+      preLoaderRoute: typeof CatalogCardsRouteImport
+      parentRoute: typeof CatalogRouteRoute
     }
     '/collection/': {
       id: '/collection/'
@@ -319,8 +404,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPricesRouteImport
       parentRoute: typeof SettingsRouteRoute
     }
+    '/catalog/sealed/': {
+      id: '/catalog/sealed/'
+      path: '/sealed'
+      fullPath: '/catalog/sealed/'
+      preLoaderRoute: typeof CatalogSealedIndexRouteImport
+      parentRoute: typeof CatalogRouteRoute
+    }
+    '/catalog/sealed/$productId': {
+      id: '/catalog/sealed/$productId'
+      path: '/sealed/$productId'
+      fullPath: '/catalog/sealed/$productId'
+      preLoaderRoute: typeof CatalogSealedProductIdRouteImport
+      parentRoute: typeof CatalogRouteRoute
+    }
+    '/catalog/sets/$setId/': {
+      id: '/catalog/sets/$setId/'
+      path: '/sets/$setId'
+      fullPath: '/catalog/sets/$setId/'
+      preLoaderRoute: typeof CatalogSetsSetIdIndexRouteImport
+      parentRoute: typeof CatalogRouteRoute
+    }
+    '/catalog/sets/$setId/cards/$cardId': {
+      id: '/catalog/sets/$setId/cards/$cardId'
+      path: '/sets/$setId/cards/$cardId'
+      fullPath: '/catalog/sets/$setId/cards/$cardId'
+      preLoaderRoute: typeof CatalogSetsSetIdCardsCardIdRouteImport
+      parentRoute: typeof CatalogRouteRoute
+    }
   }
 }
+
+interface CatalogRouteRouteChildren {
+  CatalogCardsRoute: typeof CatalogCardsRoute
+  CatalogIndexRoute: typeof CatalogIndexRoute
+  CatalogSealedProductIdRoute: typeof CatalogSealedProductIdRoute
+  CatalogSealedIndexRoute: typeof CatalogSealedIndexRoute
+  CatalogSetsSetIdIndexRoute: typeof CatalogSetsSetIdIndexRoute
+  CatalogSetsSetIdCardsCardIdRoute: typeof CatalogSetsSetIdCardsCardIdRoute
+}
+
+const CatalogRouteRouteChildren: CatalogRouteRouteChildren = {
+  CatalogCardsRoute: CatalogCardsRoute,
+  CatalogIndexRoute: CatalogIndexRoute,
+  CatalogSealedProductIdRoute: CatalogSealedProductIdRoute,
+  CatalogSealedIndexRoute: CatalogSealedIndexRoute,
+  CatalogSetsSetIdIndexRoute: CatalogSetsSetIdIndexRoute,
+  CatalogSetsSetIdCardsCardIdRoute: CatalogSetsSetIdCardsCardIdRoute,
+}
+
+const CatalogRouteRouteWithChildren = CatalogRouteRoute._addFileChildren(
+  CatalogRouteRouteChildren,
+)
 
 interface CollectionRouteRouteChildren {
   CollectionCardsRoute: typeof CollectionCardsRoute
@@ -362,9 +497,9 @@ const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CatalogRouteRoute: CatalogRouteRouteWithChildren,
   CollectionRouteRoute: CollectionRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
-  CatalogIndexRoute: CatalogIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
   PricesIndexRoute: PricesIndexRoute,
 }

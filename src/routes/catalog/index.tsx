@@ -1,12 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ComingSoon } from '@/components/ui/ComingSoon';
-import { m } from '@/i18n';
+import { SetsPage, setsSearchSchema } from '@/features/catalog';
 
 export const Route = createFileRoute('/catalog/')({
-  staticData: { title: m.nav_catalog },
-  component: CatalogPage,
+  validateSearch: setsSearchSchema,
+  component: SetsPage,
 });
-
-function CatalogPage() {
-  return <ComingSoon badge={m.page_coming_title()} body={m.page_coming_catalog()} />;
-}

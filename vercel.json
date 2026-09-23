@@ -6,7 +6,11 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/((?!assets/|catalog/|img/|fonts/|icons/|sw\\.js|workbox-|manifest\\.webmanifest|robots\\.txt).*)",
+      "source": "/img/tcgp/:path*",
+      "destination": "https://tcgplayer-cdn.tcgplayer.com/:path*"
+    },
+    {
+      "source": "/((?!assets/|catalog/v1/|img/|fonts/|icons/|sw\\.js|workbox-|manifest\\.webmanifest|robots\\.txt).*)",
       "destination": "/index.html"
     }
   ],

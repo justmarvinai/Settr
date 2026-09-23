@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { manifestQuery } from '@/catalog';
 import { ChipGroup } from '@/components/ui/ChipGroup';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -10,18 +12,11 @@ import {
   type ActiveCardLanguage,
 } from '@/domain/catalog-types';
 import type { MotionLevel, Settings, Theme } from '@/domain/schemas';
-import { m } from '@/i18n';
+import { languageLabel, m } from '@/i18n';
+import { formatDate } from '@/i18n/format';
 import { InstallSection, StorageSection } from '@/features/data';
 import { ComingSoon } from '@/components/ui/ComingSoon';
 import { applyDisplay } from '@/features/appearance';
-
-const LANGUAGE_LABELS: Record<ActiveCardLanguage, () => string> = {
-  de: m.language_de,
-  en: m.language_en,
-  ja: m.language_ja,
-  'zh-cn': m.language_zh_cn,
-  'zh-tw': m.language_zh_tw,
-};
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
@@ -54,7 +49,7 @@ export function GeneralSettings() {
     : 'de';
   const options = ACTIVE_CARD_LANGUAGES.map((value) => ({
     value,
-    label: LANGUAGE_LABELS[value](),
+    label: languageLabel(value),
   }));
   const defaultOptions = options.filter((o) => languages.includes(o.value));
 
@@ -182,13 +177,21 @@ export function DataSettings() {
 }
 
 export function AboutSettings() {
+  const catalog = useQuery(manifestQuery).data;
   return (
     <Section id="settings-about" title={m.app_tagline_long()}>
       <div className="flex flex-col gap-3">
         <p className="type-ui m-0">
           {m.settings_about_version({ version: import.meta.env.VITE_APP_VERSION })}
         </p>
-        <p className="type-small m-0 text-ink-muted">{m.settings_about_catalog()}</p>
+        <p className="type-small m-0 text-ink-muted">
+          {catalog
+            ? m.settings_about_catalog({
+                version: catalog.catalogVersion,
+                date: formatDate(new Date(catalog.generatedAt)),
+              })
+            : m.settings_about_catalog_loading()}
+        </p>
         <p className="type-small m-0 text-ink-muted">{m.settings_about_credits()}</p>
         <p className="type-small m-0 text-ink-muted">{m.settings_about_privacy()}</p>
         <p className="type-small m-0 text-ink-subtle">{m.settings_about_disclaimer()}</p>

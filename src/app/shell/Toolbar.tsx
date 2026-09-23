@@ -18,17 +18,25 @@ import { usePrivacy } from '../privacy';
 
 const isApple = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
-/** Deepest route title (route `staticData.title`); also sets the document title. */
+const pageTitleOf = (loaderData: unknown): string | undefined =>
+  loaderData && typeof loaderData === 'object' && 'pageTitle' in loaderData
+    ? String(loaderData.pageTitle)
+    : undefined;
+
+/**
+ * Deepest route title (route `staticData.title`) for the toolbar. The document title prefers a
+ * loader's `pageTitle` (a set, card or product name), so tabs and history read well.
+ */
 function usePageTitle(): string {
-  const matches = useMatches();
+  const matches = useMatches().toReversed();
   const title =
-    matches
-      .toReversed()
-      .find((match) => match.staticData.title)
-      ?.staticData.title?.() ?? m.app_name();
+    matches.find((match) => match.staticData.title)?.staticData.title?.() ?? m.app_name();
+  const detail = matches.map((match) => pageTitleOf(match.loaderData)).find(Boolean);
+  const documentTitle = detail ?? title;
   useEffect(() => {
-    document.title = title === m.app_name() ? title : `${title} · ${m.app_name()}`;
-  }, [title]);
+    document.title =
+      documentTitle === m.app_name() ? documentTitle : `${documentTitle} · ${m.app_name()}`;
+  }, [documentTitle]);
   return title;
 }
 
