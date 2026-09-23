@@ -6,9 +6,9 @@
 
 **Current phase: M0 · PLANNING.**
 
-- Round-1 answers received 2026-09-23 and incorporated (spec v0.2).
-- Mockups-first is approved (Q9.1 → recommendation). The three directions live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only). No direction is picked yet.
-- Open: round-2 questions (`USER_QUESTIONS.md`), including the design pick (R2.1).
+- Round-1 and round-2 answers received 2026-09-23 and incorporated (spec v0.3).
+- Design direction **D · Bold Studio** chosen (R2.1: C's type + B's sidebar, calmer color, light + dark). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only). Marvin confirms the final look in R3.1.
+- Open: round-3 questions (`USER_QUESTIONS.md`): R3.1 confirm D + accent, R3.2 repository visibility, R3.3 `main` branch, R3.4 backups in Brave, R3.5 link check.
 - **Coding is NOT approved yet.**
 
 **Do NOT write application code**, scaffold projects, install dependencies, create `src/` files or run generators **until Marvin explicitly grants permission in chat** (e.g. "Go", "Leg los", "Start coding").
@@ -22,17 +22,18 @@ When permission is granted, update this block with the date and the approved sco
 Settr is a **local-first Pokémon TCG collection tracker** for **singles and sealed** products.
 
 - **UI: German only** (translation-ready).
-- **Card languages:** DE, EN, JA and **Simplified Chinese** (ZH-TW only for sealed products).
+- **Card languages:** DE, EN, JA, **Simplified Chinese** and Traditional Chinese (R2.3).
 - **Deployment:** private, unlisted and `noindex`, for Marvin + a few friends.
-- **Platforms:** Windows desktop first (Chrome/Edge), then iPhone (PWA).
+- **Platforms:** Windows desktop first (**Brave**, Chromium; R2.9, ADR-027), then iPhone (PWA).
 
-- **Prices are entered manually.** Marvin's rule is *the cheapest offer in the card's language from German sellers* on Cardmarket. Entries turn into trends and P/L versus purchase price. A daily Cardmarket price-guide snapshot offers **suggestions** that are never auto-saved (ADR-020).
+- **Prices are entered manually.** Marvin's rule is *the cheapest offer in the card's language from German sellers* on Cardmarket, **Near Mint or better** (R2.2). **Every price belongs to its card language** (R2.6: what Collectr gets wrong). Entries turn into trends and P/L versus purchase price. A daily Cardmarket price-guide snapshot offers **suggestions** that are never auto-saved (ADR-020).
 - It's a static SPA on **Vercel**, with **no backend**. All user data lives in **IndexedDB**, with full import/export.
 - **v1 catalog = one expansion:** *30 Jahre / 30th Celebration*, released 16 Sep 2026.
   - EN/DE: `30th` + `30th-c` + 8 energies.
-  - JP + Simplified Chinese: `M6a`.
+  - JP + Simplified/Traditional Chinese: `M6a`.
   - Sealed: DE/EN/JP/TC/SC.
-- **Design:** Liquid Glass × bold minimalism, with references Revolut, Apple and Wise (`DESIGN_SYSTEM.md`). The direction is picked on the canvas (R2.1).
+- **After v1:** Marvin's own sets are added one by one, era by era (ADR-028). Build everything **multi-set** from day one.
+- **Design:** direction **D · Bold Studio** (`DESIGN_SYSTEM.md` §1.2): heavy wide type, floating glass sidebar, neutral surfaces with one accent, light + dark. **Usability and UX always come first** (Marvin).
 
 ## Where things are
 
@@ -95,7 +96,7 @@ pnpm size            # size-limit budgets
 3. **Writes** go through repositories in transactions. Deletes write **tombstones**. IDs are **UUIDv7**. Every record has `createdAt`/`updatedAt`.
 4. **Catalog updates never delete or corrupt user data.** Records keep a display `snapshot`.
 5. **No hard-coded UI strings.** Every string goes in the Paraglide message catalog. **German only in v1** (ADR-019), with informal "du".
-6. **Design tokens only** (no raw hex/oklch in components). Respect `prefers-reduced-motion`. Keep WCAG 2.2 AA. P/L is never color-only.
+6. **Design tokens only** (no raw hex/oklch in components). Respect `prefers-reduced-motion`. Keep WCAG 2.2 AA. P/L is never color-only. **Usability beats decoration** (Marvin: "Usability and user experience is always #1").
 7. **Licensing:**
    - No GPL code: `pokemon-cards-css` is GPL-3.0, so the holo effect is clean-room.
    - No Pokémon logos, Poké Ball or official symbols in branding.
@@ -107,10 +108,11 @@ pnpm size            # size-limit budgets
 
 ## Git
 
-- Work branch for this session: `claude/great-edison-uri1z0`.
+- Work branch for this session: `claude/great-edison-uri1z0` (currently also the repo's default branch; `main` arrives with M1, R3.3).
 - Later: one branch + PR per milestone or feature (`feat/m2-catalog-pipeline`).
 - **Conventional Commits** (`feat:`, `fix:`, `docs:`, `chore:`, `test:`, `refactor:`).
 - Never force-push shared branches. Never commit secrets or personal collection data.
+- The repository is **public** until Marvin decides R3.2. While public, never commit Cardmarket price-guide snapshots or the deployment URL (ADR-029).
 
 ## Environment notes (Claude Code on the web)
 
@@ -123,4 +125,4 @@ pnpm size            # size-limit budgets
 
 - For a milestone: read the relevant docs → plan (plan mode) → implement in small verified steps → run typecheck/lint/tests → update docs.
 - Use subagents for independent workstreams (roles in `AGENTS.md` §2) and for broad research. Keep the main context for integration and review.
-- When Marvin answers `USER_QUESTIONS.md`, propagate the answers into every affected doc, bump the spec version (v0.2 …) and log changes in `CHANGELOG.md`.
+- When Marvin answers `USER_QUESTIONS.md`, propagate the answers into every affected doc, bump the spec version (v0.3 …) and log changes in `CHANGELOG.md`.

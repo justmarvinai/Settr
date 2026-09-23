@@ -9,6 +9,16 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 ## [Unreleased]
 
 ### Docs
+- **Spec v0.3: round-2 answers incorporated, 2026-09-23.**
+  - **Design (R2.1):** direction **D · Bold Studio** chosen and built on the design canvas in light and dark (Übersicht, Set, Kartendetail, iPhone set). It takes C's heavy, wide type and B's floating glass sidebar, with neutral surfaces, one restrained accent (Indigo by default) and balanced glass. "Usability and user experience is always #1" is now the first design principle. `DESIGN_SYSTEM.md` has D's tokens for both themes (ADR-015 accepted).
+  - **Prices:** the reference price is **Near Mint or better** (R2.2, ADR-025), and worse copies use the existing per-lot value override, shown as *Eigener Wert*. Marvin verified the Cardmarket link format (`language=3` = German, `sellerCountry=7` = Germany); `minCondition=2` is still to verify.
+  - **Languages:** **Traditional Chinese** becomes an active card language on `M6a` (R2.3, ADR-026). The Simplified Chinese dataset is dropped: its terms need the official owner's consent, not the maintainer's (R2.8 revised, ADR-021).
+  - **Scope:** the binder view is v1.1 (R2.4). There's no Collectr importer, because Marvin has no Collectr Pro and therefore no export (R2.5). Marvin's own sets (Mega Evolution, Scarlet & Violet, Sword & Shield, Sun & Moon, Base Set) are added one by one after v1, and the app is multi-set from day one (ADR-028).
+  - **Positioning (R2.6):** every price belongs to its card language, which is what Collectr gets wrong.
+  - **Brand:** the short tagline is *"Jede Karte zählt."* (R2.7).
+  - **Platform:** Brave (Chromium) on Windows is the primary browser (R2.9, ADR-027). Backups are downloads, and folder access is an optional extra because Brave disables the File System Access API by default. There are warnings about Brave's delete-on-exit settings, and a manual Brave smoke test before releases.
+  - **Repository:** the GitHub repository turned out to be public. ADR-029 (proposed) lists what may be committed, and R3.2 asks whether to make it private.
+  - `USER_QUESTIONS.md` now holds round 3 (R3.1–R3.5) plus the round-1 and round-2 decision records.
 - **Spec v0.2: round-1 answers incorporated, 2026-09-23.**
   - `USER_QUESTIONS.md` is restructured into round 2 (9 open questions, incl. the design pick) plus a decision record for all round-1 questions and feature ideas.
   - **Scope:**

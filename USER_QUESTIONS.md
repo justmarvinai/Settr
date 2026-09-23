@@ -1,8 +1,8 @@
 # Settr: Questions and Decisions
 
 > Last updated: 2026-09-23.
-> **Round 1: answered ✓** (decisions below, incorporated into spec v0.2).
-> **Round 2: open** (9 short questions).
+> **Round 1: answered ✓** · **Round 2: answered ✓** (decisions below, incorporated into spec v0.3).
+> **Round 3: open** (4 short questions + one optional 30-second check).
 > **Coding: not started.** It needs your explicit **"Go"**.
 
 ## How to answer
@@ -13,74 +13,57 @@
 
 ---
 
-## Round 2: open questions
+## Round 3: open questions
 
-**R2.1 ★ Design direction.** Open the **design canvas** "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private: only you can open it). It shows three glass-based directions built from your references (Revolut, Apple, Wise; bold type; Apple minimalism; Liquid Glass): dashboard and card detail on desktop, plus the set grid on mobile. Which one should Settr get?
-- [ ] ⭐ **A · Vault Glass**: dark, gold accent, smoked glass
-- [ ] **B · Studio Glass**: light, Apple minimalism, frosted glass
-- [ ] **C · Bold**: Revolut/Wise energy, heavy type, cobalt "wallet" cards
-- [ ] Mix (e.g. "A, but with C's big numbers"): …
-
-How much glass?
-- [ ] Subtle
-- [ ] ⭐ Balanced (floating sidebar, toolbar, tab bar, sheets)
-- [ ] Strong
+**R3.1 ★ Direction D: confirm or adjust.** Open the [design canvas](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq) (top two rows). **D · Bold Studio** is my reading of your answer: C's heavy type, B's glass sidebar, calmer color, light and dark. Try the moon/sun button in the toolbar, and compare accent colors with the artboard's Tweaks button.
+- [ ] ⭐ Looks right, accent **Indigo**
+- [ ] Looks right, accent **Kobalt** (C's original, louder)
+- [ ] Looks right, **Graphit** (no accent color at all)
+- [ ] Changes: …
 
 Antwort:
 
-**R2.2 Condition filter for your "lowest price" check.** Your rule is: the cheapest offer in the card's language from German sellers. Should Settr's Cardmarket links also filter by condition?
-- [ ] Any condition (literally the cheapest offer)
-- [ ] ⭐ Near Mint or better. The reference price then means "NM", and your LP/damaged copies get a per-copy value when you want one
-- [ ] Excellent or better
+**R3.2 Your GitHub repository is public.** Settr is meant to be private (Q1.2), and Q8.7 assumed a private repository, but `justmarvinai/Settr` is currently **public**. Anyone can read the plans today, and later the daily Cardmarket price snapshot would be republished there.
+- [ ] ⭐ Make it private (GitHub → *Settings* → *General* → *Danger Zone* → *Change visibility*). Vercel keeps working
+- [ ] Keep it public. Then the price snapshot is built at deploy time instead of being committed (ADR-029)
 
 Antwort:
 
-**R2.3 Traditional Chinese cards.** You collect **Simplified** Chinese cards but also want **Traditional** Chinese sealed products. If you open a Traditional Chinese booster, should those cards be trackable too?
-- [ ] ⭐ Yes, enable ZH-TW as a card language as well (no extra effort)
-- [ ] No
+**R3.3 A `main` branch.** Right now the only branch is my work branch `claude/great-edison-uri1z0`, which GitHub made the default. For M1 I'd like the usual setup: `main` as the default branch and one pull request per milestone (Q8.6).
+- [ ] ⭐ Yes: when you say "Go", I create `main` from the reviewed docs, and you set it as the default (GitHub → *Settings* → *General* → *Default branch*)
+- [ ] I'll set it up myself
 
 Antwort:
 
-**R2.4 Binder view.** You use a Withyu 12-pocket and a VaultX 9-pocket binder, and Settr will store binder, page and slot for every card. A virtual binder view could mirror your real binders page by page. When?
-- [ ] Already in v1
-- [ ] ⭐ Right after v1 (v1.1)
-- [ ] Later
+**R3.4 Does your Brave delete site data when it closes?** Settr keeps your collection in the browser. Brave has options that erase all website data when you close it: Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data*, and a per-site *"clear cookies on exit"*. They're **off by default**, but if you use one, Settr would lose your collection on every restart (backups aside). Everything else in Brave works for Settr. Backups are downloads, and Brave asks where to save each one, so you can keep them in one folder.
+- [ ] ⭐ Default: I don't use those options
+- [ ] I use one of them. Show me how to exempt Settr
+- [ ] Not sure. Settr checks its storage protection at first start and warns you
 
 Antwort:
 
-**R2.5 Your Collectr collection.** Which sets are your ~200 cards from, roughly? Do you have **Collectr Pro**? It's needed for Collectr's CSV export, which a Settr importer would read. v1 only contains *30 Jahre*, so your other cards would need their sets first:
-- [ ] ⭐ Add the sets I own right after v1 (v1.1), plus a Collectr import
-- [ ] Before v1 goes live
-- [ ] No hurry
+**R3.5 Quick check (optional, 30 seconds).** Does [this link](https://www.cardmarket.com/de/Pokemon/Products?idProduct=907757&language=3&sellerCountry=7&minCondition=2) show Pikachu ex from German sellers, German cards, and only **Near Mint or better**?
+- [ ] Yes
+- [ ] No, it shows: …
 
-Sets / Collectr Pro:
+**Ready?** When D looks right, write **"Go"** and I'll start milestone **M1 (Foundation)**.
 
-**R2.6 Collectr as a benchmark.** What do you like most about Collectr, and what annoys you? This tells me exactly what Settr has to beat.
+---
 
-Antwort:
+## Round 2: decisions (answered 2026-09-23)
 
-**R2.7 Short tagline** (next to *"Jede Karte. Jedes Set. Jeder Cent."*):
-- [ ] ⭐ *"Jede Karte zählt."*
-- [ ] *"Sammeln mit System."*
-- [ ] *"Dein Set. Dein Wert."*
-- [ ] Own idea: …
-
-Antwort:
-
-**R2.8 Simplified Chinese data.** TCGdex has no Simplified Chinese data. The only complete source (the GitHub dataset `duanxr/PTCG-CHS-Datasets`, 176 cards for this set, with images) forbids redistribution without the maintainer's permission.
-- [ ] ⭐ Yes: draft a short, polite permission request (non-commercial, private tool) that you send from your GitHub account. Until then, Settr uses auto-derived Chinese Pokémon names plus manual names for the few Trainer cards
-- [ ] No, manual/auto-derived names only
-
-Antwort:
-
-**R2.9 Which browser on your Windows PC?**
-- [ ] Chrome · [ ] Edge · [ ] Firefox · [ ] Other: …
-
-Chrome and Edge also allow automatic backups into a folder (I-15).
-
-Antwort:
-
-**Ready?** When the plan and the design direction look right, write **"Go"** and I'll start milestone **M1 (Foundation)**.
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| R2.1 | Design | **D · Bold Studio**: C's heavy type + B's floating glass sidebar, calmer color, **light and dark** (default: follows the system), balanced glass. Your rule *"Usability and user experience is always #1"* is now the first design principle. Final look → R3.1 | M |
+| R2.2 | Condition filter | **Near Mint or better.** Cardmarket links add the NM filter (to verify → R3.5). Worse copies can get an *Eigener Wert* per lot (Q6.2) | E |
+| R2.3 | Traditional Chinese cards | **Yes:** ZH-TW is a card language too. Names come from an open Traditional Chinese card database, with derived names as the fallback | E |
+| R2.4 | Binder view | **v1.1**, right after v1. v1 already stores binder, page and slot | E |
+| R2.5 | Your collection | No Collectr Pro, so there's no CSV export and **no Collectr importer**. Your cards come over by hand. Your sets (mostly Mega Evolution era, some Sword & Shield, some Scarlet & Violet, a German Base Set Charizard, a few Sun & Moon/GX cards) are **added one by one once the core site is fully functional** with *30 Jahre*. The app is built multi-set from day one | M |
+| R2.6 | Beating Collectr | Collectr's weak spots: missing languages and fitting prices (English/international only). Settr's core promise: **every price belongs to its card language** | M |
+| R2.7 | Short tagline | *"Jede Karte zählt."* | E |
+| R2.8 | Chinese dataset | **Revised:** its terms say consent must come from the official owner or an authorized entity (they point to Pokémon Shanghai), not from the maintainer, so a request to the maintainer can't help. Settr doesn't use that dataset; Simplified Chinese names are derived + curated | E (revised) |
+| R2.9 | Browser | **Brave** (Chromium) on Windows. Settr works in it; notable: no folder access by default (backups are downloads, and Brave asks where to save them), and Brave's delete-on-exit options would erase your collection (→ R3.4, ADR-027) | M |
+| – | Cardmarket link | Verified by you: the link opens Pikachu ex (30C 150) with German sellers (`sellerCountry=7`) and German cards (`language=3`) | M |
 
 ---
 
@@ -97,7 +80,7 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 | Q1.3 | Devices | **Windows PC (primary)** + iPhone (secondary, installed to the home screen) | M |
 | Q1.4 | Domain | No custom domain for now: `*.vercel.app`. Vercel is already connected to GitHub | M |
 | Q1.5 | Size | ≈ 200 cards today, growing | M |
-| Q1.6 | Current tool | **Collectr**. A Collectr CSV import comes after v1 (I-16; see R2.5) | M |
+| Q1.6 | Current tool | **Collectr**. No Collectr Pro, so no CSV export and no importer (R2.5) | M |
 
 ### 2. Navigation, naming, tone
 
@@ -114,9 +97,9 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 |---|---|---|---|
 | Q3.1 | UI language | **German only** for now. The code stays translation-ready, so English can be added later without rework | M |
 | Q3.2 | Chinese | **Simplified Chinese** (mainland) | M |
-| Q3.3 | Card languages | **DE, EN, JA, ZH (Simplified)**. No FR/IT/ES/PT/KO | M |
+| Q3.3 | Card languages | **DE, EN, JA, ZH (Simplified)**, plus ZH-TW (R2.3). No FR/IT/ES/PT/KO | M |
 | Q3.4 | Default card language | German. Settr remembers the last language used | E |
-| Q3.5 | Chinese data gap | Simplified Chinese copies can be tracked **from day one** on the M6a card list (the Simplified Chinese set mirrors it: 176 cards on Cardmarket and in the only SC dataset). Chinese Pokémon names are auto-derived from open data. Full names and images follow once a source is cleared (R2.8) | E (adapted to Simplified) |
+| Q3.5 | Chinese data gap | Simplified Chinese copies can be tracked **from day one** on the M6a card list (the Simplified Chinese set mirrors it: 176 cards on Cardmarket and in the only SC dataset). Chinese Pokémon names are auto-derived from open data. The complete SC dataset can't be used (R2.8), so names stay derived + curated | E (adapted to Simplified) |
 | Q3.6 | Name display | Your copy's language in the collection. German in the catalog, including derived German names for Japanese/Chinese cards | E |
 
 ### 4. Catalog scope (v1)
@@ -127,7 +110,7 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 | Q4.2 | Promos | Yes, as a "Promos" section as data becomes available | E |
 | Q4.3 | Sealed | **DE + EN + JP + Traditional & Simplified Chinese products.** I also include Pokémon Center exclusives and Japanese lottery/specialty items, because they come with Cardmarket's product list at no extra cost | M+ |
 | Q4.4 | JP Premium Deck Set (MF) | Later | E |
-| Q4.5 | Sets after v1 | The rest of the *Mega-Entwicklung* era, re-prioritized by the sets you actually own (R2.5) | E |
+| Q4.5 | Sets after v1 | Set by set once the core is done, starting with the sets you own (Mega Evolution era first, R2.5) | E |
 | Q4.6 | Missing images | Another language of the same print → the same artwork from the other print (labeled) → your own photo → a designed placeholder. No official publisher images | E |
 
 ### 5. Collection details
@@ -155,7 +138,7 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 | Q6.6 | Price-guide suggestions | **Yes.** A daily snapshot of Cardmarket's public price guide feeds *suggestions* on card pages and in the price session. They're never saved without your confirmation. Note: for DE/EN cards the guide mixes all languages and countries, so it's labeled as such | M |
 | Q6.7 | Stale after | 14 days | E |
 | Q6.8 | Unpriced items | Excluded from totals and shown as "X unbepreist" | E |
-| Q6.9 | Link filters | Language of your copy + seller country Germany (from Q6.3). Condition filter → R2.2 | M/E |
+| Q6.9 | Link filters | Language of your copy + seller country Germany (from Q6.3) + Near Mint or better (R2.2) | M/E |
 
 ### 7. Data and devices
 
@@ -177,16 +160,16 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 | Q8.4 | Images | Loaded directly from TCGdex (mentioned in the privacy note) | E |
 | Q8.5 | Network for jobs | Catalog sync and price-guide snapshot run in **GitHub Actions** | E |
 | Q8.6 | Git workflow | One PR per milestone with Vercel preview links, plus GitHub Actions CI | E |
-| Q8.7 | License | Private repository, all rights reserved | E |
+| Q8.7 | License | Private repository, all rights reserved. *(The repository is public today → R3.2)* | E |
 
 ### 9. Design
 
 | ID | Topic | Decision | Src |
 |---|---|---|---|
-| Q9.1 | Direction | Mockups first: a design canvas with three glass-based directions. Your pick → **R2.1** | E |
+| Q9.1 | Direction | Mockups first: a design canvas with three glass-based directions. Your pick: **D** (R2.1) | E |
 | Q9.2 | Theme | Follows the system setting; both themes are designed | E |
-| Q9.3 | Fonts/colors | Mona Sans in **bold** weights. Colors per direction (R2.1) | E |
-| Q9.4 | Brand | Wordmark **"Settr"**. Tagline *"Jede Karte. Jedes Set. Jeder Cent."* plus a short one → R2.7 | M |
+| Q9.3 | Fonts/colors | Mona Sans in **bold** weights. D palette with one accent (R2.1, R3.1) | E |
+| Q9.4 | Brand | Wordmark **"Settr"**. Tagline *"Jede Karte. Jedes Set. Jeder Cent."* plus the short *"Jede Karte zählt."* (R2.7) | M |
 | Q9.5 | References | **Revolut, Apple, Wise.** Bold fonts, clean designs, Apple minimalism, Apple's new **Liquid Glass** look | M |
 | Q9.6 | Motion | Signature moments only | E |
 | Q9.7 | Pokémon references | Subtle (type colors in chips) | E |
@@ -197,7 +180,7 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 | ID | Idea | Decision | Src |
 |---|---|---|---|
 | I-01 | Price session | **v1** | E |
-| I-02 | Binder view | Later → R2.4 | E |
+| I-02 | Binder view | **v1.1** (R2.4) | E |
 | I-03 | Command palette + shortcuts | **v1** | E |
 | I-04 | Holo viewer + transitions | **v1** | E |
 | I-05 | Privacy mode | **v1** | E |
@@ -210,8 +193,8 @@ Source: **M** = your answer · **E** = my recommendation (you chose "go with you
 | I-12 | Own photos | Later | E |
 | I-13 | Camera scanning | No (for now) | E |
 | I-14 | Cardmarket purchase import | **Not yet** (post-v1) | M |
-| I-15 | Auto-backup to folder | Later | E |
-| I-16 | CSV import wizard | Later (Collectr preset first) | E |
+| I-15 | Auto-backup to folder | Later (in Brave only after enabling a browser flag, ADR-027) | E |
+| I-16 | CSV import wizard | Later, generic only (no Collectr preset, R2.5) | E |
 | I-17 | Encrypted backups | Later | E |
 | I-18 | Sync via own cloud | Later | E |
 | I-19 | Demo data | **No** | M |

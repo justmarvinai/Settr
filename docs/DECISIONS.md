@@ -20,16 +20,21 @@
 | 012 | MiniSearch in a worker with CJK bigram tokenization | Accepted |
 | 013 | Image delivery: direct CORS for TCGdex, same-origin proxy for non-CORS hosts | Accepted (Q8.4) |
 | 014 | Clean-room holo effect (no GPL code) | Accepted |
-| 015 | Design direction: Liquid Glass × bold minimalism (A/B/C on the canvas) | Proposed (⟶ R2.1) |
+| 015 | Design direction: D · Bold Studio (C's type, B's sidebar, calm color, light + dark) | Accepted (R2.1; final look ⟶ R3.1) |
 | 016 | Versioned JSON backup, LWW merge with tombstones | Accepted |
 | 017 | TanStack Form + Zod 4 | Accepted |
 | 018 | Chinese data strategy for v1 | Superseded by ADR-021 |
 | 019 | German-only UI, translation-ready | Accepted (Q3.1) |
-| 020 | Cardmarket price-guide suggestions via a daily static snapshot | Accepted (Q6.6) |
-| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; source permission ⟶ R2.8) |
+| 020 | Cardmarket price-guide suggestions via a daily static snapshot | Accepted (Q6.6; storage per ADR-029) |
+| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; R2.8 revised; amended by ADR-026) |
 | 022 | Private deployment: unlisted + noindex, no Impressum while private | Accepted (Q1.2) |
 | 023 | Binder-aware storage locations (layout, page, slot) | Accepted (Q5.7) |
 | 024 | Liquid Glass as a material for chrome only | Accepted (Q9.5) |
+| 025 | Reference price = Near Mint or better, plus per-copy values | Accepted (R2.2) |
+| 026 | Traditional Chinese cards as a language of M6a | Accepted (R2.3) |
+| 027 | Brave (Chromium) as the primary browser | Accepted (R2.9) |
+| 028 | Catalog growth: 30 Jahre first, then set by set and era by era; no Collectr import | Accepted (R2.5) |
+| 029 | Public repository: what may be committed | Proposed (⟶ R3.2) |
 
 ---
 
@@ -139,13 +144,15 @@
 - **Decision:** No code from it. We implement our own layered-gradient/blend-mode effect. MIT helpers are allowed (e.g. react-parallax-tilt).
 - **Consequences:** No license contamination. A one-card-at-a-time performance policy.
 
-### ADR-015 · Design direction: Liquid Glass × bold minimalism (Proposed)
-- **Context (Q9.5):** References are Revolut, Apple and Wise, with bold fonts, clean designs, Apple minimalism and Apple's Liquid Glass. Desktop first (Q9.8).
-- **Proposal:** All candidates share the bold type, minimal layout and glass-chrome foundation (`DESIGN_SYSTEM.md` §1.1). They're built as a clickable design canvas:
-  - **A · Vault Glass** (dark, gold; recommended)
-  - **B · Studio Glass** (light, Apple-minimal)
-  - **C · Bold** (Revolut/Wise energy, cobalt)
-- **Decision pending:** Marvin picks on the canvas (⟶ R2.1). v0.1's "Terminal" and "Foil Pop" directions were dropped because they didn't match the stated taste.
+### ADR-015 · Design direction: D · Bold Studio (Accepted, R2.1)
+- **Context (Q9.5):** References are Revolut, Apple and Wise, with bold fonts, clean designs, Apple minimalism and Apple's Liquid Glass. Desktop first (Q9.8). Round 2 showed three directions on the design canvas: **A · Vault Glass** (dark, gold), **B · Studio Glass** (light, Apple-minimal) and **C · Bold** (Revolut/Wise energy, cobalt). v0.1's "Terminal" and "Foil Pop" had already been dropped.
+- **Decision (R2.1):** Marvin picked **C** with **B's sidebar**, more polish and **more subtle coloring**, in **both light and dark**, with **balanced** glass, adding: *"Usability and user experience is always #1."* The result is direction **D · Bold Studio** (`DESIGN_SYSTEM.md` §1.2):
+  - C's heavy, wide display type (Mona Sans 900, `wdth` 125), pill controls and big stat numbers.
+  - B's floating glass sidebar and toolbar.
+  - Neutral surfaces with one restrained accent (*Indigo* by default); color is information, not decoration.
+  - Light and dark as equals, *System* as the default theme.
+- **Consequences:** Tokens for both themes are cut in M1 from `DESIGN_SYSTEM.md` §3. The D artboards on the canvas are the visual reference. Marvin confirms them and the accent (*Indigo*, *Kobalt* or *Graphit*) in ⟶ R3.1; changes there are token-level.
+- **Alternatives:** A (the earlier recommendation; dark-first, gold), B as-is (calm but less distinctive), C as-is (too loud for long data-entry sessions).
 
 ### ADR-016 · Versioned JSON backup, LWW merge with tombstones
 - **Decision:** A single `.settr.json` envelope with `formatVersion`, `schemaVersion` and a checksum. Import supports *replace* and *merge* (last write wins by `updatedAt`, plus tombstones), and takes a pre-import snapshot (`IMPORT_EXPORT.md`).
@@ -181,7 +188,7 @@
   - `asia:M6a.languages = ['ja', 'zh-cn']`. SC printed rarity marks are handled via `printedRarity`.
   - Chinese Pokémon names are **derived** from PokéAPI species names (+ `ex` suffix), labeled *übersetzt*. The few Trainer/Energy names are curated.
   - SC Cardmarket product IDs are mapped via `idMetacard` (6602 ↔ 6603).
-  - The complete SC dataset is used **only with the maintainer's written permission** (⟶ R2.8).
+  - **R2.8 revised (2026-09-23):** the dataset's own terms reserve consent for redistribution to the **official owner or an authorized entity** (they point to Pokémon Shanghai), not to the maintainer, so a request to the maintainer can't unlock it. Settr therefore **doesn't use `duanxr/PTCG-CHS-Datasets`**: nothing from it is committed or shipped. SC names are derived (PokéAPI `zh-Hans`) plus hand-curated Trainer/Energy names.
 - **Consequences:** SC copies are trackable at launch with correct numbers and Cardmarket links. Names and images improve without migrations.
 - **Alternatives:** Waiting for TCGdex (unknown timeline), scraping pokemon.cn (ToS and fragility).
 
@@ -191,7 +198,7 @@
 
 ### ADR-023 · Binder-aware storage locations (Accepted, Q5.7)
 - **Decision:** `Location` has `layout {columns, rows}` and `pages`. A holding's `location` stores `{id, page, slot}`, and Settr suggests the next free slot (occupancy is a warning, not a constraint).
-- **Consequences:** Matches Marvin's Withyu 12-pocket and VaultX 9-pocket binders, and enables the virtual binder view later (COL-08, ⟶ R2.4) without data changes.
+- **Consequences:** Matches Marvin's Withyu 12-pocket and VaultX 9-pocket binders, and enables the virtual binder view in v1.1 (COL-08, R2.4) without data changes.
 
 ### ADR-024 · Liquid Glass as a material for chrome only (Accepted, Q9.5)
 - **Decision:**
@@ -201,3 +208,53 @@
   - At most 3 blurred layers are visible at once.
 - **Consequences:** It delivers the macOS/iOS 26 feel Marvin likes without sacrificing legibility or performance on Windows laptops.
 - **Alternatives:** Glass everywhere (illegible, slow), no glass (misses the stated taste).
+
+### ADR-025 · Reference price = Near Mint or better, plus per-copy values (Accepted, R2.2)
+- **Context:** Marvin's rule is "the cheapest offer in the card's language from German sellers" (Q6.3). Without a condition filter, the cheapest offer is often a played copy, which would undervalue his NM cards. He also owns LP and damaged copies (Q5.2).
+- **Decision:**
+  - The reference price (*ab (DE)*) means **Near Mint or better**. Cardmarket deep links add `minCondition=2` (parameter to verify, ⟶ R3.5), and price entries store `context.minCondition = 'NM'`.
+  - Copies in worse condition use the existing per-lot **value override** (`Holding.valueOverride = { price, date, note? }`, PRC-07, Q6.2; UI: *Eigener Wert*). It replaces the reference price for that lot only, goes stale like any price and is tagged "eigener Wert" wherever it's shown.
+- **Consequences:** One price series per card/language/variant/grade stays simple, and worse copies are valued honestly when Marvin wants. Valuation already reads `valueOverride` first, then the carry-forward series price (`DATA_MODEL.md` §6).
+- **Alternatives:** Separate price series per condition (more entry work for every card), any condition (misleading for NM copies).
+
+### ADR-026 · Traditional Chinese cards as a language of M6a (Accepted, R2.3; amends ADR-021)
+- **Context:** Marvin wants Traditional Chinese sealed products (Q4.3). Opening one yields TC cards, which need a home.
+- **Decision:**
+  - `asia:M6a.languages = ['ja', 'zh-cn', 'zh-tw']`. Active card languages are **DE, EN, JA, ZH-CN and ZH-TW**.
+  - TC names come from `type-null/PTCG-database` (`data_tc`, covers M6a; its data licensing is to verify). The fallback is PokéAPI `zh-Hant` species names labeled *übersetzt*, with Trainer names curated by hand. Numbering mirrors M6a.
+  - Cardmarket links for TC copies use the JP product with Cardmarket's T-Chinese language filter.
+- **Consequences:** TC copies are trackable from launch with correct numbers. Names are tagged `lang="zh-Hant"` and rendered with Noto Sans TC (`DESIGN_SYSTEM.md` §4).
+- **Alternatives:** Sealed-only TC (opened cards would have nowhere to go).
+
+### ADR-027 · Brave (Chromium) as the primary browser (Accepted, R2.9)
+- **Context:** Marvin's main browser is **Brave** on Windows (R2.9). Brave runs Chromium's engine (1.95.x = Chromium 153, Sept 2026) but changes some web APIs for privacy. These findings come from Brave's source code at v1.95.104, not from a live install:
+  - The **File System Access API is off by default** (flag `brave://flags/#file-system-access-api`). The file and folder pickers don't exist, so remembered folder handles don't work.
+  - **Downloads open a Save-As dialog by default**, so a backup download already lets Marvin pick the folder.
+  - `persist()` follows Chromium's rules (no prompt; granted for installed apps and often-used sites). `estimate()` always reports a 2 GiB quota.
+  - **Delete-on-exit features** (Shields "Forget me when I close this site", "Delete data on exit", per-site "clear cookies on exit") are off by default but would erase IndexedDB.
+  - Standard fingerprinting protection adds tiny noise to canvas readback, randomizes hardware values, rounds screen sizes and limits named system fonts to an allowlist. CSS and `backdrop-filter` are untouched.
+  - PWA install works. Web Share works on Windows but refuses `.json` files. The default block lists don't touch Settr's assets or TCGdex images.
+- **Decision:**
+  - Chromium stays the CI reference engine, and a **manual Brave smoke test with default Shields** runs before each release (`QUALITY.md`).
+  - **Backups are downloads.** The File System Access API is only an optional extra behind feature detection (check the picker functions). Automatic folder backups (DAT-06, post-v1) explain Brave's flag.
+  - Settr requests `persist()` after install, never relies on the reported quota, and warns in onboarding and *Einstellungen → Daten* that delete-on-exit settings erase the collection (⟶ R3.4).
+  - No canvas hashing or logic based on hardware/screen values. No "share backup" via Web Share on desktop.
+  - The self-hosted Noto CJK slices must render Japanese and Chinese names on their own, because Brave may hide named system fonts. Tested in Brave.
+- **Consequences:** Nothing in v1 depends on an API that Brave disables. The one real risk, data erased by a delete-on-exit setting, is covered by warnings, persistence and backups.
+- **Alternatives:** Asking Marvin to use Chrome or Edge for Settr (unnecessary).
+
+### ADR-028 · Catalog growth: 30 Jahre first, then set by set and era by era; no Collectr import (Accepted, R2.5)
+- **Context:** Marvin's ~200 cards are mostly from **Mega Evolution era** sets, some **Sword & Shield**, some **Scarlet & Violet** (*Karmesin & Purpur*), a German **Base Set Charizard** (*Glurak*) and a few **Sun & Moon / GX era** cards. He has **no Collectr Pro**, so Collectr's CSV export isn't available to him.
+- **Decision:**
+  - v1 ships with *30 Jahre* only. Other sets and eras are added **one by one after the core site is fully functional** (Marvin's plan). Suggested order, to confirm when v1 is done: Mega Evolution → Scarlet & Violet → Sword & Shield → Sun & Moon → Base Set.
+  - The **Collectr importer is dropped**. Existing cards are entered by hand, set by set, which makes the fast add flow (quick add from the grid, ≤ 3 interactions for the full form) a priority.
+  - From M1 on, catalog, IDs, routes, search and UI are **multi-set and multi-era**: series grouping, per-set lazy-loaded chunks, a slim global search index and per-set completion. Adding a set means pipeline config, a curated overlay and a review, not a refactor.
+- **Consequences:** No throwaway work on a Collectr-only importer. A generic CSV import can come back later if friends need it.
+- **Alternatives:** Adding Marvin's sets before v1 (delays the core), a Collectr import (no export without Pro).
+
+### ADR-029 · Public repository: what may be committed (Proposed, ⟶ R3.2)
+- **Context:** On 2026-09-23 the GitHub repository `justmarvinai/Settr` was **public**, while the product is private (Q1.2, ADR-022). One planned data flow would republish third-party data through a public repo: the daily Cardmarket price-guide snapshot (ADR-020 commits `cm-prices.json`). A public repo also exposes the planning docs and, later, the deployment's configuration.
+- **Proposal:** Make the repository **private** (recommended). Vercel Hobby deploys private repos, and GitHub Free includes 2,000 Actions minutes per month for private repos, enough for CI, the weekly catalog sync and the daily price-guide job (to verify against real CI times).
+- **If it stays public:** `cm-prices.json` is **not** committed. The daily job triggers a Vercel deploy hook instead, and the build downloads and filters the price guide at build time. The deployment URL is never written into the repo.
+- **Either way:** no secrets and no personal collection data are committed (CLAUDE.md), and the default branch becomes `main` at the start of M1 (⟶ R3.3).
+

@@ -1,43 +1,44 @@
 # Settr: Design System
 
-> Status: **Draft v0.2**. It's rebuilt around your references (Q9.5: Revolut, Apple, Wise; bold fonts; Apple minimalism; Liquid Glass). The final direction is picked on the design canvas (⟶ **R2.1**). Last updated: 2026-09-23.
-> Screens and flows → [`UX_SPEC.md`](./UX_SPEC.md). Accessibility requirements → [`QUALITY.md`](./QUALITY.md) §5. Platform priority: **Windows desktop first**, iPhone second (Q9.8).
+> Status: **Draft v0.3**. Direction **D · Bold Studio** chosen (R2.1): C's bold type, B's floating glass sidebar, calmer color, light and dark. The final look is confirmed on the design canvas (⟶ **R3.1**). Last updated: 2026-09-23.
+> Screens and flows → [`UX_SPEC.md`](./UX_SPEC.md). Accessibility requirements → [`QUALITY.md`](./QUALITY.md) §5. Platform priority: **Windows desktop first** (Brave, Chromium; R2.9), iPhone second (Q9.8).
 
 ---
 
-## 1. Direction: **Liquid Glass × bold minimalism**
+## 1. Direction: **D · Bold Studio** (Liquid Glass × bold minimalism)
 
-> *Your collection as a luminous gallery: bold numbers, calm space, and glass chrome floating above the cards.*
+> *Your collection as a calm, luminous gallery: heavy numbers, quiet surfaces, and a glass sidebar floating above the cards.*
 
-**Three words:** **Bold · Clear · Luminous.**
+**Four words:** **Usable · Bold · Clear · Luminous.**
 
 | Principle | What it means in practice |
 |---|---|
-| **Bold** | Heavy, wide display type for numbers and headlines (the Revolut/Wise punch). Confident hierarchy, where one glance tells you the value, the change and the next action |
+| **Usable first** | Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks and usability conflict, usability wins: legibility, WCAG AA contrast, 44 px touch targets, keyboard paths, and no decoration that hides data |
+| **Bold** | Heavy, wide display type for numbers and headlines (the Revolut/Wise punch of direction C). One glance tells you the value, the change and the next action |
 | **Clear** | Apple-style minimalism: generous whitespace, one accent, no ornament. Tabular numerals, exact dates, honest data |
-| **Luminous** | The **cards bring the color**. The UI is quiet, and **Liquid Glass chrome** (sidebar, toolbar, tab bar, sheets) floats above the content, tinted by the card art scrolling beneath it |
+| **Luminous** | The **cards bring the color**. Surfaces stay neutral, and **Liquid Glass chrome** (sidebar, toolbar, filter bar, tab bar, sheets) floats above the content |
 
-### 1.1 Shared foundation (all directions)
+### 1.1 Foundation
 
-- **Typography:** Mona Sans at **800–900** for display and numbers (wide `wdth`), and 440–560 for UI text (§4).
-- **Glass is a material for chrome only** (§3.5): navigation, toolbars, sheets, popovers and the command palette. Content surfaces (card tiles, tables, text) stay solid for legibility.
+- **Typography:** Mona Sans **900 at `wdth` 125** for display and big numbers, 800–850 for titles, 600–650 for UI text and 500 for running text (§4).
+- **Glass is a material for chrome only** (§3.5): navigation, toolbars, the sticky filter bar, sheets, popovers, toasts and the command palette. Content surfaces (card tiles, tables, text) stay solid for legibility.
 - **Cards are the hero:** large, crisp, luminous, with a holo viewer on detail pages.
 - **Finance-grade charts:** scrubbable, minimal, and honest (§9).
+- **Light and dark are equals:** both themes are designed and tested to the same standard. *System* is the default (§11).
 
-### 1.2 The three candidate directions (on the design canvas, pick in ⟶ R2.1)
+### 1.2 The chosen direction: D · Bold Studio (R2.1, ADR-015)
 
-| | **A · Vault Glass** (recommended) | **B · Studio Glass** | **C · Bold** |
-|---|---|---|---|
-| Feel | Premium dark vault: Revolut's dark mode meets Apple Pro apps | Apple.com minimalism: bright, airy, precise | Wise/Revolut energy: loud type, chunky shapes |
-| Hero theme | Dark ink `#0A0B0F` | Light: soft grey canvas `#F2F2F4`, white surfaces | Dark navy `#0B0D1A` |
-| Accent | **Settr Gold** `#F2C14E` | **Settr Blue** `#2F6BFF` + ink-black buttons | **Cobalt** `#4353FF` |
-| Glass | Smoked dark glass | Frosted light glass | Glass top pill navigation; solid bold tiles |
-| Navigation | Floating glass sidebar | Floating glass sidebar | Floating glass pill bar (top) |
-| Display type | Mona Sans 800, `wdth` 120 | Mona Sans 780, `wdth` 105, tight tracking | Mona Sans 900, `wdth` 125 |
-| Radius (panel / tile) | 20 / 14 | 24 / 16 | 28 / 22 |
-| Risk | Must keep the light theme equally good | Can feel "generic Apple" without the card art | Can get loud; tables need restraint |
+Marvin picked **C · Bold** with **B's sidebar**, more polish, **more subtle coloring**, and **both a light and a dark mode**, with **balanced** glass. D combines exactly that:
 
-Whichever direction wins gets a complete **light + dark pair** in M1. The canvas shows each in its hero theme.
+| From | What D takes |
+|---|---|
+| **C · Bold** | Mona Sans 900 at `wdth` 125 for hero numbers and page titles, big stat numbers, pill-shaped buttons and segmented controls, a monochrome "ink pill" for the active segment |
+| **B · Studio Glass** | The **floating glass sidebar** (236 px, inset 12 px, radius 24), the floating glass toolbar, and soft tile shadows in light mode |
+| **New in D** | **Neutral surfaces instead of C's cobalt blocks**, one restrained accent (§3.1), and a first-class **light and dark** pair |
+
+- **Color is information, not decoration.** The accent marks only the primary action, active navigation, selection, chart lines, progress, quantity badges and focus rings. Gains and losses always carry sign and arrow as well as color.
+- **Accent:** *Indigo* by default. On the canvas you can compare *Kobalt* (C's original, louder) and *Graphit* (no color at all) via the artboards' Tweaks. Final pick ⟶ **R3.1**.
+- The D artboards (Übersicht, Set, Kartendetail, iPhone set; light and dark) are on the design canvas. A, B and C stay there for reference.
 
 ### 1.3 What we deliberately avoid (the "generic AI app" look)
 
@@ -48,46 +49,51 @@ Whichever direction wins gets a complete **light + dark pair** in M1. The canvas
 - Emoji as UI icons, stock 3D blobs, rainbow charts.
 - Default-everything shadcn look (same Lucide icons, same slate palette, same 0.5 rem radius).
 - Copying any real company's proprietary design. We borrow *principles* from Revolut, Apple and Wise, not their assets.
+- Large saturated color blocks behind data (like C's cobalt hero). In D, color is reserved for meaning.
 
 ---
 
 ## 2. Brand
 
-- **Name and wordmark: "Settr"** (capital S, Q9.4), set in Mona Sans 800 at wide width (`wdth` 118) with −2 % tracking.
+- **Name and wordmark: "Settr"** (capital S, Q9.4), set in Mona Sans 900 at `wdth` 125 with −3.5 % tracking.
 - **Taglines:**
   - Long: DE *"Jede Karte. Jedes Set. Jeder Cent."* · EN *"Every card. Every set. Every cent."*
-  - Short (⟶ R2.7, default): *"Jede Karte zählt."*
-- **Logo concept:** a monogram **S** formed by the negative space of two offset card silhouettes (63∶88 ratio, rounded corners), with a thin holo-foil edge on the front card.
-- **App icon (PWA, iPhone home screen):** the monogram as **layered glass cards** on ink, in the spirit of the 2025/26 layered icon style, with the front card catching a gold edge light.
+  - Short (R2.7): *"Jede Karte zählt."* It sits under the wordmark in the sidebar and is the PWA description.
+- **Logo concept:** a monogram **S** formed by the negative space of two offset card silhouettes (63∶88 ratio, rounded corners), with a thin holo-foil edge on the front card. (The canvas uses a simplified stand-in: an accent card behind an ink card.)
+- **App icon (PWA, iPhone home screen):** the monogram as **layered glass cards** on ink, in the spirit of the 2025/26 layered icon style, with the front card catching an accent edge light.
 - **No Pokémon IP in the brand** (no Poké Ball, no characters, no official energy symbols). It's safer legally and more premium.
 
 ---
 
 ## 3. Color
 
-All colors are **OKLCH design tokens** (CSS custom properties) mapped into Tailwind v4 via `@theme`. Components only use **semantic** tokens. The table shows **direction A**. B and C swap the values (§1.2) but keep the token names, so switching directions is a token change, not a refactor.
+All colors are **OKLCH design tokens** (CSS custom properties) mapped into Tailwind v4 via `@theme`. Components only use **semantic** tokens. The table shows **direction D** in both themes (hex values are the canvas values). Because components never see raw values, the accent pick (R3.1) is a token change, not a refactor.
 
-### 3.1 Semantic tokens (direction A · Vault Glass)
+### 3.1 Semantic tokens (direction D · Bold Studio)
 
-| Token | Dark (hero; follows the system setting, Q9.2) | Light | Use |
+| Token | Light | Dark | Use |
 |---|---|---|---|
-| `--bg` | `oklch(0.145 0.008 265)` | `oklch(0.985 0.004 85)` | App background |
-| `--surface-1` | `oklch(0.180 0.009 265)` | `oklch(1 0 0)` | Panels, tiles |
-| `--surface-2` | `oklch(0.215 0.010 265)` | `oklch(0.970 0.005 85)` | Raised/hover, inputs |
-| `--surface-3` | `oklch(0.255 0.012 265)` | `oklch(0.945 0.006 85)` | Pressed, selected |
-| `--border` | `oklch(1 0 0 / 0.08)` | `oklch(0.20 0.01 265 / 0.10)` | Hairlines |
-| `--border-strong` | `oklch(1 0 0 / 0.14)` | `oklch(0.20 0.01 265 / 0.18)` | Inputs, dividers |
-| `--text` | `oklch(0.965 0.004 265)` | `oklch(0.200 0.012 265)` | Primary text |
-| `--text-muted` | `oklch(0.740 0.010 265)` | `oklch(0.450 0.012 265)` | Secondary |
-| `--text-subtle` | `oklch(0.580 0.012 265)` | `oklch(0.580 0.010 265)` | Tertiary, captions |
-| `--accent` | `oklch(0.860 0.150 88)` *Settr Gold* | `oklch(0.600 0.130 80)` *Bronze* | Primary actions, active nav, links |
-| `--accent-contrast` | `oklch(0.180 0.020 88)` | `oklch(0.990 0.010 88)` | Text on accent |
-| `--gain` | `oklch(0.800 0.170 152)` | `oklch(0.560 0.150 152)` | Positive P/L |
-| `--loss` | `oklch(0.700 0.190 25)` | `oklch(0.560 0.200 25)` | Negative P/L |
-| `--warn` | `oklch(0.780 0.160 60)` | `oklch(0.620 0.160 55)` | Stale price, backup overdue |
-| `--info` | `oklch(0.760 0.120 240)` | `oklch(0.520 0.140 250)` | Neutral info |
-| `--focus` | `oklch(0.860 0.150 88 / 0.9)` | `oklch(0.600 0.130 80 / 0.9)` | Focus ring |
+| `--bg` | `oklch(0.968 0.004 286)` · `#F4F4F7` | `oklch(0.151 0.011 276)` · `#0A0B10` | App background |
+| `--surface-1` | `oklch(1 0 0)` · `#FFFFFF` | `oklch(0.197 0.016 274)` · `#13151D` | Tiles, panels |
+| `--surface-2` | `oklch(0.953 0.005 275)` · `#EEEFF3` | `oklch(0.237 0.020 272)` · `#1B1E28` | Inputs, raised elements |
+| `--hover` | `--text` at 5 % | white at 6 % | Hover, quiet buttons, segmented-control track |
+| `--border` | `--text` at 8 % | white at 7 % | Hairlines |
+| `--border-strong` | `--text` at 16 % | white at 14 % | Inputs, dividers |
+| `--text` | `oklch(0.174 0.027 276)` · `#0D0F1C` | `oklch(0.968 0.005 275)` · `#F3F4F8` | Primary text ("ink") |
+| `--text-muted` | `oklch(0.470 0.033 272)` · `#545A6E` | `oklch(0.733 0.027 273)` · `#A3A8BA` | Secondary text |
+| `--text-subtle` | `oklch(0.519 0.032 272)` · `#62687C` | `oklch(0.655 0.031 272)` · `#8A90A4` | Tertiary text, captions (still ≥ 4.5∶1) |
+| `--accent` | `oklch(0.485 0.214 271)` · `#3A47D5` *Indigo* | `oklch(0.540 0.211 273)` · `#4C59E6` | Primary buttons, badges (fills) |
+| `--accent-contrast` | `#FFFFFF` | `#FFFFFF` | Text on accent fills |
+| `--accent-text` | = `--accent` | `oklch(0.753 0.128 278)` · `#9CA6FF` | Accent as text: links, active navigation |
+| `--accent-line` | = `--accent` | `oklch(0.713 0.151 277)` · `#8C97FF` | Chart lines, progress on dark |
+| `--accent-soft` | `--accent` at 10 % | `#7C8AFF` at 14 % | Active navigation background, selection |
+| `--gain` | `oklch(0.502 0.121 154)` · `#0E7743` | `oklch(0.777 0.146 162)` · `#46D39A` | Positive P/L |
+| `--loss` | `oklch(0.533 0.181 23)` · `#BF2E37` | `oklch(0.737 0.162 17)` · `#FF7A85` | Negative P/L |
+| `--warn` | `oklch(0.520 0.121 60)` · `#9A5500` | `oklch(0.821 0.142 80)` · `#F5B94A` | Stale price, backup overdue |
+| `--focus` | = `--accent` | = `--accent` | 3 px focus ring with 2 px offset |
 
+- **Soft variants** (`--gain-soft`, `--loss-soft`, `--warn-soft`) are the color at 10–13 % over the surface. Text on them keeps ≥ 4.5∶1 (lowest pair in D: 4.8∶1).
+- **Accent alternatives for R3.1:** *Kobalt* `#3445F0` (light) / `#4353FF` (dark); *Graphit* = `--text` as the accent (ink buttons in light, white buttons with ink text in dark).
 - Colorblind-safe P/L option: gain `oklch(0.75 0.13 240)` (blue) and loss `oklch(0.76 0.16 60)` (orange).
 - All pairs are contrast-checked by an automated token test (`QUALITY.md` §5).
 
@@ -127,18 +133,18 @@ Eight categorical hues at equal perceived lightness (dark L≈0.74, light L≈0.
 
 Glass is Settr's signature *material* for floating chrome (Q9.5: Apple's Liquid Glass). It's built from `backdrop-filter`, a translucent tint, a specular edge and a soft shadow.
 
-| Token | A dark (smoked) | A/B light (frosted) | Use |
+| Token | Light (frosted) | Dark (smoked) | Use |
 |---|---|---|---|
-| `--glass-fill` | `oklch(0.20 0.012 265 / 0.58)` | `oklch(1 0 0 / 0.64)` | Tint of the pane |
-| `--glass-fill-thick` | `oklch(0.20 0.012 265 / 0.78)` | `oklch(1 0 0 / 0.82)` | Sheets, popovers, command palette (text-heavy) |
-| `--glass-blur` | `28px` | `30px` | `backdrop-filter: blur()` |
+| `--glass-fill` | `oklch(1 0 0 / 0.66)` | `oklch(0.212 0.020 276 / 0.62)` | Tint of the pane |
+| `--glass-fill-thick` | `oklch(1 0 0 / 0.84)` | `oklch(0.212 0.020 276 / 0.80)` | Sheets, popovers, command palette (text-heavy) |
+| `--glass-blur` | `24px` | `24px` | `backdrop-filter: blur()` |
 | `--glass-saturate` | `180%` | `180%` | `backdrop-filter: saturate()`, which keeps card colors vivid beneath |
-| `--glass-stroke` | `oklch(1 0 0 / 0.09)` | `oklch(0 0 0 / 0.06)` | 1 px outline |
-| `--glass-specular` | `inset 0 1px 0 oklch(1 0 0 / 0.12)` | `inset 0 1px 0 oklch(1 0 0 / 0.95)` | Top-edge light catch |
-| `--glass-shadow` | `0 24px 60px -24px oklch(0 0 0 / 0.70)` | `0 12px 40px -16px oklch(0 0 0 / 0.18)` | Lift |
+| `--glass-stroke` | `oklch(0.174 0.027 276 / 0.08)` | `oklch(1 0 0 / 0.08)` | 1 px outline |
+| `--glass-specular` | `inset 0 1px 0 oklch(1 0 0 / 0.90)` | `inset 0 1px 0 oklch(1 0 0 / 0.10)` | Top-edge light catch |
+| `--glass-shadow` | `0 18px 48px -22px oklch(0.174 0.027 276 / 0.24)` | `0 24px 60px -24px oklch(0 0 0 / 0.80)` | Lift |
 
 **Rules**
-1. **Chrome only:** floating sidebar, toolbar, mobile tab bar, sheets, popovers, command palette, segmented controls over content, and the price-session HUD. **Never** on card tiles, tables or long text.
+1. **Chrome only:** floating sidebar, toolbar, the sticky filter bar on list pages, mobile tab bar, sheets, popovers, toasts, command palette, segmented controls over content, and the price-session HUD. **Never** on card tiles, tables or long text.
 2. **Content scrolls beneath:** the sidebar and toolbar float with a 12 px inset over the page. Card art scrolling under them tints the glass, which is what makes it feel alive.
 3. **Legibility first:** text on glass meets WCAG AA against the **worst-case backdrop** (bright card art). This is guaranteed by the fill-opacity floor and tested with bright fixtures.
 4. **Materialize on scroll:** the toolbar is transparent at the top of a page and turns to glass once content passes beneath it (scroll-driven animation where supported, else an IntersectionObserver class toggle).
@@ -161,6 +167,7 @@ Glass is Settr's signature *material* for floating chrome (Q9.5: Apple's Liquid 
 - CJK families are assigned **only inside `:lang(ja)`, `:lang(zh-Hant)` and `:lang(zh-Hans)` selectors**, so German and English users never download a CJK byte.
 - The stack lists **system fonts first** (Hiragino Sans / Yu Gothic, PingFang TC/SC, Microsoft JhengHei/YaHei) and Noto last. Most users therefore download **zero** CJK font bytes, and the rest fetch only the slices they render.
 - **Every CJK string is tagged with its language** (`lang="ja"`, `lang="zh-Hant"`, `lang="zh-Hans"`). Without it, Chromium picks Simplified Chinese glyph forms for Japanese and Traditional text.
+- **Brave:** its fingerprinting protection may hide named system fonts outside an allowlist (ADR-027), so the self-hosted Noto slices must render Japanese and Chinese correctly on their own. This is part of the Brave smoke test.
 - At most two weights (400, 600).
 - Fonts are **self-hosted**, never loaded from Google's CDN (GDPR; see `DATA_SOURCES.md` §8).
 
@@ -170,18 +177,20 @@ Glass is Settr's signature *material* for floating chrome (Q9.5: Apple's Liquid 
 
 | Token | Size / line | Weight | Width | Tracking | Use |
 |---|---|---|---|---|---|
-| `display-xl` | clamp(44px, 5vw, 72px) / 0.95 | **800** | 120 | −0.035em | Portfolio hero value |
-| `display` | 44 / 46 | **800** | 115 | −0.03em | Page heroes (set name) |
-| `h1` | 32 / 36 | 720 | 108 | −0.02em | Page titles |
-| `h2` | 22 / 28 | 680 | 104 | −0.01em | Section titles |
-| `h3` | 17 / 22 | 640 | 100 | −0.005em | Tile titles |
-| `body` | 15 / 22 (mobile 16 / 24) | 440 | 100 | 0 | Text |
-| `small` | 13 / 18 | 450 | 100 | 0 | Meta, table cells |
-| `label` | 12 / 16 | 560 | 100 | +0.01em | Field labels, chips |
+| `display-xl` | clamp(48px, 6vw, 84px) / 0.9 | **900** | 125 | −0.045em | Portfolio hero value |
+| `display` | clamp(44px, 5vw, 76px) / 0.9 | **900** | 125 | −0.045em | Page heroes (set name, card name) |
+| `display-m` | 64 / 0.9 (mobile 30–42) | **900** | 125 | −0.045em | Big stats: completion %, stale count, price |
+| `h1` | 26 / 1.0 | 900 | 120 | −0.03em | Page titles in the toolbar |
+| `h2` | 20 / 1.1 | 850 | 115 | −0.02em | Section and tile titles |
+| `h3` | 16 / 1.25 | 800 | 100 | −0.01em | Item titles (movers, list rows) |
+| `body` | 15 / 22 (mobile 16 / 24) | 500 | 100 | 0 | Running text |
+| `ui` | 15 / 20 | 650 (buttons 800) | 100 | 0 | Navigation, buttons, controls |
+| `small` | 13 / 18 | 600 | 100 | 0 | Meta, table cells |
+| `label` | 12 / 16 | 700 | 100 | +0.01em | Field labels, language pills, chips |
 
-- **Per direction:** B uses 780 / `wdth` 105 with tighter tracking (Apple-like headlines). C uses **900 / `wdth` 125** for display and big numbers.
+- **D takes C's heavy, wide display settings** and keeps UI text at normal width, so tables and forms stay calm.
 - **Numerals:** `font-variant-numeric: tabular-nums` globally for money, counts and dates. Proportional numerals only in running text.
-- **German:** `hyphens: auto` on `lang="de"` in narrow containers, `text-wrap: balance` for headings and `pretty` for paragraphs. Uppercase labels are avoided because German compounds get too wide.
+- **German:** `hyphens: auto` on `lang="de"` in narrow containers, `text-wrap: balance` for headings and `pretty` for paragraphs. Uppercase is used only for very short section labels (e.g. *SETS* in the sidebar), because German compounds get too wide.
 
 ---
 
@@ -189,11 +198,11 @@ Glass is Settr's signature *material* for floating chrome (Q9.5: Apple's Liquid 
 
 - **Spacing** (4 px base): `0 · 2 · 4 · 6 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 80 · 96`.
 - **Layout:** a 12-column fluid grid with content max-width 1440 px. Gutters are 16 (mobile), 24 (tablet) and 32 (desktop).
-- **Radius:** `xs 4` (chips) · `sm 6` (inputs) · `md 10` (buttons, tiles) · `lg 14` (panels) · `xl 20` (sheets). **Card images:** `border-radius: 4.8% / 3.4%`, matching a physical card's corner.
-- **Depth:** in dark mode, depth comes from **luminance steps and hairlines, not shadows**. Shadows are only for floating layers (popover, sheet, dragged tile): `0 1px 0 oklch(1 0 0 / .04) inset, 0 16px 40px -12px oklch(0 0 0 / .55)`.
+- **Radius (D):** buttons, chips and segmented controls are **pills** (999) · inputs and selects `14` · inner cards (movers) `22` · tiles `28` · glass sidebar `24` · toolbar and filter bar `20` · sheets `28`. **Card images:** `border-radius: 4.8% / 3.4%`, matching a physical card's corner.
+- **Depth:** in light mode, tiles get a hairline plus a soft two-layer shadow (`0 1px 2px` at 4 %, `0 12px 32px -20px` at 16 %). In dark mode, depth comes from **luminance steps and hairlines, not shadows**. Shadows are only for floating layers (popover, sheet, dragged tile): `0 1px 0 oklch(1 0 0 / .04) inset, 0 16px 40px -12px oklch(0 0 0 / .55)`.
 - **Glass:** floating chrome uses the Liquid Glass materials of §3.5. Content surfaces stay solid. SVG-refraction variants are Chromium-only and are skipped.
-- **Floating layout (desktop):** the sidebar is a glass panel inset 12 px from the window edges (radius 20), and the toolbar floats above the content column. The page content has 12 px breathing room, which gives a calm "app window within the window" look, as in current macOS apps.
-- **Ambient glow (card/product detail):** a duplicated, heavily blurred copy of the artwork sits behind the hero (`filter: blur(64px) saturate(1.4); opacity: .35`), so the page takes the card's colors. It needs no canvas and no CORS.
+- **Floating layout (desktop):** the sidebar is a glass panel (236 px) inset 12 px from the window edges (radius 24), and the toolbar floats above the content column. The page content has 12 px breathing room, which gives a calm "app window within the window" look, as in current macOS apps.
+- **Ambient glow (card/product detail):** a duplicated, heavily blurred copy of the artwork sits behind the hero (`filter: blur(64px) saturate(1.4)`, opacity .22 in light and .32 in dark), so the page takes the card's colors. It needs no canvas and no CORS.
 
 ---
 
@@ -246,14 +255,14 @@ Built on **shadcn/ui** source components (copied in, fully restyled to these tok
 
 **Primitives:** Button (primary · secondary · ghost · destructive · icon; sm/md/lg) · Input · **MoneyInput** · **DateInput** (German format, keyboard-friendly) · Select · Combobox · SegmentedControl · Chip · Checkbox · Switch · Slider · Tabs · Tooltip · Popover · DropdownMenu · ContextMenu · Dialog · Sheet (side/bottom) · Toast · **CommandPalette** · Skeleton · Badge · Kbd (platform-aware: `Strg` on Windows) · Table (virtualized) · EmptyState · ErrorState.
 
-**Glass primitives (§3.5):** `GlassPanel` (regular/thick) · `GlassSidebar` · `GlassToolbar` (materialize-on-scroll) · `GlassTabBar` (mobile floating pill) · `GlassSheet`. They all fall back to solid under reduced transparency.
+**Glass primitives (§3.5):** `GlassPanel` (regular/thick) · `GlassSidebar` · `GlassToolbar` (materialize-on-scroll) · `GlassFilterBar` (sticky on list pages) · `GlassTabBar` (mobile floating pill) · `GlassSheet` · `GlassToast`. They all fall back to solid under reduced transparency.
 
 **Domain components:**
 
 | Component | Notes |
 |---|---|
 | `CardImage` | Language-aware URL builder, fixed 63∶88 slot, card-back shimmer placeholder, fallback chain, `srcset` for DPR |
-| `CardTile` / `ProductTile` | Owned/missing/hover states, quantity badge, language pills, `VariantDots`, quick actions |
+| `CardTile` / `ProductTile` | Owned/missing/hover states, quantity badge, language pills, `VariantDots`, **quick add (+)** on hover/focus with undo toast |
 | `HoloCard` | Tilt + glare + foil per rarity, pointer/gyro, reduced-motion aware |
 | `LanguagePill`, `VariantDots`, `ConditionBadge`, `GradeBadge`, `RarityGlyph`, `EnergyTypeChip` | Small, consistent metadata atoms |
 | `PriceTag` | Value + date + stale indicator (amber dot and "vor 21 Tagen") |
@@ -268,11 +277,11 @@ Built on **shadcn/ui** source components (copied in, fully restyled to these tok
 
 - **No chart junk:** horizontal gridlines only (3–4 "nice" ticks, hairline at 6 % alpha), 12 px muted axis labels, and the y-axis on the right (finance convention) or hidden when the header shows the readout.
 - **Scrubbing (finance-app pattern, as in Robinhood, Trade Republic or Revolut):** a crosshair (vertical hairline + dot) updates the header value, the date, **and the change since the start of the range**. It works with touch drag.
-- **Line color = performance of the visible range** (gain or loss token), with a dashed baseline at the range start or at the cost basis. Range chips: `1M · 3M · 6M · 1J · Max`. There's no 1-week range, because manual prices are too sparse for it.
+- **Line color = the accent** (`--accent-line`), so charts stay calm (D: color is information). The P/L chip above the chart carries the gain/loss color, sign and arrow. A dashed baseline marks the range start or the cost basis. Range chips: `1M · 3M · 6M · 1J · Max`. There's no 1-week range, because manual prices are too sparse for it.
 - **Honest data:**
   - *Item price charts* use **linear segments between real observations**, with **every observation marked** (a dot shaped by price type). Purchase price is a dashed baseline, with the area above/below tinted gain/loss.
   - *Portfolio charts* use a **step-after** line, since value truly only changes on events. The optional "Investiert" (invested capital) overlay is dashed and neutral.
-- **Area fill:** accent at 22 % → 0 % vertical gradient.
+- **Area fill:** accent at 20 % → 0 % vertical gradient.
 - **Money formatting:** `Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', signDisplay: 'exceptZero' })` for deltas produces `+1.234,56 €` and `−12,30 €`.
 - **Accessibility:** every chart offers "Als Tabelle anzeigen". Series are distinguishable without color (dash patterns, labels).
 
@@ -290,9 +299,9 @@ Built on **shadcn/ui** source components (copied in, fully restyled to these tok
 
 ## 11. Theming implementation notes
 
-- Tokens live in `src/styles/tokens.css` as CSS variables under `:root` (dark default) and `[data-theme="light"]`, bridged to Tailwind v4 with `@theme inline`. Alpha variants come from `color-mix(in oklch, var(--x) N%, transparent)`.
+- Tokens live in `src/styles/tokens.css` as CSS variables under `:root` (light) and `[data-theme="dark"]`; with the theme set to *System*, `prefers-color-scheme: dark` applies the dark set. They are bridged to Tailwind v4 with `@theme inline`. Alpha variants come from `color-mix(in oklch, var(--x) N%, transparent)`.
 - `color-scheme` is set per theme for native controls and scrollbars.
 - **No theme flash:** a tiny inline script in `index.html` applies the stored theme before first paint. It's allowed by a CSP hash, not `unsafe-inline`.
-- Themes: *System* (default) · *Dunkel* · *Hell*.
+- Themes: *System* (default) · *Hell* · *Dunkel* (Settings → *Darstellung*, plus the quick toggle in the top bar).
 - **Reduced transparency:** `[data-transparency="reduced"]` (set from `prefers-reduced-transparency` or the setting) swaps every glass token for its solid equivalent.
-- **Windows polish (primary platform):** thin, token-colored scrollbars (`scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent`), focus rings visible with high-contrast themes (`forced-colors` media query), shortcut labels as `Strg`, and Mona Sans checked with ClearType at 13–15 px.
+- **Windows polish (primary platform, Brave/Chromium):** thin, token-colored scrollbars (`scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent`), focus rings visible with high-contrast themes (`forced-colors` media query), shortcut labels as `Strg`, and Mona Sans checked with ClearType at 13–15 px.
