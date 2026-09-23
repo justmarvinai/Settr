@@ -23,6 +23,7 @@ import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
   energyKindLabel,
+  htmlLang,
   languageCode,
   languageLabel,
   m,
@@ -32,6 +33,7 @@ import {
   typeLabel,
 } from '@/i18n';
 import { cardmarketFilters } from './cardmarket';
+import { useCjkFonts } from './cjk';
 import { pickLanguage } from './language';
 import { cardName, otherNames } from './names';
 
@@ -96,6 +98,8 @@ export function CardPage() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [navigate, next, prev, search.lang, setId]);
+
+  useCjkFonts(card ? Object.keys(card.name) : []);
 
   if (!card) return null; // the loader answers 404 first
   const lang = pickLanguage(search.lang, card.languages, settings);
@@ -162,13 +166,13 @@ export function CardPage() {
           <span className="type-label text-ink-muted uppercase">
             {[pickText(cardSet.name), m.catalog_card_number({ number })].join(' · ')}
           </span>
-          <h2 lang={name.lang} className="type-display-m m-0 break-words">
+          <h2 lang={htmlLang(name.lang)} className="type-display-m m-0 break-words">
             {name.text}
             {name.translated ? <TranslatedHint /> : null}
           </h2>
           <p className="type-body m-0 flex flex-wrap gap-x-3 gap-y-1 text-ink-muted">
             {otherNames(card, name.lang).map((other) => (
-              <span key={other.lang} lang={other.lang}>
+              <span key={other.lang} lang={htmlLang(other.lang)}>
                 {other.text}
                 {other.translated ? (
                   <span className="ml-1 type-label text-ink-subtle">

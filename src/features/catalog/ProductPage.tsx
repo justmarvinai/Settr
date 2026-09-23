@@ -11,6 +11,7 @@ import { pickText } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   exclusiveLabel,
+  htmlLang,
   languageCode,
   languageLabel,
   m,
@@ -19,6 +20,7 @@ import {
 } from '@/i18n';
 import { formatDate, formatMoney } from '@/i18n/format';
 import { cardmarketFilters } from './cardmarket';
+import { useCjkFonts } from './cjk';
 import { pickLanguage } from './language';
 import { ProductTile } from './ProductTile';
 
@@ -45,6 +47,7 @@ export function ProductPage() {
   const manifest = useManifest();
   const settings = useSettings();
   const product = byId.get(productId);
+  useCjkFonts(product ? Object.keys(product.name) : []);
   if (!product) return null; // the loader answers 404 first
 
   const lang = pickLanguage(search.lang, product.languages, settings);
@@ -62,7 +65,9 @@ export function ProductPage() {
   const { contents } = product;
   const releases = Object.entries(product.releaseDates ?? {});
   const msrp = Object.entries(product.msrp ?? {});
-  const otherNames = [...new Set(Object.values(product.name))].filter((n) => n !== name);
+  const otherNames = Object.entries(product.name).filter(
+    ([, n], i, all) => n !== name && all.findIndex(([, m2]) => m2 === n) === i,
+  );
   const imageNote =
     image && image.lang !== lang
       ? m.catalog_product_image_language({ language: languageLabel(image.lang) })
@@ -93,8 +98,10 @@ export function ProductPage() {
             <h2 className="type-display-m m-0 break-words">{name}</h2>
             {otherNames.length ? (
               <p className="type-body m-0 flex flex-wrap gap-x-3 text-ink-muted">
-                {otherNames.map((n) => (
-                  <span key={n}>{n}</span>
+                {otherNames.map(([l, n]) => (
+                  <span key={l} lang={htmlLang(l)}>
+                    {n}
+                  </span>
                 ))}
               </p>
             ) : null}

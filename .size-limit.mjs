@@ -6,6 +6,12 @@ const html = readFileSync('dist/index.html', 'utf8');
 const initial = [...html.matchAll(/(?:src|href)="\/(assets\/[^"]+\.js)"/g)].map(
   (match) => `dist/${match[1]}`,
 );
+const initialCss = [...html.matchAll(/href="\/(assets\/[^"]+\.css)"/g)].map(
+  (match) => `dist/${match[1]}`,
+);
+const lazyCss = readdirSync('dist/assets')
+  .map((file) => `dist/assets/${file}`)
+  .filter((file) => file.endsWith('.css') && !initialCss.includes(file));
 const lazy = readdirSync('dist/assets')
   .map((file) => `dist/assets/${file}`)
   .filter(
@@ -20,7 +26,15 @@ export default [
     gzip: true,
     limit: '80 kB',
   })),
-  { name: 'CSS', path: 'dist/assets/*.css', gzip: true, limit: '35 kB' },
+  { name: 'CSS (initial)', path: initialCss, gzip: true, limit: '35 kB' },
+  // On-demand CSS: one Noto family's @font-face rules (~105–124 unicode-range slices) when a page
+  // shows Japanese or Chinese names.
+  ...lazyCss.map((file) => ({
+    name: `Lazy CSS ${file.slice(12)}`,
+    path: file,
+    gzip: true,
+    limit: '45 kB',
+  })),
   {
     name: 'Fonts on first render (Mona Sans + Geist Mono, latin)',
     path: [

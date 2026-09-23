@@ -72,19 +72,21 @@ PriceEntry ──> PriceSeries(card|product, language, variant, grade)
 
 ## 4. Catalog schema (generated JSON)
 
-Files are produced by `scripts/catalog/*` (see `DATA_SOURCES.md` §6) into `public/catalog/v1/`:
+Files are produced by `scripts/catalog/*` (see `DATA_SOURCES.md` §6) into `public/catalog/v1/`. The Zod schemas in `src/domain/catalog/schema.ts` are normative: the pipeline validates before writing and the app validates what it loads.
 
 ```
 public/catalog/v1/
-  manifest.json          # CatalogManifest: version, sources, prints, set summaries (grouped by series), file hashes
-  sets/<setId>.json      # CatalogSet incl. all cards (filename = encoded setId); one lazily loaded chunk per set
-  sealed.json            # all CatalogProducts
-  search-index.json      # slim global search index: one small document per card and product across all sets (ADR-028)
-  cm-prices.json         # PriceGuideSnapshot: daily Cardmarket price-guide values for catalog products (PRC-09); committed or built at deploy time (ADR-029)
-  i18n/<lang>.json       # localized labels for rarities, types, variants, product types (if not inline)
+  manifest.json          # CatalogManifest: version, sources, imagesVerified, set summaries (with series), file hashes
+  sets/<mainSetId>.json  # CatalogSetFile: a main set with its subsets and energies; file name = set id with every
+                         #   character outside [A-Za-z0-9._-] replaced by "_" (intl_30th.json); one lazily loaded chunk per set
+  sealed.json            # SealedFile: all CatalogProducts
+  search-index.json      # SearchIndexFile: one small document per card and product across all sets (ADR-028)
+  cm-prices.json         # PriceGuideSnapshot: daily Cardmarket price-guide values (PRC-09); committed or built at deploy time (ADR-029)
 ```
 
-**Multi-set layout (ADR-028):** the manifest lists every set, so the Sets page can group them by series and print without loading any set file. Set chunks load only when a set is needed. The search index carries only the fields search needs (`ARCHITECTURE.md` §7), so global search never loads every chunk. A new set adds one chunk plus manifest and index entries.
+Labels for rarities, types, sections and product types live in the app's message catalog (`src/i18n/labels.ts`), not in the catalog. The app fetches hashed files with `?h=<sha256 prefix>` so the service worker can cache them for good (`ARCHITECTURE.md` §8.1). The JSON is written with one array element per line, so a catalog PR shows one line per changed card.
+
+**Multi-set layout (ADR-028):** the manifest lists every set, so the Sets page can group them by series and print without loading any set file. Set chunks load only when a set is needed; a subset (e.g. `intl:30th-c`) lives in its parent's chunk. The search index carries only the fields search needs (`ARCHITECTURE.md` §7), so global search never loads every chunk. A new set adds one chunk plus manifest and index entries.
 
 ### 4.1 Types
 
@@ -94,13 +96,22 @@ type CardLanguage = 'de' | 'en' | 'ja' | 'zh-tw' | 'zh-cn' | 'fr' | 'it' | 'es' 
 type LocalizedText = Partial<Record<CardLanguage, string>>; // at least one key present
 type ISODate = string; // 'YYYY-MM-DD'
 
+interface FileRef { path: string; sha256: string; bytes: number }
+
 interface CatalogManifest {
   schemaVersion: 1;
-  catalogVersion: string;        // e.g. '2026.09.23.1'; bumped on every regeneration
+  catalogVersion: string;        // 'YYYY.MM.DD.N'; bumped when the content changes, reused when it doesn't
   generatedAt: string;           // ISO timestamp
-  sources: { name: string; fetchedAt: string; license: string; url: string }[];
-  sets: CatalogSetSummary[];     // lightweight list of every set for the Sets page (grouped by series) & search
-  files: { sets: Record<string, { path: string; sha256: string }>; sealed: { path: string; sha256: string }; search: { path: string; sha256: string } };
+  sources: { name: string; version: string /* pinned commit */; license: string; url: string }[];
+  imagesVerified: boolean;       // false when built without network: picture URLs are unchecked candidates
+  sets: CatalogSetSummary[];     // every set, main sets and subsets, for the Sets page and search
+  files: { sets: Record<string /* main set id */, FileRef>; sealed: FileRef; search: FileRef };
+}
+
+interface CatalogImage {
+  url: string;                   // base URL; the app adds size and format (catalog/images.ts)
+  lang: CardLanguage;            // the language the picture actually shows
+  counterpart?: boolean;         // true: the same artwork from the other print (e.g. EN picture for a JP card)
 }
 
 interface CatalogSetSummary {
@@ -109,31 +120,41 @@ interface CatalogSetSummary {
   name: LocalizedText; code?: string; languages: CardLanguage[];
   releaseDates: Partial<Record<CardLanguage, ISODate>>;
   counts: { official: number; total: number };
-  logo?: Partial<Record<CardLanguage, string>>; symbol?: string;
+  sectionNames?: Partial<Record<CardSection, LocalizedText>>; // sections that aren't a set of their own (M6a 136–165: "Klassische Sammlung")
+  otherPrint?: string;           // the same expansion in the other print (intl:30th ↔ asia:M6a), from the cards' counterparts
+  cover?: { cardId: string; images: Partial<Record<CardLanguage, CatalogImage>> }; // signature card for set tiles
+  logo?: Partial<Record<CardLanguage, string>>; symbol?: string; // TCGdex base URLs (+ '.webp'), only when verified
 }
 
-interface CatalogSet extends CatalogSetSummary {
-  cards: CatalogCard[];
-  variantsLegend: VariantDef[];  // all variants used in this set
+interface CatalogSetFile {
+  schemaVersion: 1;
+  set: CatalogSetSummary;        // the main set
+  subsets: CatalogSetSummary[];  // e.g. intl:30th-c
+  cards: CatalogCard[];          // main set, subsets and energies, in set order (section, then sort)
+  variantsLegend: VariantDef[];  // all variants used in this chunk
 }
+
+type CardSection = 'main' | 'secret' | 'subset' | 'energy' | 'promo'; // display order
 
 interface CatalogCard {
-  id: string; setId: string;
-  localId: string;               // source local ID, e.g. '025', 'R'
-  printedNumber: string;         // as printed, e.g. '025/128', '4/102' (Classic Collection), 'R'
-  section: 'main' | 'secret' | 'subset' | 'energy' | 'promo';
-  sort: number;                  // numeric sort key (handles '025', 'TG01', 'R', …)
+  id: string; setId: string;     // setId may be a subset (intl:30th-c); energies carry their main set (intl:30th)
+  localId: string;               // source local ID, e.g. '025', 'R', 'GRA'
+  printedNumber: string;         // as printed, e.g. '025/128', '4/102' (Classic Collection); '' when nothing is printed
+  section: CardSection;
+  sort: number;                  // numeric sort key within the section (R/G/B = 1000+, energies = 2000+)
   name: LocalizedText;
-  nameSource?: Partial<Record<CardLanguage, 'official' | 'curated' | 'derived-pokeapi' | 'derived-crossprint'>>; // derived names are labeled "übersetzt"
+  nameSource?: Partial<Record<CardLanguage,
+    'official' | 'curated' | 'derived-pokeapi' | 'derived-crossprint' | 'derived-script'>>; // all but official are labeled "übersetzt"
   category: 'pokemon' | 'trainer' | 'energy';
-  rarity?: string;               // RarityId (controlled vocabulary, labels in i18n)
-  printedRarity?: Partial<Record<CardLanguage, string | null>>; // e.g. SC prints C/R marks that JP omits; null = no mark printed
+  rarity?: string;               // RarityId (controlled vocabulary, labels in the app)
+  printedRarity?: Partial<Record<CardLanguage, string | null>>; // JP marks (RR, AR, SAR, FUR); null = no mark printed
   types?: string[];              // EnergyType ids
-  hp?: number; stage?: string; dexIds?: number[];
+  hp?: number; stage?: string; trainerType?: string; energyKind?: 'basic' | 'special'; dexIds?: number[];
   illustrator?: string;
-  variants: CardVariant[];       // which physical variants exist (1 for every 30th Celebration card)
+  variants: CardVariant[];       // which physical variants exist (1 for every 30th Celebration card: 'std')
   languages: CardLanguage[];     // usually = set.languages
-  images: Partial<Record<CardLanguage, string>>; // base URL; quality/format appended at runtime (only verified URLs)
+  images: Partial<Record<CardLanguage, CatalogImage>>; // best verified picture per card language (CAT-07 chain)
+  counterparts?: string[];       // card ids with the same artwork in the other print
   refs?: { tcgdex?: string };    // upstream card ID
 }
 
@@ -141,8 +162,10 @@ interface CardVariant {
   id: VariantId;
   languages?: CardLanguage[];    // restrict when a variant exists only in some languages
   refs?: {
-    cardmarket?: { default?: number; byLanguage?: Partial<Record<CardLanguage, number>> }; // JP (exp. 6602) and SC (exp. 6603) are separate Cardmarket products; TC copies use the JP product (R2.3)
-    tcgplayer?: number; cardtrader?: number;
+    // intl: `default` (one product for every language). asia: JP (exp. 6602) and SC (exp. 6603) are
+    // separate products, sorted by expansion and linked through idMetacard; TC copies use the JP product (R2.3).
+    cardmarket?: { default?: number; byLanguage?: Partial<Record<CardLanguage, number>> };
+    tcgplayer?: number;
   };
 }
 
@@ -150,23 +173,32 @@ interface VariantDef { id: VariantId; kind: 'finish' | 'pattern' | 'stamp' | 'ed
 
 type ProductType =
   | 'booster-pack' | 'sleeved-booster' | 'booster-display' | 'half-display'
-  | 'etb' | 'pc-etb' | 'booster-bundle' | 'blister-1' | 'blister-3' | 'checklane-blister'
-  | 'collection' | 'premium-collection' | 'ultra-premium-collection' | 'special-collection'
+  | 'etb' | 'pc-etb' | 'booster-bundle' | 'blister-1' | 'blister-2' | 'blister-3' | 'checklane-blister'
+  | 'collection' | 'premium-collection' | 'ultra-premium-collection' | 'special-collection' | 'figure-collection'
   | 'tin' | 'mini-tin' | 'build-and-battle' | 'deck' | 'binder-collection' | 'poster-collection'
-  | 'jp-box' | 'jp-special-set' | 'other';
+  | 'sticker-collection' | 'ex-box' | 'jp-box' | 'jp-special-set' | 'card-set' | 'coin-set' | 'other';
 
 interface CatalogProduct {
   id: string; print: Print; setIds: string[];
   type: ProductType;
+  family?: string;               // design variants of one product line share it, e.g. the ten mini tins
   name: LocalizedText;
   languages: CardLanguage[];
   releaseDates?: Partial<Record<CardLanguage, ISODate>>;
   contents?: { packs?: number; cardsPerPack?: number; promos?: string[]; description?: LocalizedText };
   msrp?: Partial<Record<CardLanguage, Money>>;   // "UVP", where known
   ean?: Partial<Record<CardLanguage, string>>;   // for barcode scanning (I-10)
-  images?: Partial<Record<CardLanguage, string>>;
+  images?: Partial<Record<CardLanguage, CatalogImage>>; // TCGplayer pictures (EN packaging for intl, JP for asia)
   exclusive?: 'pokemon-center' | 'retailer' | 'event' | 'lottery' | null;
   refs?: { cardmarket?: number; tcgplayer?: number };
+}
+
+interface SearchDoc {             // search-index.json (ARCHITECTURE.md §7)
+  id: string; kind: 'card' | 'sealed'; setId: string; print: Print;
+  name: string;                  // display name (German first)
+  names: string[];               // every name and script, plus PokéAPI species aliases
+  number?: string; sort?: number; rarity?: string; types?: string[]; category?: string;
+  illustrator?: string; languages: CardLanguage[]; image?: CatalogImage;
 }
 
 // PRC-09: produced daily from Cardmarket's public price guide, filtered to catalog products (committed or built at deploy time, ADR-029)

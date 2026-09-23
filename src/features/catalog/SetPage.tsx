@@ -32,6 +32,7 @@ import {
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
+  htmlLang,
   languageCode,
   m,
   printLabel,
@@ -40,6 +41,7 @@ import {
   typeLabel,
 } from '@/i18n';
 import { formatCount } from '@/i18n/format';
+import { useCjkFonts } from './cjk';
 import { setReleaseText } from './dates';
 import { pickLanguage, visibleLanguages } from './language';
 import { cardName, type NameMode } from './names';
@@ -113,6 +115,7 @@ export function SetPage() {
   const names: NameMode = search.names ?? 'german';
   const sort: SetSort = search.sort ?? 'number';
   const view = search.view ?? 'grid';
+  useCjkFonts(names === 'card' ? [lang] : []);
   const update = (patch: Partial<SetSearch>) =>
     void navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
@@ -470,7 +473,7 @@ function CardList({
                     to="/catalog/sets/$setId/cards/$cardId"
                     params={{ setId, cardId: card.id }}
                     search={{ lang }}
-                    lang={name.lang}
+                    lang={htmlLang(name.lang)}
                     className="type-ui text-[14px] text-ink hover:text-accent-text"
                   >
                     {name.text}

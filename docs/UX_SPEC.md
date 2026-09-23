@@ -48,7 +48,7 @@ Route slugs are English and language-neutral. Labels are localized.
 /catalog                            Katalog › Sets      (all supported sets, grouped by series & print)
 /catalog/sets/$setId                Set detail          (tabs: Karten | Sealed | Statistik)
 /catalog/cards?…                    Card search         (full catalog, filters in URL search params)
-/catalog/cards/$cardId              Card detail
+/catalog/sets/$setId/cards/$cardId  Card detail         (the set gives prev/next and the chunk to load; ids keep their colons)
 /catalog/sealed?…                   Sealed search
 /catalog/sealed/$productId          Sealed product detail
 /prices                             Preise hub          (stale items, recent entries, start session)
@@ -65,6 +65,7 @@ Route slugs are English and language-neutral. Labels are localized.
 ```
 
 - **All filter, sort and view state lives in typed URL search params** (TanStack Router). Views are therefore shareable and bookmarkable, and the back button behaves as expected.
+- **Catalog IDs in URLs keep their colons** (`/catalog/sets/intl:30th/cards/intl:30th:150`; the router allows `:` in path params). A card page sits under its set, because the set chunk holds the card and defines prev/next; a subset URL (`/catalog/sets/intl:30th-c`) opens the main set filtered to that section. The tile size (S/M/L) is a per-device preference, not part of the URL.
 - Detail pages open as **full pages**. Add/edit flows open as **sheets** (right side panel on desktop, bottom sheet on mobile) so context is never lost.
 
 ---

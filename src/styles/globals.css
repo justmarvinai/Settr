@@ -163,6 +163,26 @@
   :lang(de) {
     hyphens: manual;
   }
+  /*
+   * Japanese and Chinese text (DESIGN_SYSTEM.md §4): Latin parts ("ex") stay in Mona Sans, then the
+   * system CJK fonts, then self-hosted Noto (its @font-face rules load with the catalog). The lang
+   * tag picks the glyph forms, so every CJK string carries ja, zh-Hant or zh-Hans.
+   */
+  :lang(ja) {
+    font-family:
+      'Mona Sans Variable', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI',
+      'Yu Gothic', Meiryo, 'Noto Sans JP Variable', sans-serif;
+  }
+  :lang(zh-Hant) {
+    font-family:
+      'Mona Sans Variable', 'PingFang TC', 'Microsoft JhengHei UI', 'Microsoft JhengHei',
+      'Noto Sans TC Variable', sans-serif;
+  }
+  :lang(zh-Hans) {
+    font-family:
+      'Mona Sans Variable', 'PingFang SC', 'Microsoft YaHei UI', 'Microsoft YaHei',
+      'Noto Sans SC Variable', sans-serif;
+  }
 }
 
 /* Privacy mode (PRT-05): blurs every money value */

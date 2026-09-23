@@ -84,6 +84,9 @@ export default defineConfig({
             'assets/*latin-standard-normal*.woff2',
             'assets/geist-mono-latin-wght-normal*.woff2',
           ],
+          // Noto CJK @font-face rules load on demand (DESIGN_SYSTEM.md §4); precaching them would make
+          // every install download ~450 KB for languages it may never show.
+          globIgnores: ['**/assets/ja-*.css', '**/assets/zh-cn-*.css', '**/assets/zh-tw-*.css'],
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/catalog\/v1\//, /^\/img\//],
           cleanupOutdatedCaches: true,
@@ -101,6 +104,19 @@ export default defineConfig({
               options: {
                 cacheName: 'catalog-files',
                 expiration: { maxEntries: 60 },
+                cacheableResponse: { statuses: [200] },
+              },
+            },
+            {
+              // CJK font rules and slices load on demand, so they're cached when first used.
+              urlPattern: ({ url }) =>
+                url.origin === self.location.origin &&
+                url.pathname.startsWith('/assets/') &&
+                (url.pathname.endsWith('.woff2') || url.pathname.endsWith('.css')),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'fonts',
+                expiration: { maxEntries: 400 },
                 cacheableResponse: { statuses: [200] },
               },
             },
@@ -127,6 +143,8 @@ export default defineConfig({
   },
   build: {
     target: 'es2023',
+    // Fonts stay files: the CSP allows font-src 'self' only, not data: URIs (small CJK slices).
+    assetsInlineLimit: (file) => (file.endsWith('.woff2') ? false : undefined),
   },
   // Same-origin proxy for TCGplayer's sealed pictures, like the rewrite in vercel.json.
   server: { proxy: { '/img/tcgp': tcgplayerProxy } },

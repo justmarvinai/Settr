@@ -35,6 +35,13 @@ export const languageLabel = /* @__PURE__ */ lookup(LANGUAGES);
 /** `DE`, `ZH-TW`: compact language chips. */
 export const languageCode = (lang: string): string => lang.toUpperCase();
 
+/**
+ * The HTML lang tag for text in a card language: Chinese by script (zh-Hant / zh-Hans), so the right
+ * glyph forms and fonts apply (DESIGN_SYSTEM.md §4).
+ */
+export const htmlLang = (lang: string): string =>
+  lang === 'zh-tw' ? 'zh-Hant' : lang === 'zh-cn' ? 'zh-Hans' : lang;
+
 export const printLabel = /* @__PURE__ */ lookup<Print>({ intl: m.print_intl, asia: m.print_asia });
 
 export const rarityLabel = /* @__PURE__ */ lookup<RarityId>({

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { CatalogImage } from '@/domain/catalog';
+import { htmlLang } from '@/i18n';
 import { CardImage } from './CardImage';
 
 /**
@@ -39,7 +40,7 @@ export function CardTile({
         {number ? (
           <span className="shrink-0 font-mono text-[12px] leading-4 text-ink-muted">{number}</span>
         ) : null}
-        <span lang={nameLang} className="min-w-0 truncate type-small text-ink">
+        <span lang={htmlLang(nameLang)} className="min-w-0 truncate type-small text-ink">
           {name}
         </span>
         {rarity ? (

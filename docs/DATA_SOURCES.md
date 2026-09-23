@@ -14,7 +14,7 @@
 | **Card data, DE/EN** | **TCGdex** (compiled from the `tcgdex/cards-database` repo at build time) | TCGdex live API (CORS `*`) for ad-hoc checks | pokemontcg.io (English-only, **shutting down 1 Mar 2027**) |
 | **Card data, JA** | TCGdex (`M6a` complete: 176 cards) | `type-null/PTCG-database` for gaps | — |
 | **Card data, ZH-CN** (focus, Q3.2) | **The M6a card list** (SC mirrors it: 176 cards; numbering to spot-check against Cardmarket expansion 6603, §10). **Chinese names:** Pokémon cards get names **derived** from PokéAPI species names (`zh-Hans`) + suffix (`ex` …), labeled "übersetzt". The few Trainer/Energy cards are curated by hand. **Images:** the JP (`M6a`) artwork where one exists | Later: TCGdex, or another source that allows redistribution, once it has SC data | TCGdex zh-cn (empty shells or copies of Traditional text) · `duanxr/PTCG-CHS-Datasets` (its terms need the official owner's consent, R2.8; §4) |
-| **Card data, ZH-TW** (cards + sealed, R2.3) | JP card list (numbering mirrors M6a) + Traditional Chinese names from `type-null/PTCG-database` (`data_tc`, covers M6a; data licensing to verify) | Names derived from PokéAPI species names (`zh-Hant`), labeled "übersetzt"; Trainer names curated by hand (ADR-026) | — |
+| **Card data, ZH-TW** (cards + sealed, R2.3) | JP card list (numbering mirrors M6a) + Traditional Chinese names from `type-null/PTCG-database` (`data_tc`, covers M6a; MIT, verified in M2) | Names derived from PokéAPI species names (`zh-Hant`), labeled "übersetzt"; Trainer names curated by hand (ADR-026) | — |
 | **Card images** | TCGdex assets CDN (webp, 245×337 low / 600×825 high; **CORS `*` on 200**) | See §5: official-site URLs (JP/TW), user photos, placeholder | Cardmarket's image CDN |
 | **Sealed products** | **Curated by us**: skeleton from **Cardmarket's public product catalog file** (IDs, names, categories), enriched by hand (DE names, contents, dates, UVP) | TCGCSV (TCGplayer EN/JP catalog) for product images and names; Bulbapedia for details | Paid APIs (Scrydex $29+/month) |
 | **Cardmarket linking** | `idProduct` per card variant from TCGdex (`30th` 161/161, `30th-c` 30/30, `M6a` 173/176) and per sealed product from Cardmarket's nonsingles file | Search URL | The official Cardmarket API (closed to new applicants) |
@@ -38,8 +38,10 @@
 - Every 30th card is **foil**, but TCGdex marks many as `normal`. We override to a single `std` variant per card.
 - `30th-c` local IDs 001–030 are TCGdex's own order. The **printed numbers are the original collector numbers** (e.g. Charizard "4/102"), and Limitless lists them as CC1–CC30. Curate `printedNumber` explicitly.
 - The **RGB Mews** (R/G/B) have no anniversary stamp and their own rarity. pokemontcg.io wrongly labels them "Common".
-- JP rarity marks: only RR/AR/SAR/FUR cards print a symbol. The other 123 have none. Keep TCGdex's rarity but display "—" when nothing is printed.
-- The JP Classic Collection lists "サーナイトEX" at 156, while English databases list "M Gardevoir-EX". Verify against the official list **[U]**.
+- JP rarity marks: only RR/AR/SAR/FUR cards print a symbol. The other 123 have none. Keep TCGdex's rarity but display "—" when nothing is printed. Simplified and Traditional Chinese marks aren't verified, so they stay empty (no source yet).
+- The JP Classic Collection lists "サーナイトEX" at 156, while English databases list "M Gardevoir-EX". **Resolved in M2:** the Taiwanese list (M沙奈朵EX) and the English print (Primal Clash 106) show the Mega form, so the curated JA name is "MサーナイトEX" (`data/curated/cards/asia-M6a.yaml`).
+- The **Classic Collection's printed numbers** are the originals (4/102, 58/102, …) in TCGdex's order 001–030; they're curated in `data/curated/cards/intl-30th-c.yaml` with a sort key that follows the reprint order.
+- **Cardmarket (found by the first CI sync, M2):** TCGdex's M6a ids point at the Simplified Chinese products; the Japanese ids come from the shared metacard (171 of 176). Open: Sylveon ex 059/130 (two SC products share a metacard with one JP product) and the RGB Mews, whose ids are curated with an inferred R, G, B order (to verify).
 
 ---
 
@@ -105,9 +107,9 @@
 |---|---|---|
 | **Cardmarket product catalog** (`https://downloads.s3.cardmarket.com/productCatalog/productList/products_singles_6.json` 13.6 MB; `…/products_nonsingles_6.json` 0.95 MB) | Sealed catalog skeleton: `idProduct`, English name, `categoryName` (Booster, Display, Elite Trainer Box, Box Set, Blisters, Tins, Theme Decks, …), `idExpansion`, `idMetacard` (links the same card across prints!), `dateAdded` | Public, no auth, updated daily (≈ 02:48 CEST). **No CORS**, so build/CI only. No images, numbers or languages. German sealed = international product + language filter |
 | **Cardmarket price guide** (`…/priceGuide/price_guide_6.json`, 15.5 MB) | **Suggestions only** (Q6.6 → PRC-09): a daily snapshot limited to catalog products, never saved without confirmation (§8.3). Prices stay manual by design | Public, daily, no CORS. The snapshot isn't committed while the repository is public (ADR-029) |
-| **type-null/PTCG-database** (GitHub) | JP gaps and the primary source of **Traditional Chinese** names (`data_tc`, up to M6a; R2.3, ADR-026) | MIT code. Data scraped from official sites, so **its data licensing is to verify** before use. **Its official image URLs are not used** (Q4.6) |
+| **type-null/PTCG-database** (GitHub) | JP gaps and the primary source of **Traditional Chinese** names (`data_tc`, up to M6a; R2.3, ADR-026) | MIT; its README states the repository content is MIT too (verified in M2), credited in Einstellungen › Über. **Its official image URLs are not used** (Q4.6) |
 | **duanxr/PTCG-CHS-Datasets** (GitHub) | **Not used** (R2.8, revised). It has 232 Simplified Chinese products incl. `30thC` (176 cards) with names and images, but nothing from it is committed or shipped | **Non-commercial, no redistribution.** Its terms reserve consent for redistribution to **the official owner or an authorized entity** (they point to Pokémon Shanghai), not the maintainer. A request to the maintainer can't grant it, so none is sent |
-| **TCGCSV** (`tcgcsv.com`; TCGplayer categories 3 = EN, 85 = JP) | Product names and **images of EN/JP sealed products** (`tcgplayer-cdn…/product/{id}_in_1000x1000.jpg`), matched to Cardmarket products by name | Free, no key, needs its own User-Agent, max 10k requests/day, daily updates. Build step only |
+| **TCGCSV** (`tcgcsv.com`; TCGplayer categories 3 = EN, 85 = JP) | Product names and **images of EN/JP sealed products** (`tcgplayer-cdn…/product/{id}_400w.jpg` and `…_in_1000x1000.jpg`). The CI report lists the sealed products of the matching groups (e.g. *ME: 30th Celebration* 3/24722, *M6a: MEGA Expansion 30th Celebration* 85/24721); their ids are curated as `refs.tcgplayer` | Free, no key, needs its own User-Agent, max 10k requests/day, daily updates. Build step only |
 | **PokéAPI** (CSV in its GitHub repo) | Pokémon species names in de/ja/zh-Hant/zh-Hans/ko. Used for (1) **search aliases** ("Glurak" ⇄ "Charizard" ⇄ "リザードン" ⇄ "喷火龙"), (2) **derived Simplified Chinese names** (`zh-Hans`) for M6a Pokémon cards, plus derived Traditional Chinese names (`zh-Hant`) as the fallback for TC (ADR-026), and (3) **derived German names** for Asian-print cards ("ピカチュウex" → "Pikachu-ex"). Derived names are flagged in `nameSource` | Free, open |
 | **Bulbapedia / Serebii / PokeBeach / official galleries** | Manual research for sealed contents, release waves, promos | Read-only research; no scraping into the product |
 | **Limitless TCG** | Printed Classic Collection numbers (CC1–CC30), and as a reference | No API; image CDN terms unclear, so not used |
@@ -130,7 +132,7 @@
 
 Decision (Q4.6): **no official publisher images**. The chain is TCGdex → cross-print artwork → own photo (later, I-12) → placeholder.
 
-**Sealed product images:** TCGplayer product images via TCGCSV for EN/JP products where matched. That CDN's CORS behavior is unknown, so they're served through the same-origin image proxy (ADR-013 option B). Otherwise a designed product-type placeholder is shown (DE, TC and SC packaging has no free image source). Own photos come later (I-12).
+**Sealed product images:** TCGplayer product images via TCGCSV for EN/JP products where matched (35 of 52 products in M2; the DE products show the English packaging, labeled as such). That CDN's CORS behavior is unknown, so they're served through the same-origin image proxy (ADR-013 option B). Otherwise a designed product-type placeholder is shown (DE, TC and SC packaging has no free image source). Own photos come later (I-12).
 
 ---
 
@@ -152,7 +154,7 @@ Decision (Q4.6): **no official publisher images**. The chain is TCGdex → cross
 1. **Fetch:** check out the pinned TCGdex, PTCG-database and PokéAPI commits; in CI (`--network`) also download the Cardmarket files (and TCGCSV groups when sealed images are needed).
 2. **Load:** import the configured sets' card files from the TCGdex checkout.
 3. **Normalize** into Settr's schema (`DATA_MODEL.md` §4): Settr IDs, `print`, `section`, `sort`, `printedNumber`, controlled vocabularies (English values → Settr IDs), variants (`variantId` → Settr `VariantId`, with overrides), and per-variant Cardmarket IDs.
-4. **Overlay** curated data: sealed products (DE/EN/JP/TC/SC), Chinese names (TC from `type-null/PTCG-database` or derived from PokéAPI `zh-Hant`; SC derived from PokéAPI `zh-Hans`; Trainer/Energy names curated), printed numbers (Classic Collection), SC printed rarity marks, promos, rarity-display rules, name fixes, and Cardmarket ID corrections.
+4. **Overlay** curated data: sealed products (DE/EN/JP/TC/SC), Chinese names (TC from `type-null/PTCG-database`, else the TC name of a card with the same JA name; SC converted from TC with OpenCC, labeled *übersetzt*; DE/EN for Asian cards from the international counterpart, PokéAPI or curated), printed numbers (Classic Collection), counterparts, promos, name fixes, and Cardmarket ID corrections (`cardmarket` per language).
    **Per-language Cardmarket IDs:** TCGdex keeps one Cardmarket ID per `asia` card, and for `M6a` it points at the **Simplified Chinese** product. The product's expansion decides the language: a JP product (expansion 6602) goes into `byLanguage.ja`, an SC product (6603) into `byLanguage['zh-cn']`, and the other language is found through the shared `idMetacard` (several prints of one card pair in number order, only when both sides have the same count). Traditional Chinese copies use the JP product with Cardmarket's T-Chinese language filter. Offline builds keep the IDs of the last CI build.
 5. **Resolve images:** apply the §5 chain. In CI, keep only URLs that pass a GET check (the same for set logos and symbols). Offline builds keep the pictures of the last CI build; cards it didn't know get their exact-language URL, unverified (`imagesVerified: false` in the manifest).
 6. **Validate:** Zod schemas, counts vs official counts (e.g. `30th` = 161, `30th-c` = 30, `M6a` = 176), unique IDs, every sealed product has ≥ 1 set, and every `idProduct` exists in the Cardmarket file.
@@ -175,9 +177,13 @@ Decision (Q4.6): **no official publisher images**. The chain is TCGdex → cross
 ```
 
 ```yaml
-# data/curated/cards/30th-c-printed-numbers.yaml   (Classic Collection)
-intl:30th-c:001: { printedNumber: "4/102", classicIndex: 1 }   # Charizard (Base Set)
+# data/curated/cards/intl-30th-c.yaml   (Classic Collection: printed number and reprint order)
+setId: intl:30th-c
+cards:
+  "001": { printedNumber: 4/102, sort: 2 }   # Charizard (Base Set)
 ```
+
+Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow collections split on commas.
 
 ### 6.4 Automation
 
@@ -314,11 +320,11 @@ Unmatched rows go to a resolution screen.
 
 ## 10. Open verification tasks (M0/M1, needs an unrestricted network)
 
-- [ ] GET-check TCGdex images: `https://assets.tcgdex.net/de/me/30th/001/high.webp`, `…/en/me/30th/001/high.webp`, `…/de/me/30th-c/001/high.webp`, `…/ja/M/M6a/001/high.webp`, plus CORS headers.
+- [x] GET-check TCGdex images (CI, M2): DE and EN pictures exist for 158 of 199 international cards; none yet for the Classic Collection, the energies or M6a (JA/ZH copies show the international artwork, marked). Checked again every week.
 - [x] Cardmarket deep-link format: `Products?idProduct=…` redirects correctly, `language=3` = German and `sellerCountry=7` = Germany. Verified by Marvin on 2026-09-23 with Pikachu ex (30C 150), §8.1.
 - [x] `minCondition=2` filters to Near Mint or better (verified by Marvin, R3.5).
 - [ ] Confirm the price-guide field semantics (`low` scope, `-holo` = reverse holo for Pokémon, and whether JP product values include Traditional Chinese offers).
 - [ ] Confirm German product names (◐) from pokemon.de product galleries.
 - [ ] Simplified Chinese: verify that the SC card list = M6a numbering (spot-check 20 cards against Cardmarket expansion 6603). No permission request is sent, because `duanxr/PTCG-CHS-Datasets` isn't used (R2.8).
-- [ ] Traditional Chinese: check the data licensing of `type-null/PTCG-database` (`data_tc`) before using its names. If it doesn't allow reuse, ship the PokéAPI `zh-Hant` fallback (ADR-026).
+- [x] Traditional Chinese: `type-null/PTCG-database` is MIT, content included (M2).
 - [ ] Spot-check 20 random Cardmarket IDs from TCGdex for the 30th sets (issue #2325).
