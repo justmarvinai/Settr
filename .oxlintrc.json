@@ -203,6 +203,12 @@
         "typescript/no-unsafe-type-assertion": "off",
         "eslint/no-console": "off"
       }
+    },
+    {
+      "files": ["src/workers/**", "src/catalog/search/client.ts"],
+      "rules": {
+        "unicorn/require-post-message-target-origin": "off"
+      }
     }
   ]
 }

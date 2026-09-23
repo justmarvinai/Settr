@@ -18,12 +18,14 @@ export {
   useSealed,
 } from './queries';
 export {
+  cardsSearchSchema,
   cardSearchSchema,
   productSearchSchema,
   sealedSearchSchema,
   SET_SORTS,
   setSearchSchema,
   setsSearchSchema,
+  type CardsSearch,
   type SealedSearch,
   type SetSearch,
   type SetSort,

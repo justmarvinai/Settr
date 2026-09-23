@@ -33,6 +33,29 @@
   scale: 0.97;
 }
 
+/* Search palette: top-aligned so results grow downwards (UX_SPEC.md §7). */
+.ui-palette {
+  position: fixed;
+  top: max(12vh, 24px);
+  left: 50%;
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  width: min(640px, calc(100vw - 24px));
+  max-height: calc(100dvh - max(12vh, 24px) - 24px);
+  overflow: hidden;
+  translate: -50% 0;
+  border-radius: var(--radius-sheet);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    scale var(--dur-base) var(--ease-out);
+}
+.ui-palette[data-starting-style],
+.ui-palette[data-ending-style] {
+  opacity: 0;
+  scale: 0.98;
+}
+
 .ui-sheet {
   position: fixed;
   z-index: 61;

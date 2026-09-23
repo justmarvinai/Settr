@@ -29,6 +29,16 @@ export const setSearchSchema = z.object({
 });
 export type SetSearch = z.infer<typeof setSearchSchema>;
 
+/** Katalog › Karten: free text (with the power-user syntax, ARCHITECTURE.md §7) and filters. */
+export const cardsSearchSchema = z.object({
+  q: optional(z.string().max(120)),
+  print: optional(z.enum(['intl', 'asia'])),
+  lang: optional(z.enum(CARD_LANGUAGES)),
+  rarity: optional(z.string().max(40)),
+  type: optional(z.string().max(40)),
+});
+export type CardsSearch = z.infer<typeof cardsSearchSchema>;
+
 export const cardSearchSchema = z.object({
   lang: optional(z.enum(CARD_LANGUAGES)),
 });
@@ -37,6 +47,8 @@ export const sealedSearchSchema = z.object({
   print: optional(z.enum(['intl', 'asia'])),
   lang: optional(z.enum(CARD_LANGUAGES)),
   type: optional(z.string().max(40)),
+  /** Release window (CAT-06): already out, or announced. */
+  when: optional(z.enum(['released', 'upcoming'])),
   q: optional(z.string().max(80)),
 });
 export type SealedSearch = z.infer<typeof sealedSearchSchema>;

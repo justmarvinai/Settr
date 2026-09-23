@@ -40,12 +40,18 @@ export function SealedPage() {
     (a, b) => typeRank(a) - typeRank(b),
   );
   const q = fold(query);
+  const today = new Date().toISOString().slice(0, 10);
+  const released = (p: CatalogProduct) => {
+    const date = releaseOf(p);
+    return date !== '' && date <= today;
+  };
   const shown = products
     .filter(
       (p) =>
         (print === 'all' || p.print === print) &&
         (!search.lang || p.languages.includes(search.lang)) &&
         (!search.type || p.type === search.type) &&
+        (!search.when || (search.when === 'released') === released(p)) &&
         (!q || Object.values(p.name).some((name) => fold(name).includes(q))),
     )
     .toSorted(
@@ -93,6 +99,17 @@ export function SealedPage() {
           options={[
             { value: '', label: m.catalog_filter_language_all() },
             ...languages.map((l) => ({ value: l, label: languageLabel(l) })),
+          ]}
+        />
+        <Select<'' | 'released' | 'upcoming'>
+          label={m.catalog_filter_release()}
+          placeholder={m.catalog_filter_release()}
+          value={search.when ?? ''}
+          onValueChange={(next) => update({ when: next || undefined })}
+          options={[
+            { value: '', label: m.catalog_filter_release_all() },
+            { value: 'released', label: m.catalog_filter_release_out() },
+            { value: 'upcoming', label: m.catalog_filter_release_upcoming() },
           ]}
         />
         <Select<string>

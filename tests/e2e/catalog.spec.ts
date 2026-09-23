@@ -102,3 +102,38 @@ test('unknown ids show the not-found page', async ({ page }) => {
   await page.goto('/catalog/sets/intl:30th/cards/intl:30th:999');
   await expect(page.getByRole('heading', { name: 'Seite nicht gefunden' })).toBeVisible();
 });
+
+test('command palette finds cards in any script and opens them', async ({ page, isMobile }) => {
+  await page.goto('/');
+  await expect(pageTitle(page)).toHaveText('Übersicht'); // the shortcut listener is attached
+  if (isMobile) await page.getByRole('button', { name: 'Suchen' }).click();
+  else await page.keyboard.press('Control+k');
+  const input = page.getByRole('combobox', { name: 'Suche' });
+  await input.fill('glurak');
+  await expect(page.getByRole('option', { name: /Glurak.*4\/102/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Glurak-Figuren-Geschenkbox/ })).toBeVisible();
+  await input.fill('ピカチュウ');
+  await expect(page.getByRole('option').first()).toContainText('Pikachu');
+  await input.press('Enter');
+  await expect(page).toHaveURL(/\/catalog\/sets\/[^/]+\/cards\/[^/]+$/);
+  await expect(page.getByRole('heading', { name: /Pikachu/, level: 2 })).toBeVisible();
+});
+
+test('card search: numbers, power-user filters and the URL', async ({ page }) => {
+  await page.goto('/catalog/cards');
+  await page.getByRole('button', { name: '#150' }).click();
+  await expect(page).toHaveURL(/q=%23150/);
+  await expect(page.getByText('2 Karten', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^150\/128, Pikachu-ex/ })).toBeVisible();
+
+  await page.getByRole('searchbox', { name: 'Karten suchen' }).fill('rarity:sir set:30c');
+  await expect(page.getByText('10 Karten', { exact: true })).toBeVisible();
+
+  await page.getByRole('searchbox', { name: 'Karten suchen' }).fill('');
+  await page
+    .getByRole('combobox', { name: 'Sprache', exact: true })
+    .selectOption({ label: 'Chinesisch (traditionell)' });
+  await page.getByRole('searchbox', { name: 'Karten suchen' }).fill('夢幻');
+  await expect(page).toHaveURL(/lang=zh-tw/);
+  await expect(page.getByRole('link', { name: /Mew/ }).first()).toBeVisible();
+});
