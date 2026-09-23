@@ -14,7 +14,7 @@
 | 006 | Lots with disposals, integer money, UUIDv7, tombstones | Accepted |
 | 007 | Manual price series and carry-forward valuation | Accepted |
 | 008 | Paraglide JS 2 for i18n | Accepted |
-| 009 | shadcn/ui on Base UI + Tailwind v4 + OKLCH tokens | Accepted |
+| 009 | shadcn/ui on Base UI + Tailwind v4 + OKLCH tokens | Accepted (amended by ADR-031) |
 | 010 | Recharts 3 as the single chart library | Accepted |
 | 011 | TypeScript 7 + Oxlint/oxfmt + Vitest 5 + Playwright | Accepted |
 | 012 | MiniSearch in a worker with CJK bigram tokenization | Accepted |
@@ -26,7 +26,7 @@
 | 018 | Chinese data strategy for v1 | Superseded by ADR-021 |
 | 019 | German-only UI, translation-ready | Accepted (Q3.1) |
 | 020 | Cardmarket price-guide suggestions via a daily static snapshot | Accepted (Q6.6; storage per ADR-029) |
-| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; R2.8 revised; amended by ADR-026) |
+| 021 | Simplified Chinese as a language of M6a, with derived names | Accepted (Q3.2, Q3.5; R2.8 revised; amended by ADR-026, ADR-034) |
 | 022 | Private deployment: unlisted + noindex, no Impressum while private | Accepted (Q1.2) |
 | 023 | Binder-aware storage locations (layout, page, slot) | Accepted (Q5.7) |
 | 024 | Liquid Glass as a material for chrome only | Accepted (Q9.5) |
@@ -35,6 +35,12 @@
 | 027 | Brave (Chromium) as the primary browser | Accepted (R2.9) |
 | 028 | Catalog growth: 30 Jahre first, then set by set and era by era; no Collectr import | Accepted (R2.5) |
 | 029 | Public repository: what may be committed | Accepted (R3.2) |
+| 030 | Performance budgets re-baselined on the measured M1 build | Accepted (M1) |
+| 031 | UI primitives hand-written on Base UI (no shadcn CLI under TypeScript 7) | Accepted (M1; amends ADR-009) |
+| 032 | Pre-paint UI state in localStorage (theme mirror, privacy mode) | Accepted (M1) |
+| 033 | Catalog pipeline: pinned sources offline, network facts in CI only | Accepted (M2) |
+| 034 | Simplified Chinese names converted from the official Traditional ones | Accepted (M2; amends ADR-021) |
+| 035 | Catalog URLs and search: cards under their set, ids with colons, one worker index | Accepted (M2) |
 
 ---
 
@@ -188,7 +194,7 @@
   - `asia:M6a.languages = ['ja', 'zh-cn']`. SC printed rarity marks are handled via `printedRarity`.
   - Chinese Pokémon names are **derived** from PokéAPI species names (+ `ex` suffix), labeled *übersetzt*. The few Trainer/Energy names are curated.
   - SC Cardmarket product IDs are mapped via `idMetacard` (6602 ↔ 6603).
-  - **R2.8 revised (2026-09-23):** the dataset's own terms reserve consent for redistribution to the **official owner or an authorized entity** (they point to Pokémon Shanghai), not to the maintainer, so a request to the maintainer can't unlock it. Settr therefore **doesn't use `duanxr/PTCG-CHS-Datasets`**: nothing from it is committed or shipped. SC names are derived (PokéAPI `zh-Hans`) plus hand-curated Trainer/Energy names.
+  - **R2.8 revised (2026-09-23):** the dataset's own terms reserve consent for redistribution to the **official owner or an authorized entity** (they point to Pokémon Shanghai), not to the maintainer, so a request to the maintainer can't unlock it. Settr therefore **doesn't use `duanxr/PTCG-CHS-Datasets`**: nothing from it is committed or shipped. SC names are derived (since M2: converted from the official TC names, ADR-034).
 - **Consequences:** SC copies are trackable at launch with correct numbers and Cardmarket links. Names and images improve without migrations.
 - **Alternatives:** Waiting for TCGdex (unknown timeline), scraping pokemon.cn (ToS and fragility).
 
@@ -221,7 +227,7 @@
 - **Context:** Marvin wants Traditional Chinese sealed products (Q4.3). Opening one yields TC cards, which need a home.
 - **Decision:**
   - `asia:M6a.languages = ['ja', 'zh-cn', 'zh-tw']`. Active card languages are **DE, EN, JA, ZH-CN and ZH-TW**.
-  - TC names come from `type-null/PTCG-database` (`data_tc`, covers M6a; its data licensing is to verify). The fallback is PokéAPI `zh-Hant` species names labeled *übersetzt*, with Trainer names curated by hand. Numbering mirrors M6a.
+  - TC names come from `type-null/PTCG-database` (`data_tc`, covers M6a; MIT, verified in M2). The fallback is PokéAPI `zh-Hant` species names labeled *übersetzt*. Numbering mirrors M6a.
   - Cardmarket links for TC copies use the JP product with Cardmarket's T-Chinese language filter.
 - **Consequences:** TC copies are trackable from launch with correct numbers. Names are tagged `lang="zh-Hant"` and rendered with Noto Sans TC (`DESIGN_SYSTEM.md` §4).
 - **Alternatives:** Sealed-only TC (opened cards would have nowhere to go).
@@ -258,4 +264,52 @@
 - **If it stays public:** `cm-prices.json` is **not** committed. The daily job triggers a Vercel deploy hook instead, and the build downloads and filters the price guide at build time. The deployment URL is never written into the repo.
 - **Decision (R3.2, 2026-09-23):** the repository **stays public for now**, so the "If it stays public" rules above apply.
 - **Either way:** no secrets and no personal collection data are committed (CLAUDE.md), and `main` is the default branch from M1 on (R3.3).
+
+### ADR-030 · Performance budgets re-baselined on the measured M1 build (Accepted, M1)
+- **Context:** `QUALITY.md` §4 set *initial JS ≤ 170 KB gzip* and *fonts on first render ≤ 2 files, ≤ 90 KB* before any code existed. The M1 build (initial JS = entry script + its modulepreloads) measures **209 KB gzip**: react-dom 64, Dexie 31, Zod 25, TanStack Router 25, Base UI 15 (mostly the toast layer), app code 14, Phosphor icons 12, tailwind-merge 9. Fonts: Mona Sans latin with both axes (weight + width, needed for the wide display type) is 98 KB; Geist Mono latin is 23 KB and renders on first paint on desktop (the `Strg K` hint, later card numbers).
+- **Already applied:** route-level code splitting; the search dialog and the phone "Mehr" sheet load on first use; one module per UI primitive, so settings-only controls stay in the settings chunk; startup code never imports a feature barrel that re-exports pages (`features/appearance` and `features/pwa` are separate small features).
+- **Decision:** initial JS **≤ 220 KB** gzip, fonts on first render **≤ 2 files, ≤ 125 KB**. Per-route chunks (≤ 80 KB) and CSS (≤ 35 KB) are unchanged. `size-limit` enforces them in CI; `.size-limit.mjs` reads the built `index.html` to find the entry and its modulepreloads.
+- **Levers, cheapest first, when the budget gets tight:** load the toast layer on the first toast (≈ 12 KB), a generated icon subset with only the Phosphor weights in use (≈ 8 KB), `zod/mini` (≈ 8–11 KB), dropping tailwind-merge (≈ 9 KB). TanStack Query (≈ 12 KB) joins the initial bundle with the M2 catalog loader.
+- **Consequences:** about 10 ms more parse time on a phone than the original target, for an app the service worker serves from cache after the first visit. The budget still catches regressions.
+- **Alternatives:** pulling all four levers now (less readable code for little user benefit), dropping budgets (regressions go unnoticed).
+- **Amendment (M2):** with the catalog, the entry measures **224 KB** gzip: TanStack Query (≈ 9 KB) and the catalog loader, schemas and labels (≈ 5 KB) joined as planned. Catalog pages stay in their route chunks: route files import only components from feature barrels, and anything a route needs outside its split components (search-param schemas, the pending view) lives in `src/catalog` or the route file, because TanStack Router doesn't split `pendingComponent` and a barrel imported by the entry drags every page it re-exports along. Initial JS budget: **≤ 230 KB**. The levers above are unchanged.
+
+### ADR-031 · UI primitives hand-written on Base UI (no shadcn CLI under TypeScript 7) (Accepted, M1; amends ADR-009)
+- **Context:** ADR-009 planned shadcn CLI v4 components on Base UI. The CLI transforms component source with the TypeScript compiler API (ts-morph). TypeScript 7 is the Go-native compiler and no longer ships that JavaScript API.
+- **Decision:** primitives in `src/components/ui/` are written by hand in shadcn's style: owned source, one module per component, Base UI underneath, `cva` variants and `cn()` (clsx + tailwind-merge). Base UI's bundled docs (`node_modules/@base-ui/react/docs`) are the reference.
+- **Consequences:** same ownership and accessibility as planned, no CLI dependency. New primitives are written, not generated (a few minutes each, with a browser-mode test).
+- **Alternatives:** running the CLI with TypeScript 5 side by side (two compilers in one repo), Radix-based components (ADR-009 reasons still hold).
+
+### ADR-032 · Pre-paint UI state in localStorage (theme mirror, privacy mode) (Accepted, M1)
+- **Context:** IndexedDB is asynchronous, so the app can only read settings after its JavaScript has loaded. Applying the theme, transparency and motion settings, or privacy mode, only then would flash the wrong theme or show amounts that should be hidden.
+- **Decision:**
+  - Display settings live in `kv.settings` (backed up like every setting) and are **mirrored** to `localStorage['settr:display']` whenever they change.
+  - **Privacy mode is per device** and lives only in `localStorage['settr:privacy']`. It is not part of backups (like `kv ui:*`, `IMPORT_EXPORT.md` §2).
+  - A small inline script in `index.html` reads both keys and sets `data-theme`, `data-transparency`, `data-motion` and `data-privacy` on `<html>` before first paint. The CSP allows exactly this script by its SHA-256 hash; `pnpm csp` checks the hash against `index.html` and the built `dist/index.html` in CI.
+- **Consequences:** no theme flash and no amount flash, including on the very first frame of an installed app. Clearing site data resets privacy mode to off, which is the safe direction for a local app (the collection is gone too in that case).
+- **Alternatives:** `kv ui:*` in IndexedDB (async, so it flashes), cookies (sent nowhere, but pointless without a server), a blocking script without CSP hash (weaker CSP).
+
+### ADR-033 · Catalog pipeline: pinned sources offline, network facts in CI only (Accepted, M2)
+- **Context:** the development sandbox reaches GitHub and npm but not TCGdex's API or image server, Cardmarket's files or TCGCSV. TCGdex's own compiler needs Bun and its asset index (`datas.json`) lags behind new sets: on 2026-09-23 it listed none of `30th`, `30th-c`, `mee` or `M6a`, and TCGdex's API special-cases `30th` for that reason.
+- **Decision:**
+  - The pipeline (`scripts/catalog`, tsx) imports the set files of a **pinned** `tcgdex/cards-database` commit directly, plus pinned PTCG-database and PokéAPI commits (`sources.lock.json`). That part runs anywhere and is deterministic.
+  - Everything that needs the open web runs in CI only (`catalog-sync.yml`, `--network`): Cardmarket's product files (ID checks, JP↔SC mapping), TCGCSV (sealed pictures) and **GET checks of every picture URL** on TCGdex's and TCGplayer's servers. `datas.json` isn't used.
+  - An offline build keeps what the last network build found (pictures, logos, Asian Cardmarket ids, product pictures) per id, so a local run never downgrades a verified catalog; `imagesVerified` in the manifest says whether every picture was checked.
+  - The CI report lists what needs curation: unmatched Cardmarket singles, Cardmarket and TCGplayer sealed products with the curated ones marked.
+- **Consequences:** the committed catalog is reproducible and reviewable (one JSON line per card). New pictures appear with the weekly sync. Local builds can't verify pictures; they don't pretend to.
+- **Alternatives:** TCGdex's compiler (needs Bun, and still the stale asset index), the REST API at build time (unreachable from the sandbox, not pinned), trusting `datas.json` (0 pictures for the v1 set).
+
+### ADR-034 · Simplified Chinese names converted from the official Traditional ones (Accepted, M2; amends ADR-021)
+- **Context:** ADR-021 planned Simplified Chinese names derived from PokéAPI `zh-Hans` species names plus curated Trainer and Energy names. In M2 the Traditional Chinese names of all 176 M6a cards turned out to be available and MIT-licensed (`type-null/PTCG-database`, ADR-026), Trainers and card-name suffixes included. Simplified and Traditional Chinese card names differ almost only in script.
+- **Decision:** the SC name of an M6a card is its official TC name converted with OpenCC (`tw` → `cn`, `opencc-js`, build time only), labeled *übersetzt* (`nameSource: derived-script`). PokéAPI stays the fallback for missing TC names and the source of search aliases; hand-curated names win over both.
+- **Consequences:** every M6a card has an SC name on day one, Trainers included, with the same "übersetzt" honesty as before. Where the official SC name differs from the TC name beyond script, a curated `curatedName` fixes it.
+- **Alternatives:** PokéAPI species names only (Trainers and Energies would all need hand-typing), the SC dataset (excluded by R2.8).
+
+### ADR-035 · Catalog URLs and search: cards under their set, ids with colons, one worker index (Accepted, M2)
+- **Context:** a card id alone doesn't say which set chunk to load (ids are never parsed, DATA_MODEL.md §3), and prev/next needs the set's order. Search has to cover every set without loading every chunk (ADR-028).
+- **Decision:**
+  - The card page lives at `/catalog/sets/$setId/cards/$cardId` (UX_SPEC.md §2.2); a subset URL opens its main set filtered to that section. The router keeps `:` in path params, so URLs read like the ids (`/catalog/sets/intl:30th/cards/intl:30th:150`).
+  - Search runs in one module worker over `search-index.json` (MiniSearch, ARCHITECTURE.md §7), built once per catalog version from MiniSearch's serialized form (≈ 0.4 s for 20k cards). Names are indexed in a Latin and a CJK field (the n-grams of Chinese and Japanese names would otherwise drown Latin matches), German umlauts both folded and expanded, katakana folded to hiragana, and card numbers in every written form (`025/128`, `25`, `#025`). The command palette (APP-05) and Katalog › Karten share it; without worker support it runs on the main thread.
+- **Consequences:** shareable, readable URLs; global search stays fast as sets are added. The search engine depends on MiniSearch 7's serialized format (pinned; the engine tests catch a break on upgrade).
+- **Alternatives:** `/catalog/cards/$cardId` with an id → set lookup through the search index (an extra load per card page), a search index per set (global search would load every set).
 

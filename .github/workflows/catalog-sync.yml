@@ -1,0 +1,77 @@
+name: Catalog sync
+
+# Regenerates public/catalog/v1 with network access (DATA_SOURCES.md §6.4): Cardmarket product
+# files, TCGCSV (sealed pictures) and image GET checks, none of which the app ever calls at runtime.
+on:
+  schedule:
+    - cron: '17 4 * * 1' # Mondays 04:17 UTC
+  workflow_dispatch:
+    inputs:
+      update_sources:
+        description: Move TCGdex, PTCG-database and PokéAPI to their latest commits
+        type: boolean
+        default: false
+      commit:
+        description: Commit the result to the branch this runs on (otherwise open a PR)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: catalog-sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LEFTHOOK: '0' # no local git hooks in CI
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/cache@v4
+        with:
+          path: .cache/catalog
+          key: catalog-sources-${{ hashFiles('scripts/catalog/sources.lock.json') }}
+          restore-keys: catalog-sources-
+      - name: Build the catalog with network checks
+        run: pnpm catalog:sync --network ${{ (github.event_name == 'schedule' || inputs.update_sources) && '--update-sources' || '' }}
+      - name: Report
+        if: always()
+        run: test -f .cache/catalog/report.md && cat .cache/catalog/report.md >> "$GITHUB_STEP_SUMMARY" || true
+      - name: Check the app against the new catalog
+        run: pnpm typecheck && pnpm test
+      - name: Commit or open a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- public/catalog scripts/catalog/sources.lock.json; then
+            echo "Catalog unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          version=$(node -p "require('./public/catalog/v1/manifest.json').catalogVersion")
+          if [ "${{ inputs.commit }}" = "true" ]; then
+            git add public/catalog scripts/catalog/sources.lock.json
+            git commit -m "chore(catalog): sync catalog $version"
+            git push
+          else
+            branch="catalog-sync/$version"
+            git switch -c "$branch"
+            git add public/catalog scripts/catalog/sources.lock.json
+            git commit -m "chore(catalog): sync catalog $version"
+            git push -u origin "$branch"
+            gh pr create --base "${{ github.ref_name }}" --head "$branch" \
+              --title "chore(catalog): sync catalog $version" --body-file .cache/catalog/report.md \
+              || echo "::warning::Could not open a pull request (allow GitHub Actions to create PRs in the repository settings). The branch $branch is pushed."
+          fi

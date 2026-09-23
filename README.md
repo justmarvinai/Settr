@@ -4,7 +4,7 @@
 
 Settr is a local-first collection tracker for Pokémon TCG **singles and sealed products**, covering German, English, Japanese and Chinese (Simplified and Traditional) cards, with a German interface. You record the prices you check on Cardmarket, **per card language**, and Settr turns them into price trends, portfolio value and profit/loss against what you paid. Everything stays private in your browser. There are no accounts and no server database, and you get full import/export.
 
-> **Status: 🚧 M1 · Foundation.** Planning is complete (spec v0.3, three question rounds answered), and coding started on 2026-09-23. The design direction, **D · Bold Studio**, is on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link).
+> **Status: ✅ M2 · Catalog built, waiting for review** (M1 · Foundation too). Planning is complete (spec v0.3, three question rounds answered); coding started on 2026-09-23. The catalog holds *30 Jahre / 30th CELEBRATION* in DE, EN, JA, ZH-CN and ZH-TW with 52 sealed products. The design direction, **D · Bold Studio**, is on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link).
 >
 > Private project: unlisted deployment, not indexed, shared with a few friends.
 
@@ -36,9 +36,22 @@ Settr is a local-first collection tracker for Pokémon TCG **singles and sealed 
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Architecture decision log |
 | [`CLAUDE.md`](CLAUDE.md) · [`AGENTS.md`](AGENTS.md) | Instructions for AI coding agents |
 
-## Planned stack
+## Stack
 
-Vite 8 · React 19 · TypeScript 7 · TanStack Router/Query/Table/Form · Dexie (IndexedDB) · Tailwind CSS 4 · shadcn/ui on Base UI · Motion · Recharts · Paraglide JS · MiniSearch · vite-plugin-pwa · Vitest · Playwright. It deploys to Vercel as static files. Details and rationale are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Vite 8 · React 19 · TypeScript 7 · TanStack Router/Query/Table/Form · Dexie (IndexedDB) · Tailwind CSS 4 · Base UI · Motion · Recharts · Paraglide JS · MiniSearch · vite-plugin-pwa · Vitest · Playwright. It deploys to Vercel as static files. Details and rationale are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Development
+
+Needs Node 22.12+ (CI uses 24) and pnpm 10 (`corepack enable` picks the pinned version).
+
+```bash
+pnpm install      # also installs the git hooks (lefthook)
+pnpm dev          # http://localhost:5173
+pnpm check        # typecheck, lint, format, unit + component tests, build, CSP, budgets
+pnpm e2e          # Playwright against the built app
+```
+
+All commands are listed in [`CLAUDE.md`](CLAUDE.md#commands).
 
 ## Credits
 

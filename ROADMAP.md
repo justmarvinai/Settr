@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-23 · Current phase: **M1 · Foundation** ⏳ (spec v0.3; rounds 1–3 answered; coding approved 2026-09-23)
+> Last updated: 2026-09-23 · Current phase: **M2 · Catalog** ✅ built, waiting for your check (together with M1: Vercel, Brave, iPhone) · next: **M3 · Collection**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -11,8 +11,8 @@
 | Milestone | Goal | Version | Status |
 |---|---|---|---|
 | **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ✅ |
-| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ⏳ |
-| **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | 🔒 |
+| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ built · 🔒 your check |
+| **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ built · 🔒 your check |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | 🔒 |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | 🔒 |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | 🔒 |
@@ -46,47 +46,50 @@
 
 ---
 
-## M1 · Foundation ⏳ → v0.1.0
+## M1 · Foundation ✅ built → v0.1.0 (waiting for your check)
 
-- [ ] Repository setup: `main` as the default branch (R3.3), visibility per R3.2 (ADR-029)
-- [ ] Scaffold: Vite + React + TypeScript (strict) + TanStack Router (file-based) + Tailwind CSS v4 (`ARCHITECTURE.md` §3)
-- [ ] Tooling: pnpm, Oxlint (type-aware) + oxfmt, Vitest 5 (+ Browser Mode), Playwright, size-limit, lefthook pre-commit
-- [ ] CI (`ci.yml`), Vercel project + preview deployments + security headers (CSP) (`QUALITY.md` §6–7)
-- [ ] Design tokens for direction **D · Bold Studio** (`tokens.css`, light + dark, accent per R3.1), **Liquid Glass materials** + reduced-transparency fallback, self-hosted fonts, and base primitives (Button, Input, Sheet, Dialog, Tabs, Toast, Tooltip). See `DESIGN_SYSTEM.md`
-- [ ] App shell: **floating glass sidebar** / rail / glass tab bar, glass toolbar, theme switch, privacy toggle (APP-01, APP-03, PRT-05, DSN-05)
-- [ ] i18n setup: **German** message catalog (translation-ready), typed messages, `de-DE` formatting helpers, lint rule against hard-coded strings (APP-02, `I18N.md`)
-- [ ] Private deployment: `noindex` meta tag + `X-Robots-Tag` + `robots.txt` (APP-08)
-- [ ] Dexie database v1 schema, repositories, tombstones, `priceLatest` (`DATA_MODEL.md` §7)
-- [ ] Domain core: `Money`, allocation, IDs (UUIDv7), Zod schemas, with unit tests (`DATA_MODEL.md` §5–6)
-- [ ] PWA skeleton: manifest, icons, service worker with app-shell precache, update toast (APP-04)
-- [ ] Settings page skeleton (APP-07) and persistent-storage request (DAT-05)
+- [x] Repository setup: `main` created from the reviewed spec (R3.3), repository stays public (R3.2, ADR-029)
+  - [ ] **You:** make `main` the default branch (GitHub → Settings → General → Default branch)
+- [x] Scaffold: Vite + React + TypeScript (strict) + TanStack Router (file-based) + Tailwind CSS v4 (`ARCHITECTURE.md` §3)
+- [x] Tooling: pnpm, Oxlint (type-aware, layer boundaries) + oxfmt, Vitest 5 (+ Browser Mode), Playwright (+ axe), size-limit, lefthook pre-commit/pre-push
+- [x] CI (`ci.yml`: checks, components, build, CSP hash, budgets, audit, e2e on Chromium desktop/phone + WebKit iPhone) and security headers (CSP) in `vercel.json` (`QUALITY.md` §6–7)
+  - [ ] **You:** import the repository in Vercel (Hobby, framework preset *Vite*, settings come from `vercel.json`), production branch `main`; previews for every other branch
+- [x] Design tokens for direction **D · Bold Studio** (`tokens.css`, light + dark, Indigo accent per R3.1), **Liquid Glass materials** + reduced-transparency fallback, self-hosted fonts, and base primitives (Button, Input, Sheet, Dialog, Tabs, Toast, Tooltip, plus SegmentedControl, Switch, ChipGroup). See `DESIGN_SYSTEM.md`
+- [x] App shell: **floating glass sidebar** / rail / glass tab bar with "Mehr", glass toolbar, theme switch, privacy toggle (APP-01, APP-03, PRT-05, DSN-05)
+- [x] i18n setup: **German** message catalog (translation-ready), typed messages, `de-DE` formatting helpers, lint rule against hard-coded strings (APP-02, `I18N.md`)
+- [x] Private deployment: `noindex` meta tag + `X-Robots-Tag` + `robots.txt` (APP-08)
+- [x] Dexie database v1 schema, repositories, tombstones, `priceLatest` (`DATA_MODEL.md` §7)
+- [x] Domain core: `Money`, allocation, IDs (UUIDv7), Zod schemas, with unit tests (`DATA_MODEL.md` §5–6)
+- [x] PWA skeleton: manifest, icons, service worker with app-shell precache, update toast (APP-04), install button in Brave
+- [x] Settings page skeleton (APP-07) and persistent-storage request (DAT-05)
 
-**Exit:** the app deploys on Vercel (not indexed), loads offline, switches themes and transparency, CI is green, budgets hold, and it looks right on Windows Brave (Chromium) and iPhone.
+**Exit:** the app deploys on Vercel (not indexed), loads offline, switches themes and transparency, CI is green, budgets hold, and it looks right on Windows Brave (Chromium) and iPhone. *Status:* offline, themes, transparency, budgets (ADR-030) and CI are verified; **the Vercel deployment and your look on Brave and the iPhone are open.**
 
 ---
 
-## M2 · Catalog 🔒 → v0.2.0
+## M2 · Catalog ✅ → v0.2.0 (built, waiting for your check)
 
-- [ ] Catalog pipeline `scripts/catalog/` (`DATA_SOURCES.md` §6):
-  - [ ] Ingest TCGdex (`intl:30th`, `intl:30th-c`, 30th energies, `asia:M6a`) into the normalized schema
-  - [ ] Curated overlays: sections, variant overrides (all-foil ⇒ `std`), printed numbers for the Classic Collection, id aliases
-  - [ ] **Simplified Chinese** on `asia:M6a` (ADR-021):
-    - [ ] derived names (PokéAPI) + curated Trainer/Energy names
-    - [ ] SC printed rarity marks
-    - [ ] SC Cardmarket IDs via `idMetacard` (6602 ↔ 6603)
-  - [ ] **Traditional Chinese** on `asia:M6a` (ADR-026): names from `type-null/PTCG-database` (`data_tc`, licensing to verify) or derived (PokéAPI `zh-Hant`), curated Trainer names
-  - [ ] PokéAPI species names → search aliases + derived German names for Asian-print cards
-  - [ ] Image verification (HEAD per language, run in GitHub Actions because this sandbox can't reach TCGdex) and fallback flags
-  - [ ] Curated **sealed catalog** for DE/EN/JP/**TC/SC**, incl. Pokémon Center exclusives and JP lottery items, with release waves through Dec 2026 (Q4.3). EN/JP images via TCGCSV + the `/img/tcgp` proxy
-  - [ ] Manifest with hashes, Zod-validated output, CI job + weekly sync PR
-- [ ] **Multi-set foundation** (ADR-028): series grouping, per-set lazy-loaded chunks and a slim global search index, so later sets are config + curation only
-- [ ] Sets overview (CAT-01), set detail with sections and filters (CAT-02)
-- [ ] Card detail with language switch (CAT-03), images with fallback chain (CAT-07)
-- [ ] Sealed catalog + product detail (CAT-05)
-- [ ] Search: cards + sealed, multi-script, numbers, filters (CAT-04, CAT-06) + command palette base (APP-05)
-- [ ] Cardmarket deep links (PRC-06): exact product + **copy's language + seller country Germany** + **Near Mint or better** (`minCondition=2`, R2.2)
+- [x] Catalog pipeline `scripts/catalog/` (`DATA_SOURCES.md` §6, ADR-033):
+  - [x] Ingest TCGdex (`intl:30th` 169 incl. the 8 energies, `intl:30th-c` 30, `asia:M6a` 176) into the normalized schema, from a pinned commit
+  - [x] Curated overlays: sections, one `std` variant per card, printed numbers and order of the Classic Collection, name fixes (M6a 156), counterparts, id aliases
+  - [x] **Simplified Chinese** on `asia:M6a` (ADR-021, ADR-034):
+    - [x] names converted from the official Traditional Chinese ones (OpenCC), marked *übersetzt*
+    - [ ] SC printed rarity marks: no source yet (JP marks RR/AR/SAR/FUR are in)
+    - [x] SC and JP Cardmarket IDs sorted by expansion and linked through `idMetacard` (171 JP / 173 SC of 176; RGB Mews curated, order to verify; Sylveon ex 059/130 open)
+  - [x] **Traditional Chinese** on `asia:M6a` (ADR-026): all 176 names from `type-null/PTCG-database` (MIT, verified)
+  - [x] PokéAPI species names → search aliases + German/English names for Asian-print cards without a counterpart
+  - [x] Picture verification by GET in GitHub Actions, with the fallback chain (other language, same artwork from the other print, placeholder): DE/EN 158 of 199, JA/ZH 133 of 176 via the international artwork
+  - [x] Curated **sealed catalog**: 52 products (33 international, 5 JP, 3 TC, 11 SC) incl. Pokémon Center and lottery items and release waves through Dec 2026; Cardmarket IDs for 47, pictures for 35 (TCGCSV + `/img/tcgp`)
+  - [x] Manifest with hashes, Zod-validated output, `catalog-sync.yml` (weekly PR, manual commit) with a report
+- [x] **Multi-set foundation** (ADR-028): series grouping, per-set lazy-loaded chunks, a slim global search index, set covers and print links in the manifest
+- [x] Sets overview (CAT-01), set detail with sections, filters, sort, tile sizes and list view (CAT-02)
+- [x] Card detail with language switch, translated-name marks and prev/next (CAT-03), images with fallback chain (CAT-07)
+- [x] Sealed catalog + product detail (CAT-05), sealed filters incl. release window (CAT-06)
+- [x] Search: cards + sealed, multi-script, numbers, power-user filters (CAT-04, CAT-06) + command palette (APP-05), in a worker (ADR-035)
+- [x] Cardmarket deep links (PRC-06): exact product + **copy's language + seller country Germany** + **Near Mint or better** (`minCondition=2`, R2.2); TC copies on the JP product with the T-Chinese filter
+- [x] Japanese and Chinese names with the right glyphs (`lang` by script) and self-hosted Noto fallbacks loaded on demand
 
-**Exit:** every card and product of the v1 scope is browsable and searchable in all in-scope languages, with correct images or graceful fallbacks.
+**Exit:** every card and product of the v1 scope is browsable and searchable in all in-scope languages, with correct images or graceful fallbacks. ✅ (Open data points are listed in `USER_QUESTIONS.md`, round 4.)
 
 ---
 

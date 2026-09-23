@@ -48,19 +48,24 @@ Route slugs are English and language-neutral. Labels are localized.
 /catalog                            Katalog › Sets      (all supported sets, grouped by series & print)
 /catalog/sets/$setId                Set detail          (tabs: Karten | Sealed | Statistik)
 /catalog/cards?…                    Card search         (full catalog, filters in URL search params)
-/catalog/cards/$cardId              Card detail
+/catalog/sets/$setId/cards/$cardId  Card detail         (the set gives prev/next and the chunk to load; ids keep their colons)
 /catalog/sealed?…                   Sealed search
 /catalog/sealed/$productId          Sealed product detail
 /prices                             Preise hub          (stale items, recent entries, start session)
 /prices/session?scope=…             Price-update session (focus mode)
 /portfolio                          Portfolio           (tabs: Entwicklung | Aufteilung | Performance | Ausgaben)
 /wishlist                           Wunschliste         (post-v1, I-06)
-/settings                           Einstellungen       (sections: Allgemein | Darstellung | Preise | Daten | Über)
-/settings/data                      Daten               (export, import, CSV, storage, reset)
+/settings                           Einstellungen › Allgemein  (sections: Allgemein | Darstellung | Preise | Lagerorte | Daten | Über)
+/settings/appearance                Darstellung         (theme, transparency, motion)
+/settings/prices                    Preise              (defaults of price entry)
+/settings/locations                 Lagerorte           (binders and boxes, M3)
+/settings/data                      Daten               (storage, install, export, import, CSV, reset)
+/settings/about                     Über                (version, credits, disclaimer)
 /onboarding                         First-run flow (only until completed)
 ```
 
 - **All filter, sort and view state lives in typed URL search params** (TanStack Router). Views are therefore shareable and bookmarkable, and the back button behaves as expected.
+- **Catalog IDs in URLs keep their colons** (`/catalog/sets/intl:30th/cards/intl:30th:150`; the router allows `:` in path params). A card page sits under its set, because the set chunk holds the card and defines prev/next; a subset URL (`/catalog/sets/intl:30th-c`) opens the main set filtered to that section. The tile size (S/M/L) is a per-device preference, not part of the URL.
 - Detail pages open as **full pages**. Add/edit flows open as **sheets** (right side panel on desktop, bottom sheet on mobile) so context is never lost.
 
 ---
@@ -107,7 +112,7 @@ Route slugs are English and language-neutral. Labels are localized.
 
 ```
 ┌───────────────────────────┐
-│ Sammlung            ⌕  👁 │  ← top app bar (large title collapses on scroll)
+│ Sammlung         ⌕  👁  ••• │  ← top app bar (large title collapses on scroll)
 ├───────────────────────────┤
 │                           │
 │        content            │
@@ -118,7 +123,7 @@ Route slugs are English and language-neutral. Labels are localized.
 ```
 
 - **＋** opens a bottom sheet with a search field (autofocus): pick a card or product and the add form follows.
-- Portfolio and Einstellungen are reached via the **"Mehr"** item or from the Übersicht tiles.
+- Portfolio and Einstellungen are reached via **"Mehr"** (•••, top app bar), a bottom sheet that also shows the backup status, or from the Übersicht tiles. On phones the theme is chosen in *Einstellungen → Darstellung* (default: System).
 - The tab bar is a **floating glass pill** (safe-area aware on iPhone).
 - Bottom sheets use snap points (50 % / 92 %), and drag-to-dismiss is supported.
 

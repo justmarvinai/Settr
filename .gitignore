@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+dev-dist/
+*.tsbuildinfo
+
+# generated
+src/i18n/paraglide/
+
+# tests
+test-results/
+playwright-report/
+coverage/
+
+# local env and editor files
+.env
+.env.*
+.vercel/
+.DS_Store
+*.log
+.cache/

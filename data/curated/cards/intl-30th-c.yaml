@@ -1,0 +1,52 @@
+# Classic Collection (subset of 30 Jahre / 30th Celebration).
+# Each reprint keeps the collector number of its original set (Base Set Charizard reads 4/102), so
+# printedNumber is curated. `sort` is the Classic Collection order (CC1–CC30), which is also the
+# Japanese order M6a 136–165. Keys are TCGdex's local ids (its own order).
+# Sources: PokéBeach English set guide and pkmn.gg/Cardrake set lists (2026-09-23), cross-checked
+# against the original printings in TCGdex (same illustrator, HP and attacks).
+setId: intl:30th-c
+cards:
+  '014': { printedNumber: 58/102, sort: 1, note: Pikachu · Base Set }
+  '001': { printedNumber: 4/102, sort: 2, note: Charizard · Base Set }
+  '005': { printedNumber: 18/132, sort: 3, note: Misty · Gym Heroes (holo) }
+  '015': { printedNumber: 69/132, sort: 4, note: "Erika's Jigglypuff · Gym series" }
+  '007': { printedNumber: 25/111, sort: 5, note: Sneasel · Neo Genesis }
+  '024': { printedNumber: 106/105, sort: 6, note: Shining Celebi · Neo Destiny }
+  '029': { printedNumber: 149/147, sort: 7, note: Lugia · Aquapolis }
+  '002': { printedNumber: 5/109, sort: 8, note: Delcatty · EX Ruby & Sapphire }
+  '006': { printedNumber: 19/109, sort: 9, note: Dark Tyranitar · EX Team Rocket Returns }
+  '025': { printedNumber: 108/115, sort: 10, note: Scizor ex · EX Unseen Forces }
+  '003': { printedNumber: 11/113, sort: 11, note: Metagross δ · EX Delta Species }
+  '022':
+    printedNumber: 106/106
+    sort: 12
+    name: { en: Palkia LV.X, de: Palkia LV.X }
+    note: Palkia LV.X · Great Encounters (TCGdex names it "Palkia")
+  '010': { printedNumber: 43/146, sort: 13, note: Uxie · Legends Awakened }
+  '011': { printedNumber: 47/127, sort: 14, note: Crobat G · Platinum }
+  '018': { printedNumber: 94/102, sort: 15, note: Gengar Prime · HS Triumphant }
+  '019':
+    {
+      printedNumber: 99/102,
+      sort: 16,
+      note: 'Darkrai & Cresselia LEGEND, top half · HS Triumphant (half order follows the Cardmarket ids)',
+    }
+  '020':
+    {
+      printedNumber: 100/102,
+      sort: 17,
+      note: 'Darkrai & Cresselia LEGEND, bottom half · HS Triumphant',
+    }
+  '021': { printedNumber: 101/101, sort: 18, note: N · Noble Victories (full art) }
+  '016': { printedNumber: 85/124, sort: 19, note: Rayquaza EX · Dragons Exalted }
+  '004': { printedNumber: 11/101, sort: 20, note: Genesect EX · Plasma Blast }
+  '023': { printedNumber: 106/160, sort: 21, note: M Gardevoir EX · Primal Clash }
+  '009': { printedNumber: 41/122, sort: 22, note: Greninja BREAK · BREAKpoint }
+  '017': { printedNumber: 89/149, sort: 23, note: Solgaleo GX · Sun & Moon }
+  '013': { printedNumber: 57/111, sort: 24, note: Buzzwole GX · Crimson Invasion }
+  '008': { printedNumber: 33/181, sort: 25, note: Pikachu & Zekrom GX · Team Up }
+  '028': { printedNumber: 138/202, sort: 26, note: Zacian V · Sword & Shield }
+  '012': { printedNumber: 50/185, sort: 27, note: Raikou · Vivid Voltage }
+  '026': { printedNumber: 114/264, sort: 28, note: Mew VMAX · Fusion Strike }
+  '027': { printedNumber: 123/172, sort: 29, note: Arceus VSTAR · Brilliant Stars }
+  '030': { printedNumber: 203/193, sort: 30, note: Magikarp · Paldea Evolved }

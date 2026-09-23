@@ -1,0 +1,17 @@
+{
+  "tcgdex": {
+    "repo": "https://github.com/tcgdex/cards-database",
+    "commit": "feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a",
+    "license": "MIT"
+  },
+  "ptcgDatabase": {
+    "repo": "https://github.com/type-null/PTCG-database",
+    "commit": "bc5a2698eb9af858feb0280d579fd5fd0f0273e2",
+    "license": "MIT"
+  },
+  "pokeapi": {
+    "repo": "https://github.com/PokeAPI/pokeapi",
+    "commit": "575291cdb197a7e3a320297be276c9de4ef8401a",
+    "license": "BSD-3-Clause"
+  }
+}

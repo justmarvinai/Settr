@@ -1,0 +1,214 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "import", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "ignorePatterns": [
+    "dist/**",
+    "dev-dist/**",
+    "src/routeTree.gen.ts",
+    "src/i18n/paraglide/**",
+    "coverage/**"
+  ],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/jsx-key": "error",
+    "react/no-danger": "error",
+    "react/jsx-no-literals": [
+      "error",
+      {
+        "noStrings": true,
+        "ignoreProps": true,
+        "allowedStrings": ["·", "/", "×", "—", "–", "+", "−", "%", "€", ":", "(", ")"]
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/anchor-is-valid": "error",
+    "jsx-a11y/label-has-associated-control": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": true
+      }
+    ],
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ],
+    "typescript/switch-exhaustiveness-check": "error",
+    "eslint/no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "import/no-unassigned-import": [
+      "warn",
+      {
+        "allow": ["**/*.css", "fake-indexeddb/auto"]
+      }
+    ],
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["dexie", "dexie-react-hooks"],
+            "message": "Only src/db/ may touch Dexie/IndexedDB (ARCHITECTURE §4.1)."
+          },
+          {
+            "group": ["@/features/*/**"],
+            "message": "Import other features through their public index.ts (ARCHITECTURE §4.1)."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/db/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features",
+                  "@/features/**",
+                  "@/components/**"
+                ],
+                "message": "src/db sits below the UI layers (ARCHITECTURE §4.1)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/domain/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "react",
+                  "react-dom",
+                  "react/*",
+                  "dexie",
+                  "dexie-react-hooks",
+                  "@/db",
+                  "@/db/**",
+                  "@/app/**",
+                  "@/features",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/routes/**",
+                  "@/i18n",
+                  "@/i18n/**"
+                ],
+                "message": "src/domain is pure TypeScript: no React, Dexie, DOM, i18n or app layers (ARCHITECTURE §4.1)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["dexie", "dexie-react-hooks"],
+                "message": "Only src/db/ may touch Dexie/IndexedDB (ARCHITECTURE §4.1)."
+              },
+              {
+                "group": [
+                  "@/db",
+                  "@/db/**",
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features",
+                  "@/features/**"
+                ],
+                "message": "Components are shared building blocks: no database, feature, app or route imports (ARCHITECTURE §4.1)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["dexie", "dexie-react-hooks"],
+                "message": "Only src/db/ may touch Dexie/IndexedDB (ARCHITECTURE §4.1)."
+              },
+              {
+                "group": ["@/features/*/**"],
+                "message": "Import other features through their public index.ts (ARCHITECTURE §4.1)."
+              },
+              {
+                "group": ["@/app/**", "@/routes/**"],
+                "message": "Features must not depend on the app shell or routes (ARCHITECTURE §4.1)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["tests/**", "**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "tests/**",
+        "scripts/**",
+        "*.config.ts",
+        ".size-limit.mjs"
+      ],
+      "rules": {
+        "react/jsx-no-literals": "off",
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-unsafe-type-assertion": "off",
+        "eslint/no-console": "off"
+      }
+    },
+    {
+      "files": ["src/workers/**", "src/catalog/search/client.ts"],
+      "rules": {
+        "unicorn/require-post-message-target-origin": "off"
+      }
+    }
+  ]
+}

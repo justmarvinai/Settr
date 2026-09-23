@@ -1,0 +1,27 @@
+# 30th CELEBRATION (Japanese M6a; Simplified and Traditional Chinese mirror it, ADR-021/026).
+# Trainers have no Pokédex numbers, so their international counterparts (same artwork, same
+# illustrator) are linked here. Basic Energy only borrows the German/English names.
+setId: asia:M6a
+cards:
+  '156':
+    name: { ja: MサーナイトEX }
+    note: TCGdex lists "サーナイトEX"; the Taiwanese site (M沙奈朵EX) and the English print (M Gardevoir EX, Primal Clash 106) show the Mega form.
+  '101': { counterpart: 'intl:30th:128', note: Ultra Ball · Yuka Morii }
+  '102': { counterpart: 'intl:30th:126', note: Poké Pad · Yuka Morii }
+  '103': { counterpart: 'intl:30th:127', note: Switch · Yuka Morii }
+  '138': { counterpart: 'intl:30th-c:005', note: Misty · Ken Sugimori }
+  '153': { counterpart: 'intl:30th-c:021', note: N · Ken Sugimori }
+  GRA: { namesFrom: 'intl:mee:009' }
+  FIR: { namesFrom: 'intl:mee:010' }
+  WAT: { namesFrom: 'intl:mee:011' }
+  LIG: { namesFrom: 'intl:mee:012' }
+  PSY: { namesFrom: 'intl:mee:013' }
+  FIG: { namesFrom: 'intl:mee:014' }
+  DAR: { namesFrom: 'intl:mee:015' }
+  MET: { namesFrom: 'intl:mee:016' }
+  # The three RGB-rare Mews have no Cardmarket id in TCGdex. Cardmarket lists three "Mew [Psychic |
+  # 30C]" products per expansion with consecutive ids; the order R, G, B is inferred from the
+  # international ones (909509–909511 = R, G, B). To verify on Cardmarket.
+  R: { cardmarket: { ja: 909512, zh-cn: 909518 }, note: 'Order inferred (R, G, B); to verify.' }
+  G: { cardmarket: { ja: 909513, zh-cn: 909519 }, note: 'Order inferred (R, G, B); to verify.' }
+  B: { cardmarket: { ja: 909514, zh-cn: 909520 }, note: 'Order inferred (R, G, B); to verify.' }

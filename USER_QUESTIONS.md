@@ -2,14 +2,38 @@
 
 > Last updated: 2026-09-23.
 > **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). Milestone M1 (Foundation) is in progress.
-> New questions that come up while building will appear here as a new round.
+> **Coding: approved on 2026-09-23** ("You can start"). M1 (Foundation) and M2 (Catalog) are built and wait for your check.
+> **Round 4 (M2): open**, nothing blocking. These are data points to check when you have a moment; until then my recommendation (⭐) applies.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 4: catalog check (M2, open, nothing blocking)
+
+**R4.1 · German product names.** Where pokemon.de doesn't list a product yet, the German name is my translation and marked "to confirm" in `data/curated/sealed/30th-intl.yaml`: *Knock-Out-Kollektion*, *Tech-Sticker-Kollektion*, *ex-Box*, *Mini-Tin Tag & Nacht*, *Ultra-Premium-Kollektion Tag/Nacht*, *Ditto-Premium-Kollektion*, *Figuren-Kollektion*, *Sammelalbum-Kollektion*, *Booster der Klassischen Sammlung*, *Mini-Tin-Display*.
+- [ ] ⭐ Keep them; I correct them when pokemon.de lists the products (or you tell me what the German boxes say).
+- [ ] Other: **Antwort:**
+
+**R4.2 · RGB Mews on Cardmarket (JP/SC).** TCGdex has no Cardmarket ids for M6a's three RGB Mews. Cardmarket lists three identical "Mew [Psychic | 30C]" products per expansion; I assumed the same order as in English (R, G, B = consecutive ids). Check: *Katalog › 30th CELEBRATION › R* (Mew) → *Auf Cardmarket ansehen*: is it the red one?
+- [ ] ⭐ It's right (or tell me which is which).
+- [ ] Other: **Antwort:**
+
+**R4.3 · Sylveon ex 059 and 130 (JP) on Cardmarket.** Cardmarket's data links both SC cards to one Japanese product, so I can't tell which Japanese product belongs to which number. Their Japanese link falls back to a Cardmarket search; SC and TC work.
+- [ ] ⭐ Leave it until Cardmarket fixes its data (the weekly sync picks it up).
+- [ ] Other: **Antwort:**
+
+**R4.4 · Product pictures.** TCGplayer has pictures for 35 of 52 products. German products show the English box (marked "Bild der Verpackung auf Englisch"); Traditional and Simplified Chinese products and the two Pikachu mini tins show a product-type icon.
+- [ ] ⭐ OK for v1; your own photos come later (I-12).
+- [ ] Other: **Antwort:**
+
+**R4.5 · Card names in the catalog.** The catalog shows German names by default, also for Japanese and Chinese cards (marked *übersetzt*), with a switch to *Namen wie gedruckt* on set pages (I18N.md §1).
+- [ ] ⭐ Keep German as the default.
+- [ ] Printed names by default for Asian sets.
 
 ---
 
