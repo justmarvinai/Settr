@@ -21,51 +21,39 @@ async function quickAdd(page: Page, entries: readonly string[], language?: 'EN')
 
 test.use({ serviceWorkers: 'block' });
 
+/** Whether the page still renders frames, how long one takes, and the box's position then. */
 const probe = (page: Page) =>
   page.evaluate(async () => {
+    const started = performance.now();
+    const frame = await Promise.race([
+      new Promise<string>((resolve) => {
+        requestAnimationFrame(() =>
+          resolve(`frame after ${Math.round(performance.now() - started)} ms`),
+        );
+      }),
+      new Promise<string>((resolve) => {
+        setTimeout(() => resolve('NO FRAME within 2000 ms'), 2000);
+      }),
+    ]);
     const el = document.querySelector('[aria-label="Alle sichtbaren Positionen auswählen"]');
-    const frames: unknown[] = [];
-    for (let i = 0; i < 10; i += 1) {
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-      const r = el?.getBoundingClientRect();
-      frames.push([
-        Math.round(window.scrollY * 10) / 10,
-        r ? [r.x, r.y, r.width, r.height].map((v) => Math.round(v * 10) / 10) : null,
-        document.documentElement.scrollHeight,
-      ]);
-    }
-    const cs = el ? getComputedStyle(el) : null;
+    const r = el?.getBoundingClientRect();
+    const active = document.activeElement;
     return {
-      connected: el?.isConnected,
-      count: document.querySelectorAll('[aria-label="Alle sichtbaren Positionen auswählen"]')
-        .length,
-      frames,
-      style: cs ? [cs.visibility, cs.display, cs.opacity, cs.pointerEvents] : null,
-      checkVisibility: el?.checkVisibility?.(),
-      html: document.documentElement.getAttribute('style'),
-      body: document.body.getAttribute('style'),
-      locked: document.documentElement.hasAttribute('data-base-ui-scroll-locked'),
-      dialogs: [...document.querySelectorAll('[role=dialog]')].map((d) => [
-        d.getAttribute('aria-labelledby'),
-        d.hasAttribute('data-open'),
-        d.hasAttribute('data-ending-style'),
-        d.className.slice(0, 40),
-      ]),
-      inert: [...document.querySelectorAll('[inert]')].map((e) => `${e.tagName}.${e.className}`),
-      animations: document
-        .getAnimations()
-        .map((a) => [
-          a.playState,
-          (a.effect as KeyframeEffect | null)?.target?.className?.toString().slice(0, 40),
-        ]),
-      inner: [window.innerWidth, window.innerHeight, document.documentElement.clientWidth],
-      url: location.pathname + location.search,
+      frame,
+      visibility: document.visibilityState,
+      focus: active ? `${active.tagName}[${active.getAttribute('aria-label') ?? ''}]` : null,
+      rect: r ? [r.x, r.y, r.width, r.height].map((v) => Math.round(v)) : null,
+      scrollY: Math.round(window.scrollY),
+      toasts: document.querySelectorAll('.ui-toast').length,
+      dialogs: document.querySelectorAll('.ui-dialog, .ui-sheet').length,
     };
   });
 
+/** A copy of collection.spec.ts's Sammlung test up to the failing click, with probes. */
 test('webkit: select-all after clearing filters', async ({ page, browserName }) => {
   test.skip(browserName !== 'webkit', 'WebKit only');
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
+  const stat = (label: string) => page.locator(`dt:text-is("${label}") + dd`);
   await page.goto('/settings/locations');
   await page.getByLabel('Name').fill('VaultX 9er');
   await page.getByRole('button', { name: 'Anlegen' }).click();
@@ -75,50 +63,74 @@ test('webkit: select-all after clearing filters', async ({ page, browserName }) 
 
   await page.goto('/collection/cards');
   await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
+  await expect(stat('Exemplare')).toContainText('6');
+
+  await page.getByRole('searchbox', { name: 'In deiner Sammlung suchen' }).fill('pikachu');
+  await expect(page).toHaveURL(/q=pikachu/);
+  await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
+  await page.getByRole('button', { name: /^Filter/ }).click();
+  const filters = page.getByRole('dialog', { name: 'Filter' });
+  await filters.getByLabel('Sprache').selectOption({ label: 'Englisch' });
+  await expect(filters.getByRole('button', { name: '1 Position anzeigen' })).toBeVisible();
+  await filters.getByRole('button', { name: '1 Position anzeigen' }).click();
+  await expect(page).toHaveURL(/lang=en/);
+  await page.getByRole('button', { name: 'Filter entfernen: Sprache: Englisch' }).click();
+  await page.getByRole('searchbox', { name: 'In deiner Sammlung suchen' }).fill('');
+  await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
+
   await page.getByRole('button', { name: 'Tabellenansicht' }).click();
+  await expect(page).toHaveURL(/view=table/);
   const table = page.getByRole('table', { name: 'Deine Karten' });
   await table.getByRole('button', { name: 'Karte' }).click();
+  await expect(page).toHaveURL(/sort=name/);
+
   await page.getByRole('button', { name: 'Auswahl' }).click();
   const boxes = table.getByRole('checkbox', { name: / · NM auswählen$/ });
   await boxes.nth(0).click();
   await boxes.nth(1).click();
   const bar = page.getByRole('region', { name: 'Auswahl' });
   await expect(bar).toContainText('2 ausgewählt');
-  const selected = await probe(page);
-
   await bar.getByRole('button', { name: 'Tags …' }).click();
   const tags = page.getByRole('dialog', { name: 'Tags für 2 Positionen' });
   await tags.getByLabel('Neuer Tag').fill('Tauschordner');
   await tags.getByLabel('Neuer Tag').press('Enter');
+  await expect(tags.getByRole('checkbox', { name: 'Tauschordner' })).toBeChecked();
   await tags.getByRole('button', { name: 'Übernehmen' }).click();
   await expect(page.getByText('Tags bei 2 Positionen geändert')).toBeVisible();
+
   await bar.getByRole('button', { name: 'Verschieben …' }).click();
   const move = page.getByRole('dialog', { name: '2 Positionen verschieben' });
   await expect(move.getByLabel('Lagerort')).toHaveValue(/.+/);
   await move.getByRole('button', { name: 'Verschieben' }).click();
   await expect(page.getByText('2 Positionen nach VaultX 9er verschoben')).toBeVisible();
-  const moved = await probe(page);
 
   await page.getByRole('button', { name: /^Filter/ }).click();
-  const filters = page.getByRole('dialog', { name: 'Filter' });
   await filters.getByLabel('Tag').selectOption({ label: 'Tauschordner' });
   await filters.getByLabel('Lagerort').selectOption({ label: 'VaultX 9er' });
   await filters.getByRole('button', { name: '2 Positionen anzeigen' }).click();
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
   const filtered = await probe(page);
   await page.getByRole('button', { name: 'Alle Filter entfernen' }).click();
-  await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
   const cleared = await probe(page);
-  await page.waitForTimeout(3000);
-  const later = await probe(page);
 
-  let click = 'ok';
+  const header = table.getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' });
+  let first = 'ok';
   try {
-    await table
-      .getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' })
-      .click({ timeout: 5000 });
+    await header.click({ timeout: 5000 });
   } catch (error) {
-    click = String(error).slice(0, 1500);
+    first = String(error).slice(0, 900);
   }
-  throw new Error(JSON.stringify({ selected, moved, filtered, cleared, later, click }, null, 1));
+  const afterFirst = await probe(page);
+  await page.waitForTimeout(4000);
+  const later = await probe(page);
+  let second = 'ok';
+  try {
+    await header.click({ timeout: 5000 });
+  } catch (error) {
+    second = String(error).slice(0, 900);
+  }
+  const afterSecond = await probe(page);
+  throw new Error(
+    JSON.stringify({ filtered, cleared, first, afterFirst, later, second, afterSecond }, null, 1),
+  );
 });
