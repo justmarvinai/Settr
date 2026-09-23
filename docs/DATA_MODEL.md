@@ -3,7 +3,7 @@
 > Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > The single source of truth for entities, IDs, the IndexedDB schema, valuation and P/L formulas, and set-completion rules.
 > Backup file format → [`IMPORT_EXPORT.md`](./IMPORT_EXPORT.md). Where catalog data comes from → [`DATA_SOURCES.md`](./DATA_SOURCES.md).
-> References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
+> References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 
 ---
 

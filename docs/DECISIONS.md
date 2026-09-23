@@ -20,7 +20,7 @@
 | 012 | MiniSearch in a worker with CJK bigram tokenization | Accepted |
 | 013 | Image delivery: direct CORS for TCGdex, same-origin proxy for non-CORS hosts | Accepted (Q8.4) |
 | 014 | Clean-room holo effect (no GPL code) | Accepted |
-| 015 | Design direction: D · Bold Studio (C's type, B's sidebar, calm color, light + dark) | Accepted (R2.1; final look ⟶ R3.1) |
+| 015 | Design direction: D · Bold Studio (C's type, B's sidebar, calm color, light + dark) | Accepted (R2.1, R3.1) |
 | 016 | Versioned JSON backup, LWW merge with tombstones | Accepted |
 | 017 | TanStack Form + Zod 4 | Accepted |
 | 018 | Chinese data strategy for v1 | Superseded by ADR-021 |
@@ -34,7 +34,7 @@
 | 026 | Traditional Chinese cards as a language of M6a | Accepted (R2.3) |
 | 027 | Brave (Chromium) as the primary browser | Accepted (R2.9) |
 | 028 | Catalog growth: 30 Jahre first, then set by set and era by era; no Collectr import | Accepted (R2.5) |
-| 029 | Public repository: what may be committed | Proposed (⟶ R3.2) |
+| 029 | Public repository: what may be committed | Accepted (R3.2) |
 
 ---
 
@@ -151,7 +151,7 @@
   - B's floating glass sidebar and toolbar.
   - Neutral surfaces with one restrained accent (*Indigo* by default); color is information, not decoration.
   - Light and dark as equals, *System* as the default theme.
-- **Consequences:** Tokens for both themes are cut in M1 from `DESIGN_SYSTEM.md` §3. The D artboards on the canvas are the visual reference. Marvin confirms them and the accent (*Indigo*, *Kobalt* or *Graphit*) in ⟶ R3.1; changes there are token-level.
+- **Consequences:** Tokens for both themes are cut in M1 from `DESIGN_SYSTEM.md` §3. The D artboards on the canvas are the visual reference. Marvin confirmed them with the *Indigo* accent (R3.1).
 - **Alternatives:** A (the earlier recommendation; dark-first, gold), B as-is (calm but less distinctive), C as-is (too loud for long data-entry sessions).
 
 ### ADR-016 · Versioned JSON backup, LWW merge with tombstones
@@ -212,7 +212,7 @@
 ### ADR-025 · Reference price = Near Mint or better, plus per-copy values (Accepted, R2.2)
 - **Context:** Marvin's rule is "the cheapest offer in the card's language from German sellers" (Q6.3). Without a condition filter, the cheapest offer is often a played copy, which would undervalue his NM cards. He also owns LP and damaged copies (Q5.2).
 - **Decision:**
-  - The reference price (*ab (DE)*) means **Near Mint or better**. Cardmarket deep links add `minCondition=2` (parameter to verify, ⟶ R3.5), and price entries store `context.minCondition = 'NM'`.
+  - The reference price (*ab (DE)*) means **Near Mint or better**. Cardmarket deep links add `minCondition=2` (verified by Marvin, R3.5), and price entries store `context.minCondition = 'NM'`.
   - Copies in worse condition use the existing per-lot **value override** (`Holding.valueOverride = { price, date, note? }`, PRC-07, Q6.2; UI: *Eigener Wert*). It replaces the reference price for that lot only, goes stale like any price and is tagged "eigener Wert" wherever it's shown.
 - **Consequences:** One price series per card/language/variant/grade stays simple, and worse copies are valued honestly when Marvin wants. Valuation already reads `valueOverride` first, then the carry-forward series price (`DATA_MODEL.md` §6).
 - **Alternatives:** Separate price series per condition (more entry work for every card), any condition (misleading for NM copies).
@@ -237,7 +237,7 @@
 - **Decision:**
   - Chromium stays the CI reference engine, and a **manual Brave smoke test with default Shields** runs before each release (`QUALITY.md`).
   - **Backups are downloads.** The File System Access API is only an optional extra behind feature detection (check the picker functions). Automatic folder backups (DAT-06, post-v1) explain Brave's flag.
-  - Settr requests `persist()` after install, never relies on the reported quota, and warns in onboarding and *Einstellungen → Daten* that delete-on-exit settings erase the collection (⟶ R3.4).
+  - Settr requests `persist()` after install, never relies on the reported quota, and warns in onboarding and *Einstellungen → Daten* that delete-on-exit settings erase the collection (R3.4: Marvin doesn't use them; the warnings stay for friends).
   - No canvas hashing or logic based on hardware/screen values. No "share backup" via Web Share on desktop.
   - The self-hosted Noto CJK slices must render Japanese and Chinese names on their own, because Brave may hide named system fonts. Tested in Brave.
 - **Consequences:** Nothing in v1 depends on an API that Brave disables. The one real risk, data erased by a delete-on-exit setting, is covered by warnings, persistence and backups.
@@ -252,9 +252,10 @@
 - **Consequences:** No throwaway work on a Collectr-only importer. A generic CSV import can come back later if friends need it.
 - **Alternatives:** Adding Marvin's sets before v1 (delays the core), a Collectr import (no export without Pro).
 
-### ADR-029 · Public repository: what may be committed (Proposed, ⟶ R3.2)
+### ADR-029 · Public repository: what may be committed (Accepted, R3.2)
 - **Context:** On 2026-09-23 the GitHub repository `justmarvinai/Settr` was **public**, while the product is private (Q1.2, ADR-022). One planned data flow would republish third-party data through a public repo: the daily Cardmarket price-guide snapshot (ADR-020 commits `cm-prices.json`). A public repo also exposes the planning docs and, later, the deployment's configuration.
-- **Proposal:** Make the repository **private** (recommended). Vercel Hobby deploys private repos, and GitHub Free includes 2,000 Actions minutes per month for private repos, enough for CI, the weekly catalog sync and the daily price-guide job (to verify against real CI times).
+- **Proposal (not taken for now):** make the repository **private**. Vercel Hobby deploys private repos, and GitHub Free includes 2,000 Actions minutes per month for private repos, enough for CI, the weekly catalog sync and the daily price-guide job (to verify against real CI times).
 - **If it stays public:** `cm-prices.json` is **not** committed. The daily job triggers a Vercel deploy hook instead, and the build downloads and filters the price guide at build time. The deployment URL is never written into the repo.
-- **Either way:** no secrets and no personal collection data are committed (CLAUDE.md), and the default branch becomes `main` at the start of M1 (⟶ R3.3).
+- **Decision (R3.2, 2026-09-23):** the repository **stays public for now**, so the "If it stays public" rules above apply.
+- **Either way:** no secrets and no personal collection data are committed (CLAUDE.md), and `main` is the default branch from M1 on (R3.3).
 

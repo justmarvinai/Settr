@@ -9,6 +9,7 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 ## [Unreleased]
 
 ### Docs
+- **Round 3 answered, M0 complete, coding approved (2026-09-23).** Direction D is confirmed with the *Indigo* accent (R3.1). The repository stays public for now, so ADR-029 is accepted with its public-repo rules (R3.2). `main` is created from the reviewed spec (R3.3). Marvin's Brave keeps site data (R3.4), and `minCondition=2` = Near Mint or better is verified (R3.5). `CLAUDE.md`, `AGENTS.md` and the roadmap now show M1 in progress.
 - **Spec v0.3: round-2 answers incorporated, 2026-09-23.**
   - **Design (R2.1):** direction **D · Bold Studio** chosen and built on the design canvas in light and dark (Übersicht, Set, Kartendetail, iPhone set). It takes C's heavy, wide type and B's floating glass sidebar, with neutral surfaces, one restrained accent (Indigo by default) and balanced glass. "Usability and user experience is always #1" is now the first design principle. `DESIGN_SYSTEM.md` has D's tokens for both themes (ADR-015 accepted).
   - **Prices:** the reference price is **Near Mint or better** (R2.2, ADR-025), and worse copies use the existing per-lot value override, shown as *Eigener Wert*. Marvin verified the Cardmarket link format (`language=3` = German, `sellerCountry=7` = Germany); `minCondition=2` is still to verify.

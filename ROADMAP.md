@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-23 · Current phase: **M0 · Planning** ⏳ (spec v0.3: rounds 1–2 answered, direction D chosen; round 3 + "Go" open)
+> Last updated: 2026-09-23 · Current phase: **M1 · Foundation** ⏳ (spec v0.3; rounds 1–3 answered; coding approved 2026-09-23)
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -10,8 +10,8 @@
 
 | Milestone | Goal | Version | Status |
 |---|---|---|---|
-| **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ⏳ |
-| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | 🔒 |
+| **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ✅ |
+| **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ⏳ |
 | **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | 🔒 |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | 🔒 |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | 🔒 |
@@ -25,7 +25,7 @@
 
 ---
 
-## M0 · Planning ⏳
+## M0 · Planning ✅
 
 - [x] Research data sources (TCGdex, pokemontcg.io, Cardmarket, sealed-product sources) → `docs/DATA_SOURCES.md`
 - [x] Research the 30th-anniversary set across DE/EN/JA/ZH → `docs/PRODUCT_SPEC.md` §5
@@ -39,15 +39,14 @@
 - [x] **You:** pick a design direction (R2.1: C with B's sidebar, calmer color, light + dark) and answer round 2 (2026-09-23)
 - [x] Build direction **D · Bold Studio** on the canvas (Übersicht, Set, Kartendetail, iPhone set; light + dark)
 - [x] Incorporate round 2 (spec v0.3)
-- [ ] **You:** answer round 3 (R3.1 confirm D + accent, R3.2 repository visibility, R3.3 `main` branch, R3.4 backups in Brave, R3.5 optional link check)
-- [ ] Verify from an unrestricted network that TCGdex images exist (HEAD checks per language, `DATA_SOURCES.md` §4)
-- [ ] **You:** explicit **go** for coding 🔑
+- [x] **You:** answer round 3 (2026-09-23): D confirmed with *Indigo*, the repository stays public, `main` branch, Brave keeps its data, NM filter verified
+- [x] **You:** explicit **go** for coding 🔑 (2026-09-23: "You can start")
 
 **Exit:** direction D confirmed (R3.1), round 3 incorporated, and explicit permission ("Go") to start M1.
 
 ---
 
-## M1 · Foundation 🔒 → v0.1.0
+## M1 · Foundation ⏳ → v0.1.0
 
 - [ ] Repository setup: `main` as the default branch (R3.3), visibility per R3.2 (ADR-029)
 - [ ] Scaffold: Vite + React + TypeScript (strict) + TanStack Router (file-based) + Tailwind CSS v4 (`ARCHITECTURE.md` §3)
@@ -77,7 +76,7 @@
     - [ ] SC Cardmarket IDs via `idMetacard` (6602 ↔ 6603)
   - [ ] **Traditional Chinese** on `asia:M6a` (ADR-026): names from `type-null/PTCG-database` (`data_tc`, licensing to verify) or derived (PokéAPI `zh-Hant`), curated Trainer names
   - [ ] PokéAPI species names → search aliases + derived German names for Asian-print cards
-  - [ ] Image verification (HEAD per language) and fallback flags
+  - [ ] Image verification (HEAD per language, run in GitHub Actions because this sandbox can't reach TCGdex) and fallback flags
   - [ ] Curated **sealed catalog** for DE/EN/JP/**TC/SC**, incl. Pokémon Center exclusives and JP lottery items, with release waves through Dec 2026 (Q4.3). EN/JP images via TCGCSV + the `/img/tcgp` proxy
   - [ ] Manifest with hashes, Zod-validated output, CI job + weekly sync PR
 - [ ] **Multi-set foundation** (ADR-028): series grouping, per-set lazy-loaded chunks and a slim global search index, so later sets are config + curation only

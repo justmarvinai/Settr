@@ -1,7 +1,7 @@
 # Settr: Product Specification (PRD)
 
 > Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
-> References like (Q6.3) or (R2.2) point to the decision record in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
+> References like (Q6.3) or (R2.2) point to the decision record in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 > Owner: Marvin (product) · Author: Claude (planning)
 > Related: [`UX_SPEC.md`](./UX_SPEC.md) · [`DATA_MODEL.md`](./DATA_MODEL.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) · [`ROADMAP.md`](../ROADMAP.md)
 
@@ -81,7 +81,7 @@ The first version contains **only** the Pokémon TCG 30th-anniversary expansion,
 
 ## 6. Feature catalogue
 
-Priority uses **MoSCoW** for v1: **M**ust, **S**hould, **C**ould, **W**on't (v1, i.e. later). The IDs are referenced in the roadmap, tests and PRs. "I-xx" refers to a feature idea, "Qx.y"/"R2.x" to a decision and "⟶ R3.x" to an open question in `USER_QUESTIONS.md`.
+Priority uses **MoSCoW** for v1: **M**ust, **S**hould, **C**ould, **W**on't (v1, i.e. later). The IDs are referenced in the roadmap, tests and PRs. "I-xx" refers to a feature idea, and "Qx.y"/"R2.x"/"R3.x" to a decision in `USER_QUESTIONS.md`.
 
 ### 6.1 Catalog and search (CAT)
 
@@ -125,7 +125,7 @@ Priority uses **MoSCoW** for v1: **M**ust, **S**hould, **C**ould, **W**on't (v1,
 | PRC-03 | **Price chart** per item (ranges, markers, purchase baseline, compare languages) | M | "Graphical trends" from the brief |
 | PRC-04 | **Price-update session**: a keyboard-driven queue across stale or selected items | S | Signature feature, see `UX_SPEC.md` §4.10 |
 | PRC-05 | **Staleness** indicators and reminders | S | |
-| PRC-06 | **Cardmarket deep links**: exact product (idProduct), preset with **the copy's language + seller country Germany + Near Mint or better** (R2.2) | S | IDs from TCGdex / Cardmarket catalog, Q6.3. `language` and `sellerCountry=7` verified by Marvin (2026-09-23); `minCondition=2` to verify (⟶ R3.5) |
+| PRC-06 | **Cardmarket deep links**: exact product (idProduct), preset with **the copy's language + seller country Germany + Near Mint or better** (R2.2) | S | IDs from TCGdex / Cardmarket catalog, Q6.3. `language` and `sellerCountry=7` verified by Marvin (2026-09-23); `minCondition=2` verified too (R3.5) |
 | PRC-07 | Per-lot **value override**, labeled ***Eigener Wert***: for copies worth less than the NM reference price (LP, damaged; R2.2) or more (special pieces). It has its own date, goes stale like any price, feeds valuation and P/L, and carries an "eigener Wert" tag wherever it's shown | S | Q6.2, R2.2, ADR-025 |
 | PRC-08 | **Multi-currency** purchase prices with FX conversion to EUR | W | EUR only (Q6.1) |
 | PRC-09 | **Price-guide suggestions**: a daily snapshot of Cardmarket's public price guide shows *ab* and *Trend* as suggestions on card pages and in the price session. Clearly labeled (for DE/EN cards it mixes all languages and countries), and **never saved without confirmation** | S | Q6.6 = yes |
@@ -155,7 +155,7 @@ Priority uses **MoSCoW** for v1: **M**ust, **S**hould, **C**ould, **W**on't (v1,
 | DAT-02 | **Full import** with preview, *replace* or *merge*, safety snapshot and undo | M | |
 | DAT-03 | **CSV export** (Excel-DE friendly) | S | |
 | DAT-04 | **Backup reminders** and a status pill | S | Sidebar footer, amber when a backup is due: *"Backup fällig · Letztes vor 12 Tagen"* (Q7.1, R2.1) |
-| DAT-05 | **Persistent storage** request and storage usage display | M | Protects against browser eviction. Never relies on the reported quota (Brave always reports 2 GiB), and warns about Brave's delete-on-exit settings (ADR-027, ⟶ R3.4) |
+| DAT-05 | **Persistent storage** request and storage usage display | M | Protects against browser eviction. Never relies on the reported quota (Brave always reports 2 GiB), and warns about Brave's delete-on-exit settings (ADR-027, R3.4) |
 | DAT-06 | **Auto-backup to a folder** (browsers with the File System Access API; in Brave only after enabling `brave://flags/#file-system-access-api`) | W | Later (I-15, Q7.2, ADR-027) |
 | DAT-07 | **Generic CSV import** from other apps (mapping wizard), **no Collectr preset** | W | Later (I-16). The Collectr importer is dropped: without Collectr Pro there's no export (R2.5, ADR-028) |
 | DAT-08 | Multi-device **sync** via your own cloud | W | I-18 |
@@ -254,10 +254,10 @@ Priority uses **MoSCoW** for v1: **M**ust, **S**hould, **C**ould, **W**on't (v1,
 ## 9. Constraints
 
 - **Hosting:** Vercel, static only. No server database and no accounts.
-- **Data sources:** free/open only (TCGdex primary). No price API calls at runtime; the price-guide snapshot is a static file produced by a scheduled GitHub Action (committed only if the repository is private, otherwise built at deploy time; ⟶ R3.2, ADR-029). See `DATA_SOURCES.md`.
+- **Data sources:** free/open only (TCGdex primary). No price API calls at runtime; the price-guide snapshot is a static file produced by a scheduled GitHub Action (built at deploy time while the repository is public, R3.2, ADR-029). See `DATA_SOURCES.md`.
 - **UI language:** German only in v1 (translation-ready).
 - **Primary platform:** Windows desktop (**Brave**, Chromium; R2.9, ADR-027) first, then iPhone (installed PWA, Safari/WebKit). Nothing in v1 may depend on an API that Brave disables, such as the File System Access API. Chromium in CI covers Brave's engine, and a manual Brave smoke test with default Shields runs before each release.
-- **Storage:** browser IndexedDB, which can be evicted. Mitigations are persistence, PWA installation and backups. Brave's delete-on-exit settings (off by default) would erase it, so Settr warns about them (ADR-027, ⟶ R3.4).
+- **Storage:** browser IndexedDB, which can be evicted. Mitigations are persistence, PWA installation and backups. Brave's delete-on-exit settings (off by default) would erase it, so Settr warns about them (ADR-027, R3.4).
 - **Legal:** unofficial fan project, with a disclaimer (see `DATA_SOURCES.md` §8).
 
 ## 10. Success criteria for v1 (personal, measurable)

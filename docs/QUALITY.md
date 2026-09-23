@@ -146,7 +146,7 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 - **External links** (Cardmarket) use `rel="noopener noreferrer"`.
 - **Dependencies:** minimal and well-maintained, with a committed lockfile, Renovate for updates (grouped weekly) and `pnpm audit` in CI.
 - **Analytics and telemetry:** none (Q8.3). Never add Vercel Analytics (it's on EasyPrivacy, so Brave would block it anyway). Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
-- **Repository (ADR-029):** no secrets and no personal collection data are ever committed. While the GitHub repository is public (⟶ R3.2), neither are Cardmarket price-guide snapshots (`cm-prices.json`) nor the deployment URL.
+- **Repository (ADR-029):** no secrets and no personal collection data are ever committed. While the GitHub repository is public (it stays public for now, R3.2), neither are Cardmarket price-guide snapshots (`cm-prices.json`) nor the deployment URL.
 
 ---
 
@@ -157,10 +157,10 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 | `ci.yml` | PR, push to `main` | pnpm install (cached) → `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → build → size-limit → Playwright (Chromium + WebKit on PR; all engines on `main`) → upload reports |
 | `e2e-nightly.yml` | nightly | Full browser matrix + visual regression + random-seed property tests |
 | `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
-| `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, ⟶ R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
+| `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
 | Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |
 | `lighthouse.yml` | PR (after the Vercel preview is ready) | Lighthouse CI against the preview URL with budgets |
 
-Branch protection on `main` requires green CI and a review (`main` becomes the default branch at the start of M1, ⟶ R3.3). Before each release, the manual Brave smoke test (§3.1) must pass.
+Branch protection on `main` requires green CI and a review (`main` is the default branch from M1 on, R3.3). Before each release, the manual Brave smoke test (§3.1) must pass.
 
 In a private repository, GitHub Free includes 2,000 Actions minutes per month, which should cover CI, the weekly catalog sync and the daily price-guide job (to verify against real CI times, ADR-029).

@@ -1,6 +1,6 @@
 # Settr: Design System
 
-> Status: **Draft v0.3**. Direction **D · Bold Studio** chosen (R2.1): C's bold type, B's floating glass sidebar, calmer color, light and dark. The final look is confirmed on the design canvas (⟶ **R3.1**). Last updated: 2026-09-23.
+> Status: **Draft v0.3**. Direction **D · Bold Studio** chosen (R2.1): C's bold type, B's floating glass sidebar, calmer color, light and dark. Marvin confirmed the look and the *Indigo* accent on the design canvas (R3.1). Last updated: 2026-09-23.
 > Screens and flows → [`UX_SPEC.md`](./UX_SPEC.md). Accessibility requirements → [`QUALITY.md`](./QUALITY.md) §5. Platform priority: **Windows desktop first** (Brave, Chromium; R2.9), iPhone second (Q9.8).
 
 ---
@@ -37,7 +37,7 @@ Marvin picked **C · Bold** with **B's sidebar**, more polish, **more subtle col
 | **New in D** | **Neutral surfaces instead of C's cobalt blocks**, one restrained accent (§3.1), and a first-class **light and dark** pair |
 
 - **Color is information, not decoration.** The accent marks only the primary action, active navigation, selection, chart lines, progress, quantity badges and focus rings. Gains and losses always carry sign and arrow as well as color.
-- **Accent:** *Indigo* by default. On the canvas you can compare *Kobalt* (C's original, louder) and *Graphit* (no color at all) via the artboards' Tweaks. Final pick ⟶ **R3.1**.
+- **Accent:** *Indigo* by default. On the canvas you can compare *Kobalt* (C's original, louder) and *Graphit* (no color at all) via the artboards' Tweaks. **Final pick: Indigo** (R3.1).
 - The D artboards (Übersicht, Set, Kartendetail, iPhone set; light and dark) are on the design canvas. A, B and C stay there for reference.
 
 ### 1.3 What we deliberately avoid (the "generic AI app" look)
@@ -93,7 +93,7 @@ All colors are **OKLCH design tokens** (CSS custom properties) mapped into Tailw
 | `--focus` | = `--accent` | = `--accent` | 3 px focus ring with 2 px offset |
 
 - **Soft variants** (`--gain-soft`, `--loss-soft`, `--warn-soft`) are the color at 10–13 % over the surface. Text on them keeps ≥ 4.5∶1 (lowest pair in D: 4.8∶1).
-- **Accent alternatives for R3.1:** *Kobalt* `#3445F0` (light) / `#4353FF` (dark); *Graphit* = `--text` as the accent (ink buttons in light, white buttons with ink text in dark).
+- **Accent alternatives (compared on the canvas, not chosen; R3.1):** *Kobalt* `#3445F0` (light) / `#4353FF` (dark); *Graphit* = `--text` as the accent (ink buttons in light, white buttons with ink text in dark).
 - Colorblind-safe P/L option: gain `oklch(0.75 0.13 240)` (blue) and loss `oklch(0.76 0.16 60)` (orange).
 - All pairs are contrast-checked by an automated token test (`QUALITY.md` §5).
 

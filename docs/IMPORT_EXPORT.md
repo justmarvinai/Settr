@@ -2,7 +2,7 @@
 
 > Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > Settr has no server, so the backup file **is** the user's safety net and the only way to move data between devices. This document specifies the format and the guarantees.
-> Entities → [`DATA_MODEL.md`](./DATA_MODEL.md). References like (Q7.1) or (R2.9) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
+> Entities → [`DATA_MODEL.md`](./DATA_MODEL.md). References like (Q7.1) or (R2.9) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 
 ---
 
@@ -148,7 +148,7 @@ Presets (TCG Collector, Cardmarket stock/shipment exports) follow on demand. The
 | Mechanism | Behavior |
 |---|---|
 | **Persistent storage** | Settr requests `navigator.storage.persist()` after onboarding, after the first holding is added, and after installation as an app. Chromium browsers (incl. Brave) don't prompt: they grant it to installed apps and to often-used or bookmarked sites, and never while the site's cookies are blocked or cleared on exit. A `false` result is retried later. Status is shown in Einstellungen › Daten |
-| **Delete-on-exit warning** (Brave, ADR-027) | Brave's Shields *"Forget me when I close this site"* (per site, or globally at `brave://settings/shields`), the *"Delete data on exit"* tab under *Clear browsing data*, and a per-site *"clear cookies on exit"* exception all erase IndexedDB. They're off by default. The first wipes all site data about 30 s after the last tab closes, even for installed apps, and the last also blocks `persist()`. Onboarding and Einstellungen › Daten warn about them (⟶ R3.4) |
+| **Delete-on-exit warning** (Brave, ADR-027) | Brave's Shields *"Forget me when I close this site"* (per site, or globally at `brave://settings/shields`), the *"Delete data on exit"* tab under *Clear browsing data*, and a per-site *"clear cookies on exit"* exception all erase IndexedDB. They're off by default. The first wipes all site data about 30 s after the last tab closes, even for installed apps, and the last also blocks `persist()`. Onboarding and Einstellungen › Daten warn about them (R3.4) |
 | **Backup reminder** | The sidebar pill turns amber (*"Backup fällig · Letztes vor 12 Tagen"*) and a toast appears when `lastBackupAt` is older than **7 days** (Q7.1) **and** there were changes since. The interval is configurable |
 | **Change counter** | After 50 changes without a backup, a gentle reminder |
 | **Auto-backup to folder** (I-15, **post-v1** per Q7.2; needs the File System Access API: Chromium browsers, and Brave only after enabling `brave://flags/#file-system-access-api`, ADR-027) | Settr feature-detects the picker functions (`'showDirectoryPicker' in window`), never `FileSystemHandle`, and explains Brave's flag when the picker is missing. The user grants a directory once (the handle is stored in IndexedDB). Settr writes `settr-backup-latest.settr.json` and rotating dated copies (keeps the last 10) after changes (debounced 60 s) and on `visibilitychange: hidden`. Permission is re-requested per session when needed. Without the API, backups stay downloads |

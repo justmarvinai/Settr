@@ -2,7 +2,7 @@
 
 > Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23 · Research date: 2026-09-23 (TCGdex repo commit `a211f11`, 2026-09-22).
 > Evidence labels: **[V]** verified by us in source data or compiler output · **[V-src]** verified in server/SDK source code · **[M]** checked live by Marvin (dated) · **[3P]** dated live measurements published by other projects · **[D]** vendor docs · **[U]** unverified.
-> References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
+> References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 > Our cloud environment blocked live HTTP checks to most hosts (see `CLAUDE.md`), so all **[3P]** items must be re-verified from an unrestricted network in M0/M1.
 
 ---
@@ -257,7 +257,7 @@ Released or announced as of 2026-09-23. **Scope (Q4.3):** DE, EN, JP, Traditiona
 - **Exact product (preferred):** `https://www.cardmarket.com/{de|en}/Pokemon/Products?idProduct={idProduct}&language={langId}&minCondition={cond}`. The `Products?idProduct=` redirect to the product page works **[M, 2026-09-23]**.
 - **Fallback search:** `https://www.cardmarket.com/de/Pokemon/Products/Search?searchString={urlencoded name + number}` [3P].
 - **Cardmarket language IDs** [3P, except `3` = German: M, 2026-09-23]: 1 English · 2 French · **3 German** · 4 Spanish · 5 Italian · **6 S-Chinese** · **7 Japanese** · 8 Portuguese · 9 Russian · 10 Korean · **11 T-Chinese** · 12 Dutch · 13 Polish · 14 Czech · 15 Hungarian · 16 Indonesian · 17 Thai.
-- **Condition codes (`minCondition`)** [3P]: 1 MT · 2 NM · 3 EX · 4 GD · 5 LP · 6 PL · 7 PO. **`minCondition=2` is still to verify** (a test link for Marvin, ⟶ R3.5).
+- **Condition codes (`minCondition`)** [3P]: 1 MT · 2 NM · 3 EX · 4 GD · 5 LP · 6 PL · 7 PO. **`minCondition=2` = Near Mint or better is verified** [M, 2026-09-23] (R3.5).
 - Reverse holos: add `isReverseHolo=Y` (same product ID) [3P]. Pattern reverses have their own product IDs.
 - **Seller country:** `sellerCountry={countryId}`. **Germany = `7`** **[M, 2026-09-23]**.
 - **Settr's default link (Q6.3, R2.2):** `…/Products?idProduct={id}&language={langId of the copy}&sellerCountry=7&minCondition=2`. This opens the product with exactly the offers Marvin compares: his language, German sellers, **Near Mint or better**, sorted by price. Traditional Chinese copies link to the JP product with `language=11` (T-Chinese, R2.3).
@@ -282,8 +282,8 @@ Unmatched rows go to a resolution screen.
   1. Download `price_guide_6.json` (15.5 MB).
   2. Keep only the `idProduct`s referenced by the catalog (cards per variant/language + sealed products): a few KB.
   3. Write `public/catalog/v1/cm-prices.json` (`PriceGuideSnapshot`, `DATA_MODEL.md` §4.1).
-  4. Publish it. How depends on the repository's visibility (ADR-029, ⟶ R3.2):
-     - **Private repository (recommended):** commit it to `main` **only if changed**. Vercel redeploys automatically; one small commit per day is the accepted cost of staying static.
+  4. Publish it. How depends on the repository's visibility (ADR-029). It stays **public** for now (R3.2), so the public variant applies:
+     - **Private repository (if it's made private later):** commit it to `main` **only if changed**. Vercel redeploys automatically; one small commit per day is the accepted cost of staying static.
      - **Public repository:** **never commit it**, because a public repo would republish Cardmarket's data. The job only calls a Vercel **deploy hook** (its URL is kept as a GitHub Actions secret), and steps 1–3 run inside the Vercel build, so the file exists only in the deployment.
 - **Semantics** (shown in the UI):
   - **International** products (DE/EN share one product): `low` = the cheapest offer across **all languages, countries and conditions**, and `trend` = Cardmarket's trend. So it's usually *lower* than "cheapest German seller in German", and it's labeled *"alle Sprachen & Länder"*.
@@ -298,7 +298,7 @@ Unmatched rows go to a resolution screen.
 ## 9. Legal and licensing
 
 - **Data:** TCGdex database is MIT. We credit it (About page + README). Cardmarket product catalog files are publicly offered downloads; we use IDs and names only. PokéAPI is open. `type-null/PTCG-database` is MIT code with data scraped from official sites, so its data licensing is to verify before TC names ship (ADR-026). `duanxr/PTCG-CHS-Datasets` is not used (R2.8).
-- **Public repository (ADR-029, ⟶ R3.2):** while the GitHub repository is public, Cardmarket's price guide is never committed (`cm-prices.json` is built at deploy time, §8.3), so the repo doesn't republish Cardmarket's data.
+- **Public repository (ADR-029; public for now, R3.2):** while the GitHub repository is public, Cardmarket's price guide is never committed (`cm-prices.json` is built at deploy time, §8.3), so the repo doesn't republish Cardmarket's data.
 - **Artwork and card text:** © The Pokémon Company, Nintendo, GAME FREAK, Creatures. We **hotlink or proxy** (never re-host) images, and show this disclaimer:
   - **DE:** „Settr ist ein inoffizielles Fanprojekt und steht in keiner Verbindung zu The Pokémon Company, Nintendo, GAME FREAK oder Creatures. Pokémon und alle zugehörigen Namen sind Marken von Nintendo/The Pokémon Company. Kartenbilder und -texte © The Pokémon Company, Nintendo, GAME FREAK und/oder Creatures. Keine Verbindung zu Cardmarket. Preise sind Nutzereingaben ohne Gewähr."
   - **EN:** "Settr is an unofficial fan project and is not affiliated with, endorsed or sponsored by The Pokémon Company, Nintendo, GAME FREAK or Creatures. Pokémon and all related names are trademarks of Nintendo/The Pokémon Company. Card images and text © The Pokémon Company, Nintendo, GAME FREAK and/or Creatures. Not affiliated with Cardmarket. Prices are user-entered."
@@ -316,7 +316,7 @@ Unmatched rows go to a resolution screen.
 
 - [ ] GET-check TCGdex images: `https://assets.tcgdex.net/de/me/30th/001/high.webp`, `…/en/me/30th/001/high.webp`, `…/de/me/30th-c/001/high.webp`, `…/ja/M/M6a/001/high.webp`, plus CORS headers.
 - [x] Cardmarket deep-link format: `Products?idProduct=…` redirects correctly, `language=3` = German and `sellerCountry=7` = Germany. Verified by Marvin on 2026-09-23 with Pikachu ex (30C 150), §8.1.
-- [ ] Confirm that `minCondition=2` filters to Near Mint or better (test link for Marvin, ⟶ R3.5).
+- [x] `minCondition=2` filters to Near Mint or better (verified by Marvin, R3.5).
 - [ ] Confirm the price-guide field semantics (`low` scope, `-holo` = reverse holo for Pokémon, and whether JP product values include Traditional Chinese offers).
 - [ ] Confirm German product names (◐) from pokemon.de product galleries.
 - [ ] Simplified Chinese: verify that the SC card list = M6a numbering (spot-check 20 cards against Cardmarket expansion 6603). No permission request is sent, because `duanxr/PTCG-CHS-Datasets` isn't used (R2.8).

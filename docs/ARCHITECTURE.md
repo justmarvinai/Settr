@@ -28,7 +28,7 @@
  │ price-guide.yml (daily) ──▶ Cardmarket price_guide_6.json ──filter──▶         │
  │   → cm-prices.json · private repo: commit if changed                          │
  │                    · public repo: never committed; deploy hook, then the      │
- │                      build fetches + filters it (ADR-029, ⟶ R3.2)             │
+ │                      build fetches + filters it (ADR-029, R3.2)               │
  └──────────────────────────────────────────────────────────────────────────────┘
                                    │  git push or deploy hook → Vercel build (vite build)
                                    ▼
@@ -220,7 +220,7 @@ Updates show a non-blocking toast ("Neue Version verfügbar · Neu laden"). It n
 |---|---|
 | Eviction under storage pressure (all browsers, least-recently-used first) | `navigator.storage.persist()` after onboarding and the first holding, and again after the app is installed (ADR-027). Chromium browsers, Brave included, grant silently (no prompt) if the site is installed as an app or among the user's most-used/bookmarked sites, and only if its cookies aren't blocked or cleared on exit; otherwise `persist()` returns false and is retried later. Firefox **prompts**, Safari uses heuristics |
 | **Safari/iOS deletes all script-writable storage after 7 days of Safari use without interaction with the site** | Onboarding strongly recommends **"Zum Home-Bildschirm"** (installed web apps keep their own counter and are effectively exempt). Backup reminders are mandatory UX, and the dashboard shows a warning banner on iOS Safari when the app isn't installed |
-| **Brave's delete-on-exit settings** (all off by default): Shields *"Forget me when I close this site"* (per site, or globally in `brave://settings/shields`) wipes all site data ~30 s after the last tab closes, even for installed apps. The *"Delete data on exit"* tab in *Clear browsing data* and a per-site *"clear cookies on exit"* exception erase it too; the exception also makes storage temporary and blocks `persist()` | Onboarding and *Einstellungen › Daten* warn that these settings erase the collection (ADR-027; whether Marvin uses one ⟶ R3.4). Backups and reminders are the safety net |
+| **Brave's delete-on-exit settings** (all off by default): Shields *"Forget me when I close this site"* (per site, or globally in `brave://settings/shields`) wipes all site data ~30 s after the last tab closes, even for installed apps. The *"Delete data on exit"* tab in *Clear browsing data* and a per-site *"clear cookies on exit"* exception erase it too; the exception also makes storage temporary and blocks `persist()` | Onboarding and *Einstellungen › Daten* warn that these settings erase the collection (ADR-027; whether Marvin uses one R3.4). Backups and reminders are the safety net |
 | Quotas (Chromium ≤ 60 % of disk per origin, Firefox ≤ 10 % / 10 GiB (50 % when persistent), Safari ≈ 60 %) | Not a practical concern for user data (MBs). Photos are downscaled. `storage.estimate()` usage is shown in Einstellungen › Daten. **Brave always reports `quota` = 2 GiB** (anti-fingerprinting; `usage` is real and the real limit is unchanged), so Settr never relies on the reported quota |
 | Browser data cleared by the user | Only backups help, hence the backup pill, reminders and the optional auto-backup folder (post-v1, DAT-06; Chromium with File System Access, in Brave only after enabling `brave://flags/#file-system-access-api`) |
 
@@ -299,12 +299,12 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
     ]
   }
   ```
-- **Environments:** every PR gets a **preview deployment**, and `main` goes to **production** (`main` becomes the default branch at the start of M1, ⟶ R3.3). There are no secrets and no environment variables at runtime. The Vercel deploy-hook URL of the public-repository variant below is kept as a GitHub Actions secret, never in the repo.
+- **Environments:** every PR gets a **preview deployment**, and `main` goes to **production** (`main` is the default branch from M1 on, R3.3). There are no secrets and no environment variables at runtime. The Vercel deploy-hook URL of the public-repository variant below is kept as a GitHub Actions secret, never in the repo.
 - **Plan constraint:** Vercel **Hobby is for non-commercial use only** (no ads, no paid features; donations are allowed). Settr stays non-commercial (Q8.2).
 - **Domain:** no custom domain for now (Q1.4). It lives at a free `*.vercel.app` name.
 - **Private deployment (Q1.2):** `<meta name="robots" content="noindex, nofollow">`, the `X-Robots-Tag` header above, and a `robots.txt` with `Disallow: /`. The URL is shared only with friends and is **never written into the repository** (docs, config or code; ADR-029).
-- **Daily price-guide deploys (ADR-020, ADR-029):** how `cm-prices.json` reaches production depends on the repository's visibility (⟶ R3.2):
-  - **Private repository (recommended):** the `price-guide.yml` job commits `cm-prices.json` only when it changed, so at most one production deploy per day (well within Hobby limits). GitHub Free includes 2,000 Actions minutes per month for private repositories, which should cover CI, the weekly catalog sync and the daily job (to verify against real CI times).
+- **Daily price-guide deploys (ADR-020, ADR-029):** how `cm-prices.json` reaches production depends on the repository's visibility. It stays **public** for now (R3.2), so the deploy-hook variant is the one in use:
+  - **Private repository (if it's made private later):** the `price-guide.yml` job commits `cm-prices.json` only when it changed, so at most one production deploy per day (well within Hobby limits). GitHub Free includes 2,000 Actions minutes per month for private repositories, which should cover CI, the weekly catalog sync and the daily job (to verify against real CI times).
   - **Public repository:** `cm-prices.json` is **never committed**, because that would republish Cardmarket's data. The daily job calls a Vercel **deploy hook**, and a build step downloads Cardmarket's price guide, filters it to catalog products and writes `cm-prices.json` into the build output. Still at most one extra production deploy per day.
 
 ---
@@ -342,10 +342,10 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
 | **Card images missing** for some languages (a brand-new set, released 16 Sep 2026) | Placeholders instead of art | Verify via HEAD in the pipeline. Fall back to another language of the same print, then the card-back placeholder. Re-sync weekly |
 | TCGdex upstream changes or outages | Build-time only (runtime uses our static copy) | Pinned commit, schema validation, id-alias map |
 | Browser storage eviction | Data loss | Persistence request, PWA install, backups, reminders, auto-backup (post-v1; Chromium with File System Access, in Brave only behind a flag) |
-| **Brave delete-on-exit settings** (off by default, §8.2) | The whole collection is erased when the site or the browser is closed | Warnings in onboarding and *Einstellungen › Daten*, `persist()` after install, backups and reminders (ADR-027; Marvin's setup ⟶ R3.4) |
+| **Brave delete-on-exit settings** (off by default, §8.2) | The whole collection is erased when the site or the browser is closed | Warnings in onboarding and *Einstellungen › Daten*, `persist()` after install, backups and reminders (ADR-027; Marvin's setup R3.4) |
 | Brave fingerprinting protection | Hidden system fonts, noisy canvas readback, randomized hardware/screen values | Self-hosted Noto CJK slices, no canvas hashing, no logic based on hardware/screen values, manual Brave smoke test before each release (`QUALITY.md` §3.1) |
 | Brave Shields blocking Settr's requests | Missing assets or data | Brave's default lists (Brave, EasyList, EasyPrivacy, uBlock lists, and EasyList Germany on German installs) don't match Settr's assets, `/catalog/v1/*.json`, the service worker, fonts or TCGdex images. No analytics scripts: Vercel Analytics is on EasyPrivacy and is never added |
-| **Public GitHub repository** (⟶ R3.2) | Cardmarket's price guide republished; the private deployment's URL exposed | Recommended: make the repository private. While it's public, `cm-prices.json` is never committed (deploy hook + build-time fetch, §11), and the deployment URL is never written into the repo (ADR-029) |
+| **Public GitHub repository** (public for now, R3.2) | Cardmarket's price guide republished; the private deployment's URL exposed | Marvin keeps it public for now (R3.2). While it's public, `cm-prices.json` is never committed (deploy hook + build-time fetch, §11), and the deployment URL is never written into the repo (ADR-029) |
 | Catalog growth (Marvin's sets and eras after v1) | Bigger downloads, slower search | Per-set lazy chunks, series grouping and a slim global search index from M1 (§9.1, ADR-028). FlexSearch if the index reaches tens of thousands of docs (ADR-012) |
 | Vercel Hobby non-commercial rule | Hosting must change if monetized | Static output is portable (Cloudflare Pages / Netlify) |
 | TS 7 ecosystem gaps (tools needing the TS JS API) | Tooling friction | Oxlint/tsgolint are TS 7-native. Fall back to TS 6.0 for a specific tool only if unavoidable |

@@ -2,8 +2,8 @@
 
 > Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
 > Covers the information architecture, navigation, screen specifications, key flows, states and keyboard model.
-> Visual language (colors, type, motion) lives in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md): direction **D · Bold Studio**, light and dark (R2.1). Its artboards on the design canvas are the visual reference for the shell (§3) and the Übersicht, set and card screens (§4.1, §4.3, §4.4); Marvin confirms the final look in ⟶ R3.1. Feature IDs (`CAT-02`, `PRC-04`, …) refer to [`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md).
-> References like (Q6.3) or (R2.1) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). **⟶ R3.x** marks a still-open round-3 question.
+> Visual language (colors, type, motion) lives in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md): direction **D · Bold Studio**, light and dark (R2.1). Its artboards on the design canvas are the visual reference for the shell (§3) and the Übersicht, set and card screens (§4.1, §4.3, §4.4); Marvin confirmed the final look with the *Indigo* accent (R3.1). Feature IDs (`CAT-02`, `PRC-04`, …) refer to [`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md).
+> References like (Q6.3) or (R2.1) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 > **Platform priority:** Windows desktop (**Brave**, Chromium; R2.9) first, then iPhone (installed PWA, Safari/WebKit). **UI language:** German only (Q3.1).
 
 ---
@@ -231,7 +231,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 - **Price context (R2.2, R2.6):** the panel states what the current price means: card language, price type and condition, e.g. *"Aktueller Preis · Deutsch · ab (DE) · NM oder besser · 12.09."*. A price never appears under another language's series.
 - **Inline price entry (PRC-01):** amount with a German decimal comma, date (default today) and type (default **"ab (DE)"**, i.e. the lowest offer in this language from German sellers, **Near Mint or better**, Q6.3/R2.2). **Speichern** or Enter saves, and the entry pulses into the chart.
 - **Price-guide suggestion (PRC-09):** a quiet chip under the input, labeled with date and scope: *"Preisguide 22.09. · alle Sprachen & Länder: ab 89,00 € · Trend 97,40 €"*. Its info tooltip reads *"alle Sprachen & Länder"* for international cards. Clicking a value copies it into the input, and Enter saves it (`origin: guide`). It's never saved automatically.
-- **Cardmarket button (PRC-06):** opens the exact Cardmarket product in a new tab, pre-filtered by **the copy's language + seller country Germany + Near Mint or better** (R2.2; the `minCondition` parameter is still to verify, ⟶ R3.5). Traditional Chinese copies open the JP product with Cardmarket's T-Chinese language filter (R2.3).
+- **Cardmarket button (PRC-06):** opens the exact Cardmarket product in a new tab, pre-filtered by **the copy's language + seller country Germany + Near Mint or better** (R2.2; `minCondition=2` verified by Marvin, R3.5). Traditional Chinese copies open the JP product with Cardmarket's T-Chinese language filter (R2.3).
 - **Holdings list:** every lot of this card shows its cost, current value and P/L, with inline edit and a context menu (Bearbeiten, *Eigener Wert…*, Verkaufen…, Duplizieren, Löschen).
   - ***Eigener Wert* (PRC-07, R2.2):** the reference price means Near Mint or better, so a worse copy (LP, damaged) can get its own per-lot value with a date and an optional note. That lot then shows the value with an *"eigener Wert"* tag, and it goes stale like any price.
 - **Prev/next:** ← / → keys and swipe on mobile, in set order.
@@ -346,7 +346,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 | **Darstellung** | Theme (*Hell / Dunkel / System*, default *System*; light and dark are equals, R2.1; the top bar keeps a quick toggle) · card-tile density · holo/animation level (*voll / reduziert / aus*) · **Transparenz reduzieren** (solid instead of glass) · colorblind-safe P/L colors |
 | **Preise** | Default price type (**ab (DE)**) · Cardmarket link filters (**seller country: Deutschland**, **language: like the copy**, **min. condition: Near Mint or better**, R2.2) · price-guide suggestions (on/off) · stale threshold (14 days) · valuation of unpriced items (*ausschließen* / *Einkaufspreis verwenden*) |
 | **Lagerorte** | Binders and boxes: name, layout (3×3 / 3×4 / 4×3 / custom), page count, sort order |
-| **Daten** | Export backup (a download; Brave asks where to save it) · import backup · CSV export · backup reminder interval · **storage status**: persistent yes/no (`persist()`) and used space; the reported quota isn't relied on, since Brave always reports 2 GiB (ADR-027) · request persistence · **install hint**: an installed app gets `persist()` (Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*; English menu names, the German ones are to verify) · **delete-on-exit warning**: Brave's Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data* and a per-site *"clear cookies on exit"* erase the whole collection (all off by default; ADR-027, ⟶ R3.4) · delete all data |
+| **Daten** | Export backup (a download; Brave asks where to save it) · import backup · CSV export · backup reminder interval · **storage status**: persistent yes/no (`persist()`) and used space; the reported quota isn't relied on, since Brave always reports 2 GiB (ADR-027) · request persistence · **install hint**: an installed app gets `persist()` (Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*; English menu names, the German ones are to verify) · **delete-on-exit warning**: Brave's Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data* and a per-site *"clear cookies on exit"* erase the whole collection (all off by default; ADR-027, R3.4) · delete all data |
 | **Über** | App version and the long tagline (*"Jede Karte. Jedes Set. Jeder Cent."*) · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
 
 ### 4.14 Onboarding · APP-06
@@ -355,7 +355,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 2. **Deine Daten bleiben bei dir:** explains local storage and asks for **persistent storage** (`navigator.storage.persist()`).
    - On iOS it recommends **"Zum Home-Bildschirm"**, since Safari may clear site data after 7 days without a visit (see `ARCHITECTURE.md` §8).
    - On Windows it recommends installing Settr as an app (in Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*), because Chromium grants `persist()` to installed apps without a prompt (ADR-027).
-   - It warns that browser settings which delete site data on exit erase the collection (in Brave: Shields *"Forget me when I close this site"*, *"Delete data on exit"*, per-site *"clear cookies on exit"*; all off by default, ⟶ R3.4).
+   - It warns that browser settings which delete site data on exit erase the collection (in Brave: Shields *"Forget me when I close this site"*, *"Delete data on exit"*, per-site *"clear cookies on exit"*; all off by default, R3.4).
 3. **Los geht's:** pick your default card language(s) and open the 30th Anniversary set.
 
 ---

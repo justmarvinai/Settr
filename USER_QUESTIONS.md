@@ -1,9 +1,9 @@
 # Settr: Questions and Decisions
 
 > Last updated: 2026-09-23.
-> **Round 1: answered ✓** · **Round 2: answered ✓** (decisions below, incorporated into spec v0.3).
-> **Round 3: open** (4 short questions + one optional 30-second check).
-> **Coding: not started.** It needs your explicit **"Go"**.
+> **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
+> **Coding: approved on 2026-09-23** ("You can start"). Milestone M1 (Foundation) is in progress.
+> New questions that come up while building will appear here as a new round.
 
 ## How to answer
 
@@ -13,40 +13,16 @@
 
 ---
 
-## Round 3: open questions
+## Round 3: decisions (answered 2026-09-23)
 
-**R3.1 ★ Direction D: confirm or adjust.** Open the [design canvas](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq) (top two rows). **D · Bold Studio** is my reading of your answer: C's heavy type, B's glass sidebar, calmer color, light and dark. Try the moon/sun button in the toolbar, and compare accent colors with the artboard's Tweaks button.
-- [ ] ⭐ Looks right, accent **Indigo**
-- [ ] Looks right, accent **Kobalt** (C's original, louder)
-- [ ] Looks right, **Graphit** (no accent color at all)
-- [ ] Changes: …
-
-Antwort:
-
-**R3.2 Your GitHub repository is public.** Settr is meant to be private (Q1.2), and Q8.7 assumed a private repository, but `justmarvinai/Settr` is currently **public**. Anyone can read the plans today, and later the daily Cardmarket price snapshot would be republished there.
-- [ ] ⭐ Make it private (GitHub → *Settings* → *General* → *Danger Zone* → *Change visibility*). Vercel keeps working
-- [ ] Keep it public. Then the price snapshot is built at deploy time instead of being committed (ADR-029)
-
-Antwort:
-
-**R3.3 A `main` branch.** Right now the only branch is my work branch `claude/great-edison-uri1z0`, which GitHub made the default. For M1 I'd like the usual setup: `main` as the default branch and one pull request per milestone (Q8.6).
-- [ ] ⭐ Yes: when you say "Go", I create `main` from the reviewed docs, and you set it as the default (GitHub → *Settings* → *General* → *Default branch*)
-- [ ] I'll set it up myself
-
-Antwort:
-
-**R3.4 Does your Brave delete site data when it closes?** Settr keeps your collection in the browser. Brave has options that erase all website data when you close it: Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data*, and a per-site *"clear cookies on exit"*. They're **off by default**, but if you use one, Settr would lose your collection on every restart (backups aside). Everything else in Brave works for Settr. Backups are downloads, and Brave asks where to save each one, so you can keep them in one folder.
-- [ ] ⭐ Default: I don't use those options
-- [ ] I use one of them. Show me how to exempt Settr
-- [ ] Not sure. Settr checks its storage protection at first start and warns you
-
-Antwort:
-
-**R3.5 Quick check (optional, 30 seconds).** Does [this link](https://www.cardmarket.com/de/Pokemon/Products?idProduct=907757&language=3&sellerCountry=7&minCondition=2) show Pikachu ex from German sellers, German cards, and only **Near Mint or better**?
-- [ ] Yes
-- [ ] No, it shows: …
-
-**Ready?** When D looks right, write **"Go"** and I'll start milestone **M1 (Foundation)**.
+| ID | Topic | Decision | Src |
+|---|---|---|---|
+| R3.1 | Direction D | **Confirmed** ("D looks fine now"), accent **Indigo** | M + E |
+| R3.2 | Repository visibility | **Stays public for now.** So Cardmarket price-guide snapshots are built at deploy time and never committed, and the deployment URL never goes into the repo (ADR-029) | M |
+| R3.3 | `main` branch | Created at the start of M1 from the reviewed spec. You set it as the default branch on GitHub (*Settings* → *General* → *Default branch*) | E |
+| R3.4 | Brave data on exit | Your Brave deletes no data on exit. The in-app warnings stay for friends | M |
+| R3.5 | Near Mint filter | Verified: `minCondition=2` shows only Near Mint or better offers | M |
+| – | Coding | **Approved 2026-09-23** ("You can start") → M1 started | M |
 
 ---
 

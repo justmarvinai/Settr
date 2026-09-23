@@ -4,18 +4,11 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M0 · PLANNING.**
+**Current phase: M1 · FOUNDATION ⏳** — **coding approved on 2026-09-23** (Marvin: "You can start"), starting with M1 per `ROADMAP.md`.
 
-- Round-1 and round-2 answers received 2026-09-23 and incorporated (spec v0.3).
-- Design direction **D · Bold Studio** chosen (R2.1: C's type + B's sidebar, calmer color, light + dark). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only). Marvin confirms the final look in R3.1.
-- Open: round-3 questions (`USER_QUESTIONS.md`): R3.1 confirm D + accent, R3.2 repository visibility, R3.3 `main` branch, R3.4 backups in Brave, R3.5 link check.
-- **Coding is NOT approved yet.**
-
-**Do NOT write application code**, scaffold projects, install dependencies, create `src/` files or run generators **until Marvin explicitly grants permission in chat** (e.g. "Go", "Leg los", "Start coding").
-
-Allowed now: editing planning docs (`*.md`), answering questions, research, and design mockups on the design canvas (not in `src/`).
-
-When permission is granted, update this block with the date and the approved scope (e.g. "M1 approved on 2026-10-01").
+- Rounds 1–3 are answered and incorporated (spec v0.3). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
+- Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
+- The repository stays **public** for now (R3.2): never commit price-guide snapshots or the deployment URL (ADR-029).
 
 ## What Settr is
 
@@ -108,11 +101,11 @@ pnpm size            # size-limit budgets
 
 ## Git
 
-- Work branch for this session: `claude/great-edison-uri1z0` (currently also the repo's default branch; `main` arrives with M1, R3.3).
+- Work branch for this session: `claude/great-edison-uri1z0`. `main` holds the reviewed spec (created 2026-09-23, R3.3) and becomes the default branch; milestone work merges into it via one PR per milestone (Q8.6), opened when Marvin asks.
 - Later: one branch + PR per milestone or feature (`feat/m2-catalog-pipeline`).
 - **Conventional Commits** (`feat:`, `fix:`, `docs:`, `chore:`, `test:`, `refactor:`).
 - Never force-push shared branches. Never commit secrets or personal collection data.
-- The repository is **public** until Marvin decides R3.2. While public, never commit Cardmarket price-guide snapshots or the deployment URL (ADR-029).
+- The repository stays **public** for now (R3.2). Never commit Cardmarket price-guide snapshots or the deployment URL (ADR-029).
 
 ## Environment notes (Claude Code on the web)
 

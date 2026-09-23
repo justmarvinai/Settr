@@ -7,7 +7,7 @@
 
 ## 0. Phase gate (applies to every agent)
 
-**Current phase: M0 · PLANNING** (spec v0.3, design direction D chosen, round 3 open). No application code, scaffolding or dependency installs until Marvin explicitly approves in chat. The status line in `CLAUDE.md` is authoritative. If it doesn't say a milestone is approved, **stop and ask**.
+**Current phase: M1 · FOUNDATION** (coding approved 2026-09-23, spec v0.3, direction D with the *Indigo* accent). The status line in `CLAUDE.md` is authoritative. If it doesn't say a milestone is approved, **stop and ask**.
 
 ---
 
@@ -97,9 +97,9 @@ The lead first lands the **contracts** (types, interfaces, fixtures). Specialist
 
 ## 5. Workflow conventions
 
-- **Branches:** `feat/<milestone>-<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`. The current planning branch is `claude/great-edison-uri1z0`, which is also the repository's default branch until `main` is created at the start of M1 (⟶ R3.3).
+- **Branches:** `feat/<milestone>-<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`. The current planning branch is `claude/great-edison-uri1z0`, and `main` (created at the start of M1, R3.3) is the default branch; milestone work merges into it.
 - **Commits:** Conventional Commits in English, imperative mood (`feat(collection): add quick-add mode`).
-- **What never gets committed (ADR-029):** secrets and personal collection data. While the repository is public (⟶ R3.2), also Cardmarket price-guide snapshots (`cm-prices.json`) and the deployment URL.
+- **What never gets committed (ADR-029):** secrets and personal collection data. While the repository is public (it stays public for now, R3.2), also Cardmarket price-guide snapshots (`cm-prices.json`) and the deployment URL.
 - **Pull requests:**
   - One per coherent change, and at least one per milestone.
   - The description lists the feature IDs, screenshots (light + dark, mobile + desktop for UI) and the Vercel preview link.
