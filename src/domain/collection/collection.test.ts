@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { CatalogCard } from '../catalog';
 import { money } from '../money';
 import type { Disposal, Holding } from '../schemas/holding';
+import { valueLot } from '../valuation/value';
 import {
   allocateOpeningCost,
   collectionSearchSchema,
@@ -494,7 +495,52 @@ describe('collection view pipeline (COL-04)', () => {
       items: 1,
       invested: eur(3000),
       unknownCost: 1,
+      value: eur(0),
+      pl: eur(0),
+      plRatio: undefined,
+      unpriced: 2,
+      stale: 0,
     });
+  });
+
+  it('adds value and P/L, filters and sorts by them once prices are known', () => {
+    const options = { today: '2026-09-23', staleAfterDays: 14, unpriced: 'exclude' } as const;
+    const priced = rows.map((r) => ({
+      ...r,
+      value: valueLot(
+        r.holding,
+        r.name === 'Pikachu-ex'
+          ? { date: '2026-09-01', price: eur(2000) }
+          : r.name === 'Glurak'
+            ? { date: '2026-09-20', price: eur(500) }
+            : undefined,
+        options,
+      ),
+    }));
+    // Pikachu-ex: 2 × 20,00 € = 40,00 € for 30,00 € (+10,00 €, stale); Glurak 5,00 €, cost unknown.
+    expect(summarize(priced)).toMatchObject({
+      value: eur(4500),
+      pl: eur(1000),
+      plRatio: 1000 / 3000,
+      unpriced: 0,
+      stale: 1,
+    });
+    expect(namesOf(priced, { priced: 'yes' })).toEqual(['Glurak', 'Pikachu-ex']);
+    expect(namesOf(priced, { priced: 'no', closed: true })).toEqual(['Mew']);
+    expect(namesOf(priced, { stale: true })).toEqual(['Pikachu-ex']);
+    expect(namesOf(priced, { pl: 'gain' })).toEqual(['Pikachu-ex']);
+    expect(namesOf(priced, { pl: 'loss' })).toEqual([]);
+    expect(sortRows(priced, 'value', 'desc').map((r) => r.name)).toEqual([
+      'Pikachu-ex',
+      'Glurak',
+      'Mew',
+    ]);
+    // Unknown P/L ranks below every known one in both directions' ends.
+    expect(
+      sortRows(priced, 'pl', 'asc')
+        .map((r) => r.name)
+        .at(-1),
+    ).toBe('Pikachu-ex');
   });
 
   it('falls back to defaults for broken URL values', () => {

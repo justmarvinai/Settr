@@ -1,11 +1,13 @@
-import { CaretDownIcon, CaretUpIcon } from '@phosphor-icons/react';
+import { CaretDownIcon, CaretUpIcon, ColumnsIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useRef, type ReactNode } from 'react';
 import { CardImage } from '@/components/domain/CardImage';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { Checkbox } from '@/components/ui/FormControls';
-import { ActionMenu } from '@/components/ui/Menu';
+import { PLDelta } from '@/components/domain/PLDelta';
+import { ActionMenu, CheckMenu } from '@/components/ui/Menu';
+import { db, setUiPref, useUiPref } from '@/db';
 import { cn } from '@/components/ui/cn';
 import {
   boughtOn,
@@ -16,10 +18,10 @@ import {
 } from '@/domain/collection';
 import { remaining } from '@/domain/schemas';
 import { htmlLang, languageCode, m, productTypeLabel } from '@/i18n';
-import { formatCount, formatDate, formatMoney } from '@/i18n/format';
+import { formatCount, formatDate, formatMoney, formatPercent } from '@/i18n/format';
 import { useElementBox } from '@/lib/useElementBox';
 import type { SelectionProps } from './LibraryGrid';
-import { lotMenuActions } from '@/features/collection';
+import { lotMenuActions, toastError } from '@/features/collection';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
 import type { LibraryKind, LibraryRow } from './rows';
 
@@ -27,19 +29,58 @@ type TableItem =
   | { type: 'header'; key: string; title: string; count: number }
   | { type: 'row'; key: string; row: LibraryRow };
 
+/** Every column besides the name, the check box and the menu. */
+export const COLUMN_KEYS = [
+  'number',
+  'language',
+  'state',
+  'quantity',
+  'unit',
+  'cost',
+  'unitValue',
+  'value',
+  'pl',
+  'plRatio',
+  'priceDate',
+  'bought',
+  'location',
+] as const;
+export type ColumnKey = (typeof COLUMN_KEYS)[number];
+
 interface Column {
-  key: string;
+  key: ColumnKey | 'name' | 'compactValue';
   label: string;
-  /** Screen-reader-only header (check boxes, menus). */
-  hidden?: boolean;
   sort?: LotSort;
   align?: 'right';
   /** Width in px; the name column takes the rest. */
   width?: number;
-  /** Table width (px) from which the column shows; narrower tables leave it out. */
-  from?: number;
   cell: (row: LibraryRow) => ReactNode;
 }
+
+/** Below this table width a compact line under the name replaces the detail columns. */
+const COMPACT_BELOW = 560;
+/** Room the name column keeps before detail columns give way; plus check box and menu. */
+const NAME_MIN = 224;
+const FIXED = 48 + 52;
+/**
+ * Which columns stay longest as the table narrows (first = last to go): what a lot is worth and
+ * how it's doing, then what it is, then what it cost and where it is.
+ */
+const PRIORITY: readonly ColumnKey[] = [
+  'quantity',
+  'value',
+  'pl',
+  'language',
+  'state',
+  'number',
+  'unit',
+  'unitValue',
+  'plRatio',
+  'priceDate',
+  'cost',
+  'bought',
+  'location',
+];
 
 function NameCell({
   row,
@@ -124,22 +165,66 @@ function moneyCell(value: ReturnType<typeof remainingCost>): ReactNode {
   return value ? <span className="money">{formatMoney(value)}</span> : '—';
 }
 
-function columnsOf(kind: LibraryKind, width: number): Column[] {
-  const compact = width < 560;
-  const nameColumn: Column = {
-    key: 'name',
-    label: kind === 'card' ? m.library_col_card() : m.library_col_product(),
-    sort: 'name',
-    cell: (row) => <NameCell row={row} kind={kind} compact={compact} />,
-  };
-  const columns: Column[] = [nameColumn];
+/** The lot's value per copy, with the *eigener Wert* tag when it's the lot's own (PRC-07). */
+function unitValueCell(row: LibraryRow): ReactNode {
+  const unit = row.value?.unit;
+  if (!unit || remaining(row.holding) <= 0) return '—';
+  return (
+    <span className="inline-flex flex-col items-end">
+      <span className="money">{formatMoney(unit.price)}</span>
+      {unit.source === 'override' ? (
+        <span className="text-[11px] leading-4 text-accent-text">{m.library_value_own()}</span>
+      ) : null}
+    </span>
+  );
+}
+
+function plCell(row: LibraryRow, show: 'amount' | 'ratio'): ReactNode {
+  const v = row.value;
+  if (!v?.pl) return '—';
+  return <PLDelta delta={v.pl} ratio={v.plRatio} show={show} className="font-semibold" />;
+}
+
+function priceDateCell(row: LibraryRow): ReactNode {
+  const unit = row.value?.unit;
+  if (!unit || remaining(row.holding) <= 0) return '—';
+  return (
+    <span className={cn('whitespace-nowrap', row.value?.stale && 'font-bold text-warn')}>
+      {formatDate(unit.date)}
+    </span>
+  );
+}
+
+/** Phones: value on top, P/L % under it, in one narrow column. */
+function compactValueCell(row: LibraryRow): ReactNode {
+  const v = row.value;
+  if (!v?.value) return <span className="text-ink-subtle">—</span>;
+  return (
+    <span className="inline-flex flex-col items-end gap-0.5">
+      <span className="money font-bold text-ink">{formatMoney(v.value)}</span>
+      {v.pl ? (
+        <span
+          className={cn(
+            'money text-[12px] font-semibold',
+            v.pl.minor > 0 ? 'text-gain' : v.pl.minor < 0 ? 'text-loss' : 'text-ink-muted',
+          )}
+        >
+          {formatPercent(v.plRatio)}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+/** Every detail column of the library, in display order. */
+function allColumns(kind: LibraryKind): Column[] {
+  const columns: Column[] = [];
   if (kind === 'card') {
     columns.push({
       key: 'number',
       label: m.catalog_col_number(),
       sort: 'number',
       width: 88,
-      from: 752,
       cell: (row) => <span className="font-mono text-ink-muted">{row.number ?? '—'}</span>,
     });
   }
@@ -148,14 +233,12 @@ function columnsOf(kind: LibraryKind, width: number): Column[] {
       key: 'language',
       label: m.holding_language(),
       width: 76,
-      from: 560,
       cell: (row) => <span className="font-mono">{languageCode(row.holding.language)}</span>,
     },
     {
       key: 'state',
       label: kind === 'card' ? m.holding_condition() : m.holding_state(),
       width: kind === 'card' ? 92 : 112,
-      from: 560,
       cell: (row) => stateText(row.holding) ?? '—',
     },
     {
@@ -164,7 +247,6 @@ function columnsOf(kind: LibraryKind, width: number): Column[] {
       sort: 'quantity',
       align: 'right',
       width: 80,
-      from: 560,
       cell: (row) => <span className="font-mono">{quantityText(row.holding)}</span>,
     },
     {
@@ -172,8 +254,7 @@ function columnsOf(kind: LibraryKind, width: number): Column[] {
       label: m.library_col_unit_cost(),
       sort: 'cost',
       align: 'right',
-      width: 108,
-      from: 752,
+      width: 112,
       cell: (row) => (remaining(row.holding) > 0 ? moneyCell(unitCostDisplay(row.holding)) : '—'),
     },
     {
@@ -181,26 +262,120 @@ function columnsOf(kind: LibraryKind, width: number): Column[] {
       label: m.library_col_cost(),
       align: 'right',
       width: 108,
-      from: 880,
       cell: (row) => moneyCell(remainingCost(row.holding)),
+    },
+    {
+      key: 'unitValue',
+      label: m.library_col_unit_value(),
+      sort: 'unitValue',
+      align: 'right',
+      width: 104,
+      cell: unitValueCell,
+    },
+    {
+      key: 'value',
+      label: m.library_col_value(),
+      sort: 'value',
+      align: 'right',
+      width: 108,
+      cell: (row) => moneyCell(row.value?.value),
+    },
+    {
+      key: 'pl',
+      label: m.library_col_pl(),
+      sort: 'pl',
+      align: 'right',
+      width: 116,
+      cell: (row) => plCell(row, 'amount'),
+    },
+    {
+      key: 'plRatio',
+      label: m.library_col_pl_ratio(),
+      sort: 'plRatio',
+      align: 'right',
+      width: 96,
+      cell: (row) => plCell(row, 'ratio'),
+    },
+    {
+      key: 'priceDate',
+      label: m.library_col_price_date(),
+      sort: 'priceDate',
+      width: 108,
+      cell: priceDateCell,
     },
     {
       key: 'bought',
       label: m.holding_date(),
       sort: 'bought',
       width: 108,
-      from: 1008,
       cell: (row) => formatDate(boughtOn(row.holding)),
     },
     {
       key: 'location',
       label: m.holding_location(),
       width: 168,
-      from: 1136,
       cell: (row) => <span className="block truncate">{row.locationText ?? '—'}</span>,
     },
   );
-  return columns.filter((column) => column.from === undefined || width >= column.from);
+  return columns;
+}
+
+/** The detail columns a user can choose from (UX_SPEC.md §4.6), with their labels. */
+export function columnChoices(kind: LibraryKind): { key: ColumnKey; label: string }[] {
+  return allColumns(kind).flatMap((c) =>
+    c.key === 'name' || c.key === 'compactValue' ? [] : [{ key: c.key, label: c.label }],
+  );
+}
+
+/**
+ * The columns to render: the name, then the chosen columns that fit, most important first
+ * (PRIORITY), shown in their display order. Narrow tables (phones) get the name with a compact
+ * line under it and one value column.
+ */
+function columnsOf(kind: LibraryKind, width: number, hidden: ReadonlySet<string>): Column[] {
+  const compact = width < COMPACT_BELOW;
+  const nameColumn: Column = {
+    key: 'name',
+    label: kind === 'card' ? m.library_col_card() : m.library_col_product(),
+    sort: 'name',
+    cell: (row) => <NameCell row={row} kind={kind} compact={compact} />,
+  };
+  if (compact) {
+    return [
+      nameColumn,
+      {
+        key: 'compactValue',
+        label: m.library_col_value(),
+        sort: 'value',
+        align: 'right',
+        width: 96,
+        cell: compactValueCell,
+      },
+    ];
+  }
+  const all = allColumns(kind);
+  let room = width - NAME_MIN - FIXED;
+  const shown = new Set<string>();
+  for (const key of PRIORITY) {
+    const column = all.find((c) => c.key === key);
+    if (!column || hidden.has(key)) continue;
+    const need = column.width ?? 0;
+    if (need <= room) {
+      shown.add(key);
+      room -= need;
+    }
+  }
+  return [nameColumn, ...all.filter((c) => shown.has(c.key))];
+}
+
+/** Columns this device hides, per library (kv `ui:library.columns.<kind>`); all show by default. */
+function useHiddenColumns(
+  kind: LibraryKind,
+): [ReadonlySet<string>, (next: ReadonlySet<string>) => void] {
+  const key = `library.columns.${kind}`;
+  const stored = useUiPref(key)?.value;
+  const hidden = new Set(Array.isArray(stored) ? stored.filter((v) => typeof v === 'string') : []);
+  return [hidden, (next) => void setUiPref(db, key, [...next]).catch(toastError)];
 }
 
 /** Until the table is measured: the viewport minus the sidebar and the page padding. */
@@ -241,9 +416,11 @@ export function LibraryTable({
   'use no memo'; // TanStack Virtual keeps one mutable instance; compiled memoization would go stale.
   const ref = useRef<HTMLTableSectionElement>(null);
   const box = useElementBox(ref);
+  const [hidden, setHidden] = useHiddenColumns(kind);
+  const width = box.width || guessWidth();
   // Columns come and go with the table's width (not the viewport's: the sidebar takes room), and
   // only rendered columns exist, so the spacer and group rows span exactly the table.
-  const columns = columnsOf(kind, box.width || guessWidth());
+  const columns = columnsOf(kind, width, hidden);
   const span = columns.length + 2;
   const items: TableItem[] = [];
   for (const group of groups) {
@@ -330,6 +507,23 @@ export function LibraryTable({
             ))}
             <th scope="col" className="w-13 px-2 py-2">
               <span className="sr-only">{m.library_col_actions()}</span>
+              {width >= COMPACT_BELOW ? (
+                <CheckMenu
+                  label={m.library_columns()}
+                  icon={<ColumnsIcon size={18} weight="bold" aria-hidden />}
+                  options={columnChoices(kind).map((c) => ({
+                    value: c.key,
+                    label: c.label,
+                    checked: !hidden.has(c.key),
+                  }))}
+                  onToggle={(key, checked) => {
+                    const next = new Set(hidden);
+                    if (checked) next.delete(key);
+                    else next.add(key);
+                    setHidden(next);
+                  }}
+                />
+              ) : null}
             </th>
           </tr>
         </thead>

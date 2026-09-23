@@ -96,6 +96,9 @@
 .ui-menu {
   min-width: 220px;
   max-width: min(320px, calc(100vw - 24px));
+  /* Long menus (the table's columns) scroll inside the space Base UI measures for them */
+  max-height: var(--available-height);
+  overflow-y: auto;
   border-radius: 18px;
   padding: 6px;
   transform-origin: var(--transform-origin);

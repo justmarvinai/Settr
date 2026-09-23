@@ -1,9 +1,12 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { sealedQuery, setQuery, useManifest, type LoadedSealed, type LoadedSet } from '@/catalog';
-import { useCustomItems, useHoldings, useLocations, useSettings } from '@/db';
+import { useCustomItems, useHoldings, useLatestPrices, useLocations, useSettings } from '@/db';
 import { chunkSetId, pickText, type CatalogManifest, type NameDisplay } from '@/domain/catalog';
 import type { LotRow } from '@/domain/collection';
-import type { CustomItem, Holding, Location } from '@/domain/schemas';
+import { todayIso } from '@/domain/ids';
+import type { CustomItem, Holding, Location, PriceLatest } from '@/domain/schemas';
+import { seriesKeyOf } from '@/domain/series';
+import { valueLot, type ValuationOptions } from '@/domain/valuation';
 import {
   cardInfo,
   customIdOf,
@@ -34,6 +37,8 @@ interface Context {
   custom: ReadonlyMap<string, CustomItem>;
   locations: readonly Location[];
   display: NameDisplay;
+  latest: ReadonlyMap<string, PriceLatest> | undefined;
+  valuation: ValuationOptions;
 }
 
 /** Room per set in the catalog-wide sort key (a chunk holds a few hundred cards). */
@@ -103,15 +108,18 @@ function rowOf(h: Holding, ctx: Context): LibraryRow {
     variantLabel: h.variant
       ? (info.variants.find((v) => v.id === h.variant)?.label ?? h.variant)
       : undefined,
+    value: ctx.latest ? valueLot(h, ctx.latest.get(seriesKeyOf(h)), ctx.valuation) : undefined,
   };
 }
 
 /**
  * Every lot of one kind (open and closed) with what the catalog, the custom items and the lot's
- * snapshot know about it; undefined while the collection loads. Suspends while set chunks load.
+ * snapshot know about it, and its value today (DATA_MODEL.md §6.3); undefined while the collection
+ * loads. Suspends while set chunks load.
  */
 export function useLibraryRows(kind: LibraryKind): LibraryRow[] | undefined {
   const holdings = useHoldings();
+  const latest = useLatestPrices();
   const customItems = useCustomItems();
   const locations = useLocations();
   const settings = useSettings();
@@ -136,6 +144,12 @@ export function useLibraryRows(kind: LibraryKind): LibraryRow[] | undefined {
     custom: new Map(customItems.map((item) => [item.id, item])),
     locations,
     display: settings.nameDisplay,
+    latest,
+    valuation: {
+      today: todayIso(),
+      staleAfterDays: settings.price.staleAfterDays,
+      unpriced: settings.price.unpriced,
+    },
   };
   return lots.map((h) => rowOf(h, ctx));
 }

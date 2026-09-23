@@ -817,5 +817,39 @@
   "lot_value_with_unit": "Wert {value} ({unit} pro Stück)",
   "lot_value_own": "eigener Wert · {date}",
   "lot_value_at_cost": "zum Kaufpreis",
-  "lot_unpriced": "Noch ohne Preis"
+  "lot_unpriced": "Noch ohne Preis",
+  "library_sort_unit_value": "Wert pro Stück",
+  "library_sort_value": "Wert",
+  "library_sort_pl": "Gewinn/Verlust",
+  "library_sort_pl_ratio": "Gewinn/Verlust in %",
+  "library_sort_price_date": "Preisdatum",
+  "library_filter_priced": "Preis",
+  "library_filter_priced_yes": "Mit Preis",
+  "library_filter_priced_no": "Ohne Preis",
+  "library_filter_pl": "Gewinn/Verlust",
+  "library_filter_pl_gain": "Im Plus",
+  "library_filter_pl_loss": "Im Minus",
+  "library_filter_stale": "Nur veraltete Preise",
+  "library_filter_stale_hint": "Der Preis ist älter als {days} Tage.",
+  "library_chip_stale": "Preis veraltet",
+  "library_stat_value": "Wert",
+  "library_stat_pl": "Gewinn/Verlust",
+  "library_stat_unpriced": "{count} ohne Preis",
+  "library_stat_stale": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Preis veraltet",
+        "plural=*": "{count} Preise veraltet"
+      }
+    }
+  ],
+  "library_col_unit_value": "Wert/Stk.",
+  "library_col_value": "Wert",
+  "library_col_pl": "G/V",
+  "library_col_pl_ratio": "G/V %",
+  "library_col_price_date": "Preis vom",
+  "library_columns": "Spalten wählen",
+  "library_value_own": "eigener Wert"
 }

@@ -20,9 +20,11 @@ import { formatDate } from '@/i18n/format';
 import type { LibraryKind, LibraryRow } from './rows';
 
 /** What each library offers (UX_SPEC.md §4.6); sealed lots have no number, rarity or condition. */
+const PRICE_SORTS: readonly LotSort[] = ['value', 'unitValue', 'pl', 'plRatio', 'priceDate'];
+
 export const LIBRARY_SORTS: Record<LibraryKind, readonly LotSort[]> = {
-  card: ['added', 'name', 'number', 'bought', 'cost', 'quantity'],
-  sealed: ['added', 'name', 'bought', 'cost', 'quantity'],
+  card: ['added', 'name', 'number', 'bought', 'cost', 'quantity', ...PRICE_SORTS],
+  sealed: ['added', 'name', 'bought', 'cost', 'quantity', ...PRICE_SORTS],
 };
 
 export const LIBRARY_GROUPS: Record<LibraryKind, readonly LotGroup[]> = {
@@ -37,6 +39,11 @@ export const SORT_LABELS: Record<LotSort, () => string> = {
   bought: m.library_sort_bought,
   cost: m.library_sort_cost,
   quantity: m.library_sort_quantity,
+  unitValue: m.library_sort_unit_value,
+  value: m.library_sort_value,
+  pl: m.library_sort_pl,
+  plRatio: m.library_sort_pl_ratio,
+  priceDate: m.library_sort_price_date,
 };
 
 export const GROUP_LABELS: Record<LotGroup, () => string> = {
@@ -58,6 +65,9 @@ export function filterOf(s: CollectionSearch, kind: LibraryKind): LotFilter {
     from: s.from,
     to: s.to,
     closed: s.closed,
+    priced: s.priced,
+    stale: s.stale,
+    pl: s.pl,
   };
   return kind === 'card'
     ? { ...common, rarity: s.rarity, variant: s.variant, cond: s.cond, graded: s.graded }
@@ -80,6 +90,9 @@ export const NO_FILTERS: Partial<CollectionSearch> = {
   from: undefined,
   to: undefined,
   closed: undefined,
+  priced: undefined,
+  stale: undefined,
+  pl: undefined,
 };
 
 const KNOWN_RARITIES = /* @__PURE__ */ new Set<string>(RARITY_IDS);
@@ -103,6 +116,12 @@ export interface FilterOptions {
   graded: boolean;
   /** Closed lots (everything sold, traded or opened). */
   closed: number;
+  /** Open lots with and without a price, with a stale one, in profit and at a loss. */
+  priced: number;
+  unpriced: number;
+  stale: number;
+  gains: number;
+  losses: number;
 }
 
 export function filterOptions(
@@ -120,6 +139,10 @@ export function filterOptions(
   const locationIds = new Set<string>();
   let graded = false;
   let closed = 0;
+  let priced = 0;
+  let stale = 0;
+  let gains = 0;
+  let losses = 0;
   for (const row of rows) {
     const h = row.holding;
     if (row.setId && !sets.has(row.setId)) sets.set(row.setId, row.setName ?? row.setId);
@@ -131,7 +154,15 @@ export function filterOptions(
     for (const tag of h.tags) tagIds.add(tag);
     locationIds.add(h.location?.id ?? NO_LOCATION);
     if (h.grading) graded = true;
-    if (remaining(h) <= 0) closed += 1;
+    if (remaining(h) <= 0) {
+      closed += 1;
+      continue;
+    }
+    if (row.value?.unit) priced += 1;
+    if (row.value?.stale) stale += 1;
+    const pl = row.value?.pl?.minor ?? 0;
+    if (pl > 0) gains += 1;
+    if (pl < 0) losses += 1;
   }
   const collator = new Intl.Collator('de');
   const usedLocations: Named[] = locations
@@ -160,6 +191,11 @@ export function filterOptions(
     locations: usedLocations,
     graded,
     closed,
+    priced,
+    unpriced: rows.length - closed - priced,
+    stale,
+    gains,
+    losses,
   };
 }
 
@@ -238,6 +274,25 @@ export function filterChips(
       text: m.library_chip_to({ date: formatDate(filter.to) }),
       clear: { to: undefined },
     });
+  }
+  if (filter.priced) {
+    add(
+      'priced',
+      m.library_filter_priced(),
+      filter.priced === 'yes' ? m.library_filter_priced_yes() : m.library_filter_priced_no(),
+      { priced: undefined },
+    );
+  }
+  if (filter.stale) {
+    chips.push({ key: 'stale', text: m.library_chip_stale(), clear: { stale: undefined } });
+  }
+  if (filter.pl) {
+    add(
+      'pl',
+      m.library_filter_pl(),
+      filter.pl === 'gain' ? m.library_filter_pl_gain() : m.library_filter_pl_loss(),
+      { pl: undefined },
+    );
   }
   if (filter.closed) {
     chips.push({ key: 'closed', text: m.library_chip_closed(), clear: { closed: undefined } });

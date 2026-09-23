@@ -10,7 +10,8 @@ import {
   XIcon,
 } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import { PLDelta } from '@/components/domain/PLDelta';
 import { buttonVariants, Button, IconButton } from '@/components/ui/Button';
 import { cn } from '@/components/ui/cn';
 import { Select } from '@/components/ui/Select';
@@ -27,7 +28,7 @@ import {
   type RowGroup,
 } from '@/domain/collection';
 import { m } from '@/i18n';
-import { formatCount, formatMoney } from '@/i18n/format';
+import { formatCount, formatMoney, formatPercent } from '@/i18n/format';
 import { BulkBar } from './BulkBar';
 import { FilterSheet } from './FilterSheet';
 import { LibraryGrid } from './LibraryGrid';
@@ -53,19 +54,34 @@ function Stat({
   money = false,
 }: {
   label: string;
-  value: string;
-  hint?: string | undefined;
+  value: ReactNode;
+  hint?: ReactNode;
   /** Hidden in privacy mode (PRT-05). */
   money?: boolean;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <dt className="type-label text-ink-muted uppercase">{label}</dt>
-      <dd className="m-0 flex flex-col gap-0.5">
-        <span className={cn('type-h1 truncate tabular-nums', money && 'money')}>{value}</span>
+      <dd className="m-0 flex flex-col items-start gap-0.5">
+        <span className={cn('type-h1 max-w-full truncate tabular-nums', money && 'money')}>
+          {value}
+        </span>
         {hint ? <span className="type-small text-ink-muted">{hint}</span> : null}
       </dd>
     </div>
+  );
+}
+
+/** A count under a stat that narrows the list to what it counts, e.g. "3 ohne Preis". */
+function HintFilter({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="font-bold text-accent-text underline-offset-4 hover:underline"
+    >
+      {label}
+    </button>
   );
 }
 
@@ -162,13 +178,39 @@ export function LibraryPage({
     <div className={cn('flex flex-col gap-5', selecting && 'pb-24')}>
       <dl
         aria-label={m.library_summary_label()}
-        className="tile m-0 grid grid-cols-2 gap-x-6 gap-y-5 p-5 sm:grid-cols-4"
+        className="tile m-0 grid grid-cols-2 gap-x-6 gap-y-5 p-5 sm:grid-cols-3 xl:grid-cols-6"
       >
         <Stat label={m.library_stat_lots()} value={formatCount(summary.lots)} />
         <Stat label={m.library_stat_copies()} value={formatCount(summary.copies)} />
         <Stat
           label={kind === 'card' ? m.library_stat_items_cards() : m.library_stat_items_sealed()}
           value={formatCount(summary.items)}
+        />
+        <Stat
+          label={m.library_stat_value()}
+          value={formatMoney(summary.value)}
+          money
+          hint={
+            summary.unpriced || summary.stale ? (
+              <span className="flex flex-wrap gap-x-2">
+                {summary.unpriced ? (
+                  <HintFilter
+                    label={m.library_stat_unpriced({ count: formatCount(summary.unpriced) })}
+                    onClick={() => update({ priced: 'no', stale: undefined })}
+                  />
+                ) : null}
+                {summary.stale ? (
+                  <HintFilter
+                    label={m.library_stat_stale({
+                      n: summary.stale,
+                      count: formatCount(summary.stale),
+                    })}
+                    onClick={() => update({ stale: true, priced: undefined })}
+                  />
+                ) : null}
+              </span>
+            ) : undefined
+          }
         />
         <Stat
           label={m.library_stat_invested()}
@@ -178,6 +220,22 @@ export function LibraryPage({
             summary.unknownCost
               ? m.library_stat_unknown_cost({ count: formatCount(summary.unknownCost) })
               : undefined
+          }
+        />
+        <Stat
+          label={m.library_stat_pl()}
+          value={
+            <PLDelta
+              delta={summary.pl}
+              ratio={summary.plRatio}
+              show="amount"
+              className="type-h1 [&_svg]:size-5"
+            />
+          }
+          hint={
+            summary.plRatio === undefined ? undefined : (
+              <span className="money">{formatPercent(summary.plRatio)}</span>
+            )
           }
         />
       </dl>

@@ -10,12 +10,13 @@ import { formatDelta, formatPercent } from '@/i18n/format';
 export function PLDelta({
   delta,
   ratio,
-  showRatio = true,
+  show = 'both',
   className,
 }: {
   delta: Money;
   ratio?: number | undefined;
-  showRatio?: boolean;
+  /** The amount, the percentage or both (`+12,30 € (+14,6 %)`). */
+  show?: 'both' | 'amount' | 'ratio';
   className?: string;
 }) {
   const sign = Math.sign(delta.minor);
@@ -29,8 +30,8 @@ export function PLDelta({
       )}
     >
       <Arrow size={14} weight="bold" aria-hidden className="shrink-0" />
-      {formatDelta(delta)}
-      {showRatio ? <span className="font-semibold">({formatPercent(ratio)})</span> : null}
+      {show === 'ratio' ? formatPercent(ratio) : formatDelta(delta)}
+      {show === 'both' ? <span className="font-semibold">({formatPercent(ratio)})</span> : null}
     </span>
   );
 }
