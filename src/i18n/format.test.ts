@@ -6,6 +6,7 @@ import {
   formatDate,
   formatDelta,
   formatMoney,
+  formatMoneyShort,
   formatPercent,
   formatRelative,
   formatShare,
@@ -26,6 +27,11 @@ describe('formatMoney / formatDelta', () => {
   it('signs deltas except zero', () => {
     expect(formatDelta(money(1230))).toBe(`+12,30${NBSP}€`);
     expect(formatDelta(money(0))).toBe(`0,00${NBSP}€`);
+  });
+  it('drops the cents of whole amounts for chart labels', () => {
+    expect(formatMoneyShort(money(3000))).toBe(`30${NBSP}€`);
+    expect(formatMoneyShort(money(3250))).toBe(`32,50${NBSP}€`);
+    expect(formatMoneyShort(money(123400))).toBe(`1.234${NBSP}€`);
   });
   it('formats JPY without decimals', () => {
     expect(formatMoney(money(7200, 'JPY'))).toBe(`7.200${NBSP}¥`);

@@ -39,6 +39,23 @@ export function formatMoney(m: Money): string {
   return trueMinus(moneyFormatter(m.currency, false).format(toMajor(m)));
 }
 
+const wholeFormatters = new Map<string, Intl.NumberFormat>();
+
+/** Chart labels: `30 €` for whole amounts, `32,50 €` otherwise. */
+export function formatMoneyShort(m: Money): string {
+  if (m.minor % 10 ** MINOR_DIGITS[m.currency] !== 0) return formatMoney(m);
+  let f = wholeFormatters.get(m.currency);
+  if (!f) {
+    f = new Intl.NumberFormat(LOCALE, {
+      style: 'currency',
+      currency: m.currency,
+      maximumFractionDigits: 0,
+    });
+    wholeFormatters.set(m.currency, f);
+  }
+  return trueMinus(f.format(toMajor(m)));
+}
+
 /** `+12,30 €` / `−12,30 €` / `0,00 €` */
 export function formatDelta(m: Money): string {
   return trueMinus(moneyFormatter(m.currency, true).format(toMajor(m)));

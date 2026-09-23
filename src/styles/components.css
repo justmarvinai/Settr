@@ -223,3 +223,43 @@
 .skip-link:focus {
   top: 12px;
 }
+
+/* Charts: the hidden range input that scrubs by keyboard shows its focus on the whole chart */
+.chart-box:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+/* A price that was just saved drops into its chart (DESIGN_SYSTEM.md §7, moment 5) */
+@keyframes chart-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(1.4);
+  }
+}
+.chart-drop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chart-drop var(--dur-slow) var(--ease-out);
+}
+
+/* The value flashes gain or loss for 150 ms after a save, then fades back */
+@keyframes value-flash-gain {
+  0%,
+  30% {
+    color: var(--gain);
+  }
+}
+@keyframes value-flash-loss {
+  0%,
+  30% {
+    color: var(--loss);
+  }
+}
+.value-flash-gain {
+  animation: value-flash-gain 500ms var(--ease-out);
+}
+.value-flash-loss {
+  animation: value-flash-loss 500ms var(--ease-out);
+}

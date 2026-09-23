@@ -123,7 +123,7 @@
 - **Consequences:** Accessible primitives with full visual control, deliberately restyled to avoid the "default shadcn" look.
 - **Alternatives:** Radix-based shadcn (maintenance slowed), MUI/Mantine (opinionated look), fully custom primitives (a11y cost).
 
-### ADR-010 · Recharts 3 as the single chart library
+### ADR-010 · Recharts 3 as the single chart library (superseded by ADR-038)
 - **Decision:** Recharts 3 via shadcn chart components for time series (line/area/step, custom scrubbing), donut, treemap, bars and sparklines.
 - **Consequences:** One themeable, SVG-accessible dependency, lazy-loaded (≤ 120 KB chunk budget).
 - **Alternatives:** TradingView Lightweight Charts 5 (excellent time series, but mandatory attribution and a second library). This is the fallback if scrubbing performance disappoints. ECharts 6 (heavy), visx (low-level), Nivo/Tremor (slowed/dormant).
@@ -335,3 +335,12 @@
 - **Consequences:** after M3 the startup JS is 219.6 KB gzip (about 10 KB headroom for M4), the collection chunk 48 KB and the library chunk 32 KB. A new shell icon goes into `glyphs.tsx` with the one weight it shows. `pnpm size` stays the gate; a source-map attribution of the entry and its preloads explains any jump.
 - **Alternatives:** raising the budget (hides regressions), manual chunk rules (brittle across Rolldown releases), Zod Mini instead of Zod's classic API (about 4 KB of JSON-schema code would leave startup, but every schema changes; kept in reserve).
 
+
+### ADR-038 · Hand-written SVG charts instead of Recharts (Accepted, M4; supersedes ADR-010)
+- **Context:** ADR-010 chose Recharts 3 for every chart, lazy-loaded within a 120 KB chunk budget. Measured in M4, Recharts 3.10.1 costs about 402 KB minified and 116 KB gzip for just the line, area, pie, axes and tooltip we need: more than the whole 80 KB budget of a lazy chunk (ADR-030), and the dashboard, Settr's start page, would load it on every visit. The charts Settr needs are few and calm (DESIGN_SYSTEM.md §9): an item price line with observation markers and a dashed purchase baseline, a step-after portfolio line with an optional *Investiert* overlay, scrubbing with a crosshair, and one donut.
+- **Decision:**
+  - Draw them as SVG in `components/domain/charts/`: `scale.ts` holds the pure math (linear scales, "nice" gridlines inside a data-following domain, the range chips `1M · 3M · 6M · 1J · Max`, line and step paths; unit-tested), `TimeChart.tsx` the time chart, and the donut follows the same pattern.
+  - Scrubbing uses pointer events (touch drags horizontally, vertical swipes still scroll) plus a visually hidden native range input for keyboard and screen readers; the chart box shows its focus ring. Every chart offers the same data as a table.
+  - Colors come from tokens only: the accent line, the gain/loss tint against the baseline, the new `--viz-1…8` palette for comparison lines, which also differ by dash pattern.
+- **Consequences:** a few KB instead of 116 KB, the charts look exactly like the design system, and they work offline and without layout libraries. We own the edge cases (flat lines, one point, prices older than the range), which the scale tests cover. Treemaps and other chart types stay out of v1.
+- **Alternatives:** Recharts 3 (too heavy, see above), TradingView Lightweight Charts 5 (canvas instead of SVG, mandatory attribution, a second look to theme), visx (low-level pieces we'd assemble anyway), uPlot (canvas, tiny, but no SVG accessibility and its own look).
