@@ -1,51 +1,16 @@
-import { z } from 'zod';
-import { CARD_LANGUAGES, CONDITIONS, type CardLanguage } from '../catalog-types';
+import type { CardLanguage } from '../catalog-types';
 import type { CatalogImage } from '../catalog/schema';
 import { money, type Money } from '../money';
 import type { Holding } from '../schemas/holding';
 import { remaining } from '../schemas/holding';
 import { remainingCost } from './lots';
+import { NO_LOCATION, type CollectionSearch, type LotGroup, type LotSort } from './search';
 
 /**
- * Sammlung › Karten / Sealed (COL-04, COL-05, UX_SPEC.md §4.6): the URL state and one pipeline
- * (filter → sort → group) shared by the grid and the table. Rows carry what the catalog knows about
- * a lot's item, resolved by the feature, so everything here stays pure.
+ * Sammlung › Karten / Sealed (COL-04, COL-05, UX_SPEC.md §4.6): one pipeline (filter → sort →
+ * group) shared by the grid and the table. Rows carry what the catalog knows about a lot's item,
+ * resolved by the feature, so everything here stays pure.
  */
-
-const optional = <T extends z.ZodType>(schema: T) => schema.optional().catch(undefined);
-
-export const COLLECTION_VIEWS = ['grid', 'table'] as const;
-export type CollectionView = (typeof COLLECTION_VIEWS)[number];
-
-export const LOT_SORTS = ['added', 'name', 'number', 'bought', 'cost', 'quantity'] as const;
-export type LotSort = (typeof LOT_SORTS)[number];
-
-export const LOT_GROUPS = ['set', 'language', 'rarity', 'location'] as const;
-export type LotGroup = (typeof LOT_GROUPS)[number];
-
-/** Location filter value for lots without a location. */
-export const NO_LOCATION = 'none';
-
-export const collectionSearchSchema = z.object({
-  view: optional(z.enum(COLLECTION_VIEWS)),
-  q: optional(z.string().max(80)),
-  set: optional(z.string().max(80)),
-  lang: optional(z.enum(CARD_LANGUAGES)),
-  variant: optional(z.string().max(40)),
-  cond: optional(z.enum(CONDITIONS)),
-  graded: optional(z.enum(['yes', 'no'])),
-  state: optional(z.enum(['sealed', 'damaged'])),
-  tag: optional(z.string().max(80)),
-  loc: optional(z.string().max(80)),
-  from: optional(z.iso.date()),
-  to: optional(z.iso.date()),
-  sort: optional(z.enum(LOT_SORTS)),
-  dir: optional(z.enum(['asc', 'desc'])),
-  group: optional(z.enum(LOT_GROUPS)),
-  /** Also show closed lots (everything sold, traded or opened). */
-  closed: optional(z.boolean()),
-});
-export type CollectionSearch = z.infer<typeof collectionSearchSchema>;
 
 export interface LotRow {
   holding: Holding;
@@ -58,12 +23,13 @@ export interface LotRow {
   setName?: string | undefined;
   /** As printed, e.g. `025/128`. */
   number?: string | undefined;
-  /** Position in set order (cards). */
+  /** Position in catalog order: sets in manifest order, then set order (cards). */
   setSort?: number | undefined;
   rarity?: string | undefined;
   image?: CatalogImage | undefined;
   productType?: string | undefined;
-  locationName?: string | undefined;
+  /** "VaultX 9er · Seite 4 · Platz 7" */
+  locationText?: string | undefined;
   /** False when the catalog no longer has the item (the lot shows its snapshot). */
   inCatalog: boolean;
 }
@@ -84,6 +50,8 @@ export function matchesFilter(row: LotRow, filter: LotFilter): boolean {
   if (filter.lang && h.language !== filter.lang) return false;
   if (filter.variant && h.variant !== filter.variant) return false;
   if (filter.cond && h.condition !== filter.cond) return false;
+  if (filter.rarity && row.rarity !== filter.rarity) return false;
+  if (filter.type && row.productType !== filter.type) return false;
   if (filter.graded === 'yes' && !h.grading) return false;
   if (filter.graded === 'no' && h.grading) return false;
   if (filter.state && (h.sealedState ?? 'sealed') !== filter.state) return false;
@@ -113,8 +81,8 @@ const COMPARE: Record<LotSort, (a: LotRow, b: LotRow) => number> = {
   added: (a, b) => a.holding.createdAt.localeCompare(b.holding.createdAt),
   name: (a, b) => collator.compare(a.name, b.name),
   number: (a, b) =>
-    collator.compare(a.setName ?? '', b.setName ?? '') ||
     (a.setSort ?? Number.MAX_SAFE_INTEGER) - (b.setSort ?? Number.MAX_SAFE_INTEGER) ||
+    collator.compare(a.setName ?? '', b.setName ?? '') ||
     collator.compare(a.number ?? '', b.number ?? ''),
   bought: (a, b) => boughtOn(a.holding).localeCompare(boughtOn(b.holding)),
   cost: (a, b) => unitCostMinor(a) - unitCostMinor(b),
@@ -133,11 +101,11 @@ export function defaultDirection(sort: LotSort): 'asc' | 'desc' {
   return sort === 'name' || sort === 'number' ? 'asc' : 'desc';
 }
 
-export function sortRows(
-  rows: readonly LotRow[],
+export function sortRows<T extends LotRow>(
+  rows: readonly T[],
   sort: LotSort = 'added',
   dir: 'asc' | 'desc' = defaultDirection(sort),
-): LotRow[] {
+): T[] {
   const compare = COMPARE[sort];
   const sign = dir === 'asc' ? 1 : -1;
   // Ties keep the newest lot first, so equal rows never jump around.
@@ -146,21 +114,23 @@ export function sortRows(
   );
 }
 
-export interface RowGroup {
+export interface RowGroup<T extends LotRow = LotRow> {
   key: string;
-  rows: LotRow[];
+  rows: T[];
 }
 
 const GROUP_KEY: Record<LotGroup, (row: LotRow) => string> = {
-  set: (row) => row.setId ?? '',
+  // Custom items without a catalog set group by the set name they were given.
+  set: (row) => row.setId ?? `name:${row.setName ?? ''}`,
   language: (row) => row.holding.language,
   rarity: (row) => row.rarity ?? '',
+  type: (row) => row.productType ?? '',
   location: (row) => row.holding.location?.id ?? NO_LOCATION,
 };
 
 /** Groups in order of first appearance, so the sort decides which group comes first. */
-export function groupRows(rows: readonly LotRow[], group: LotGroup): RowGroup[] {
-  const groups = new Map<string, LotRow[]>();
+export function groupRows<T extends LotRow>(rows: readonly T[], group: LotGroup): RowGroup<T>[] {
+  const groups = new Map<string, T[]>();
   for (const row of rows) {
     const key = GROUP_KEY[group](row);
     const list = groups.get(key);

@@ -70,6 +70,31 @@ export function nextFreeSlot(
   return undefined;
 }
 
+/**
+ * The first `count` free pockets in reading order, so a bulk move fills a binder in list order.
+ * Fewer come back when a binder with a page count runs out of room.
+ */
+export function freeSlots(
+  occupied: readonly SlotPosition[],
+  layout: BinderLayout,
+  pages: number | undefined,
+  count: number,
+): SlotPosition[] {
+  const perPage = pocketsPerPage(layout);
+  const free: SlotPosition[] = [];
+  if (perPage <= 0 || count <= 0) return free;
+  const taken = new Set(occupied.map(key));
+  const lastPage = pages ?? Number.POSITIVE_INFINITY;
+  for (let page = 1; page <= lastPage; page += 1) {
+    for (let slot = 1; slot <= perPage; slot += 1) {
+      if (taken.has(key({ page, slot }))) continue;
+      free.push({ page, slot });
+      if (free.length === count) return free;
+    }
+  }
+  return free;
+}
+
 /** The pocket after `position` in reading order (for "Hinzufügen & nächste"). */
 export function slotAfter(
   position: SlotPosition,

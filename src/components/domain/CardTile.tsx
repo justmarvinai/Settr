@@ -20,6 +20,7 @@ export function CardTile({
   ownedText,
   ownedLabel,
   ghost = false,
+  meta,
 }: {
   image: CatalogImage | undefined;
   number: string;
@@ -36,6 +37,8 @@ export function CardTile({
   ownedLabel?: string | undefined;
   /** A card you don't own yet in a set you collect: faded, with a dashed outline. */
   ghost?: boolean;
+  /** Second caption line, e.g. a lot's "×2 · DE · NM" in the collection. */
+  meta?: ReactNode;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
@@ -74,6 +77,11 @@ export function CardTile({
           </span>
         ) : null}
       </div>
+      {meta ? (
+        <div className="-mt-1 min-w-0 truncate px-0.5 font-mono text-[12px] leading-4 text-ink-muted">
+          {meta}
+        </div>
+      ) : null}
     </div>
   );
 }

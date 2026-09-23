@@ -9,6 +9,7 @@ import {
   costTotal,
   disposalCost,
   findCardsByNumber,
+  freeSlots,
   groupRows,
   matchesFilter,
   nextFreeSlot,
@@ -243,6 +244,21 @@ describe('binder slots (DATA_MODEL §5.6)', () => {
     expect(nextFreeSlot(firstPage, nine, 1)).toBeUndefined(); // a full one-page binder
   });
 
+  it('lists free pockets in reading order for bulk moves', () => {
+    const taken = [
+      { page: 1, slot: 1 },
+      { page: 1, slot: 3 },
+    ];
+    expect(freeSlots(taken, nine, undefined, 3)).toEqual([
+      { page: 1, slot: 2 },
+      { page: 1, slot: 4 },
+      { page: 1, slot: 5 },
+    ]);
+    expect(freeSlots(taken, nine, 1, 20)).toHaveLength(7); // a one-page binder runs out
+    expect(freeSlots([], nine, undefined, 11).at(-1)).toEqual({ page: 2, slot: 2 });
+    expect(freeSlots([], nine, undefined, 0)).toEqual([]);
+  });
+
   it('knows reading order and cells', () => {
     expect(slotAfter({ page: 4, slot: 9 }, nine)).toEqual({ page: 5, slot: 1 });
     expect(slotAfter({ page: 4, slot: 9 }, nine, 4)).toBeUndefined();
@@ -423,6 +439,33 @@ describe('collection view pipeline (COL-04)', () => {
     expect(namesOf(rows, { q: '#150' })).toEqual(['Pikachu-ex']);
     expect(namesOf(rows, { lang: 'en' })).toEqual(['Pikachu-ex']);
     expect(namesOf(rows, { from: '2026-09-02' })).toEqual(['Glurak']);
+    expect(namesOf(rows, { rarity: 'rare' })).toEqual(['Glurak']);
+  });
+
+  it('filters and groups sealed lots by product type', () => {
+    const sealed = [
+      row(lot({ snapshot: { name: 'Display' } }), { productType: 'booster-box' }),
+      row(lot({ snapshot: { name: 'ETB' } }), { productType: 'elite-trainer-box' }),
+      row(lot({ snapshot: { name: 'Display 2' } }), { productType: 'booster-box' }),
+    ];
+    expect(namesOf(sealed, { type: 'booster-box' })).toEqual(['Display', 'Display 2']);
+    expect(groupRows(sealed, 'type').map((g) => [g.key, g.rows.length])).toEqual([
+      ['booster-box', 2],
+      ['elite-trainer-box', 1],
+    ]);
+  });
+
+  it('groups custom items without a catalog set by their set name', () => {
+    const custom = [
+      row(lot({ snapshot: { name: 'Messe-Promo' } }), { setId: undefined, setName: 'Messe' }),
+      row(lot({ snapshot: { name: 'Fehldruck' } }), { setId: undefined, setName: undefined }),
+      row(lot({ snapshot: { name: 'Glurak' } }), { setId: 'intl:30th' }),
+    ];
+    expect(groupRows(custom, 'set').map((g) => g.key)).toEqual([
+      'name:Messe',
+      'name:',
+      'intl:30th',
+    ]);
   });
 
   it('sorts and groups', () => {

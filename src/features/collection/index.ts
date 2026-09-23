@@ -7,7 +7,9 @@ export {
   useSetOwnership,
   type SetOwnership,
 } from './ownership';
-export { HoldingsPanel, locationText } from './HoldingsPanel';
+export { HoldingsPanel } from './HoldingsPanel';
+export { locationText } from './location';
+export { lotMenuActions } from './lot-menu';
 export {
   cardInfo,
   customIdOf,

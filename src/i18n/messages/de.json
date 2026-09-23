@@ -39,7 +39,6 @@
   "overview_storage_body": "Settr speichert alles nur in diesem Browser. Es gibt kein Konto und keinen Server.",
   "overview_storage_action": "Speicher prüfen",
   "page_coming_title": "Folgt bald",
-  "page_coming_collection": "Deine Karten und Sealed-Produkte, mit Sprache, Zustand, Lagerort und Einkaufspreis. Kommt in Meilenstein 3.",
   "page_coming_prices": "Preise erfassen, veraltete Preise prüfen und die Preis-Session. Kommt in Meilenstein 4.",
   "page_coming_portfolio": "Wertentwicklung, Gewinn/Verlust und Aufteilung. Kommt in Meilenstein 4.",
   "collection_tabs_label": "Sammlung",
@@ -565,5 +564,180 @@
   "tags_empty": "Noch keine Tags.",
   "tag_rename": "Umbenennen",
   "tag_actions": "Aktionen für {name}",
-  "toast_tag_deleted": "Gelöscht: {name}"
+  "toast_tag_deleted": "Gelöscht: {name}",
+  "library_summary_label": "Zusammenfassung",
+  "library_stat_lots": "Positionen",
+  "library_stat_copies": "Exemplare",
+  "library_stat_items_cards": "Verschiedene Karten",
+  "library_stat_items_sealed": "Verschiedene Produkte",
+  "library_stat_invested": "Investiert",
+  "library_stat_unknown_cost": "{count} ohne Kaufpreis",
+  "library_filters_label_cards": "Karten in deiner Sammlung filtern",
+  "library_filters_label_sealed": "Sealed in deiner Sammlung filtern",
+  "library_search_label": "In deiner Sammlung suchen",
+  "library_search_placeholder_cards": "Name, Nummer oder Set",
+  "library_search_placeholder_sealed": "Name oder Set",
+  "library_filter_open": "Filter",
+  "library_filter_open_count": "Filter, {count} aktiv",
+  "library_sort_added": "Zuletzt hinzugefügt",
+  "library_sort_name": "Name",
+  "library_sort_number": "Nummer",
+  "library_sort_bought": "Kaufdatum",
+  "library_sort_cost": "Einkaufspreis",
+  "library_sort_quantity": "Menge",
+  "library_sort_desc": "Absteigend sortieren",
+  "library_group_label": "Gruppierung",
+  "library_group_none": "Nicht gruppiert",
+  "library_group_set": "Nach Set",
+  "library_group_language": "Nach Sprache",
+  "library_group_rarity": "Nach Seltenheit",
+  "library_group_type": "Nach Produkttyp",
+  "library_group_location": "Nach Lagerort",
+  "library_group_no_set": "Ohne Set",
+  "library_group_no_rarity": "Ohne Seltenheit",
+  "library_group_no_type": "Ohne Produkttyp",
+  "library_view_table": "Tabellenansicht",
+  "library_filters_title": "Filter",
+  "library_filter_set": "Set",
+  "library_filter_any": "Alle",
+  "library_filter_graded": "Grading",
+  "library_filter_graded_yes": "Nur gradierte",
+  "library_filter_graded_no": "Nur ungradierte",
+  "library_filter_tag": "Tag",
+  "library_filter_no_location": "Ohne Lagerort",
+  "library_filter_from": "Gekauft ab",
+  "library_filter_to": "Gekauft bis",
+  "library_filter_closed": "Abgeschlossene Positionen zeigen",
+  "library_filter_closed_hint": "Ganz verkauft, getauscht, verschenkt oder geöffnet.",
+  "library_filters_reset": "Zurücksetzen",
+  "library_filters_show": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position anzeigen",
+        "plural=*": "{count} Positionen anzeigen"
+      }
+    }
+  ],
+  "library_chip": "{label}: {value}",
+  "library_chip_remove": "Filter entfernen: {filter}",
+  "library_chip_from": "Gekauft ab {date}",
+  "library_chip_to": "Gekauft bis {date}",
+  "library_chip_closed": "Mit abgeschlossenen",
+  "library_chips_clear": "Alle Filter entfernen",
+  "library_count": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position",
+        "plural=*": "{count} Positionen"
+      }
+    }
+  ],
+  "library_count_filtered": [
+    {
+      "declarations": ["input n", "input count", "input total", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} von {total} Position",
+        "plural=*": "{count} von {total} Positionen"
+      }
+    }
+  ],
+  "library_list_cards": "Deine Karten",
+  "library_list_sealed": "Deine Sealed-Produkte",
+  "library_select": "{what} auswählen",
+  "library_select_all": "Alle sichtbaren Positionen auswählen",
+  "library_col_card": "Karte",
+  "library_col_product": "Produkt",
+  "library_col_set": "Set",
+  "library_col_type": "Typ",
+  "library_col_unit_cost": "Einkauf/Stk.",
+  "library_col_cost": "Investiert",
+  "library_col_actions": "Aktionen",
+  "library_empty_cards": "Noch keine Karten. Öffne ein Set und tippe auf ＋.",
+  "library_empty_cards_action": "Zum Katalog",
+  "library_empty_sealed": "Noch kein Sealed. Öffne ein Produkt im Katalog und füge es hinzu.",
+  "library_empty_sealed_action": "Zum Sealed-Katalog",
+  "library_empty_filtered": "Keine Position passt zu diesen Filtern.",
+  "library_only_closed": "Alle Positionen hier sind abgeschlossen: verkauft, getauscht, verschenkt oder geöffnet.",
+  "library_show_closed": "Abgeschlossene zeigen",
+  "bulk_label": "Auswahl",
+  "bulk_selected": "{count} ausgewählt",
+  "bulk_select_all": "Alle {count} auswählen",
+  "bulk_clear": "Auswahl aufheben",
+  "bulk_tags": "Tags …",
+  "bulk_move": "Verschieben …",
+  "bulk_delete": "Löschen",
+  "bulk_tags_title": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "Tags für {count} Position",
+        "plural=*": "Tags für {count} Positionen"
+      }
+    }
+  ],
+  "bulk_tags_intro": "Ein Häkchen gibt allen den Tag, ohne Häkchen wird er entfernt. Ein Strich heißt: nur einige haben ihn, das bleibt so.",
+  "bulk_tags_none": "Noch keine Tags. Leg unten den ersten an.",
+  "bulk_tags_some": "bei {count} von {total}",
+  "bulk_apply": "Übernehmen",
+  "bulk_cancel": "Abbrechen",
+  "bulk_move_title": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position verschieben",
+        "plural=*": "{count} Positionen verschieben"
+      }
+    }
+  ],
+  "bulk_move_binder_hint": "Im Ordner bekommt jede Position den nächsten freien Platz, in der Reihenfolge der Liste.",
+  "bulk_move_short": "Nur {free} freie Plätze: Die übrigen Positionen kommen ohne Platz in den Ordner.",
+  "bulk_move_submit": "Verschieben",
+  "toast_bulk_deleted": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position gelöscht",
+        "plural=*": "{count} Positionen gelöscht"
+      }
+    }
+  ],
+  "toast_bulk_tags": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "Tags bei {count} Position geändert",
+        "plural=*": "Tags bei {count} Positionen geändert"
+      }
+    }
+  ],
+  "toast_bulk_moved": [
+    {
+      "declarations": ["input n", "input count", "input name", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position nach {name} verschoben",
+        "plural=*": "{count} Positionen nach {name} verschoben"
+      }
+    }
+  ],
+  "toast_bulk_unplaced": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "Lagerort bei {count} Position entfernt",
+        "plural=*": "Lagerort bei {count} Positionen entfernt"
+      }
+    }
+  ],
+  "bulk_move_no_locations": "Noch keine Lagerorte. Du legst sie hier an:"
 }

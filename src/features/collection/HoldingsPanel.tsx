@@ -1,46 +1,16 @@
-import {
-  CopySimpleIcon,
-  PackageIcon,
-  PencilSimpleIcon,
-  PlusIcon,
-  ShoppingBagIcon,
-  TrashIcon,
-} from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { Fragment, useState, type ReactNode } from 'react';
 import { Button } from '@/components/ui/Button';
-import { ActionMenu, type MenuAction } from '@/components/ui/Menu';
+import { ActionMenu } from '@/components/ui/Menu';
 import { Panel } from '@/components/ui/Panel';
-import {
-  db,
-  deleteHolding,
-  duplicateHolding,
-  restoreHolding,
-  useHoldingsOfItem,
-  useLocations,
-  useTags,
-} from '@/db';
+import { useHoldingsOfItem, useLocations, useTags } from '@/db';
 import { remainingCost, unitCostDisplay } from '@/domain/collection';
 import { remaining, type Disposal, type Holding, type Location } from '@/domain/schemas';
 import { languageCode, m } from '@/i18n';
 import { disposalText, gradingText, sealedStateLabel } from '@/i18n/collection-labels';
 import { formatCount, formatDate, formatMoney } from '@/i18n/format';
-import { openDispose, openEdit, openOpening } from './actions';
-import { toastError, toastWithUndo } from './toasts';
-
-/** "VaultX 9er · Seite 4 · Platz 7" */
-export function locationText(
-  location: Holding['location'],
-  locations: readonly Location[],
-): string | undefined {
-  if (!location) return undefined;
-  const name = locations.find((l) => l.id === location.id)?.name;
-  if (!name) return undefined;
-  if (location.page && location.slot) {
-    return m.lot_location_slot({ name, page: location.page, slot: location.slot });
-  }
-  if (location.page) return m.lot_location_page({ name, page: location.page });
-  return name;
-}
+import { locationText } from './location';
+import { lotMenuActions } from './lot-menu';
 
 /** Parts separated by " · ", skipping empty ones. */
 function joined(parts: readonly ReactNode[]): ReactNode {
@@ -92,52 +62,6 @@ function LotRow({
     : holding.grading
       ? gradingText(holding.grading)
       : holding.condition;
-
-  const actions: MenuAction[] = [
-    {
-      label: m.action_edit(),
-      icon: <PencilSimpleIcon size={18} />,
-      onSelect: () => openEdit(holding.id),
-    },
-    {
-      label: m.action_duplicate(),
-      icon: <CopySimpleIcon size={18} />,
-      onSelect: () => {
-        duplicateHolding(db, holding.id).then(
-          (copy) =>
-            toastWithUndo(m.toast_duplicated({ what: label }), () => deleteHolding(db, copy.id)),
-          toastError,
-        );
-      },
-    },
-  ];
-  if (left > 0) {
-    actions.push({
-      label: m.action_dispose(),
-      icon: <ShoppingBagIcon size={18} />,
-      onSelect: () => openDispose(holding.id),
-    });
-    if (sealed) {
-      actions.push({
-        label: m.action_open(),
-        icon: <PackageIcon size={18} />,
-        onSelect: () => openOpening(holding.id),
-      });
-    }
-  }
-  actions.push({
-    label: m.action_delete(),
-    icon: <TrashIcon size={18} />,
-    danger: true,
-    onSelect: () => {
-      deleteHolding(db, holding.id).then(
-        (deleted) =>
-          deleted &&
-          toastWithUndo(m.toast_deleted({ what: label }), () => restoreHolding(db, deleted)),
-        toastError,
-      );
-    },
-  });
 
   return (
     <li className="flex items-start gap-3 border-t border-line py-3 first:border-t-0 first:pt-0">
@@ -197,7 +121,7 @@ function LotRow({
           <span className="type-small text-ink-muted italic">{holding.note}</span>
         ) : null}
       </div>
-      <ActionMenu label={m.lot_actions({ what: label })} actions={actions} />
+      <ActionMenu label={m.lot_actions({ what: label })} actions={lotMenuActions(holding, label)} />
     </li>
   );
 }
