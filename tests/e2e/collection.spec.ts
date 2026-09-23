@@ -228,8 +228,13 @@ test('owned:ja and owned:nein narrow the card search to the collection', async (
 });
 
 test.describe('accessibility with a collection', () => {
+  // One test per screen group and scheme, so each gets its own time budget (axe is slow in WebKit).
+  test.beforeEach(({ browserName }) => {
+    test.slow(browserName === 'webkit', 'axe takes several seconds per page in WebKit');
+  });
+
   for (const scheme of ['light', 'dark'] as const) {
-    test(`Sammlung screens have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+    test(`Sammlung lists have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });
       await quickAdd(page, ['1', '4 2,50', '25']);
 
@@ -246,7 +251,18 @@ test.describe('accessibility with a collection', () => {
         .click();
       await expect(page.getByRole('region', { name: 'Auswahl' })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);
+    });
 
+    test(`Sammlung dialogs have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await quickAdd(page, ['1', '25']);
+
+      await page.goto('/collection/cards?view=table');
+      await page.getByRole('button', { name: 'Auswahl' }).click();
+      await page
+        .getByRole('checkbox', { name: / · NM auswählen$/ })
+        .first()
+        .click();
       await page.getByRole('button', { name: 'Tags …' }).click();
       await expect(page.getByRole('dialog', { name: 'Tags für 1 Position' })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);
@@ -255,8 +271,11 @@ test.describe('accessibility with a collection', () => {
       await page.getByRole('button', { name: /^Filter/ }).click();
       await expect(page.getByRole('dialog', { name: 'Filter' })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);
-      await page.keyboard.press('Escape');
+    });
 
+    test(`a collected set has no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await quickAdd(page, ['1']);
       await page.goto('/catalog/sets/intl:30th');
       await expect(page.getByRole('heading', { name: '30 Jahre', level: 2 })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);

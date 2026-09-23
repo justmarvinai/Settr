@@ -145,6 +145,34 @@
     bottom: 92px;
   }
 }
+/*
+ * On phones (and short windows), a toast would cover an open dialog's or sheet's buttons and take
+ * their taps; while one is open (not closing), toasts appear at the top and stack downwards.
+ */
+@media (max-width: 767px), (max-height: 720px) {
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast-viewport {
+    top: max(12px, env(safe-area-inset-top));
+    bottom: auto;
+  }
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style])) .ui-toast {
+    top: 0;
+    bottom: auto;
+    transform: translateY(calc(var(--toast-swipe-movement-y) + var(--toast-index) * 10px))
+      translateX(var(--toast-swipe-movement-x)) scale(calc(1 - var(--toast-index) * 0.05));
+  }
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast[data-expanded] {
+    transform: translateY(calc(var(--toast-offset-y) + var(--toast-swipe-movement-y)))
+      translateX(var(--toast-swipe-movement-x));
+  }
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast[data-starting-style],
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast[data-ending-style] {
+    transform: translateY(-24px);
+  }
+}
 .ui-toast {
   position: absolute;
   right: 0;

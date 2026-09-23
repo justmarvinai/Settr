@@ -25,7 +25,8 @@ export const test = base.extend<{ problems: string[]; pictures: void }>({
     async ({ page }, use) => {
       const problems: string[] = [];
       page.on('console', (msg) => {
-        if (msg.type() === 'error') problems.push(`console: ${msg.text()}`);
+        // A failed load names no URL in its text; the location does.
+        if (msg.type() === 'error') problems.push(`console: ${msg.text()} (${msg.location().url})`);
       });
       page.on('pageerror', (error) => problems.push(`pageerror: ${error.message}`));
       await use(problems);

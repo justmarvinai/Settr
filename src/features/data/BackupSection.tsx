@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { manifestQuery } from '@/catalog';
 import { Button } from '@/components/ui/Button';
@@ -14,16 +14,21 @@ import { download, saveFile } from './save-file';
  */
 export function BackupSection() {
   const meta = useMeta();
-  const catalog = useQuery(manifestQuery).data;
+  const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
   const last = meta?.lastBackupAt;
 
   const exportBackup = async () => {
     setBusy(true);
     try {
+      // Only on export: the page itself must not need the catalog (offline, it may not be cached).
+      const catalogVersion = await queryClient.ensureQueryData(manifestQuery).then(
+        (manifest) => manifest.catalogVersion,
+        () => null,
+      );
       const envelope = await createBackup(db, {
         appVersion: import.meta.env.VITE_APP_VERSION,
-        catalogVersion: catalog?.catalogVersion ?? null,
+        catalogVersion,
       });
       const name = backupFileName();
       const blob = new Blob([JSON.stringify(envelope)], { type: 'application/json' });
