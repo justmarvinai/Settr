@@ -93,12 +93,12 @@ International (DE/EN) only, cards only (R10.1, R10.2). Cardmarket = the singles'
 | `base1` Grundset (BS), Unlimited print | 102 (102) | 1523 |
 
 **Data quirks (found by the syncs of 2026-09-24)**
-- **No Cardmarket ids at TCGdex** for Karmesin & Purpur and Nacht in Flammen: the pipeline matches the expansion's singles by name, abilities and attacks (ADR-056). Cardmarket also files stamped and promotional prints under the card's name, so a name with more products than cards keeps to the batch of regular prints, or stays open: its button opens Cardmarket's search.
+- **No Cardmarket ids at TCGdex** for Karmesin & Purpur and Nacht in Flammen: the pipeline matches the expansion's singles by name, abilities and attacks (ADR-056): 241 of 258 and 155 of 169 cards. Cardmarket also files stamped and promotional prints under the card's name, so a name with more products than cards keeps to the batch of regular prints, or stays open: its button opens Cardmarket's search (the starters, the Miraidon-ex and Koraidon-ex prints, most GX cards).
 - **Side expansions:** the pattern reverses of Schwarze Blitze, Weiße Flammen and Prismatische Entwicklungen, and Ewige Rivalen's deck exclusives. TCGdex has no expansion for Ewige Rivalen's set; its cards point to 6096. The galleries sell in their main set's expansion.
 - **Unpadded ids:** TCGdex numbers Farbenschock, Clash der Rebellen, Nacht in Flammen and the Grundset `1`, `2` …; Sword & Shield prints `001/185`, the older sets `4/102` (`printedNumber`).
 - **Print runs:** the Grundset's variants carry TCGdex subtypes (unlimited, shadowless, 1999–2000 copyright, red cheeks); the set keeps `unlimited` (`printRun`).
 - **German names:** TCGdex has none for 34 promos; species names come from PokéAPI, the rest is curated or English-only (`data/curated/cards/intl-svp.yaml`, `intl-swshp.yaml`).
-- **Pictures:** TCGdex has none for the galleries in their own folders; the pipeline also tries the main set's folder (`picturesIn`). The Grundset's German cards show the English picture (labeled).
+- **Pictures:** TCGdex files the galleries' pictures in their main set's folder (`de/swsh/swsh11/TG01`, not `…/swsh11tg/…`), so the config names it (`picturesIn`); all 160 gallery cards have German pictures. The Grundset's German cards show the English picture (labeled). Of the 3,678 cards, 3,512 have a German picture, 121 the English one and 45 promos none (placeholder).
 
 ---
 

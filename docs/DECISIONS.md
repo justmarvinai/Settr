@@ -639,6 +639,7 @@
     - German names TCGdex lacks come from PokéAPI when the English name is a species with an optional region or suffix (*Paldean Wooper* → *Paldea-Felino*), else from curation. Both show as *übersetzt*.
 - **Consequences:**
   - The catalog grows by 3,678 cards to 6,167, in 39 sets. The search index grows to about 330 KB gzip; it still loads on first search.
+  - After the syncs of 2026-09-24: 3,640 of the 3,678 cards have their exact Cardmarket product (ADR-056), 3,633 a picture (3,512 German). TCGdex files the galleries' pictures in their main set's folder (`picturesIn`).
   - The Classic Collection's `4/102` now also finds the Base Set's Glurak.
 - **Alternatives:**
   - Japanese prints too: not asked for, and each needs pairing and names (ADR-051).
@@ -670,7 +671,10 @@
   - The product goes to the card's plain variants (normal, holo and the reverse holo, which the link filters for).
   - The sync report lists unmatched cards and the expansion's singles no card points to. A curated `cardmarket` overlay (`en`, one product for DE and EN) wins.
   - Offline builds keep the ids the last network build found.
-- **Consequences:** filled in by the first network sync (DATA_SOURCES.md §2.2).
+- **Consequences** (sync of 2026-09-24):
+  - Karmesin & Purpur: 241 of 258 cards have their product; Nacht in Flammen: 155 of 169. Nine promos of Karmesin & Purpur Promos, which TCGdex lacks ids for, too.
+  - The other 31 have more products than cards, even within the batch: the starters and the Miraidon-ex and Koraidon-ex prints Cardmarket listed before the set, and most GX cards. Their button opens Cardmarket's search until they're curated.
+  - A wrong exact link costs more than a search link, so the rule never guesses between products.
 - **Alternatives:**
   - Curating about 430 ids by hand.
   - Search links only: no exact product, no price-guide suggestions (PRC-09).

@@ -17,7 +17,8 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - **Variants:** Rainbow Rares; Tinsel, Galaxy and Cracked Ice holos; metal cards; World Championship, league and player stamps. A holo print of a card packs carry as a non-holo is *Holo (Promo)*, outside Master (ADR-055).
   - **Numbers as printed:** `001/185`, `TG05/TG30`, `GG05/GG70`, `4/102`, `SWSH001`.
   - **Promos:** German names TCGdex lacks come from the Pokémon's German name (*Paldea-Felino*, marked *übersetzt*); the Special Delivery promos and the Van Gogh Museum Pikachu come in English only.
-  - **Cardmarket:** each set's expansion comes from TCGdex or the config; Karmesin & Purpur and Nacht in Flammen, which TCGdex has no ids for, get their products by name (ADR-056).
+  - **Cardmarket:** each set's expansion comes from TCGdex or the config; Karmesin & Purpur and Nacht in Flammen, which TCGdex has no ids for, get their products by name (ADR-056). 3,640 of the 3,678 cards link to their exact product; the rest open Cardmarket's search.
+  - **Pictures** for 3,633 cards, 3,512 of them German; the galleries' pictures come from their main set's folder at TCGdex.
 - **The Mega Evolution series (2026-09-24, ROADMAP v1.x · Your sets).**
   - **International (DE/EN), 1,077 cards:** Mega-Entwicklung (with the basic Energy MEE 001–008), Fatale Flammen, Erhabene Helden, Optimale Ordnung, Wachsendes Chaos, Dunkelnacht and Mega-Entwicklung Promos.
   - **Japanese with Traditional Chinese, 1,037 cards:** Mega Brave and Mega Symphonia (together Mega-Entwicklung), Inferno X, MEGA Dream ex, Nihil Zero, Ninja Spinner, Abyss Eye and the MEGA promo cards (Japanese only). Simplified Chinese stays with 30th CELEBRATION: its Mega editions cut the Japanese sets differently (ADR-053).
