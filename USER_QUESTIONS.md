@@ -2,14 +2,37 @@
 
 > Last updated: 2026-09-24.
 > **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) is built and waits for your check.
-> **Rounds 4 (M2), 5 (M3) and 6 (M4): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) is in PR #3; M5 (Data Safety) is built and waits for your check.
+> **Rounds 4 (M2), 5 (M3), 6 (M4) and 7 (M5): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 7: data safety (M5, open, nothing blocking)
+
+**To try when you check M5:** export a backup on the PC, import it on the iPhone (*Einstellungen › Daten › Backup einspielen*, *Ersetzen*, or *Einspielen* on an empty phone), change something on both, then bring the phone's backup back to the PC with *Zusammenführen*. The preview says what will happen before anything is written, and *Sicherungen vor Importen* can put the old state back.
+
+**R7.1 · When the backup reminder speaks up.** The pill turns amber once your data changed since the last backup and that backup is older than 7 days (or after 50 changes). A toast (*Letztes Backup vor 12 Tagen. Jetzt sichern?*) comes at most once a day. Without any backup, the pill is amber right away, but the toast waits for the second day (or 50 changes), so a first session isn't interrupted (ADR-043).
+- [ ] ⭐ Keep it like that.
+- [ ] Remind me right away on the first day too.
+- [ ] No toasts, the pill is enough.
+
+**R7.2 · What *Alle Daten löschen* deletes.** It deletes everything on this device: collection, prices, tags, Lagerorte, own items, settings, device preferences, and also the *Sicherungen vor Importen*. The dialog asks you to type *LÖSCHEN* and offers *Backup exportieren* first.
+- [ ] ⭐ Everything, snapshots included (it's what the button says, e.g. before handing a device on).
+- [ ] Keep the last snapshot, so it can be undone once.
+
+**R7.3 · The Sammlung CSV from Einstellungen › Daten.** It lists the lots you still own; sold, traded and given-away copies are in *Verkäufe*. A selection in Sammlung exports exactly what you selected, closed lots included.
+- [ ] ⭐ Open lots only.
+- [ ] All lots, closed ones with quantity 0.
+
+**R7.4 · Folding tags and Lagerorte when merging.** If both devices have a tag (or a Lagerort) with the same name, they become one, and lots keep pointing at it. This only happens when it's unambiguous: two binders called *Binder* on one device stay two (ADR-042).
+- [ ] ⭐ Fold them like that.
+- [ ] Never fold, keep both (then they show twice).
 
 ---
 

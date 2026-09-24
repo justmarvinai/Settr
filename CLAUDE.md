@@ -4,7 +4,7 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M4 · PRICES & PORTFOLIO ✅ built, waiting for Marvin's check** (M1–M3 too). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1 + M2 are merged into `main` (PR #1), M3 too (PR #2, 2026-09-23). The CI fixes after that merge and M4 sit on `claude/great-edison-uri1z0` on top of `main`; their PR opens when Marvin asks. Open on Marvin's side: connect the repo to Vercel (then add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide), make `main` the default branch, check the app in Brave and on the iPhone, answer rounds 4–6 in `USER_QUESTIONS.md` when convenient, then say whether to open the PR and start **M5 · Data Safety**.
+**Current phase: M5 · DATA SAFETY ✅ built, waiting for Marvin's check** (M1–M4 too). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1 + M2 are merged into `main` (PR #1), M3 too (PR #2, 2026-09-23). The CI fixes after that merge and M4 are in PR #3 (opened 2026-09-24, squash merge recommended). M5 follows on `claude/great-edison-uri1z0` once PR #3 is merged, and its PR opens when Marvin asks. Open on Marvin's side: connect the repo to Vercel (then add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide), make `main` the default branch, check the app in Brave and on the iPhone (for M5: export, import on the other device, merge back), answer rounds 4–7 in `USER_QUESTIONS.md` when convenient, then say whether to start **M6 · Polish & Launch**.
 
 - Rounds 1–3 are answered and incorporated (spec v0.3). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
@@ -52,7 +52,7 @@ Settr is a **local-first Pokémon TCG collection tracker** for **singles and sea
 - **UI:** Tailwind 4.3 + OKLCH tokens · shadcn-style primitives on **Base UI**, hand-written (ADR-031) · Motion 13 · Recharts 3 · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
 - **Libraries:** Paraglide JS 2 (i18n, DE base) · TanStack Form + Zod 4 · TanStack Table 9 / Virtual 3 · MiniSearch (worker) · Zustand (tiny UI state) · vite-plugin-pwa.
 - **Tooling:** Oxlint (type-aware) + oxfmt · Vitest 5 (+ Browser Mode) + Playwright + axe · size-limit · lefthook · pnpm 10.33 · Node 24 LTS.
-- **Jobs (GitHub Actions):** `ci.yml` (PRs, `main`, manual) · `catalog-sync.yml` (weekly catalog PR; manual run with `commit: true` commits to the branch) · `price-guide.yml` (M4, daily; a deploy hook while the repo is public, ADR-029).
+- **Jobs (GitHub Actions):** `ci.yml` (PRs, `main`, manual) · `catalog-sync.yml` (weekly catalog PR; manual run with `commit: true` commits to the branch) · `price-guide.yml` (M4, daily; a deploy hook while the repo is public, ADR-029) · `e2e-nightly.yml` (M5, nightly + manual: property tests with a random seed, the data journeys in Firefox).
 
 ## Commands
 
@@ -63,7 +63,7 @@ pnpm preview         # serve dist/ with the production security headers (CSP)
 pnpm typecheck       # Paraglide compile + tsc --noEmit (TS 7)
 pnpm lint            # oxlint --type-aware (incl. layer boundaries, no hard-coded strings)
 pnpm format          # oxfmt (format:check in CI)
-pnpm test            # vitest unit + integration (Node, fake-indexeddb)
+pnpm test            # vitest unit + integration (Node, fake-indexeddb); FC_SEED=random explores, FC_SEED=<n> replays
 pnpm test:browser    # vitest browser mode (components, *.test.tsx)
 pnpm e2e             # playwright against the built app (run pnpm build first)
 pnpm size            # size-limit budgets (after build)

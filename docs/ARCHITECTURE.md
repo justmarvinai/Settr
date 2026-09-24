@@ -44,9 +44,9 @@
  │  React SPA ──▶ TanStack Router ──▶ feature modules                            │
  │     │  useLiveQuery                       │ TanStack Query (catalog JSON)     │
  │     ▼                                     ▼                                   │
- │  Dexie ─▶ IndexedDB "settr" (user data)   in-memory catalog + search worker   │
+ │  Dexie ─▶ IndexedDB "settr" (user data), "settr-snapshots"                    │
  │  Service worker (Workbox): app shell precache, catalog SWR, image cache       │
- │  Web Worker: search index (MiniSearch); time series on the main thread (ADR-039) │
+ │  Workers: search index, backup reading (time series: ADR-039)                 │
  └──────────────────────────────────────────────────────────────────────────────┘
        ▲ user opens Cardmarket links in a new tab (no API integration)
 ```
@@ -109,7 +109,7 @@
 - `components/ui/` (design-system primitives) has no domain knowledge.
 - These rules are enforced with Oxlint import restrictions (`no-restricted-imports` patterns) and reviewed in PRs.
 
-### 4.2 Folder structure (as built through M3, plus planned folders)
+### 4.2 Folder structure (as built through M5, plus planned folders)
 
 ```
 settr/
@@ -133,7 +133,7 @@ settr/
 │  │  ├─ prices/                # price panel + chart + entries, Preise hub, price session, price-guide chips (series choice, save, Cardmarket link)
 │  │  ├─ portfolio/             # Portfolio: filters, allocation, performance, realized P/L
 │  │  ├─ wishlist/
-│  │  ├─ data/                  # import/export/CSV/backups/storage, install section
+│  │  ├─ data/                  # Einstellungen › Daten: export, import preview, snapshots, CSV, storage, install, delete all; read-backup.ts talks to the backup worker
 │  │  ├─ settings/              # settings layout and sections
 │  │  ├─ appearance/            # theme, transparency, motion (loaded at startup, ADR-030)
 │  │  ├─ pwa/                   # install prompt, update toast (loaded at startup)
@@ -142,17 +142,17 @@ settr/
 │  ├─ components/
 │  │  ├─ ui/                    # hand-written shadcn-style primitives on Base UI, one module each (ADR-031); glyphs.tsx = the shell's single-weight icons (ADR-037)
 │  │  └─ domain/                # CardImage, CardTile, PLDelta, charts/ (scale.ts, TimeChart, Donut, RangeChips) …
-│  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, merge, schemas (Zod)
-│  ├─ db/                       # Dexie schema, migrations, repositories, live-query hooks, backup export; core.ts = what the shell needs at startup (ADR-037)
+│  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, csv, schemas (Zod); backup/ = format, read pipeline, migrations, validation, merge planner, reminder rule (M5)
+│  ├─ db/                       # Dexie schema, repositories, live-query hooks, backup export, import (replace/merge/restore/wipe), snapshots.ts = the `settr-snapshots` database (ADR-041); core.ts = what the shell needs at startup (ADR-037)
 │  ├─ catalog/                  # catalog loader, image URL builder, search client
-│  ├─ workers/                  # search.worker.ts
+│  ├─ workers/                  # search.worker.ts, backup.worker.ts (reads backup files, M5)
 │  ├─ i18n/                     # Paraglide project (messages/de.json, en.json), format helpers
-│  ├─ lib/                      # small generic utilities (sheets.ts: the sheet request store, useElementBox for virtualizers)
+│  ├─ lib/                      # small generic utilities (sheets.ts: the sheet request store, useElementBox for virtualizers, hash.ts, storage.ts: persistence and usage)
 │  └─ styles/                   # tokens.css, globals.css
 ├─ tests/
 │  ├─ e2e/                      # Playwright specs (+ axe, console/CSP guard in fixtures.ts)
-│  ├─ fixtures/                 # catalog + backup fixtures (per schema version)
-│  └─ factories.ts
+│  ├─ fixtures/                 # backup fixtures per schema version (backups/v1/basic.settr.json)
+│  └─ factories.ts              # valid records and fast-check arbitraries
 ├─ docs/                        # this planning suite
 └─ vercel.json, vite.config.ts, tsconfig.json, .oxlintrc.json, .size-limit.mjs, lefthook.yml, playwright.config.ts, package.json …
 ```
@@ -191,6 +191,11 @@ settr/
 
 **Import**
 1. See `IMPORT_EXPORT.md` §4. Parsing and validation run in a worker. The write is one transaction, followed by a derived-table rebuild.
+2. As built (M5, ADR-041):
+   - `features/data/read-backup.ts` starts a module worker per file, which runs `domain/backup/readBackup`: parse, envelope, checksum, migrate, validate.
+   - The preview plans a merge with `planMerge` against `readUserData`.
+   - `db/import.ts` snapshots the current state into `settr-snapshots`, then writes in one transaction guarded by the change counter, rebuilds `priceLatest` and bumps the counter.
+   - Undo restores a snapshot through the same read pipeline.
 
 ---
 

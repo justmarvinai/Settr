@@ -105,7 +105,7 @@ Route slugs are English and language-neutral. Labels are localized.
 - **Liquid Glass chrome (DSN-05, *Balanced*, R2.1):** the sidebar is a **floating glass panel** (236 px, inset 12 px from the window edges, radius 24), and the top bar is a floating glass toolbar (radius 20). List pages add a **sticky glass filter bar** (§4.3). Content scrolls **beneath** them, so card art tints the glass. It's solid when *Transparenz reduzieren* is on. Details in `DESIGN_SYSTEM.md` §3.5.
 - **Top bar:** page title/breadcrumb · global search (opens the command palette; shortcut labels are platform-aware, e.g. **Strg K** on Windows and ⌘K on Mac/iPad) · theme toggle (◐, a quick light/dark switch; the setting lives in Einstellungen › Darstellung) · **privacy toggle (👁)**, which blurs every money value (PRT-05) · primary **＋ Hinzufügen**.
 - **Sidebar:** the wordmark with the short tagline *"Jede Karte zählt."* underneath (R2.7) · navigation (Übersicht, Sammlung, Katalog, Preise, Portfolio) · a **Sets** quick-access section with pinned and recently opened sets, each with its progress ring, so it stays useful as sets are added after v1 (R2.5) · footer with the backup status and Einstellungen.
-- **Backup status (DAT-04):** a pill in the sidebar footer, e.g. *"Backup vor 3 Tagen"*. Once a backup is due (after N days, default 7, Q7.1) it turns amber and reads *"Backup fällig · Letztes vor 12 Tagen"*. It links to `/settings/data`.
+- **Backup status (DAT-04):** a pill in the sidebar footer, e.g. *"Backup vor 3 Tagen"*. Once a backup is due (after N days, default 7, Q7.1) it turns amber and reads *"Backup fällig · Letztes vor 12 Tagen"*. It links to `/settings/data`. **As built (M5, ADR-043):** due means the data changed since the last backup and that backup is older than the interval, or 50 changes piled up; without any backup it's due as soon as there's data. A toast (*"Letztes Backup vor 12 Tagen. Jetzt sichern?"*, *Jetzt sichern*) follows at most once a day, never on the Daten page, and on a new install only from its second day (or after 50 changes).
 - The badge on **Preise** shows the number of stale prices.
 
 ### 3.3 Mobile shell
@@ -270,7 +270,7 @@ This screen uses the same structure as card detail, but:
   - *Table:* Karte (thumb, name, set · variant when it isn't the standard print · *Eigener Eintrag*), Nr., Sprache, Zustand (Status for sealed), Menge, Einkauf/Stk., Investiert, Kaufdatum, Lagerort. Columns drop out as the table narrows (the sidebar counts); below about 560 px a compact line under the name shows quantity, language and condition. Karte, Nr., Menge, Einkauf/Stk. and Kaufdatum sort from their header. Choosing columns arrives with M4's price columns.
   - *Grid:* tiles as on the set page with "×2 · DE · NM" (plus a non-standard variant) under the name; closed lots are faded and say *Abgeschlossen*.
   - *Grouping* shows groups in their own order (sets as in the catalog, rarities from common up, languages as everywhere, locations as sorted in Einstellungen), "ohne …" last; the sort applies inside each group.
-  - *Multi-select:* check boxes on hover (desktop) or after *Auswahl* (always on touch), `Space` on a focused tile, the table's header box for everything shown. The bar at the bottom offers **Tags …** (checked = all, dash = some; untouched tags stay), **Verschieben …** (into a binder, lots fill the next free pockets in list order; lots already in it keep theirs) and **Löschen**, each with *Rückgängig*. The price session (M4) and CSV (M5) for a selection come later.
+  - *Multi-select:* check boxes on hover (desktop) or after *Auswahl* (always on touch), `Space` on a focused tile, the table's header box for everything shown. The bar at the bottom offers **Tags …** (checked = all, dash = some; untouched tags stay), **Verschieben …** (into a binder, lots fill the next free pockets in list order; lots already in it keep theirs) and **Löschen**, each with *Rückgängig*. *Preise …* (M4) starts a price session for the selection, and **CSV** (M5) exports it (the dialect chosen on the Daten page).
   - `N` on a focused tile adds another lot of that card or product; custom items and lots whose item left the catalog open their edit sheet instead of a page.
 - **As built (M4):** the summary adds *Wert* and *Gewinn/Verlust* (with how many lots have no price or a stale one); tiles show value and P/L % (a dot for a stale price, *eigener Wert* where it applies); the table adds Wert/Stk., Wert, G/V, G/V % and *Preis vom*, and a column chooser remembers the columns per device. Filters add *Bepreist/Ohne Preis*, *Preis veraltet* and *G/V positiv/negativ*. *Preise …* in the selection bar starts a price session for the selected lots. `P` on a tile or a row's name opens *Preis eintragen*.
 
@@ -376,6 +376,15 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 | **Daten** | Export backup (a download; Brave asks where to save it) · import backup · CSV export · backup reminder interval · **storage status**: persistent yes/no (`persist()`) and used space; the reported quota isn't relied on, since Brave always reports 2 GiB (ADR-027) · request persistence · **install hint**: an installed app gets `persist()` (Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*; English menu names, the German ones are to verify) · **delete-on-exit warning**: Brave's Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data* and a per-site *"clear cookies on exit"* erase the whole collection (all off by default; ADR-027, R3.4) · delete all data |
 | **Über** | App version and the long tagline (*"Jede Karte. Jedes Set. Jeder Cent."*) · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
 
+- **As built (M5), Daten:** the sections are:
+  - **Backup:** the last backup and the changes since, *Backup exportieren* (*Fotos einschließen* once there are photos), and *Backup-Erinnerung* after 3/7/14/30 days.
+  - **Backup einspielen:** a drop zone with *Datei auswählen*. The preview dialog is in `IMPORT_EXPORT.md` §4.
+  - **Sicherungen vor Importen:** only when there are some; *Herunterladen* and *Wiederherstellen*.
+  - **CSV für Tabellen:** *Excel (Deutschland)* or *International*; *Sammlung / Preise / Verkäufe exportieren*.
+  - **Speicher:** *Gespeichert: …*, persistent yes/no, usage, *Dauerhaft speichern*.
+  - **Als App installieren.**
+  - **Achtung bei „Daten beim Beenden löschen“.**
+  - **Alle Daten löschen:** a dialog that asks you to type *LÖSCHEN*, with *Backup exportieren* inside, then a fresh start.
 - **As built (M4), Preise:** default price type (a select), the Cardmarket filters (sellers from Germany, fixed while it's the only verified country; *Nur Angebote in der Sprache der Karte*; the minimum condition MT…PO), *Vorschläge aus dem Cardmarket-Preisführer* on/off, *Preis veraltet nach* 7/14/30/60/90 days and *Karten ohne Preis im Gesamtwert* (*nicht mitzählen* / *mit Einkaufspreis*). Changes apply at once.
 
 ### 4.14 Onboarding · APP-06
@@ -414,7 +423,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 - **Destructive actions:** deleting a lot uses undo only. Deleting a whole set or all data requires a typed confirmation.
 - **Errors:** route-level error boundaries with "Neu laden" and "Fehlerbericht kopieren", which copies a diagnostic JSON without user data. Import errors list exactly which records failed validation.
 - **Offline:** a small pill ("Offline · alles funktioniert") shows. Only images not yet cached fall back to placeholders.
-- **Storage pressure:** `QuotaExceededError` gets a dedicated dialog explaining how to free space and urging a backup.
+- **Storage pressure:** `QuotaExceededError` gets a dedicated dialog explaining how to free space and urging a backup. **As built (M5):** a toast that stays until closed (*Der Speicher ist voll* · *Sichere jetzt ein Backup und gib Speicher frei.* · *Zu den Daten*) wherever a write fails for lack of space.
 - **Image fallback chain** (`DATA_SOURCES.md` §5):
   1. The selected language's image.
   2. Another language of the same print, badged "Bild in Englisch".
@@ -428,7 +437,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 | Keys | Action |
 |---|---|
-| `Strg K` (Windows) / `⌘K` (Mac, iPad) / `/` | Command palette (search catalog, collection, actions, settings) |
+| `Strg K` (Windows) / `⌘K` (Mac, iPad) / `/` | Command palette (search catalog, collection, actions, settings). As built (M5), *Aktionen*: *Backup exportieren* (runs right away) and *Backup einspielen …* (opens the import on the Daten page) |
 | `N` | New holding (add sheet for the focused card, or palette otherwise) |
 | `P` | Record a price for the focused/selected item |
 | `Q` | Quick-add mode (in set context) |

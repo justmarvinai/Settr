@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M4 · Prices & Portfolio** ✅ built, waiting for your check (M1–M3 are merged; Vercel, Brave and iPhone checks still open) · next: **M5 · Data Safety**
+> Last updated: 2026-09-24 · Current phase: **M5 · Data Safety** ✅ built, waiting for your check (M1–M3 are merged, M4 is in PR #3; Vercel, Brave and iPhone checks still open) · next: **M6 · Polish & Launch**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -14,8 +14,8 @@
 | **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
 | **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
-| **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ built · 🔒 your check |
-| **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | 🔒 |
+| **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ built · PR #3 · 🔒 your check |
+| **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ built · 🔒 your check |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | 🔒 |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
 | **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | 🔒 |
@@ -139,16 +139,36 @@
 
 ---
 
-## M5 · Data Safety 🔒 → v0.5.0
+## M5 · Data Safety ✅ → v0.5.0 (built 2026-09-24, waiting for your check)
 
-- [ ] Full backup export with checksum, embedded photos option (DAT-01; the export itself ships with M3, M5 adds the options and the ⌘K entry)
-- [ ] Import: parse in a worker → migrate → validate → preview → replace/merge → snapshot → undo (DAT-02)
-- [ ] CSV export (Excel-DE dialect) (DAT-03), also for a selection in Sammlung
-- [ ] Backup reminders + status pill (DAT-04), storage usage display (DAT-05)
-- [ ] Delete all data (DAT-09)
-- [ ] Round-trip, migration-fixture and merge property tests in CI
+- [x] Full backup export with checksum, embedded photos option (DAT-01; the export itself ships with M3, M5 adds the options and the ⌘K entry). *As built:* *Fotos einschließen* appears once there are photos (none in v1 yet); ⌘K › *Aktionen* › *Backup exportieren*; the Daten page shows the changes since the last backup
+- [x] Import: parse in a worker → migrate → validate → preview → replace/merge → snapshot → undo (DAT-02). *As built (ADR-041, ADR-042):*
+  - Refusals say why: not JSON (with line and column), not a backup, encrypted, from a newer Settr, damaged, over 200 MB.
+  - The preview lists the skipped records and why, and shows the merge counts.
+  - Safety snapshots live in their own database, `settr-snapshots` (the last three), with *Sicherungen vor Importen* to restore or download them.
+  - Undo in the toast; one guarded transaction.
+- [x] CSV export (Excel-DE dialect) (DAT-03), also for a selection in Sammlung. *As built:* Sammlung (open lots), Preise and Verkäufe from the Daten page, *Excel (Deutschland)* or *International* (remembered), and *CSV* in the Sammlung selection bar
+- [x] Backup reminders + status pill (DAT-04), storage usage display (DAT-05). *As built (ADR-043):*
+  - A backup is due when the data changed since the last one and it's older than 3/7/14/30 days, or after 50 changes.
+  - Without any backup, the pill turns amber at once, but the toast only comes from the install's second day. The toast shows at most once a day and never on the Daten page.
+  - Persistent storage is requested once there's data and when Settr is installed.
+  - *Gespeichert: …* shows what the device holds.
+  - A full disk gets its own toast.
+- [x] Delete all data (DAT-09). *As built:* type *LÖSCHEN*, with *Backup exportieren* in the dialog; the snapshots and device preferences go too
+- [x] Round-trip, migration-fixture and merge property tests in CI. *As built:*
+  - Export → import → export gives the same data and checksum on generated datasets.
+  - The v1 fixture `tests/fixtures/backups/v1/basic.settr.json` imports cleanly.
+  - Merge properties: self-merge changes nothing, and devices converge.
+  - One fixed fast-check seed for all property tests, and a random one nightly.
+- [x] e2e (`tests/e2e/data.spec.ts`): export → delete all → import, merge with conflicts and restore, refusals, CSV, the reminder, ⌘K, axe in light and dark
+- [ ] **You:** check M5 in Brave and on the iPhone (export, import on the other device, merge back), answer round 7 in `USER_QUESTIONS.md`
 
-**Exit:** the E2E journeys "export → wipe → import" and "merge with conflicts" pass on Chromium and WebKit on every PR, and on Firefox nightly.
+**Exit:** the E2E journeys "export → wipe → import" and "merge with conflicts" pass on Chromium and WebKit on every PR, and on Firefox nightly. *Status:*
+- They pass locally on Chromium (desktop and phone).
+- On every PR they run on Chromium and WebKit (`ci.yml`).
+- `e2e-nightly.yml` runs them on Firefox. The first run follows once this branch is on GitHub.
+
+**Carried forward:** a ZIP container for backups with many photos (`formatVersion: 2`, with photos, post-v1); password-protected backups (I-17); the auto-backup folder (DAT-06, post-v1).
 
 ---
 

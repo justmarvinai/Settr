@@ -46,6 +46,9 @@
 | 038 | Hand-written SVG charts instead of Recharts | Accepted (M4; supersedes ADR-010) |
 | 039 | Portfolio time series on the main thread (no worker yet) | Accepted (M4) |
 | 040 | Price entry as a sheet; price-guide values stored as `from`/`trend` with `origin: 'guide'` | Accepted (M4) |
+| 041 | Import as built: read in a worker, safety snapshots in their own database, one guarded transaction | Accepted (M5; amends ADR-016) |
+| 042 | Merge rules as built: instants, tombstone hygiene, conservative name folding | Accepted (M5; amends ADR-016) |
+| 043 | Backup reminders: the pill says due, the toast waits for a settled install, once a day | Accepted (M5) |
 
 ---
 
@@ -361,3 +364,68 @@
   - An accepted guide value keeps the price type it is (`from` for *ab*, `trend` for *Trend*) with `origin: 'guide'`, `source: 'cardmarket'` and no `context` (no filters applied). Lists label such entries *Preisführer ab* / *Preisführer Trend*, and the context line never claims a filter the value didn't have. No new price type, so no user-data shape change.
 - **Consequences:** one sheet pattern everywhere, keyboard-first on desktop and thumb-friendly on phones. Valuation treats a guide value like any price of its series; the entry says where it came from.
 - **Alternatives:** an anchored popover (small, and a second pattern), new price types `guide-low`/`guide-trend` (a user-data shape change with a migration for no gain in valuation).
+
+### ADR-041 · Import as built: read in a worker, safety snapshots in their own database, one guarded transaction (Accepted, M5; amends ADR-016)
+- **Context:** `IMPORT_EXPORT.md` §4 lists the import steps. Building them in M5 meant deciding where each step runs, where the pre-import snapshots live, what undo means after a reload, and how to avoid writing a merge that was planned on data that changed in the meantime.
+- **Decision:**
+  - Reading is pure domain code (`domain/backup`: parse → envelope check → checksum → migrate → validate) that runs in a module worker (`workers/backup.worker.ts`) with Zod's German messages. When `JSON.parse` fails, a small scanner finds the line and column, because browsers word the error differently and WebKit gives no position at all. Files over 200 MB are refused before reading.
+  - Migrations are per-record functions per schema step (`domain/backup/migrate.ts`), so Dexie's `upgrade()` and older backups use the same code. Schema 1 needs none; `tests/fixtures/backups/v1/basic.settr.json` has to keep importing in every later version.
+  - Safety snapshots are complete backup envelopes in a second IndexedDB database, `settr-snapshots`, which keeps the last three. One is taken before every replace, merge and restore. Undo means restoring a snapshot, and that restore snapshots the current state first, so it can be undone too.
+  - Writing is one read-write transaction across all user tables, `priceLatest` and `kv`. It runs only if the change counter still has the value it had when the snapshot was read; otherwise nothing is written and the user is asked to try again. A merge is planned again from the snapshot's data, so what gets written matches what was saved.
+  - A replace clears the device's price session and counts the imported file as the data's latest backup, so a device you just moved to doesn't nag for a backup.
+- **Consequences:**
+  - A large file doesn't freeze the page, and a failed import leaves no trace.
+  - Undo survives reloads and stays available until three newer snapshots push it out, which costs up to three times the data size in storage.
+  - `Alle Daten löschen` removes the snapshots too.
+- **Alternatives:**
+  - Snapshots in the main database: they'd be lost with it and would bloat every export.
+  - `sessionStorage`: too small, and gone with the tab.
+  - Keeping only the last snapshot: a restore would overwrite the only way back.
+  - Parsing on the main thread: freezes the page on large files.
+
+### ADR-042 · Merge rules as built: instants, tombstone hygiene, conservative name folding (Accepted, M5; amends ADR-016)
+- **Context:** The table in `IMPORT_EXPORT.md` §5 leaves details open: how timestamps compare, when two tags or Lagerorte are the same one, what happens to deletions after a merge, and how tag names stay unique (Dexie's `&name` index).
+- **Decision:**
+  - Last write wins by `updatedAt`, compared as points in time (`Date.parse`), so a hand-edited offset can't win by spelling. Ties go to the larger `installId`. Two versions count as identical when their canonical JSON matches.
+  - Deletions:
+    - A backup record is added unless it was deleted here after the backup's version.
+    - A local record is removed if the backup deleted it after this version.
+    - Afterwards the device keeps both sides' deletions (the later one per id), minus records that are alive after the merge.
+  - Tags and Lagerorte folding:
+    - A tag or Lagerort made on both devices under the same name (ignoring case) but with different ids becomes the local one, and the backup's references are remapped: lot tags, a lot's Lagerort, a Lagerort's parent.
+    - Folding only happens when it's unambiguous: the backup's record is new here and its name is unique in the backup; exactly one local record has that name; and the backup doesn't contain that local record.
+    - A backup tag that would still clash with a different tag here gets a number, *Favoriten (2)*.
+  - Settings stay this device's unless *Einstellungen aus dem Backup übernehmen* is checked. Cardmarket corrections are joined, and this device's win.
+  - The merge is planned purely (`planMerge`), shown in the preview, and written as planned.
+- **Consequences:**
+  - Property tests show that merging a dataset into itself changes nothing, merging into an empty device gives the backup, and two devices end up with the same data whichever merges which.
+  - Folding is cautious: two binders called *Binder* that one device keeps apart stay apart.
+- **Alternatives:**
+  - Merging field by field: needs a timestamp per field.
+  - Always folding by name: could fold two different binders into one.
+  - Asking about every conflict: far too many questions for a collection.
+
+### ADR-043 · Backup reminders: the pill says due, the toast waits for a settled install, once a day (Accepted, M5)
+- **Context:** `IMPORT_EXPORT.md` §8 turns the sidebar pill amber and shows a toast when the last backup is older than 7 days and something changed since, plus a gentle reminder after 50 changes. In M3 the pill turned amber as soon as there was data without a backup, and nothing counted the changes since a backup.
+- **Decision:**
+  - `meta` keeps the change counter at the last backup (`backupDataVersion`). A backup is due when:
+    - there's data;
+    - something changed since the last backup;
+    - and that backup is older than the reminder interval (3, 7, 14 or 30 days; 7 by default) or 50 changes have piled up.
+  - Without any backup, data is due at once and the pill turns amber. The toast (*Noch kein Backup. Jetzt sichern?*) waits until the install is a day old or 50 changes have piled up, so a first session isn't interrupted.
+  - The toast (*Letztes Backup vor 12 Tagen. Jetzt sichern?*):
+    - shows at most once a day per device (kv `ui:backup.remindedOn`);
+    - waits for 4 quiet seconds;
+    - never shows on the Daten page;
+    - *Jetzt sichern* exports right away, and the export code only loads then.
+  - A backup made before the counter existed counts as changed.
+  - Persistent storage is requested once there's data, and again when Settr gets installed as an app.
+- **Consequences:**
+  - The pill always tells the truth.
+  - The toast interrupts at most once a day, and only when saving a backup actually protects something.
+  - The rule is pure (`domain/backup/reminder.ts`) and unit-tested.
+  - The shell stays within its startup budget.
+- **Alternatives:**
+  - A toast right away on a new install: it interrupts the first session.
+  - Counting settings changes as well: they're rare and small, and they'd need their own counter.
+  - A blocking dialog: too heavy-handed for a reminder.
