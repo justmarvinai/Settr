@@ -1,16 +1,14 @@
 import { Link } from '@tanstack/react-router';
 import { DatabaseGlyph } from '@/components/ui/glyphs';
-import { useHoldingCount, useMeta, useSettings } from '@/db/core';
 import { m } from '@/i18n';
 import { formatRelative } from '@/i18n/format';
 import { cn } from '@/components/ui/cn';
-import { useNow } from '@/lib/useNow';
-
-const DAY_MS = 86_400_000;
+import { useBackupState } from './useBackupState';
 
 /**
- * Backup status in the sidebar footer (DAT-04). Amber once a backup is due, but only when there's
- * data worth backing up, so a fresh install isn't nagged.
+ * Backup status in the sidebar footer (DAT-04): amber once a backup is due, that is when the data
+ * changed since the last one and it's older than the reminder interval (or 50 changes piled up).
+ * A fresh install without data isn't nagged.
  */
 export function BackupPill({
   expanded = false,
@@ -19,14 +17,10 @@ export function BackupPill({
   expanded?: boolean;
   onNavigate?: () => void;
 }) {
-  const meta = useMeta();
-  const settings = useSettings();
-  const holdings = useHoldingCount() ?? 0;
-  const now = useNow();
-  const last = meta?.lastBackupAt;
-  const due =
-    holdings > 0 &&
-    (!last || now - new Date(last).getTime() > settings.backup.remindAfterDays * DAY_MS);
+  const state = useBackupState();
+  const due = state?.due ?? false;
+  const last = state?.lastBackupAt;
+  const now = state?.now ?? 0;
 
   return (
     <Link

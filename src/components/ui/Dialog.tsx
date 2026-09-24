@@ -1,6 +1,6 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { XIcon } from '@phosphor-icons/react';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { m } from '@/i18n';
 import { cn } from './cn';
 
@@ -11,6 +11,8 @@ export interface DialogProps {
   description?: string;
   children?: ReactNode;
   className?: string;
+  /** What gets focus on open (Base UI: an element, true = first focusable, false = nothing). */
+  initialFocus?: ComponentProps<typeof BaseDialog.Popup>['initialFocus'];
 }
 
 /** Centered modal on a thick glass panel. Base UI handles the focus trap, Esc and focus return. */
@@ -21,12 +23,16 @@ export function Dialog({
   description,
   children,
   className,
+  initialFocus,
 }: DialogProps) {
   return (
     <BaseDialog.Root open={open} onOpenChange={onOpenChange}>
       <BaseDialog.Portal>
         <BaseDialog.Backdrop className="ui-backdrop" />
-        <BaseDialog.Popup className={cn('ui-dialog glass-thick', className)}>
+        <BaseDialog.Popup
+          initialFocus={initialFocus}
+          className={cn('ui-dialog glass-thick', className)}
+        >
           <div className="flex items-start justify-between gap-4">
             <BaseDialog.Title className="type-h2 m-0">{title}</BaseDialog.Title>
             <BaseDialog.Close

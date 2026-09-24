@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { useCatalogSet, type LoadedSet } from '@/catalog';
 import { sectionTitle } from '@/components/domain/sections';
 import { FormRow } from '@/components/ui/FormControls';

@@ -1,31 +1,12 @@
-import {
-  ArrowLeftIcon,
-  ArrowSquareOutIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
-} from '@phosphor-icons/react';
+import { ArrowLeftIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, type ReactNode } from 'react';
-import {
-  cardmarketProductId,
-  cardmarketSearchUrl,
-  cardmarketUrl,
-  useCatalogSet,
-  useManifest,
-} from '@/catalog';
+import { useCatalogSet, useManifest } from '@/catalog';
 import { CardImage } from '@/components/domain/CardImage';
-import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
-import {
-  pickText,
-  STANDARD_VARIANT,
-  type CatalogCard,
-  pickLanguage,
-  cardName,
-  otherNames,
-} from '@/domain/catalog';
+import { pickText, type CatalogCard, pickLanguage, cardName, otherNames } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
@@ -39,10 +20,10 @@ import {
   trainerTypeLabel,
   typeLabel,
 } from '@/i18n';
-import { cardmarketFilters } from './cardmarket';
 import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
-import { cardInfo, HoldingsPanel, lotLabel, openAdd } from '@/features/collection';
+import { cardInfo, HoldingsPanel, lotLabel, openAdd, snapshotOf } from '@/features/collection';
+import { cardmarketLinkOf, ItemPrices } from '@/features/prices';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/cards/$cardId');
 
@@ -73,8 +54,8 @@ function TranslatedHint() {
 
 /**
  * Card detail (CAT-03, UX_SPEC.md §4.4): the large picture, names in every language (translations
- * marked), the facts, the Cardmarket link for the chosen language (PRC-06) and prev/next in set
- * order (← →). Holdings, prices and the price chart join in M3/M4.
+ * marked), the price of the chosen language with its entry, chart and Cardmarket link (PRC-01…03,
+ * PRC-06), the copies you own, the facts and prev/next in set order (← →).
  */
 export function CardPage() {
   const { setId, cardId } = route.useParams();
@@ -112,12 +93,9 @@ export function CardPage() {
   const lang = pickLanguage(search.lang, card.languages, settings);
   const name = cardName(card, lang, 'card');
   const cardSet = loaded.sets.get(card.setId) ?? loaded.set;
+  const info = cardInfo(card, loaded);
   const image = card.images[lang];
   const number = card.printedNumber || card.localId;
-  const productId = cardmarketProductId(card, STANDARD_VARIANT, lang);
-  const cardmarketHref = productId
-    ? cardmarketUrl(productId, cardmarketFilters(settings, lang))
-    : cardmarketSearchUrl(`${card.name.en ?? pickText(card.name)} ${number}`);
   const mark = card.printedRarity?.[lang];
   // Counterparts live in the other print's chunk (ids are never parsed, DATA_MODEL.md §3).
   const otherPrint = manifest.sets.find((s) => s.id === loaded.set.otherPrint);
@@ -207,10 +185,22 @@ export function CardPage() {
           />
         ) : null}
 
+        <ItemPrices
+          item={{
+            ref: info.ref,
+            snapshot: snapshotOf(info, lang),
+            label: [number, name.text].join(' '),
+            languages: card.languages,
+            variants: info.variants,
+          }}
+          language={lang}
+          cardmarket={(variant) => cardmarketLinkOf(info, lang, variant, settings)}
+        />
+
         <HoldingsPanel
           itemId={card.id}
           describe={(h) =>
-            lotLabel(cardInfo(card, loaded), {
+            lotLabel(info, {
               language: h.language,
               condition: h.condition,
               quantity: remaining(h),
@@ -218,25 +208,6 @@ export function CardPage() {
           }
           onAdd={() => openAdd({ kind: 'card', id: card.id }, setId, lang)}
         />
-
-        <Panel className="flex flex-col gap-3 p-5">
-          <h3 className="type-h3 m-0">{m.catalog_cardmarket_title()}</h3>
-          <p className="type-small m-0 text-ink-muted">
-            {productId
-              ? m.catalog_cardmarket_filters({ language: languageLabel(lang) })
-              : m.catalog_cardmarket_search_hint()}
-          </p>
-          <a
-            href={cardmarketHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={buttonVariants({ variant: 'outline', className: 'w-fit' })}
-          >
-            {productId ? m.catalog_cardmarket_open() : m.catalog_cardmarket_search()}
-            <ArrowSquareOutIcon size={18} aria-hidden />
-            <span className="sr-only">{m.catalog_opens_new_tab()}</span>
-          </a>
-        </Panel>
 
         <Panel className="p-5">
           <dl className="m-0 grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-x-6 gap-y-4">

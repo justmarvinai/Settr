@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/Input';
 import { NativeSelect } from '@/components/ui/NativeSelect';
 import { Sheet } from '@/components/ui/Sheet';
 import { Switch } from '@/components/ui/Switch';
+import { useSettings } from '@/db';
 import { todayIso } from '@/domain/ids';
 import { collectionSearchSchema, type CollectionSearch } from '@/domain/collection';
 import { languageLabel, m, productTypeLabel, rarityLabel } from '@/i18n';
@@ -12,7 +13,7 @@ import { conditionLabel, sealedStateLabel } from '@/i18n/collection-labels';
 import { formatCount } from '@/i18n/format';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 import { NO_FILTERS, type FilterOptions } from './library-options';
-import type { LibraryKind } from './rows';
+import type { LibraryKind } from '@/features/collection';
 
 const fields = /* @__PURE__ */ collectionSearchSchema.shape;
 
@@ -74,6 +75,7 @@ export function FilterSheet({
 }) {
   const id = useId();
   const desktop = useMediaQuery('(min-width: 768px)');
+  const staleAfterDays = useSettings().price.staleAfterDays;
 
   return (
     <Sheet
@@ -181,6 +183,30 @@ export function FilterSheet({
               onChange={(loc) => update({ loc })}
             />
           ) : null}
+          {(options.priced && options.unpriced) || search.priced ? (
+            <Choice
+              id={`${id}-priced`}
+              label={m.library_filter_priced()}
+              value={search.priced}
+              options={[
+                { value: 'yes', label: m.library_filter_priced_yes() },
+                { value: 'no', label: m.library_filter_priced_no() },
+              ]}
+              onChange={(priced) => update({ priced: fields.priced.parse(priced) })}
+            />
+          ) : null}
+          {options.gains || options.losses || search.pl ? (
+            <Choice
+              id={`${id}-pl`}
+              label={m.library_filter_pl()}
+              value={search.pl}
+              options={[
+                { value: 'gain', label: m.library_filter_pl_gain() },
+                { value: 'loss', label: m.library_filter_pl_loss() },
+              ]}
+              onChange={(pl) => update({ pl: fields.pl.parse(pl) })}
+            />
+          ) : null}
           <div className="grid grid-cols-2 gap-3">
             <FormRow label={m.library_filter_from()} htmlFor={`${id}-from`}>
               <Input
@@ -202,6 +228,15 @@ export function FilterSheet({
               />
             </FormRow>
           </div>
+          {options.stale || search.stale ? (
+            <Switch
+              id={`${id}-stale`}
+              label={m.library_filter_stale()}
+              hint={m.library_filter_stale_hint({ days: formatCount(staleAfterDays) })}
+              checked={Boolean(search.stale)}
+              onCheckedChange={(stale) => update({ stale: stale || undefined })}
+            />
+          ) : null}
           {options.closed || search.closed ? (
             <Switch
               id={`${id}-closed`}

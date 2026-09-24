@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import type { HoldingPatch, NewHolding } from '@/db';
 import { pocketsPerPage } from '@/domain/collection';
 import {

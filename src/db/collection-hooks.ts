@@ -4,11 +4,15 @@ import {
   type CustomItem,
   type Holding,
   type Location,
+  type PriceEntry,
+  type PriceLatest,
   type Tag,
 } from '@/domain/schemas';
+import type { PriceSessionState } from '@/domain/valuation';
 import { db } from './instance';
-import { getUiPref } from './repositories/collection-meta';
+import { getUiPref, setUiPref } from './repositories/collection-meta';
 import { listHoldingsInSets, listHoldingsOfItem } from './repositories/holdings';
+import { getPrice, getPriceSession, listPricesOfItem, listSeries } from './repositories/prices';
 
 /** Live queries of the collection (ARCHITECTURE.md §5), loaded with the pages that use them. */
 
@@ -59,6 +63,20 @@ export function useUiPref(key: string): { value: unknown } | undefined {
   return useLiveQuery(async () => ({ value: await getUiPref(db, key) }), [key]);
 }
 
+/**
+ * A remembered choice among fixed values (kv `ui:<key>`), e.g. a chart's range: the stored value
+ * if it's still one of `choices`, else `fallback`. The setter's promise rejects when saving fails.
+ */
+export function useUiChoice<T extends string>(
+  key: string,
+  choices: readonly T[],
+  fallback: T,
+): [T, (value: T) => Promise<void>] {
+  const stored = useUiPref(key)?.value;
+  const value = choices.find((choice) => choice === stored) ?? fallback;
+  return [value, (next) => setUiPref(db, key, next)];
+}
+
 const collator = new Intl.Collator('de');
 function byName(a: { name: string }, b: { name: string }): number {
   return collator.compare(a.name, b.name);
@@ -85,4 +103,43 @@ export function useOwnedItemIds(): ReadonlySet<string> | undefined {
     });
     return ids;
   }, []);
+}
+
+/** Every entry of one price series, oldest first (PRC-02, PRC-03); undefined while loading. */
+export function usePriceSeries(seriesKey: string): PriceEntry[] | undefined {
+  return useLiveQuery(
+    async () =>
+      (await listSeries(db, seriesKey)).toSorted(
+        (a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt),
+      ),
+    [seriesKey],
+  );
+}
+
+/** Every entry of one card or product across its series (language compare in the chart). */
+export function useItemPrices(itemId: string): PriceEntry[] | undefined {
+  return useLiveQuery(() => listPricesOfItem(db, itemId), [itemId]);
+}
+
+/** The latest price of every series, for valuation (DATA_MODEL.md §5.4); undefined while loading. */
+export function useLatestPrices(): ReadonlyMap<string, PriceLatest> | undefined {
+  return useLiveQuery(
+    async () => new Map((await db.priceLatest.toArray()).map((p) => [p.seriesKey, p])),
+    [],
+  );
+}
+
+/** Every price entry, for the portfolio over time (DATA_MODEL.md §6.5). */
+export function useAllPrices(): PriceEntry[] | undefined {
+  return useLiveQuery(() => db.prices.toArray(), []);
+}
+
+/** The stored price session, wrapped so "loading" (undefined) differs from "none". */
+export function usePriceSession(): { value: PriceSessionState | undefined } | undefined {
+  return useLiveQuery(async () => ({ value: await getPriceSession(db) }), []);
+}
+
+/** One price entry by id (e.g. a series' latest, for its type); undefined while loading or none. */
+export function usePriceEntry(id: string | undefined): PriceEntry | undefined {
+  return useLiveQuery(async () => (id ? getPrice(db, id) : undefined), [id]);
 }

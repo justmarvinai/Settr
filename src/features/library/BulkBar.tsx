@@ -1,5 +1,12 @@
-import { ArrowsLeftRightIcon, TagIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
-import { Link } from '@tanstack/react-router';
+import {
+  ArrowsLeftRightIcon,
+  CurrencyEurIcon,
+  FileCsvIcon,
+  TagIcon,
+  TrashIcon,
+  XIcon,
+} from '@phosphor-icons/react';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useId, useState } from 'react';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
@@ -12,14 +19,17 @@ import {
   ensureTag,
   listHoldingsAt,
   restoreHoldings,
+  setUiPref,
   updateHoldings,
   useHoldingsInLocation,
 } from '@/db';
 import { freeSlots, NO_LOCATION, occupiedSlots } from '@/domain/collection';
-import type { Holding, Location, Tag } from '@/domain/schemas';
+import { remaining, type Holding, type Location, type Tag } from '@/domain/schemas';
+import { seriesKeyOf } from '@/domain/series';
 import { m } from '@/i18n';
 import { formatCount } from '@/i18n/format';
-import { toastError, toastWithUndo } from '@/features/collection';
+import { toastError, toastWithUndo, type LibraryRow } from '@/features/collection';
+import { downloadCollectionCsv, useCsvDialect } from '@/features/data';
 
 const counted = (n: number) => ({ n, count: formatCount(n) });
 
@@ -281,11 +291,11 @@ function MoveForm({
 }
 
 /**
- * Multi-select actions (UX_SPEC.md §4.6): tags, move to a location (binders fill their next free
- * pockets), delete. Each is one transaction with Rückgängig. The price session and CSV export for
- * a selection follow with M4 and M5.
+ * Multi-select actions (UX_SPEC.md §4.6): a price session, tags, move to a location (binders fill
+ * their next free pockets), CSV (DAT-03) and delete. Changes are one transaction with Rückgängig.
  */
 export function BulkBar({
+  rows,
   lots,
   total,
   locations,
@@ -293,7 +303,9 @@ export function BulkBar({
   onSelectAll,
   onClear,
 }: {
-  /** Selected lots in list order. */
+  /** Selected lots in list order, as rows (names and values for CSV). */
+  rows: readonly LibraryRow[];
+  /** The same lots. */
   lots: readonly Holding[];
   /** Lots shown, for "Alle auswählen". */
   total: number;
@@ -303,8 +315,21 @@ export function BulkBar({
   onClear: () => void;
 }) {
   const [dialog, setDialog] = useState<'tags' | 'move' | null>(null);
+  const [dialect] = useCsvDialect();
+  const navigate = useNavigate();
   const count = lots.length;
   const close = () => setDialog(null);
+
+  /** A price session over the series of the chosen lots (UX_SPEC.md §4.6, PRC-04). */
+  const priceSession = async () => {
+    try {
+      const keys = [...new Set(lots.filter((h) => remaining(h) > 0).map(seriesKeyOf))];
+      await setUiPref(db, 'session.selection', keys);
+      await navigate({ to: '/prices/session', search: { start: 'selection' } });
+    } catch (error) {
+      toastError(error);
+    }
+  };
 
   const remove = async () => {
     try {
@@ -339,6 +364,16 @@ export function BulkBar({
         <Button
           variant="quiet"
           size="sm"
+          disabled={!lots.some((h) => remaining(h) > 0)}
+          onClick={() => void priceSession()}
+          aria-label={m.bulk_prices()}
+        >
+          <CurrencyEurIcon size={16} weight="bold" aria-hidden />
+          <span className="max-sm:hidden">{m.bulk_prices()}</span>
+        </Button>
+        <Button
+          variant="quiet"
+          size="sm"
           disabled={!count}
           onClick={() => setDialog('tags')}
           aria-label={m.bulk_tags()}
@@ -355,6 +390,18 @@ export function BulkBar({
         >
           <ArrowsLeftRightIcon size={16} weight="bold" aria-hidden />
           <span className="max-sm:hidden">{m.bulk_move()}</span>
+        </Button>
+        <Button
+          variant="quiet"
+          size="sm"
+          disabled={!count}
+          onClick={() =>
+            downloadCollectionCsv(rows, new Map(tags.map((t) => [t.id, t.name])), dialect)
+          }
+          aria-label={m.bulk_csv()}
+        >
+          <FileCsvIcon size={16} weight="bold" aria-hidden />
+          <span className="max-sm:hidden">{m.bulk_csv()}</span>
         </Button>
         <Button
           variant="quiet"

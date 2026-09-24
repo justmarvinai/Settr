@@ -28,9 +28,24 @@ export async function getMeta(db: SettrDB): Promise<Meta | undefined> {
   return parsed.success ? parsed.data : undefined;
 }
 
-export async function markBackupDone(db: SettrDB, at: string = nowIso()): Promise<void> {
+/** Records a backup: when, and the change counter at that moment (DAT-04 counts changes since). */
+export async function markBackupDone(
+  db: SettrDB,
+  at: string = nowIso(),
+  dataVersion?: number,
+): Promise<void> {
+  await db.transaction('rw', db.kv, async () => {
+    const meta = await ensureMeta(db);
+    const next: Meta = { ...meta, lastBackupAt: at };
+    if (dataVersion !== undefined) next.backupDataVersion = dataVersion;
+    await db.kv.put({ key: META, value: next });
+  });
+}
+
+/** Records an import (IMPORT_EXPORT.md §4 step 10). Call inside a transaction that includes kv. */
+export async function markImportDone(db: SettrDB, at: string = nowIso()): Promise<void> {
   const meta = await ensureMeta(db);
-  await db.kv.put({ key: META, value: { ...meta, lastBackupAt: at } satisfies Meta });
+  await db.kv.put({ key: META, value: { ...meta, lastImportAt: at } satisfies Meta });
 }
 
 /** Bumped by every write transaction; derived caches and analytics key on it (ARCHITECTURE.md §5). */
@@ -44,4 +59,16 @@ export async function bumpDataVersion(db: SettrDB): Promise<number> {
 export async function getDataVersion(db: SettrDB): Promise<number> {
   const row = await db.kv.get(DATA_VERSION);
   return typeof row?.value === 'number' ? row.value : 0;
+}
+
+const REMINDED_ON = 'ui:backup.remindedOn';
+
+/** The day (YYYY-MM-DD) the backup reminder last showed on this device (DAT-04: once a day). */
+export async function getRemindedOn(db: SettrDB): Promise<string | undefined> {
+  const row = await db.kv.get(REMINDED_ON);
+  return typeof row?.value === 'string' ? row.value : undefined;
+}
+
+export async function setRemindedOn(db: SettrDB, day: string): Promise<void> {
+  await db.kv.put({ key: REMINDED_ON, value: day });
 }

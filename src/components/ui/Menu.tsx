@@ -1,5 +1,5 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
-import { DotsThreeIcon } from '@phosphor-icons/react';
+import { CheckIcon, DotsThreeIcon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import { cn } from './cn';
 
@@ -61,6 +61,74 @@ export function ActionMenu({
                   {action.label}
                 </BaseMenu.Item>
               </div>
+            ))}
+          </BaseMenu.Popup>
+        </BaseMenu.Positioner>
+      </BaseMenu.Portal>
+    </BaseMenu.Root>
+  );
+}
+
+export interface CheckOption {
+  value: string;
+  label: string;
+  checked: boolean;
+}
+
+/**
+ * A menu of on/off choices behind an icon button, e.g. the table's columns. It stays open while
+ * choices change; Base UI handles focus, arrow keys and Esc.
+ */
+export function CheckMenu({
+  label,
+  icon,
+  options,
+  onToggle,
+  className,
+}: {
+  label: string;
+  icon: ReactNode;
+  options: readonly CheckOption[];
+  onToggle: (value: string, checked: boolean) => void;
+  className?: string;
+}) {
+  return (
+    <BaseMenu.Root>
+      <BaseMenu.Trigger
+        aria-label={label}
+        title={label}
+        className={cn(
+          'inline-flex size-9 shrink-0 items-center justify-center rounded-pill text-ink-muted transition-colors duration-(--dur-fast) hover:bg-hover hover:text-ink data-popup-open:bg-hover data-popup-open:text-ink',
+          className,
+        )}
+      >
+        {icon}
+      </BaseMenu.Trigger>
+      <BaseMenu.Portal>
+        <BaseMenu.Positioner sideOffset={6} align="end" className="ui-menu-positioner">
+          <BaseMenu.Popup className="ui-menu glass-thick">
+            {options.map((option) => (
+              <BaseMenu.CheckboxItem
+                key={option.value}
+                checked={option.checked}
+                onCheckedChange={(checked) => onToggle(option.value, checked)}
+                className="flex min-h-11 cursor-default items-center gap-3 rounded-[12px] px-3 type-ui text-[15px] text-ink outline-none data-highlighted:bg-hover-strong"
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    'inline-flex size-5 shrink-0 items-center justify-center rounded-[6px]',
+                    option.checked
+                      ? 'bg-accent text-accent-contrast'
+                      : 'shadow-[inset_0_0_0_1.5px_var(--border-strong)]',
+                  )}
+                >
+                  <BaseMenu.CheckboxItemIndicator>
+                    <CheckIcon size={14} weight="bold" />
+                  </BaseMenu.CheckboxItemIndicator>
+                </span>
+                {option.label}
+              </BaseMenu.CheckboxItem>
             ))}
           </BaseMenu.Popup>
         </BaseMenu.Positioner>

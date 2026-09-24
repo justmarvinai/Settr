@@ -53,7 +53,12 @@ export function CardImage({
         />
       ) : null}
       {showImage && loaded !== src ? (
-        <div aria-hidden className="absolute inset-0 animate-pulse bg-hover" />
+        // A few pulses while the picture loads, then still: lazy pictures far below may never
+        // load, and an endless animation keeps a phone (and a CI browser) repainting.
+        <div
+          aria-hidden
+          className="absolute inset-0 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_3] bg-hover"
+        />
       ) : null}
       {showImage ? null : (
         <div

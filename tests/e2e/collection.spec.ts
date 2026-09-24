@@ -1,23 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import type { Page } from '@playwright/test';
-import { axeViolations, expect, pageTitle, test } from './fixtures';
-
-/** Adds lots to 30 Jahre through Schnellerfassung (COL-06): `25`, `25x3`, `25 4,50`. */
-async function quickAdd(page: Page, entries: readonly string[], language?: 'EN') {
-  await page.goto('/catalog/sets/intl:30th');
-  await page.getByRole('button', { name: 'Schnellerfassung' }).click();
-  const sheet = page.getByRole('dialog', { name: 'Schnellerfassung' });
-  if (language) await sheet.getByRole('radio', { name: language }).click();
-  const input = sheet.getByLabel('Kartennummer');
-  for (const entry of entries) {
-    await input.fill(entry);
-    await expect(sheet.getByText(/^⏎ fügt hinzu:/)).toBeVisible();
-    await input.press('Enter');
-    await expect(input).toHaveValue('');
-  }
-  await page.keyboard.press('Escape');
-  await expect(sheet).toBeHidden();
-}
+import { axeViolations, expect, pageTitle, quickAdd, test } from './fixtures';
 
 // The service worker would fetch card pictures itself once it controls the page, past the
 // fixtures' picture stubs; the PWA spec covers it.
@@ -130,9 +113,13 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await filters.getByRole('button', { name: '2 Positionen anzeigen' }).click();
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
   await page.getByRole('button', { name: 'Alle Filter entfernen' }).click();
+  await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
+  await expect(table.getByRole('row')).toHaveCount(6); // the header and all five lots
 
-  // Delete everything shown, then take it back.
-  await table.getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' }).click();
+  // Delete everything shown, then take it back. The header box works from the keyboard too.
+  await table
+    .getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' })
+    .press('Space');
   await expect(bar).toContainText('5 ausgewählt');
   await bar.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByText('5 Positionen gelöscht')).toBeVisible();
@@ -228,8 +215,13 @@ test('owned:ja and owned:nein narrow the card search to the collection', async (
 });
 
 test.describe('accessibility with a collection', () => {
+  // One test per screen group and scheme, so each gets its own time budget (axe is slow in WebKit).
+  test.beforeEach(({ browserName }) => {
+    test.slow(browserName === 'webkit', 'axe takes several seconds per page in WebKit');
+  });
+
   for (const scheme of ['light', 'dark'] as const) {
-    test(`Sammlung screens have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+    test(`Sammlung lists have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });
       await quickAdd(page, ['1', '4 2,50', '25']);
 
@@ -246,7 +238,18 @@ test.describe('accessibility with a collection', () => {
         .click();
       await expect(page.getByRole('region', { name: 'Auswahl' })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);
+    });
 
+    test(`Sammlung dialogs have no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await quickAdd(page, ['1', '25']);
+
+      await page.goto('/collection/cards?view=table');
+      await page.getByRole('button', { name: 'Auswahl' }).click();
+      await page
+        .getByRole('checkbox', { name: / · NM auswählen$/ })
+        .first()
+        .click();
       await page.getByRole('button', { name: 'Tags …' }).click();
       await expect(page.getByRole('dialog', { name: 'Tags für 1 Position' })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);
@@ -255,8 +258,11 @@ test.describe('accessibility with a collection', () => {
       await page.getByRole('button', { name: /^Filter/ }).click();
       await expect(page.getByRole('dialog', { name: 'Filter' })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);
-      await page.keyboard.press('Escape');
+    });
 
+    test(`a collected set has no WCAG A/AA violations (${scheme})`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await quickAdd(page, ['1']);
       await page.goto('/catalog/sets/intl:30th');
       await expect(page.getByRole('heading', { name: '30 Jahre', level: 2 })).toBeVisible();
       expect(await axeViolations(page)).toEqual([]);

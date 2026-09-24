@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useRef, type KeyboardEvent } from 'react';
 import { CardTile } from '@/components/domain/CardTile';
+import { PLDelta } from '@/components/domain/PLDelta';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { Checkbox } from '@/components/ui/FormControls';
 import { ActionMenu } from '@/components/ui/Menu';
@@ -10,11 +11,12 @@ import { RARITY_ABBR } from '@/domain/catalog';
 import type { RowGroup } from '@/domain/collection';
 import { remaining } from '@/domain/schemas';
 import { htmlLang, languageCode, m, productTypeLabel } from '@/i18n';
-import { formatCount } from '@/i18n/format';
+import { formatCount, formatMoney } from '@/i18n/format';
 import { useElementBox } from '@/lib/useElementBox';
-import { lotMenuActions, openAdd, openEdit } from '@/features/collection';
+import { lotMenuActions, openEdit } from '@/features/collection';
+import { lotKeys } from './lot-keys';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
-import type { LibraryKind, LibraryRow } from './rows';
+import type { LibraryKind, LibraryRow } from '@/features/collection';
 
 /** Grid tiles (UX_SPEC.md §4.6): the set grid's tiles plus quantity, language and condition. */
 const TILE_MIN = { card: 132, sealed: 168 } as const;
@@ -52,18 +54,41 @@ function itemsOf(
   return items;
 }
 
-/** Space selects the focused tile, N adds another lot of its item (UX_SPEC.md §7). */
+/** Space selects the focused tile; N and P as on every lot (UX_SPEC.md §7). */
 function tileKeys(row: LibraryRow, onToggle: (id: string) => void) {
+  const keys = lotKeys(row);
   return (event: KeyboardEvent) => {
-    if (event.ctrlKey || event.metaKey || event.altKey) return;
-    if (event.key === ' ') {
+    if (event.key === ' ' && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       onToggle(row.holding.id);
-    } else if (event.key.toLowerCase() === 'n' && row.inCatalog) {
-      event.preventDefault();
-      openAdd(row.holding.item, row.setId, row.holding.language);
+    } else {
+      keys(event);
     }
   };
+}
+
+/** The lot's value and P/L under a tile: `69,80 € ↗ +34,2 %`, or that it has no price yet. */
+function TileValue({ row }: { row: LibraryRow }) {
+  const v = row.value;
+  if (!v || remaining(row.holding) <= 0) return null;
+  if (!v.value) return <span className="block truncate text-ink-subtle">{m.lot_unpriced()}</span>;
+  return (
+    <span className="flex min-w-0 items-center gap-1.5">
+      {v.stale ? (
+        <span className="inline-flex shrink-0 items-center">
+          <span aria-hidden className="size-1.5 rounded-pill bg-warn" />
+          <span className="sr-only">{m.prices_stale()}</span>
+        </span>
+      ) : null}
+      <span className="money shrink-0 font-bold text-ink">{formatMoney(v.value)}</span>
+      {v.pl ? (
+        <PLDelta delta={v.pl} ratio={v.plRatio} show="ratio" className="text-[12px]" />
+      ) : null}
+      {v.unit?.source === 'override' ? (
+        <span className="truncate font-sans text-accent-text">{m.library_value_own()}</span>
+      ) : null}
+    </span>
+  );
 }
 
 function TileBody({ row, kind }: { row: LibraryRow; kind: LibraryKind }) {
@@ -83,7 +108,12 @@ function TileBody({ row, kind }: { row: LibraryRow; kind: LibraryKind }) {
         rarity={ABBREVIATIONS.get(row.rarity ?? '')}
         badge={image && image.lang !== h.language ? languageCode(image.lang) : undefined}
         missingLabel={m.catalog_image_missing()}
-        meta={meta}
+        meta={
+          <>
+            <span className="block truncate">{meta}</span>
+            <TileValue row={row} />
+          </>
+        }
       />
     );
   }
@@ -104,6 +134,9 @@ function TileBody({ row, kind }: { row: LibraryRow; kind: LibraryKind }) {
           {row.name}
         </span>
         <span className="truncate font-mono text-[12px] leading-4 text-ink-muted">{meta}</span>
+        <span className="font-mono text-[12px] leading-4 text-ink-muted">
+          <TileValue row={row} />
+        </span>
       </div>
     </div>
   );

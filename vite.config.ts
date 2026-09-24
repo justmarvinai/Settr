@@ -39,6 +39,9 @@ const tcgplayerProxy = {
 };
 
 export default defineConfig({
+  // Only the backup worker imports Zod's German messages; found at runtime, the dev server would
+  // re-optimize and reload the page mid-import.
+  optimizeDeps: { include: ['zod/v4/locales/de.js'] },
   plugins: [
     paraglideVitePlugin({
       project: './src/i18n/project.inlang',
@@ -97,6 +100,12 @@ export default defineConfig({
               urlPattern: ({ url }) => url.pathname === '/catalog/v1/manifest.json',
               handler: 'NetworkFirst',
               options: { cacheName: 'catalog-manifest', networkTimeoutSeconds: 3 },
+            },
+            {
+              // The price guide changes daily (PRC-09): shown from the cache, refreshed behind.
+              urlPattern: ({ url }) => url.pathname === '/catalog/v1/cm-prices.json',
+              handler: 'StaleWhileRevalidate',
+              options: { cacheName: 'price-guide', cacheableResponse: { statuses: [200] } },
             },
             {
               urlPattern: ({ url }) => url.pathname.startsWith('/catalog/v1/'),

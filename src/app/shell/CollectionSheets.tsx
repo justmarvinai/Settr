@@ -9,8 +9,10 @@ import {
   DisposeBody,
   EditHoldingBody,
   OpenBody,
+  PriceBody,
   QuickAddBody,
   SheetLoading,
+  ValueBody,
 } from '@/features/entry';
 
 function titleOf(request: SheetRequest): string {
@@ -20,6 +22,8 @@ function titleOf(request: SheetRequest): string {
   if (request.type === 'edit') return m.holding_edit_title();
   if (request.type === 'dispose') return m.dispose_title();
   if (request.type === 'open') return m.open_title();
+  if (request.type === 'value') return m.value_title();
+  if (request.type === 'price') return m.price_sheet_title();
   if (request.type === 'quick') return m.quick_title();
   return m.custom_title();
 }
@@ -31,6 +35,8 @@ function Body({ request }: { request: SheetRequest }) {
   if (request.type === 'edit') return <EditHoldingBody holdingId={request.holdingId} />;
   if (request.type === 'dispose') return <DisposeBody holdingId={request.holdingId} />;
   if (request.type === 'open') return <OpenBody holdingId={request.holdingId} />;
+  if (request.type === 'value') return <ValueBody holdingId={request.holdingId} />;
+  if (request.type === 'price') return <PriceBody {...request} />;
   if (request.type === 'quick')
     return <QuickAddBody setId={request.setId} language={request.language} />;
   return <CustomItemBody kind={request.kind} name={request.name} />;

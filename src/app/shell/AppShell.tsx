@@ -3,6 +3,7 @@ import { ToastViewport } from '@/components/ui/Toasts';
 import { m } from '@/i18n';
 import { isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
+import { BackupReminder } from './BackupReminder';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
 import { Toolbar } from './Toolbar';
@@ -99,6 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {moreLoaded ? <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} /> : null}
       </Suspense>
       <ToastViewport />
+      <BackupReminder />
     </>
   );
 }

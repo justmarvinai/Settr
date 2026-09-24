@@ -44,9 +44,9 @@
  │  React SPA ──▶ TanStack Router ──▶ feature modules                            │
  │     │  useLiveQuery                       │ TanStack Query (catalog JSON)     │
  │     ▼                                     ▼                                   │
- │  Dexie ─▶ IndexedDB "settr" (user data)   in-memory catalog + search worker   │
+ │  Dexie ─▶ IndexedDB "settr" (user data), "settr-snapshots"                    │
  │  Service worker (Workbox): app shell precache, catalog SWR, image cache       │
- │  Web Workers: search index (MiniSearch), analytics (time series)              │
+ │  Workers: search index, backup reading (time series: ADR-039)                 │
  └──────────────────────────────────────────────────────────────────────────────┘
        ▲ user opens Cardmarket links in a new tab (no API integration)
 ```
@@ -66,7 +66,7 @@
 | UI primitives | shadcn-style primitives on **Base UI**, written by hand (ADR-031: the shadcn CLI needs the TS JS API that TS 7 dropped) | Base UI 1.8 | We own the component code and restyle it fully. Base UI is shadcn's default since July 2026, actively maintained, and includes Drawer/Toast/Combobox/NumberField | Radix (development slowed), vaul (unmaintained), MUI/Chakra (opinionated look) |
 | Styling | **Tailwind CSS** v4 + CSS custom properties (OKLCH tokens) | 4.3 | Tokens-first theming, container queries, tiny CSS output | CSS-in-JS (runtime cost) |
 | Motion | **Motion** (`motion/react`, LazyMotion) + CSS (`@starting-style`, View Transitions) | 13.4 | Layout/gesture animation. Initial cost about 4.6 KB with LazyMotion | GSAP (license, size) |
-| Charts | **Recharts 3** via shadcn chart components | 3.10 | One library for line/area/step, donut, treemap, bars and sparklines. Themed by the same CSS variables. SVG, so accessible | *Fallback:* TradingView Lightweight Charts 5 for time series (fast, finance-grade crosshair, but requires TradingView attribution). ECharts 6 (heavy). visx (too low-level for the timeline) |
+| Charts | **Hand-written SVG** in `components/domain/charts` (ADR-038; Recharts 3 dropped, ADR-010 superseded) | — | A time chart (line or step, markers, baseline, comparison lines, scrubbing with pointer and keys) and a donut: a few KB, themed by the tokens, SVG with a table view | Recharts 3 (116 KB gzip for the parts we need), TradingView Lightweight Charts 5 (canvas, attribution), visx (low-level) |
 | Forms | **TanStack Form** + **Zod 4** | 1.33 · 4.6 | Strong typing. Zod schemas shared with import validation. Zod ships German error messages | react-hook-form 7 (v8 still beta) |
 | i18n | **Paraglide JS 2** (inlang) | 2.25 | Compile-time, typed, tree-shakable messages. **German only in v1** (Q3.1), but every string lives in the catalog, so adding English later needs no refactor | i18next (runtime and bundle size), Lingui 6 (needs Babel macros), react-intl (high churn) |
 | Dates | **date-fns 4** + `Intl` | 4.4 | Temporal isn't Baseline yet (no Safari). Revisit later | Temporal polyfill (size) |
@@ -109,7 +109,7 @@
 - `components/ui/` (design-system primitives) has no domain knowledge.
 - These rules are enforced with Oxlint import restrictions (`no-restricted-imports` patterns) and reviewed in PRs.
 
-### 4.2 Folder structure (as built through M3, plus planned folders)
+### 4.2 Folder structure (as built through M5, plus planned folders)
 
 ```
 settr/
@@ -130,29 +130,29 @@ settr/
 │  │  ├─ collection/            # what catalog pages share: ownership + completion, holdings panel, lot menu, item info, Lagerorte
 │  │  ├─ entry/                 # add/edit, Schnellerfassung, sell, open + pulls, custom items (TanStack Form; loaded by the sheet host, ADR-037)
 │  │  ├─ library/               # Sammlung › Karten / Sealed: filters, grid, table, bulk actions (TanStack Virtual; loaded by those routes, ADR-037)
-│  │  ├─ prices/                # price entry, history, charts, price session
-│  │  ├─ portfolio/             # dashboard, analytics
+│  │  ├─ prices/                # price panel + chart + entries, Preise hub, price session, price-guide chips (series choice, save, Cardmarket link)
+│  │  ├─ portfolio/             # Portfolio: filters, allocation, performance, realized P/L
 │  │  ├─ wishlist/
-│  │  ├─ data/                  # import/export/CSV/backups/storage, install section
+│  │  ├─ data/                  # Einstellungen › Daten: export, import preview, snapshots, CSV, storage, install, delete all; read-backup.ts talks to the backup worker
 │  │  ├─ settings/              # settings layout and sections
 │  │  ├─ appearance/            # theme, transparency, motion (loaded at startup, ADR-030)
 │  │  ├─ pwa/                   # install prompt, update toast (loaded at startup)
-│  │  ├─ overview/              # Übersicht (the dashboard grows here in M4)
+│  │  ├─ overview/              # Übersicht: welcome or the dashboard (hero chart, tiles)
 │  │  └─ onboarding/
 │  ├─ components/
 │  │  ├─ ui/                    # hand-written shadcn-style primitives on Base UI, one module each (ADR-031); glyphs.tsx = the shell's single-weight icons (ADR-037)
-│  │  └─ domain/                # CardImage, CardTile, HoloCard, PLDelta, PriceChart …
-│  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, merge, schemas (Zod)
-│  ├─ db/                       # Dexie schema, migrations, repositories, live-query hooks, backup export; core.ts = what the shell needs at startup (ADR-037)
+│  │  └─ domain/                # CardImage, CardTile, PLDelta, charts/ (scale.ts, TimeChart, Donut, RangeChips) …
+│  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, csv, schemas (Zod); backup/ = format, read pipeline, migrations, validation, merge planner, reminder rule (M5)
+│  ├─ db/                       # Dexie schema, repositories, live-query hooks, backup export, import (replace/merge/restore/wipe), snapshots.ts = the `settr-snapshots` database (ADR-041); core.ts = what the shell needs at startup (ADR-037)
 │  ├─ catalog/                  # catalog loader, image URL builder, search client
-│  ├─ workers/                  # search.worker.ts, analytics.worker.ts (Comlink)
+│  ├─ workers/                  # search.worker.ts, backup.worker.ts (reads backup files, M5)
 │  ├─ i18n/                     # Paraglide project (messages/de.json, en.json), format helpers
-│  ├─ lib/                      # small generic utilities (sheets.ts: the sheet request store, useElementBox for virtualizers)
+│  ├─ lib/                      # small generic utilities (sheets.ts: the sheet request store, useElementBox for virtualizers, hash.ts, storage.ts: persistence and usage)
 │  └─ styles/                   # tokens.css, globals.css
 ├─ tests/
 │  ├─ e2e/                      # Playwright specs (+ axe, console/CSP guard in fixtures.ts)
-│  ├─ fixtures/                 # catalog + backup fixtures (per schema version)
-│  └─ factories.ts
+│  ├─ fixtures/                 # backup fixtures per schema version (backups/v1/basic.settr.json)
+│  └─ factories.ts              # valid records and fast-check arbitraries
 ├─ docs/                        # this planning suite
 └─ vercel.json, vite.config.ts, tsconfig.json, .oxlintrc.json, .size-limit.mjs, lefthook.yml, playwright.config.ts, package.json …
 ```
@@ -187,10 +187,15 @@ settr/
 
 **Valuation and dashboard**
 1. The live query gathers open holdings plus `priceLatest`, and `domain/valuation` computes totals synchronously (O(n)).
-2. The time-series chart posts `{holdings, prices}` to the analytics worker, which runs the event sweep (`DATA_MODEL.md` §6.5) and returns the series. Results are cached by `dataVersion` and range.
+2. The time-series chart runs the event sweep (`DATA_MODEL.md` §6.5) over the lots and all price entries in its render; the React Compiler memoizes it on its inputs, so scrubbing doesn't recompute it (ADR-039: a worker once collections reach the thousands).
 
 **Import**
 1. See `IMPORT_EXPORT.md` §4. Parsing and validation run in a worker. The write is one transaction, followed by a derived-table rebuild.
+2. As built (M5, ADR-041):
+   - `features/data/read-backup.ts` starts a module worker per file, which runs `domain/backup/readBackup`: parse, envelope, checksum, migrate, validate.
+   - The preview plans a merge with `planMerge` against `readUserData`.
+   - `db/import.ts` snapshots the current state into `settr-snapshots`, then writes in one transaction guarded by the change counter, rebuilds `priceLatest` and bumps the counter.
+   - Undo restores a snapshot through the same read pipeline.
 
 ---
 
@@ -278,7 +283,7 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
 ## 10. Routing and code splitting
 
 - File-based routes (`src/routes`) with **lazy route components**. Heavy modules load on demand as separate chunks:
-  - charts (Recharts)
+  - the chart components (with the price and overview routes; a few KB, ADR-038)
   - holo viewer
   - import/export and CSV
   - quick-add and price session
@@ -315,6 +320,7 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
 - **Daily price-guide deploys (ADR-020, ADR-029):** how `cm-prices.json` reaches production depends on the repository's visibility. It stays **public** for now (R3.2), so the deploy-hook variant is the one in use:
   - **Private repository (if it's made private later):** the `price-guide.yml` job commits `cm-prices.json` only when it changed, so at most one production deploy per day (well within Hobby limits). GitHub Free includes 2,000 Actions minutes per month for private repositories, which should cover CI, the weekly catalog sync and the daily job (to verify against real CI times).
   - **Public repository:** `cm-prices.json` is **never committed**, because that would republish Cardmarket's data. The daily job calls a Vercel **deploy hook**, and a build step downloads Cardmarket's price guide, filters it to catalog products and writes `cm-prices.json` into the build output. Still at most one extra production deploy per day.
+  - **As built (M4):** `pnpm build` = `vite build && tsx scripts/price-guide/index.ts`. The step downloads only on Vercel (`VERCEL=1`, or `PRICE_GUIDE=download`; `PRICE_GUIDE_FILE=<path>` reads a local file); every other build, and any failure, writes an empty snapshot, so a deploy never fails over the guide and the app never requests a missing file. The app loads it through `src/catalog/price-guide.ts` (not the `@/catalog` barrel, so the startup bundle doesn't carry it). `price-guide.yml` runs daily at 03:23 UTC and posts to the `VERCEL_DEPLOY_HOOK` secret (a notice and no failure while it's unset). `.gitignore` guards `cm-prices.json`.
 
 ---
 

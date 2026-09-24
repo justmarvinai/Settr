@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { ACTIVE_CARD_LANGUAGES } from '../catalog-types';
 import { cardLanguageSchema, conditionSchema } from './common';
 import { PRICE_TYPES } from './price';

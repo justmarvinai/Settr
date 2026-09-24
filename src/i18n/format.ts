@@ -39,6 +39,23 @@ export function formatMoney(m: Money): string {
   return trueMinus(moneyFormatter(m.currency, false).format(toMajor(m)));
 }
 
+const wholeFormatters = new Map<string, Intl.NumberFormat>();
+
+/** Chart labels: `30 €` for whole amounts, `32,50 €` otherwise. */
+export function formatMoneyShort(m: Money): string {
+  if (m.minor % 10 ** MINOR_DIGITS[m.currency] !== 0) return formatMoney(m);
+  let f = wholeFormatters.get(m.currency);
+  if (!f) {
+    f = new Intl.NumberFormat(LOCALE, {
+      style: 'currency',
+      currency: m.currency,
+      maximumFractionDigits: 0,
+    });
+    wholeFormatters.set(m.currency, f);
+  }
+  return trueMinus(f.format(toMajor(m)));
+}
+
 /** `+12,30 €` / `−12,30 €` / `0,00 €` */
 export function formatDelta(m: Money): string {
   return trueMinus(moneyFormatter(m.currency, true).format(toMajor(m)));
@@ -90,6 +107,18 @@ const dateFormatter = new Intl.DateTimeFormat(LOCALE, {
 /** 'YYYY-MM-DD' or Date → `23.09.2026` */
 export function formatDate(value: string | Date): string {
   return dateFormatter.format(typeof value === 'string' ? parseIsoDate(value) : value);
+}
+
+const dateTimeFormatter = new Intl.DateTimeFormat(LOCALE, {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+/** ISO timestamp or Date → `24.09.2026, 10:12` (local time) */
+export function formatDateTime(value: string | Date): string {
+  return dateTimeFormatter.format(typeof value === 'string' ? new Date(value) : value);
 }
 
 const relativeFormatter = new Intl.RelativeTimeFormat(LOCALE, { numeric: 'auto' });

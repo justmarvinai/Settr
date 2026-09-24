@@ -38,9 +38,6 @@
   "overview_storage_title": "Deine Daten bleiben bei dir",
   "overview_storage_body": "Settr speichert alles nur in diesem Browser. Es gibt kein Konto und keinen Server.",
   "overview_storage_action": "Speicher prüfen",
-  "page_coming_title": "Folgt bald",
-  "page_coming_prices": "Preise erfassen, veraltete Preise prüfen und die Preis-Session. Kommt in Meilenstein 4.",
-  "page_coming_portfolio": "Wertentwicklung, Gewinn/Verlust und Aufteilung. Kommt in Meilenstein 4.",
   "collection_tabs_label": "Sammlung",
   "collection_tab_cards": "Karten",
   "collection_tab_sealed": "Sealed",
@@ -75,12 +72,9 @@
   "settings_appearance_motion_off": "Aus",
   "settings_prices_summary": "So erfasst du Preise",
   "settings_prices_type": "Standard-Preistyp",
-  "settings_prices_type_value": "ab (DE)",
   "settings_prices_filters": "Cardmarket-Filter",
-  "settings_prices_filters_value": "Verkäufer aus Deutschland · Sprache wie die Karte · Near Mint oder besser",
   "settings_prices_stale": "Preis veraltet nach",
   "settings_prices_stale_value": "{days} Tagen",
-  "settings_prices_more": "Weitere Preis-Einstellungen kommen mit Meilenstein 4.",
   "settings_data_storage": "Speicher",
   "settings_data_persisted": "Dauerhaft gespeichert",
   "settings_data_persisted_hint": "Der Browser löscht deine Daten nicht von selbst, auch wenn der Speicher knapp wird.",
@@ -743,8 +737,638 @@
   "settings_data_backup_last": "Letztes Backup {ago}, am {date}",
   "settings_data_backup_never": "Noch kein Backup.",
   "settings_data_backup_action": "Backup exportieren",
-  "settings_data_backup_import_later": "Ein Backup wieder einspielen, auch zusammenführen, kommt mit Meilenstein 5.",
   "toast_backup_started": "Backup-Download gestartet",
   "toast_backup_shared": "Backup gesichert",
-  "toast_backup_again": "Erneut speichern"
+  "toast_backup_again": "Erneut speichern",
+  "price_type_from": "ab (DE)",
+  "price_type_trend": "Preis-Trend",
+  "price_type_avg30": "30-Tages-Durchschnitt",
+  "price_type_avg7": "7-Tages-Durchschnitt",
+  "price_type_avg1": "1-Tages-Durchschnitt",
+  "price_type_sold": "Verkaufspreis",
+  "price_type_manual": "Eigene Schätzung",
+  "prices_current": "Aktueller Preis",
+  "prices_none": "Noch kein Preis eingetragen",
+  "prices_stale": "veraltet",
+  "prices_new": "Neuer Preis",
+  "prices_date": "Datum",
+  "prices_type": "Preistyp",
+  "prices_save": "Speichern",
+  "prices_unchanged": "Unverändert",
+  "prices_unchanged_hint": "Letzten Preis mit heutigem Datum bestätigen",
+  "prices_delta_last": "seit letztem Preis",
+  "prices_saved": "Preis gespeichert: {amount} · {what}",
+  "prices_deleted": "Preis vom {date} gelöscht",
+  "prices_updated": "Preis vom {date} geändert",
+  "prices_series": "Preisreihe",
+  "prices_series_raw": "Ungegradet",
+  "prices_variant": "Variante",
+  "error_price_required": "Bitte einen Betrag eingeben.",
+  "chart_title": "Preisverlauf",
+  "chart_range": "Zeitraum",
+  "chart_range_1m": "1M",
+  "chart_range_3m": "3M",
+  "chart_range_6m": "6M",
+  "chart_range_1y": "1J",
+  "chart_range_max": "Max",
+  "chart_in_range": "im Zeitraum",
+  "chart_point": "{date}: {amount}, {type}",
+  "chart_scrub": "Preisverlauf, Punkt wählen",
+  "chart_baseline": "Einkauf {amount}",
+  "chart_baseline_avg": "Einkauf Ø {amount}",
+  "chart_carried": "gilt bis heute",
+  "chart_compare": "Sprachen vergleichen",
+  "chart_show_table": "Als Tabelle anzeigen",
+  "chart_hide_table": "Diagramm anzeigen",
+  "chart_empty": "Noch keine Preise. Trag oben den ersten ein, er erscheint dann hier.",
+  "chart_range_empty": "Kein Preis in diesem Zeitraum.",
+  "chart_legend": "Legende",
+  "chart_col_date": "Datum",
+  "chart_col_price": "Preis",
+  "chart_col_type": "Preistyp",
+  "chart_col_language": "Sprache",
+  "history_title": "Einträge",
+  "history_show_all": "Alle {count} anzeigen",
+  "history_show_less": "Weniger anzeigen",
+  "history_actions": "Aktionen für den Preis vom {date}",
+  "history_edit_title": "Preis bearbeiten",
+  "history_note": "Notiz",
+  "action_cancel": "Abbrechen",
+  "action_value": "Eigener Wert …",
+  "value_title": "Eigener Wert",
+  "value_intro": "Für Exemplare, die weniger (LP, beschädigt) oder mehr wert sind als der Marktpreis. Ab seinem Datum zählt dieser Wert statt des Marktpreises, und er veraltet wie jeder Preis.",
+  "value_amount": "Wert pro Stück",
+  "value_date": "Gilt ab",
+  "value_market": "Marktpreis {language}: {amount} · {date}",
+  "value_no_market": "Für {language} ist noch kein Marktpreis eingetragen.",
+  "value_remove": "Eigenen Wert entfernen",
+  "toast_value_saved": "Eigener Wert gespeichert: {what}",
+  "toast_value_removed": "Eigener Wert entfernt: {what}",
+  "lot_value": "Wert {value}",
+  "lot_value_with_unit": "Wert {value} ({unit} pro Stück)",
+  "lot_value_own": "eigener Wert · {date}",
+  "lot_value_at_cost": "zum Kaufpreis",
+  "lot_unpriced": "Noch ohne Preis",
+  "library_sort_unit_value": "Wert pro Stück",
+  "library_sort_value": "Wert",
+  "library_sort_pl": "Gewinn/Verlust",
+  "library_sort_pl_ratio": "Gewinn/Verlust in %",
+  "library_sort_price_date": "Preisdatum",
+  "library_filter_priced": "Preis",
+  "library_filter_priced_yes": "Mit Preis",
+  "library_filter_priced_no": "Ohne Preis",
+  "library_filter_pl": "Gewinn/Verlust",
+  "library_filter_pl_gain": "Im Plus",
+  "library_filter_pl_loss": "Im Minus",
+  "library_filter_stale": "Nur veraltete Preise",
+  "library_filter_stale_hint": "Der Preis ist älter als {days} Tage.",
+  "library_chip_stale": "Preis veraltet",
+  "library_stat_value": "Wert",
+  "library_stat_pl": "Gewinn/Verlust",
+  "library_stat_unpriced": "{count} ohne Preis",
+  "library_stat_stale": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Preis veraltet",
+        "plural=*": "{count} Preise veraltet"
+      }
+    }
+  ],
+  "library_col_unit_value": "Wert/Stk.",
+  "library_col_value": "Wert",
+  "library_col_pl": "G/V",
+  "library_col_pl_ratio": "G/V %",
+  "library_col_price_date": "Preis vom",
+  "library_columns": "Spalten wählen",
+  "library_value_own": "eigener Wert",
+  "overview_value": "Gesamtwert",
+  "overview_invested": "Investiert {amount}",
+  "overview_realized": "Realisiert {amount}",
+  "overview_mode": "Diagramm zeigt",
+  "overview_mode_value": "Wert",
+  "overview_mode_pl": "Gewinn/Verlust",
+  "overview_today": "Heute",
+  "overview_on": "Am {date}",
+  "overview_chart_label": "Verlauf deiner Sammlung, Tag wählen",
+  "overview_chart_point": "{date}: {value}",
+  "overview_chart_empty": "Sobald deine Karten Preise haben, zeigt dieser Verlauf ihren Wert.",
+  "overview_legend_value": "Wert",
+  "overview_legend_pl": "Gewinn/Verlust",
+  "overview_legend_invested": "Investiert",
+  "overview_stale_title": "Preise veraltet",
+  "overview_stale_count": [
+    {
+      "declarations": ["input n", "input count", "input days", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position mit einem Preis älter als {days} Tage",
+        "plural=*": "{count} Positionen mit Preisen älter als {days} Tage"
+      }
+    }
+  ],
+  "overview_stale_none": "Alle Preise sind aktuell.",
+  "overview_stale_action": "Preis-Session starten",
+  "overview_progress_title": "Set-Fortschritt",
+  "overview_progress_basis": "{owned} von {total} Karten",
+  "overview_gainers": "Top-Gewinner",
+  "overview_losers": "Top-Verlierer",
+  "overview_movers_by": "Sortieren nach",
+  "overview_movers_abs": "Euro",
+  "overview_movers_ratio": "Prozent",
+  "overview_movers_none": "Gewinne und Verluste erscheinen, sobald Karten einen Kaufpreis und einen Preis haben.",
+  "overview_allocation_title": "Aufteilung",
+  "overview_alloc_singles": "Karten",
+  "overview_alloc_graded": "Gradiert",
+  "overview_alloc_sealed": "Sealed",
+  "overview_alloc_none": "Noch nichts bepreist.",
+  "overview_recent_title": "Zuletzt hinzugefügt",
+  "overview_unpriced": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position ohne Preis. Nicht im Gesamtwert enthalten.",
+        "plural=*": "{count} Positionen ohne Preis. Nicht im Gesamtwert enthalten."
+      }
+    }
+  ],
+  "overview_unpriced_action": "Zeigen",
+  "overview_dashboard_label": "Übersicht deiner Sammlung",
+  "overview_movers_title": "Seit dem Kauf",
+  "session_title": "Preis-Session",
+  "session_scope_stale": "Veraltete Preise",
+  "session_scope_unpriced": "Ohne Preis",
+  "session_scope_all": "Alle Preise",
+  "session_scope_selection": "Deine Auswahl",
+  "session_order": "Reihenfolge",
+  "session_order_value": "Wertvollste zuerst",
+  "session_order_oldest": "Älteste Preise zuerst",
+  "session_order_set": "Wie im Set",
+  "session_progress": "{index} von {total}",
+  "session_progress_label": "Fortschritt der Session",
+  "session_pause": "Session pausieren",
+  "session_last": "Letzter Preis {amount} · {type} · {age}",
+  "session_no_price": "Noch kein Preis",
+  "session_cost": "Einkauf {amount} pro Stück",
+  "session_copies": "Menge {count}",
+  "session_cardmarket": "Auf Cardmarket öffnen",
+  "session_skip": "Überspringen",
+  "session_unchanged": "Unverändert",
+  "session_save": "Speichern & weiter",
+  "session_back": "Zurück",
+  "session_saved_note": "In dieser Session eingetragen: {amount}",
+  "session_tip": "Tipp: Leg Settr und Cardmarket nebeneinander, dann siehst du beides auf einmal.",
+  "session_keys": "Tastatur",
+  "session_key_cardmarket": "Cardmarket",
+  "session_key_save": "speichern",
+  "session_key_unchanged": "unverändert",
+  "session_key_skip": "überspringen",
+  "session_key_back": "zurück",
+  "session_key_pause": "pausieren",
+  "session_done_title": "Geschafft",
+  "session_done_saved": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Preis eingetragen",
+        "plural=*": "{count} Preise eingetragen"
+      }
+    }
+  ],
+  "session_done_unchanged": "{count} unverändert",
+  "session_done_skipped": "{count} übersprungen",
+  "session_done_delta": "Wert deiner Sammlung",
+  "session_done_new": "davon {amount} erstmals bepreist",
+  "session_done_movers": "Größte Änderungen",
+  "session_done_finish": "Fertig",
+  "session_done_more": "Weitere veraltete Preise",
+  "session_empty": "Hier gibt es gerade nichts zu tun.",
+  "session_none": "Gerade läuft keine Preis-Session.",
+  "session_missing": "Diese Position gibt es nicht mehr. Sie wird übersprungen.",
+  "prices_hub_stale": "Veraltet",
+  "prices_hub_unpriced": "Ohne Preis",
+  "prices_hub_current": "Aktuell",
+  "prices_hub_start": "Preis-Session starten",
+  "prices_hub_scope": "Was möchtest du aktualisieren?",
+  "prices_hub_resume": "Session fortsetzen",
+  "prices_hub_resume_progress": "{scope} · {index} von {total}",
+  "prices_hub_discard": "Verwerfen",
+  "prices_hub_stale_list": "Veraltete Preise",
+  "prices_hub_recent": "Zuletzt eingetragen",
+  "prices_hub_empty": "Noch nichts in deiner Sammlung. Füg Karten hinzu, dann kannst du hier ihre Preise pflegen.",
+  "prices_hub_all_current": "Alle Preise sind aktuell.",
+  "prices_hub_no_entries": "Noch keine Preise eingetragen.",
+  "prices_hub_show_stale": "In der Sammlung zeigen",
+  "prices_hub_series_count": "{count} Preisreihen",
+  "bulk_prices": "Preise …",
+  "key_c": "C",
+  "key_s": "S",
+  "key_u": "U",
+  "key_v": "V",
+  "key_enter": "⏎",
+  "action_price": "Preis eintragen …",
+  "price_sheet_title": "Preis eintragen",
+  "collection_quick_price": "Preis für {name} eintragen",
+  "price_type_guide_from": "Preisführer ab",
+  "price_type_guide_trend": "Preisführer Trend",
+  "guide_title": "Cardmarket-Preisführer vom {date}",
+  "guide_scope_all": "alle Sprachen, Länder und Zustände",
+  "guide_scope_countries": "alle Länder und Zustände",
+  "guide_scope_ja_tc": "Japanisch und T-Chinesisch, alle Länder und Zustände",
+  "guide_scope_sealed_all": "alle Sprachen und Länder",
+  "guide_scope_sealed": "alle Länder",
+  "guide_low": "ab {amount}",
+  "guide_trend": "Trend {amount}",
+  "guide_pick": "{value} aus dem Preisführer übernehmen",
+  "guide_hint": "Nur ein Vorschlag: gespeichert wird erst, was du übernimmst und speicherst.",
+  "guide_key": "im Preisfeld übernimmt den ersten Vorschlag",
+  "settings_prices_type_hint": "Vorausgewählt, wenn du einen Preis einträgst.",
+  "settings_prices_filters_hint": "So öffnet der Cardmarket-Link die Angebote, und so steht es bei jedem ab-Preis dabei.",
+  "settings_prices_country": "Verkäufer",
+  "settings_prices_match_language": "Nur Angebote in der Sprache der Karte",
+  "settings_prices_match_language_hint": "Für eine deutsche Karte zeigt Cardmarket dann nur deutsche Exemplare.",
+  "settings_prices_min_condition": "Mindestzustand",
+  "settings_prices_guide": "Vorschläge aus dem Cardmarket-Preisführer",
+  "settings_prices_guide_hint": "Zeigt „ab“ und „Trend“ vom Vortag, wenn du einen Preis einträgst. Gespeichert wird nur, was du übernimmst.",
+  "settings_prices_unpriced": "Karten ohne Preis im Gesamtwert",
+  "settings_prices_unpriced_hint": "Gilt für Übersicht, Sammlung und Portfolio.",
+  "settings_prices_unpriced_exclude": "nicht mitzählen",
+  "settings_prices_unpriced_cost": "mit Einkaufspreis",
+  "price_context_min": "{condition} oder besser",
+  "settings_prices_country_de": "aus Deutschland",
+  "portfolio_filters": "Was das Portfolio zeigt",
+  "portfolio_kind": "Art",
+  "portfolio_kind_all": "Alles",
+  "portfolio_kind_card": "Karten",
+  "portfolio_kind_sealed": "Sealed",
+  "portfolio_language": "Sprache",
+  "portfolio_language_all": "Alle Sprachen",
+  "portfolio_set": "Set",
+  "portfolio_set_all": "Alle Sets",
+  "portfolio_value_part": "Wert der Auswahl",
+  "portfolio_reset": "Alles zeigen",
+  "portfolio_empty": "Noch nichts in deiner Sammlung. Sobald du Karten oder Sealed einträgst, siehst du hier Wert, Aufteilung und Gewinn/Verlust.",
+  "portfolio_filtered_empty": "Zu dieser Auswahl gibt es nichts in deiner Sammlung.",
+  "portfolio_allocation": "Aufteilung",
+  "portfolio_allocation_by": "Aufteilen nach",
+  "portfolio_by_category": "Art",
+  "portfolio_by_set": "Set",
+  "portfolio_by_language": "Sprache",
+  "portfolio_by_rarity": "Seltenheit",
+  "portfolio_rest": "Weitere",
+  "portfolio_no_set": "Ohne Set",
+  "portfolio_custom": "Eigene Einträge",
+  "portfolio_no_rarity": "Ohne Seltenheit",
+  "portfolio_allocation_none": "Die Aufteilung erscheint, sobald Positionen einen Preis haben.",
+  "portfolio_allocation_unpriced": "{count} ohne Preis nicht mitgezählt",
+  "portfolio_performance": "Performance",
+  "portfolio_performance_per": "Gruppieren nach",
+  "portfolio_per_set": "Set",
+  "portfolio_per_language": "Sprache",
+  "portfolio_realized": "Realisiert",
+  "portfolio_realized_hint": "Verkäufe und Tausche: was sie eingebracht haben, abzüglich Gebühren und Einkaufspreis.",
+  "portfolio_realized_none": "Noch nichts verkauft oder getauscht. Das trägst du im Menü einer Position ein: „Verkaufen oder abgeben …“.",
+  "portfolio_realized_net": "Erlös {amount}",
+  "portfolio_realized_cost": "Einkauf {amount}",
+  "portfolio_realized_open": "Ergebnis offen: Einkaufspreis unbekannt",
+  "portfolio_realized_no_proceeds": "Ohne Erlös eingetragen",
+  "settings_data_backup_media": "Fotos einschließen",
+  "settings_data_backup_media_hint": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Foto macht die Datei etwas größer.",
+        "plural=*": "{count} Fotos machen die Datei größer."
+      }
+    }
+  ],
+  "settings_data_backup_changes": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Änderung seit dem letzten Backup",
+        "plural=*": "{count} Änderungen seit dem letzten Backup"
+      }
+    }
+  ],
+  "settings_data_remind": "Backup-Erinnerung",
+  "settings_data_remind_hint": "Wenn du seit dem letzten Backup etwas geändert hast, erinnert Settr dich nach so vielen Tagen, spätestens nach 50 Änderungen.",
+  "settings_data_remind_after": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "Nach {count} Tag",
+        "plural=*": "Nach {count} Tagen"
+      }
+    }
+  ],
+  "settings_data_import": "Backup einspielen",
+  "settings_data_import_intro": "Holt Daten aus einer Backup-Datei zurück: beim Umzug auf ein neues Gerät oder um zwei Geräte zusammenzuführen. Vorher sichert Settr den jetzigen Stand, ein Import lässt sich also rückgängig machen.",
+  "settings_data_import_drop": "Backup-Datei hierher ziehen oder",
+  "settings_data_import_pick": "Datei auswählen",
+  "settings_data_import_reading": "Datei wird gelesen …",
+  "import_error_too_large": "Die Datei ist größer als 200 MB. So große Backups kann Settr nicht einlesen.",
+  "import_error_syntax": "Die Datei ist kein gültiges JSON (Zeile {line}, Spalte {column}). Vielleicht ist sie beschädigt oder unvollständig.",
+  "import_error_not_backup": "Das ist kein Settr-Backup. Backups enden auf .settr.json.",
+  "import_error_encrypted": "Das Backup ist verschlüsselt. Verschlüsselte Backups kann diese Settr-Version noch nicht einspielen.",
+  "import_error_newer": "Das Backup stammt aus einer neueren Settr-Version. Bitte Settr aktualisieren, dann klappt der Import.",
+  "import_error_newer_version": "Das Backup stammt aus Settr {version}. Bitte Settr aktualisieren, dann klappt der Import.",
+  "import_error_damaged": "Das Backup ist beschädigt ({detail}).",
+  "import_error_unreadable": "Die Datei ließ sich nicht lesen ({reason}).",
+  "import_error_changed": "Deine Daten haben sich währenddessen geändert. Es wurde nichts eingespielt, bitte versuch es noch einmal.",
+  "import_title": "Backup einspielen",
+  "import_made": "Erstellt",
+  "import_made_value": "{date}, {ago}",
+  "import_app": "Settr-Version",
+  "import_device": "Gerät",
+  "import_device_this": "Dieses Gerät",
+  "import_device_other": "Ein anderes Gerät",
+  "import_checksum": "Prüfsumme",
+  "import_checksum_ok": "In Ordnung",
+  "import_checksum_mismatch": "Datei wurde verändert",
+  "import_checksum_missing": "Keine",
+  "import_checksum_mismatch_hint": "Die Datei wurde nach dem Export verändert. Settr prüft trotzdem jeden Eintrag einzeln.",
+  "import_contents": "Inhalt",
+  "import_empty": "Das Backup ist leer.",
+  "import_invalid": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Eintrag ist fehlerhaft und wird übersprungen.",
+        "plural=*": "{count} Einträge sind fehlerhaft und werden übersprungen."
+      }
+    }
+  ],
+  "import_invalid_details": "Welche?",
+  "import_issue_where": "{table}, Nr. {index}",
+  "import_issue_duplicate_id": "ID kommt doppelt vor",
+  "import_issue_duplicate_name": "Name kommt doppelt vor",
+  "import_issue_invalid": "Ungültiger Wert",
+  "import_issues_more": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "… und {count} weiterer",
+        "plural=*": "… und {count} weitere"
+      }
+    }
+  ],
+  "import_settings_reset": "Einige Einstellungen im Backup sind ungültig. Für sie gilt der Standard.",
+  "import_mode": "Wie einspielen?",
+  "import_mode_merge": "Zusammenführen",
+  "import_mode_merge_hint": "Behält deine Daten hier und übernimmt, was im Backup neu oder neuer ist. Für zwei Geräte.",
+  "import_mode_replace": "Ersetzen",
+  "import_mode_replace_hint": "Ersetzt alles auf diesem Gerät durch das Backup. Für den Umzug auf ein neues Gerät.",
+  "import_local_empty": "Auf diesem Gerät sind noch keine Daten. Das Backup wird vollständig übernommen.",
+  "import_local": "Auf diesem Gerät: {summary}.",
+  "import_replace_warning": "Diese Daten werden ersetzt. Settr sichert sie vorher, du kannst also zurück.",
+  "import_merge_new": "Neu",
+  "import_merge_updated": "Aktualisiert",
+  "import_merge_deleted": "Gelöscht",
+  "import_merge_unchanged": "Unverändert",
+  "import_merge_calculating": "Wird verglichen …",
+  "import_merge_kept": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Eintrag ist hier neuer und bleibt, wie er ist.",
+        "plural=*": "{count} Einträge sind hier neuer und bleiben, wie sie sind."
+      }
+    }
+  ],
+  "import_merge_skipped": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Eintrag hast du hier gelöscht, er kommt nicht zurück.",
+        "plural=*": "{count} Einträge hast du hier gelöscht, sie kommen nicht zurück."
+      }
+    }
+  ],
+  "import_merge_folded": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Tag oder Lagerort gibt es auf beiden Geräten unter gleichem Namen, er wird zusammengelegt.",
+        "plural=*": "{count} Tags und Lagerorte gibt es auf beiden Geräten unter gleichem Namen, sie werden zusammengelegt."
+      }
+    }
+  ],
+  "import_merge_renamed": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Tag aus dem Backup bekommt eine Nummer, weil ein anderer hier schon so heißt.",
+        "plural=*": "{count} Tags aus dem Backup bekommen eine Nummer, weil andere hier schon so heißen."
+      }
+    }
+  ],
+  "import_settings_from_backup": "Einstellungen aus dem Backup übernehmen",
+  "import_settings_from_backup_hint": "Sonst bleiben die Einstellungen dieses Geräts.",
+  "import_submit": "Einspielen",
+  "import_running": "Wird eingespielt …",
+  "toast_import_done": "Backup eingespielt",
+  "toast_import_merged": "Neu: {added} · Aktualisiert: {updated} · Gelöscht: {deleted}",
+  "toast_import_undone": "Stand vor dem Import wiederhergestellt",
+  "settings_data_snapshots": "Sicherungen vor Importen",
+  "settings_data_snapshots_intro": "Vor jedem Import und jeder Wiederherstellung sichert Settr den Stand davor, die letzten drei auf diesem Gerät. So lässt sich ein Import auch später noch rückgängig machen.",
+  "snapshot_before_import_file": "Vor dem Import von {file}",
+  "snapshot_before_import": "Vor einem Import",
+  "snapshot_before_restore": "Vor einer Wiederherstellung",
+  "snapshot_restore": "Wiederherstellen",
+  "snapshot_download": "Herunterladen",
+  "snapshot_restore_title": "Diesen Stand wiederherstellen?",
+  "snapshot_restore_body": "Deine Daten werden durch den Stand vom {date} ersetzt. Settr sichert den jetzigen Stand vorher, du kannst also zurück.",
+  "toast_snapshot_restored": "Stand vom {date} wiederhergestellt",
+  "snapshot_unreadable": "Diese Sicherung lässt sich nicht lesen.",
+  "settings_data_wipe": "Alle Daten löschen",
+  "settings_data_wipe_body": "Löscht auf diesem Gerät deine Sammlung, Preise, Tags, Lagerorte, eigenen Einträge, Einstellungen und die Sicherungen vor Importen. Der Katalog bleibt.",
+  "settings_data_wipe_action": "Alle Daten löschen …",
+  "wipe_title": "Wirklich alle Daten löschen?",
+  "wipe_body": "Das lässt sich nicht rückgängig machen. Exportiere vorher ein Backup, wenn du deine Daten behalten willst.",
+  "wipe_confirm_label": "Tippe LÖSCHEN zur Bestätigung",
+  "wipe_confirm_word": "LÖSCHEN",
+  "wipe_submit": "Endgültig löschen",
+  "toast_wiped": "Alle Daten gelöscht",
+  "settings_data_contents": "Gespeichert: {summary}",
+  "settings_data_contents_empty": "Noch keine Daten gespeichert.",
+  "count_holdings": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Position",
+        "plural=*": "{count} Positionen"
+      }
+    }
+  ],
+  "count_prices": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Preis",
+        "plural=*": "{count} Preise"
+      }
+    }
+  ],
+  "count_wishlist": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Wunsch",
+        "plural=*": "{count} Wünsche"
+      }
+    }
+  ],
+  "count_tags": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Tag",
+        "plural=*": "{count} Tags"
+      }
+    }
+  ],
+  "count_locations": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Lagerort",
+        "plural=*": "{count} Lagerorte"
+      }
+    }
+  ],
+  "count_custom": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} eigener Eintrag",
+        "plural=*": "{count} eigene Einträge"
+      }
+    }
+  ],
+  "count_media": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Foto",
+        "plural=*": "{count} Fotos"
+      }
+    }
+  ],
+  "count_tombstones": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Löschung",
+        "plural=*": "{count} Löschungen"
+      }
+    }
+  ],
+  "count_snapshots": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Sicherung vor Importen",
+        "plural=*": "{count} Sicherungen vor Importen"
+      }
+    }
+  ],
+  "table_holdings": "Positionen",
+  "table_prices": "Preise",
+  "table_wishlist": "Wunschliste",
+  "table_tags": "Tags",
+  "table_locations": "Lagerorte",
+  "table_custom": "Eigene Einträge",
+  "table_media": "Fotos",
+  "table_tombstones": "Löschungen",
+  "table_overrides": "Cardmarket-Korrekturen",
+  "settings_data_csv": "CSV für Tabellen",
+  "settings_data_csv_intro": "Für Excel, Numbers oder Google Tabellen. CSV ist kein Backup: Es enthält nicht alles und lässt sich nicht wieder einspielen.",
+  "csv_dialect": "Format",
+  "csv_dialect_excel": "Excel (Deutschland)",
+  "csv_dialect_intl": "International",
+  "csv_dialect_excel_hint": "Semikolon, Dezimalkomma, Datum 23.09.2026",
+  "csv_dialect_intl_hint": "Komma, Dezimalpunkt, Datum 2026-09-23",
+  "csv_collection": "Sammlung",
+  "csv_prices": "Preise",
+  "csv_sales": "Verkäufe",
+  "csv_export": "{what} exportieren",
+  "toast_csv_started": "CSV-Download gestartet",
+  "bulk_csv": "CSV",
+  "csv_col_id": "ID",
+  "csv_col_kind": "Art",
+  "csv_kind_card": "Karte",
+  "csv_kind_sealed": "Sealed",
+  "csv_col_name": "Name",
+  "csv_col_set": "Set",
+  "csv_col_number": "Nr.",
+  "csv_col_language": "Sprache",
+  "csv_col_variant": "Variante",
+  "csv_col_condition": "Zustand",
+  "csv_col_grading": "Grading",
+  "csv_col_quantity": "Menge",
+  "csv_col_bought": "Kaufdatum",
+  "csv_col_cost_total": "Einkauf gesamt",
+  "csv_col_fees": "Gebühren",
+  "csv_col_cost_unit": "Einkauf/Stk.",
+  "csv_col_price_unit": "Preis/Stk.",
+  "csv_col_price_date": "Preis vom",
+  "csv_col_value": "Wert",
+  "csv_col_pl": "G/V",
+  "csv_col_pl_pct": "G/V %",
+  "csv_col_source": "Quelle",
+  "csv_col_tags": "Tags",
+  "csv_col_location": "Lagerort",
+  "csv_col_note": "Notiz",
+  "csv_col_series": "Serie",
+  "csv_col_grade": "Grade",
+  "csv_col_date": "Datum",
+  "csv_col_price": "Preis",
+  "csv_col_currency": "Währung",
+  "csv_col_price_type": "Preistyp",
+  "csv_col_proceeds": "Erlös",
+  "csv_col_basis": "Einstand",
+  "csv_col_realized": "Realisierter G/V",
+  "csv_sale": "Verkauf",
+  "csv_trade": "Tausch",
+  "reminder_title": "Letztes Backup {ago}. Jetzt sichern?",
+  "reminder_title_never": "Noch kein Backup. Jetzt sichern?",
+  "reminder_changes": [
+    {
+      "declarations": ["input n", "input count", "local plural = n: plural"],
+      "selectors": ["plural"],
+      "match": {
+        "plural=one": "{count} Änderung seit dem letzten Backup.",
+        "plural=*": "{count} Änderungen seit dem letzten Backup."
+      }
+    }
+  ],
+  "reminder_action": "Jetzt sichern",
+  "search_group_actions": "Aktionen",
+  "palette_backup_export": "Backup exportieren",
+  "palette_backup_import": "Backup einspielen …",
+  "toast_quota_title": "Der Speicher ist voll",
+  "toast_quota_body": "Der Browser lässt Settr nichts mehr speichern. Sichere jetzt ein Backup und gib Speicher frei.",
+  "toast_quota_action": "Zu den Daten"
 }

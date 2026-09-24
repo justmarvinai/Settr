@@ -11,8 +11,8 @@ import {
   SunGlyph,
 } from '@/components/ui/glyphs';
 import { Kbd } from '@/components/ui/Kbd';
-import { db, updateSettings, useSettings } from '@/db/core';
-import { applyDisplay, resolvedTheme } from '@/features/appearance';
+import { useSettings } from '@/db/core';
+import { changeDisplay, resolvedTheme } from '@/features/appearance';
 import { m } from '@/i18n';
 import { usePrivacy } from '../privacy';
 
@@ -45,9 +45,8 @@ function ThemeToggle() {
   const dark = resolvedTheme(settings.display.theme) === 'dark';
   const label = dark ? m.toolbar_theme_to_light() : m.toolbar_theme_to_dark();
   const toggle = () => {
-    const display = { ...settings.display, theme: dark ? ('light' as const) : ('dark' as const) };
-    applyDisplay(display); // instant; the stored setting follows
-    void updateSettings(db, { display: { theme: display.theme } });
+    // Instant; the stored setting follows (and a late older read can't switch it back).
+    void changeDisplay(settings.display, { theme: dark ? 'light' : 'dark' });
   };
   return (
     <IconButton className="max-md:hidden" label={label} onClick={toggle}>

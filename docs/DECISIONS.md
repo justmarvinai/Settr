@@ -43,6 +43,12 @@
 | 035 | Catalog URLs and search: cards under their set, ids with colons, one worker index | Accepted (M2) |
 | 036 | Collection lists without a table library: one domain pipeline + TanStack Virtual | Accepted (M3) |
 | 037 | Startup bundle hygiene: route-owned features and a lean shell | Accepted (M3; amends ADR-030) |
+| 038 | Hand-written SVG charts instead of Recharts | Accepted (M4; supersedes ADR-010) |
+| 039 | Portfolio time series on the main thread (no worker yet) | Accepted (M4) |
+| 040 | Price entry as a sheet; price-guide values stored as `from`/`trend` with `origin: 'guide'` | Accepted (M4) |
+| 041 | Import as built: read in a worker, safety snapshots in their own database, one guarded transaction | Accepted (M5; amends ADR-016) |
+| 042 | Merge rules as built: instants, tombstone hygiene, conservative name folding | Accepted (M5; amends ADR-016) |
+| 043 | Backup reminders: the pill says due, the toast waits for a settled install, once a day | Accepted (M5) |
 
 ---
 
@@ -123,7 +129,7 @@
 - **Consequences:** Accessible primitives with full visual control, deliberately restyled to avoid the "default shadcn" look.
 - **Alternatives:** Radix-based shadcn (maintenance slowed), MUI/Mantine (opinionated look), fully custom primitives (a11y cost).
 
-### ADR-010 · Recharts 3 as the single chart library
+### ADR-010 · Recharts 3 as the single chart library (superseded by ADR-038)
 - **Decision:** Recharts 3 via shadcn chart components for time series (line/area/step, custom scrubbing), donut, treemap, bars and sparklines.
 - **Consequences:** One themeable, SVG-accessible dependency, lazy-loaded (≤ 120 KB chunk budget).
 - **Alternatives:** TradingView Lightweight Charts 5 (excellent time series, but mandatory attribution and a second library). This is the fallback if scrubbing performance disappoints. ECharts 6 (heavy), visx (low-level), Nivo/Tremor (slowed/dormant).
@@ -335,3 +341,91 @@
 - **Consequences:** after M3 the startup JS is 219.6 KB gzip (about 10 KB headroom for M4), the collection chunk 48 KB and the library chunk 32 KB. A new shell icon goes into `glyphs.tsx` with the one weight it shows. `pnpm size` stays the gate; a source-map attribution of the entry and its preloads explains any jump.
 - **Alternatives:** raising the budget (hides regressions), manual chunk rules (brittle across Rolldown releases), Zod Mini instead of Zod's classic API (about 4 KB of JSON-schema code would leave startup, but every schema changes; kept in reserve).
 
+
+### ADR-038 · Hand-written SVG charts instead of Recharts (Accepted, M4; supersedes ADR-010)
+- **Context:** ADR-010 chose Recharts 3 for every chart, lazy-loaded within a 120 KB chunk budget. Measured in M4, Recharts 3.10.1 costs about 402 KB minified and 116 KB gzip for just the line, area, pie, axes and tooltip we need: more than the whole 80 KB budget of a lazy chunk (ADR-030), and the dashboard, Settr's start page, would load it on every visit. The charts Settr needs are few and calm (DESIGN_SYSTEM.md §9): an item price line with observation markers and a dashed purchase baseline, a step-after portfolio line with an optional *Investiert* overlay, scrubbing with a crosshair, and one donut.
+- **Decision:**
+  - Draw them as SVG in `components/domain/charts/`: `scale.ts` holds the pure math (linear scales, "nice" gridlines inside a data-following domain, the range chips `1M · 3M · 6M · 1J · Max`, line and step paths; unit-tested), `TimeChart.tsx` the time chart, and the donut follows the same pattern.
+  - Scrubbing uses pointer events (touch drags horizontally, vertical swipes still scroll) plus a visually hidden native range input for keyboard and screen readers; the chart box shows its focus ring. Every chart offers the same data as a table.
+  - Colors come from tokens only: the accent line, the gain/loss tint against the baseline, the new `--viz-1…8` palette for comparison lines, which also differ by dash pattern.
+- **Consequences:** a few KB instead of 116 KB, the charts look exactly like the design system, and they work offline and without layout libraries. We own the edge cases (flat lines, one point, prices older than the range), which the scale tests cover. Treemaps and other chart types stay out of v1.
+- **Alternatives:** Recharts 3 (too heavy, see above), TradingView Lightweight Charts 5 (canvas instead of SVG, mandatory attribution, a second look to theme), visx (low-level pieces we'd assemble anyway), uPlot (canvas, tiny, but no SVG accessibility and its own look).
+
+### ADR-039 · Portfolio time series on the main thread (Accepted, M4)
+- **Context:** The roadmap planned the portfolio time series (DATA_MODEL.md §6.5) in a Web Worker. Built in M4, the event sweep is one pass over lots and price entries per grid day. Measured in the build sandbox: 1,500 lots over 600 series with 4,800 prices and two years of daily points take 160–190 ms; a v1 collection (one set, a few hundred lots) takes a few milliseconds.
+- **Decision:** `portfolioSeries` runs on the main thread, in the render of the charts that show it (Übersicht, Portfolio). The React Compiler memoizes it on its inputs, so scrubbing the chart doesn't recompute it; a new price, a range or a mode does.
+- **Consequences:** no worker protocol, no second copy of the domain code in a worker chunk, and the chart has its data in the first render. With collections in the thousands a range change can take a noticeable moment: that's the signal to move the sweep into a worker (the function is pure and takes plain data, so the move is mechanical).
+- **Alternatives:** a worker now (message passing and structured cloning of every lot and price for a computation that is fast at v1 sizes), caching series in IndexedDB (derived data to keep in sync).
+
+### ADR-040 · Price entry as a sheet; guide values stored as `from`/`trend` with `origin: 'guide'` (Accepted, M4)
+- **Context:** UX_SPEC.md §4.9 describes a price entry *popover*. The app already opens every collection form as a sheet (right on desktop, from the bottom on phones), and a popover anchored to a tile would be cramped on phones and a second pattern next to the add, sell and value forms. Separately, accepted price-guide suggestions (PRC-09, ADR-020) need a type: Cardmarket's guide `low` is an *ab* price, but over all languages, countries and conditions, not the German-seller, same-language, Near-Mint *ab (DE)* of R2.2.
+- **Decision:**
+  - *Preis eintragen* is a sheet like the other collection forms: from `P` on a set or Sammlung tile, a table row's name, the € button on set tiles and the lot menu. On card and product pages `P` focuses the inline price field instead.
+  - An accepted guide value keeps the price type it is (`from` for *ab*, `trend` for *Trend*) with `origin: 'guide'`, `source: 'cardmarket'` and no `context` (no filters applied). Lists label such entries *Preisführer ab* / *Preisführer Trend*, and the context line never claims a filter the value didn't have. No new price type, so no user-data shape change.
+- **Consequences:** one sheet pattern everywhere, keyboard-first on desktop and thumb-friendly on phones. Valuation treats a guide value like any price of its series; the entry says where it came from.
+- **Alternatives:** an anchored popover (small, and a second pattern), new price types `guide-low`/`guide-trend` (a user-data shape change with a migration for no gain in valuation).
+
+### ADR-041 · Import as built: read in a worker, safety snapshots in their own database, one guarded transaction (Accepted, M5; amends ADR-016)
+- **Context:** `IMPORT_EXPORT.md` §4 lists the import steps. Building them in M5 meant deciding where each step runs, where the pre-import snapshots live, what undo means after a reload, and how to avoid writing a merge that was planned on data that changed in the meantime.
+- **Decision:**
+  - Reading is pure domain code (`domain/backup`: parse → envelope check → checksum → migrate → validate) that runs in a module worker (`workers/backup.worker.ts`) with Zod's German messages. When `JSON.parse` fails, a small scanner finds the line and column, because browsers word the error differently and WebKit gives no position at all. Files over 200 MB are refused before reading.
+  - Migrations are per-record functions per schema step (`domain/backup/migrate.ts`), so Dexie's `upgrade()` and older backups use the same code. Schema 1 needs none; `tests/fixtures/backups/v1/basic.settr.json` has to keep importing in every later version.
+  - Safety snapshots are complete backup envelopes in a second IndexedDB database, `settr-snapshots`, which keeps the last three. One is taken before every replace, merge and restore. Undo means restoring a snapshot, and that restore snapshots the current state first, so it can be undone too.
+  - Writing is one read-write transaction across all user tables, `priceLatest` and `kv`. It runs only if the change counter still has the value it had when the snapshot was read; otherwise nothing is written and the user is asked to try again. A merge is planned again from the snapshot's data, so what gets written matches what was saved.
+  - A replace clears the device's price session and counts the imported file as the data's latest backup, so a device you just moved to doesn't nag for a backup.
+- **Consequences:**
+  - A large file doesn't freeze the page, and a failed import leaves no trace.
+  - Undo survives reloads and stays available until three newer snapshots push it out, which costs up to three times the data size in storage.
+  - `Alle Daten löschen` removes the snapshots too.
+- **Alternatives:**
+  - Snapshots in the main database: they'd be lost with it and would bloat every export.
+  - `sessionStorage`: too small, and gone with the tab.
+  - Keeping only the last snapshot: a restore would overwrite the only way back.
+  - Parsing on the main thread: freezes the page on large files.
+
+### ADR-042 · Merge rules as built: instants, tombstone hygiene, conservative name folding (Accepted, M5; amends ADR-016)
+- **Context:** The table in `IMPORT_EXPORT.md` §5 leaves details open: how timestamps compare, when two tags or Lagerorte are the same one, what happens to deletions after a merge, and how tag names stay unique (Dexie's `&name` index).
+- **Decision:**
+  - Last write wins by `updatedAt`, compared as points in time (`Date.parse`), so a hand-edited offset can't win by spelling. Ties go to the larger `installId`. Two versions count as identical when their canonical JSON matches.
+  - Deletions:
+    - A backup record is added unless it was deleted here after the backup's version.
+    - A local record is removed if the backup deleted it after this version.
+    - Afterwards the device keeps both sides' deletions (the later one per id), minus records that are alive after the merge.
+  - Tags and Lagerorte folding:
+    - A tag or Lagerort made on both devices under the same name (ignoring case) but with different ids becomes the local one, and the backup's references are remapped: lot tags, a lot's Lagerort, a Lagerort's parent.
+    - Folding only happens when it's unambiguous: the backup's record is new here and its name is unique in the backup; exactly one local record has that name; and the backup doesn't contain that local record.
+    - A backup tag that would still clash with a different tag here gets a number, *Favoriten (2)*.
+  - Settings stay this device's unless *Einstellungen aus dem Backup übernehmen* is checked. Cardmarket corrections are joined, and this device's win.
+  - The merge is planned purely (`planMerge`), shown in the preview, and written as planned.
+- **Consequences:**
+  - Property tests show that merging a dataset into itself changes nothing, merging into an empty device gives the backup, and two devices end up with the same data whichever merges which.
+  - Folding is cautious: two binders called *Binder* that one device keeps apart stay apart.
+- **Alternatives:**
+  - Merging field by field: needs a timestamp per field.
+  - Always folding by name: could fold two different binders into one.
+  - Asking about every conflict: far too many questions for a collection.
+
+### ADR-043 · Backup reminders: the pill says due, the toast waits for a settled install, once a day (Accepted, M5)
+- **Context:** `IMPORT_EXPORT.md` §8 turns the sidebar pill amber and shows a toast when the last backup is older than 7 days and something changed since, plus a gentle reminder after 50 changes. In M3 the pill turned amber as soon as there was data without a backup, and nothing counted the changes since a backup.
+- **Decision:**
+  - `meta` keeps the change counter at the last backup (`backupDataVersion`). A backup is due when:
+    - there's data;
+    - something changed since the last backup;
+    - and that backup is older than the reminder interval (3, 7, 14 or 30 days; 7 by default) or 50 changes have piled up.
+  - Without any backup, data is due at once and the pill turns amber. The toast (*Noch kein Backup. Jetzt sichern?*) waits until the install is a day old or 50 changes have piled up, so a first session isn't interrupted.
+  - The toast (*Letztes Backup vor 12 Tagen. Jetzt sichern?*):
+    - shows at most once a day per device (kv `ui:backup.remindedOn`);
+    - waits for 4 quiet seconds;
+    - never shows on the Daten page;
+    - *Jetzt sichern* exports right away, and the export code only loads then.
+  - A backup made before the counter existed counts as changed.
+  - Persistent storage is requested once there's data, and again when Settr gets installed as an app.
+- **Consequences:**
+  - The pill always tells the truth.
+  - The toast interrupts at most once a day, and only when saving a backup actually protects something.
+  - The rule is pure (`domain/backup/reminder.ts`) and unit-tested.
+  - The shell stays within its startup budget.
+- **Alternatives:**
+  - A toast right away on a new install: it interrupts the first session.
+  - Counting settings changes as well: they're rare and small, and they'd need their own counter.
+  - A blocking dialog: too heavy-handed for a reminder.

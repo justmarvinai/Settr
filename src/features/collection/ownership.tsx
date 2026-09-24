@@ -1,4 +1,4 @@
-import { PlusIcon } from '@phosphor-icons/react';
+import { CurrencyEurIcon, PlusIcon } from '@phosphor-icons/react';
 import type { LoadedSet } from '@/catalog';
 import { cn } from '@/components/ui/cn';
 import {
@@ -23,6 +23,7 @@ import type { CardLanguage } from '@/domain/catalog-types';
 import type { Holding } from '@/domain/schemas';
 import { m } from '@/i18n';
 import { formatCount, formatShare } from '@/i18n/format';
+import { openPrice } from './actions';
 import { cardInfo, lotLabel, snapshotOf } from './item';
 import { toastError, toastWithUndo } from './toasts';
 
@@ -127,6 +128,38 @@ export function QuickAddButton({
       )}
     >
       <PlusIcon size={18} weight="bold" aria-hidden />
+    </button>
+  );
+}
+
+/** € on a set tile: the price sheet for the card in the view's language (UX_SPEC.md §4.3, §4.9). */
+export function QuickPriceButton({
+  card,
+  setId,
+  language,
+  name,
+  className,
+}: {
+  card: Pick<CatalogCard, 'id'>;
+  setId: string;
+  language: CardLanguage;
+  /** The tile's name, for the button's accessible name. */
+  name: string;
+  className?: string;
+}) {
+  const label = m.collection_quick_price({ name });
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={() => openPrice({ kind: 'card', id: card.id }, setId, language)}
+      className={cn(
+        'inline-flex size-9 items-center justify-center rounded-pill bg-surface-1 text-ink shadow-[0_0_0_1px_var(--border),0_6px_16px_-6px_oklch(0_0_0/0.5)] transition-[opacity,transform] duration-(--dur-fast) hover:scale-105 hover:text-accent-text focus-visible:opacity-100',
+        className,
+      )}
+    >
+      <CurrencyEurIcon size={18} weight="bold" aria-hidden />
     </button>
   );
 }

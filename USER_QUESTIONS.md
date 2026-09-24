@@ -1,15 +1,56 @@
 # Settr: Questions and Decisions
 
-> Last updated: 2026-09-23.
+> Last updated: 2026-09-24.
 > **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). M1 (Foundation), M2 (Catalog) and M3 (Collection) are built and wait for your check.
-> **Rounds 4 (M2) and 5 (M3): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) and M5 (Data Safety) are in PR #3 and wait for your check.
+> **Rounds 4 (M2), 5 (M3), 6 (M4) and 7 (M5): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 7: data safety (M5, open, nothing blocking)
+
+**To try when you check M5:** export a backup on the PC, import it on the iPhone (*Einstellungen › Daten › Backup einspielen*, *Ersetzen*, or *Einspielen* on an empty phone), change something on both, then bring the phone's backup back to the PC with *Zusammenführen*. The preview says what will happen before anything is written, and *Sicherungen vor Importen* can put the old state back.
+
+**R7.1 · When the backup reminder speaks up.** The pill turns amber once your data changed since the last backup and that backup is older than 7 days (or after 50 changes). A toast (*Letztes Backup vor 12 Tagen. Jetzt sichern?*) comes at most once a day. Without any backup, the pill is amber right away, but the toast waits for the second day (or 50 changes), so a first session isn't interrupted (ADR-043).
+- [ ] ⭐ Keep it like that.
+- [ ] Remind me right away on the first day too.
+- [ ] No toasts, the pill is enough.
+
+**R7.2 · What *Alle Daten löschen* deletes.** It deletes everything on this device: collection, prices, tags, Lagerorte, own items, settings, device preferences, and also the *Sicherungen vor Importen*. The dialog asks you to type *LÖSCHEN* and offers *Backup exportieren* first.
+- [ ] ⭐ Everything, snapshots included (it's what the button says, e.g. before handing a device on).
+- [ ] Keep the last snapshot, so it can be undone once.
+
+**R7.3 · The Sammlung CSV from Einstellungen › Daten.** It lists the lots you still own; sold, traded and given-away copies are in *Verkäufe*. A selection in Sammlung exports exactly what you selected, closed lots included.
+- [ ] ⭐ Open lots only.
+- [ ] All lots, closed ones with quantity 0.
+
+**R7.4 · Folding tags and Lagerorte when merging.** If both devices have a tag (or a Lagerort) with the same name, they become one, and lots keep pointing at it. This only happens when it's unambiguous: two binders called *Binder* on one device stay two (ADR-042).
+- [ ] ⭐ Fold them like that.
+- [ ] Never fold, keep both (then they show twice).
+
+---
+
+## Round 6: prices and portfolio (M4, open, nothing blocking)
+
+**To do on your side (Vercel is connected now, PR #3 has a preview):** in Vercel › Project › Settings › Git › *Deploy Hooks*, create a hook for `main` and store its URL in GitHub › Settings › Secrets and variables › Actions as `VERCEL_DEPLOY_HOOK`. Then the daily `price-guide.yml` job redeploys every morning and the Cardmarket price-guide suggestions appear. Without it everything else works; the chips just stay hidden. And when you try the price session on your collection: does 30 prices in about 5 minutes feel right (the M4 exit criterion)?
+
+**R6.1 · Seller country for *ab (DE)*.** Only Germany is a verified Cardmarket country id, so the Cardmarket links and every *ab (DE)* price assume German sellers; Einstellungen › Preise shows it as fixed. The language filter and the minimum condition can be changed.
+- [ ] ⭐ Keep German sellers fixed (your rule, R2.2).
+- [ ] Add *alle Länder* as an option (prices then read *ab (alle Länder)*).
+
+**R6.2 · What `V` copies from the price guide.** Next to the price field the guide shows *ab* (the cheapest offer on Cardmarket, over all languages, countries and conditions) and *Trend*. `V` copies *ab*, the same type as your default. For German cards the guide's *ab* is often below "cheapest German seller, German, NM or better", because it includes every language and condition.
+- [ ] ⭐ `V` copies *ab*; *Trend* is one click on its chip.
+- [ ] `V` copies *Trend*.
+
+**R6.3 · *Preis eintragen* as a sheet.** The spec described a small popover at the tile. It's built as the same sheet as *Hinzufügen*, *Eigener Wert* or *Verkaufen* (right on desktop, from the bottom on the iPhone; ADR-040): `P` on a tile or row, the € button on set tiles, or *Preis eintragen…* in a lot's menu. On a card page `P` jumps to the price field instead.
+- [ ] ⭐ Keep the sheet.
+- [ ] I'd rather have a small popover at the tile on desktop.
 
 ---
 

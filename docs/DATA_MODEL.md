@@ -213,6 +213,8 @@ interface PriceGuideSnapshot {
 }
 ```
 
+**As built (M4):** `scripts/price-guide` writes the file after `vite build`, only on Vercel (ADR-029); every other build, and a failed download, gets `{ source, fetchedAt, prices: {} }` without `guideCreatedAt`, so the app finds the file and shows no suggestions. The app validates the file with `priceGuideSnapshotSchema` (`src/domain/catalog/price-guide.ts`), shows values only for raw series of a known product and hides snapshots older than three days. A variant counts as reverse (the `-holo` fields) when its id starts with `reverse`.
+
 **Semantics of guide values (shown to the user):** for international products, one Cardmarket product covers **all languages and seller countries**, so `low` is the global cheapest offer, not "cheapest German seller in German". Japanese and Simplified Chinese products are separate Cardmarket products, so their values don't mix in international offers. Traditional Chinese copies are listed under the JP product (R2.3), so JP values may include TC offers (to verify). The UI labels suggestions accordingly (`UX_SPEC.md` §4.4): every price belongs to its card language (R2.6), and a guide value is never presented as if it applied to a language it doesn't cover.
 
 ### 4.2 Display snapshot on user records
@@ -332,6 +334,8 @@ type GradeKey = 'raw' | `${Lowercase<Grading['company']>}-${string}`; // 'raw', 
 
 Several entries per series per day are allowed. The latest `createdAt` on a date wins for valuation. "Unchanged" in the price session writes a new entry with the same price, so staleness resets honestly.
 
+**As built (M4):** an *ab* price stores the filters of Einstellungen › Preise in `context` (seller country, the copy's language when the link filters by it, the minimum condition); other types store none. "Unverändert" copies the last entry's type, source, context and origin. An accepted price-guide value (ADR-040) keeps its type (`from` for *ab*, `trend`) with `origin: 'guide'`, `source: 'cardmarket'` and **no `context`**, because the guide applies no filters; lists call it *Preisführer ab/Trend*. The price session never touches the shape: it writes ordinary entries.
+
 ### 5.4 `priceLatest`: materialized cache (derived)
 
 ```ts
@@ -393,9 +397,10 @@ Images are downscaled client-side before storing (max 1600 px long edge, WebP q�
 | key | value |
 |---|---|
 | `settings` | `Settings` object (Zod schema with defaults; merged on read so new settings appear automatically). Key v1 defaults: `cardLanguages: ['de','en','ja','zh-cn','zh-tw']`, `defaultCardLanguage: 'de'`, `defaultCondition: 'NM'`, `price: { defaultType: 'from', cardmarket: { sellerCountry: 'DE', matchLanguage: true, minCondition: 'NM' /* NM or better, R2.2 */ }, guideSuggestions: true, staleAfterDays: 14, unpriced: 'exclude' }`, `display: { theme: 'system', reduceTransparency: false, motion: 'full' }`, `backup: { remindAfterDays: 7 }` |
-| `meta` | `{ installId, createdAt, schemaVersion, lastBackupAt?, lastImportAt?, catalogVersionSeen }` |
-| `priceSession` | resumable price-session state (queue, cursor, scope) |
-| `ui:*` | per-device UI prefs (density, last-used defaults, collapsed panels) |
+| `meta` | `{ installId, createdAt, schemaVersion, lastBackupAt?, backupDataVersion?, lastImportAt?, catalogVersionSeen }`. `backupDataVersion` (M5) is the change counter at the last backup, so reminders count the changes since (ADR-043); optional, not exported |
+| `dataVersion` | the change counter: every write transaction bumps it (derived caches key on it; reminders compare it with `meta.backupDataVersion`). It only ever grows, also across *Alle Daten löschen* |
+| `priceSession` | resumable price-session state: `{ scope, order, queue: seriesKey[], position, results: Record<seriesKey, { outcome: 'saved' \| 'unchanged' \| 'skipped', before?, after?, copies, entryId? }>, startedAt }` (validated on read, dropped if it doesn't parse; never exported) |
+| `ui:*` | per-device UI prefs (density, last-used defaults, collapsed panels). As built: `ui:chart.range`, `ui:overview.range`, `ui:overview.mode`, `ui:library.columns.card` / `.sealed`, `ui:session.selection` (the series of a Sammlung selection for the next session), `ui:csv.dialect` (M5), `ui:backup.remindedOn` (M5: the day the backup reminder last showed) |
 | `overrides:cardmarket` | `Record<ItemKey, number>`: user corrections of Cardmarket product IDs (upstream IDs are sometimes wrong, see `DATA_SOURCES.md` §3.2). Exported with backups |
 
 ### 5.10 `tombstones`: deletions (merge and sync readiness)
@@ -406,7 +411,23 @@ interface Tombstone { id: string; table: string; deletedAt: string; }
 
 Deleting a record removes the row **and** writes a tombstone in one transaction. Main tables contain only live rows, which keeps queries simple, and merge-imports can still honor deletions (see `IMPORT_EXPORT.md` §5). Tombstones older than 365 days are purged.
 
-### 5.11 Future tables (not in schema v1, reserved)
+### 5.11 Safety snapshots: the separate `settr-snapshots` database (M5)
+
+```ts
+interface SnapshotRow {
+  id: string;               // UUIDv7 (sorts by creation)
+  createdAt: string;
+  reason: 'import' | 'restore';  // what came next
+  label?: string;           // the imported file's name
+  counts: BackupCounts;
+  bytes: number;
+  json: string;             // the state as a complete backup envelope (IMPORT_EXPORT.md §2)
+}
+```
+
+A second IndexedDB database (`snapshots: 'id, createdAt'`, version 1) keeps the last **three** states before an import or a restore (ADR-041). It's not user data in the backup sense: snapshots aren't exported, and *Alle Daten löschen* removes them. A snapshot is restored through the import pipeline, so an older one gets migrated like any backup.
+
+### 5.12 Future tables (not in schema v1, reserved)
 
 - `packOpenings` (I-11): product holding, date, packs, pulled holding ids, cost-allocation method.
 - `gradingSubmissions` (I-09): company, service level, dates, costs, holding ids, status.
@@ -524,7 +545,7 @@ db.version(1).stores({
 
 **Migration policy**
 - Every schema change bumps `db.version(n)` with an `upgrade()` function and a fixture-based test that upgrades a v(n−1) database.
-- Backup files carry their `schemaVersion`, and importers migrate older payloads through the same pure migration functions (`src/db/migrations/*.ts`).
+- Backup files carry their `schemaVersion`, and importers migrate older payloads through the same pure migration functions. As built (M5, ADR-041): per-record functions per schema step in `src/domain/backup/migrate.ts` (`MIGRATIONS[n]` lifts version n to n + 1), used by Dexie's `upgrade()` and by the import. Schema 1 has none; `tests/fixtures/backups/v1/basic.settr.json` must import in every later version.
 - Never remove or rename a field without a migration. Additive changes are preferred.
 
 **Transactions**

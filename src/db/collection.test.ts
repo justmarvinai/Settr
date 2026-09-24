@@ -1,13 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { canonicalJson } from '@/domain/backup';
 import { remaining } from '@/domain/schemas';
 import { cardSeriesKey } from '@/domain/series';
+import { sha256Hex } from '@/lib/hash';
 import { SettrDB } from './db';
 import {
   addDisposal,
   addPrice,
   allocatePullCosts,
   backupFileName,
-  canonicalJson,
   createBackup,
   createCustomItem,
   createHoldings,
@@ -27,7 +28,6 @@ import {
   renameTag,
   restoreHoldings,
   restoreTagOrLocation,
-  sha256Hex,
   updateHolding,
   updateHoldings,
   type NewHolding,

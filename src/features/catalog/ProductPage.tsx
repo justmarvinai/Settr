@@ -1,9 +1,8 @@
-import { ArrowLeftIcon, ArrowSquareOutIcon } from '@phosphor-icons/react';
+import { ArrowLeftIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
-import { cardmarketSearchUrl, productCardmarketUrl, useManifest, useSealed } from '@/catalog';
+import { useManifest, useSealed } from '@/catalog';
 import { ProductImage } from '@/components/domain/ProductImage';
-import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
@@ -19,10 +18,10 @@ import {
   productTypeLabel,
 } from '@/i18n';
 import { formatDate, formatMoney } from '@/i18n/format';
-import { cardmarketFilters } from './cardmarket';
 import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
-import { HoldingsPanel, lotLabel, openAdd, productInfo } from '@/features/collection';
+import { HoldingsPanel, lotLabel, openAdd, productInfo, snapshotOf } from '@/features/collection';
+import { cardmarketLinkOf, ItemPrices } from '@/features/prices';
 import { ProductTile } from './ProductTile';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sealed/$productId');
@@ -54,9 +53,8 @@ export function ProductPage() {
   const lang = pickLanguage(search.lang, product.languages, settings);
   const image = product.images?.[lang] ?? Object.values(product.images ?? {})[0];
   const name = pickText(product.name);
-  const cardmarketHref =
-    productCardmarketUrl(product, cardmarketFilters(settings, lang)) ??
-    cardmarketSearchUrl(product.name.en ?? name);
+  const firstSet = manifest.sets.find((s) => s.id === product.setIds[0]);
+  const info = productInfo(product, firstSet ? pickText(firstSet.name) : undefined);
   const family = product.family
     ? products.filter((p) => p.family === product.family && p.id !== product.id)
     : [];
@@ -129,34 +127,23 @@ export function ProductPage() {
             />
           ) : null}
 
-          <HoldingsPanel
-            itemId={product.id}
-            describe={(h) =>
-              lotLabel(productInfo(product), { language: h.language, quantity: remaining(h) })
-            }
-            onAdd={() => openAdd({ kind: 'sealed', id: product.id }, undefined, lang)}
+          <ItemPrices
+            item={{
+              ref: info.ref,
+              snapshot: snapshotOf(info, lang),
+              label: info.name(lang).text,
+              languages: product.languages,
+              variants: [],
+            }}
+            language={lang}
+            cardmarket={(variant) => cardmarketLinkOf(info, lang, variant, settings)}
           />
 
-          <Panel className="flex flex-col gap-3 p-5">
-            <h3 className="type-h3 m-0">{m.catalog_cardmarket_title()}</h3>
-            <p className="type-small m-0 text-ink-muted">
-              {product.refs?.cardmarket
-                ? m.catalog_cardmarket_filters_sealed({ language: languageLabel(lang) })
-                : m.catalog_cardmarket_search_hint()}
-            </p>
-            <a
-              href={cardmarketHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={buttonVariants({ variant: 'outline', className: 'w-fit' })}
-            >
-              {product.refs?.cardmarket
-                ? m.catalog_cardmarket_open()
-                : m.catalog_cardmarket_search()}
-              <ArrowSquareOutIcon size={18} aria-hidden />
-              <span className="sr-only">{m.catalog_opens_new_tab()}</span>
-            </a>
-          </Panel>
+          <HoldingsPanel
+            itemId={product.id}
+            describe={(h) => lotLabel(info, { language: h.language, quantity: remaining(h) })}
+            onAdd={() => openAdd({ kind: 'sealed', id: product.id }, undefined, lang)}
+          />
 
           <Panel className="p-5">
             <dl className="m-0 grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-6 gap-y-4">

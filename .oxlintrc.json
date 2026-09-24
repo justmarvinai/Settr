@@ -73,6 +73,13 @@
             "group": ["@/features/*/**"],
             "message": "Import other features through their public index.ts (ARCHITECTURE §4.1)."
           }
+        ],
+        "paths": [
+          {
+            "name": "zod",
+            "message": "Import z from '@/lib/zod': Zod runs jitless there, which the CSP needs.",
+            "allowTypeImports": true
+          }
         ]
       }
     ]
@@ -94,6 +101,13 @@
                   "@/components/**"
                 ],
                 "message": "src/db sits below the UI layers (ARCHITECTURE §4.1)."
+              }
+            ],
+            "paths": [
+              {
+                "name": "zod",
+                "message": "Import z from '@/lib/zod': Zod runs jitless there, which the CSP needs.",
+                "allowTypeImports": true
               }
             ]
           }
@@ -126,6 +140,13 @@
                 ],
                 "message": "src/domain is pure TypeScript: no React, Dexie, DOM, i18n or app layers (ARCHITECTURE §4.1)."
               }
+            ],
+            "paths": [
+              {
+                "name": "zod",
+                "message": "Import z from '@/lib/zod': Zod runs jitless there, which the CSP needs.",
+                "allowTypeImports": true
+              }
             ]
           }
         ]
@@ -153,6 +174,13 @@
                 ],
                 "message": "Components are shared building blocks: no database, feature, app or route imports (ARCHITECTURE §4.1)."
               }
+            ],
+            "paths": [
+              {
+                "name": "zod",
+                "message": "Import z from '@/lib/zod': Zod runs jitless there, which the CSP needs.",
+                "allowTypeImports": true
+              }
             ]
           }
         ]
@@ -176,6 +204,13 @@
               {
                 "group": ["@/app/**", "@/routes/**"],
                 "message": "Features must not depend on the app shell or routes (ARCHITECTURE §4.1)."
+              }
+            ],
+            "paths": [
+              {
+                "name": "zod",
+                "message": "Import z from '@/lib/zod': Zod runs jitless there, which the CSP needs.",
+                "allowTypeImports": true
               }
             ]
           }
@@ -205,9 +240,29 @@
       }
     },
     {
-      "files": ["src/workers/**", "src/catalog/search/client.ts"],
+      "files": [
+        "src/workers/**",
+        "src/catalog/search/client.ts",
+        "src/features/data/read-backup.ts"
+      ],
       "rules": {
         "unicorn/require-post-message-target-origin": "off"
+      }
+    },
+    {
+      "files": ["scripts/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["dexie", "dexie-react-hooks"],
+                "message": "Only src/db/ may touch Dexie/IndexedDB (ARCHITECTURE §4.1)."
+              }
+            ]
+          }
+        ]
       }
     }
   ]

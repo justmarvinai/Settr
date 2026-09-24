@@ -96,6 +96,9 @@
 .ui-menu {
   min-width: 220px;
   max-width: min(320px, calc(100vw - 24px));
+  /* Long menus (the table's columns) scroll inside the space Base UI measures for them */
+  max-height: var(--available-height);
+  overflow-y: auto;
   border-radius: 18px;
   padding: 6px;
   transform-origin: var(--transform-origin);
@@ -143,6 +146,34 @@
 @media (min-width: 768px) {
   :root:has([data-bulk-bar]) .ui-toast-viewport {
     bottom: 92px;
+  }
+}
+/*
+ * On phones (and short windows), a toast would cover an open dialog's or sheet's buttons and take
+ * their taps; while one is open (not closing), toasts appear at the top and stack downwards.
+ */
+@media (max-width: 767px), (max-height: 720px) {
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast-viewport {
+    top: max(12px, env(safe-area-inset-top));
+    bottom: auto;
+  }
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style])) .ui-toast {
+    top: 0;
+    bottom: auto;
+    transform: translateY(calc(var(--toast-swipe-movement-y) + var(--toast-index) * 10px))
+      translateX(var(--toast-swipe-movement-x)) scale(calc(1 - var(--toast-index) * 0.05));
+  }
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast[data-expanded] {
+    transform: translateY(calc(var(--toast-offset-y) + var(--toast-swipe-movement-y)))
+      translateX(var(--toast-swipe-movement-x));
+  }
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast[data-starting-style],
+  :root:has(.ui-dialog:not([data-ending-style]), .ui-sheet:not([data-ending-style]))
+    .ui-toast[data-ending-style] {
+    transform: translateY(-24px);
   }
 }
 .ui-toast {
@@ -194,4 +225,44 @@
 }
 .skip-link:focus {
   top: 12px;
+}
+
+/* Charts: the hidden range input that scrubs by keyboard shows its focus on the whole chart */
+.chart-box:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+/* A price that was just saved drops into its chart (DESIGN_SYSTEM.md §7, moment 5) */
+@keyframes chart-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(1.4);
+  }
+}
+.chart-drop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chart-drop var(--dur-slow) var(--ease-out);
+}
+
+/* The value flashes gain or loss for 150 ms after a save, then fades back */
+@keyframes value-flash-gain {
+  0%,
+  30% {
+    color: var(--gain);
+  }
+}
+@keyframes value-flash-loss {
+  0%,
+  30% {
+    color: var(--loss);
+  }
+}
+.value-flash-gain {
+  animation: value-flash-gain 500ms var(--ease-out);
+}
+.value-flash-loss {
+  animation: value-flash-loss 500ms var(--ease-out);
 }

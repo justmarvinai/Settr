@@ -1,11 +1,15 @@
 import { PlusIcon } from '@phosphor-icons/react';
 import { Fragment, useState, type ReactNode } from 'react';
+import { PLDelta } from '@/components/domain/PLDelta';
 import { Button } from '@/components/ui/Button';
 import { ActionMenu } from '@/components/ui/Menu';
 import { Panel } from '@/components/ui/Panel';
-import { useHoldingsOfItem, useLocations, useTags } from '@/db';
+import { useHoldingsOfItem, useLatestPrices, useLocations, useSettings, useTags } from '@/db';
 import { remainingCost, unitCostDisplay } from '@/domain/collection';
+import { todayIso } from '@/domain/ids';
 import { remaining, type Disposal, type Holding, type Location } from '@/domain/schemas';
+import { seriesKeyOf } from '@/domain/series';
+import { valueLot, type LotValue, type ValuationOptions } from '@/domain/valuation';
 import { languageCode, m } from '@/i18n';
 import { disposalText, gradingText, sealedStateLabel } from '@/i18n/collection-labels';
 import { formatCount, formatDate, formatMoney } from '@/i18n/format';
@@ -40,16 +44,54 @@ function DisposalLine({ disposal }: { disposal: Disposal }) {
   );
 }
 
+/** `Wert 69,80 € (34,90 € pro Stück) ↗ +17,80 € (+34,2 %)`, with *eigener Wert* and *veraltet* tags. */
+function ValueLine({ value }: { value: LotValue }) {
+  const { unit } = value;
+  if (!value.value) {
+    return <span className="type-small text-ink-subtle">{m.lot_unpriced()}</span>;
+  }
+  return (
+    <span className="type-small flex flex-wrap items-center gap-x-2 gap-y-1 text-ink">
+      <span className="money font-bold">
+        {value.remaining > 1 && unit
+          ? m.lot_value_with_unit({
+              value: formatMoney(value.value),
+              unit: formatMoney(unit.price),
+            })
+          : m.lot_value({ value: formatMoney(value.value) })}
+      </span>
+      {value.pl ? <PLDelta delta={value.pl} ratio={value.plRatio} /> : null}
+      {unit?.source === 'override' ? (
+        <span className="type-label rounded-pill bg-accent-soft px-2 py-0.5 text-accent-text">
+          {m.lot_value_own({ date: formatDate(unit.date) })}
+        </span>
+      ) : null}
+      {value.atCost ? (
+        <span className="type-label rounded-pill bg-hover px-2 py-0.5 text-ink-muted">
+          {m.lot_value_at_cost()}
+        </span>
+      ) : null}
+      {value.stale ? (
+        <span className="type-label rounded-pill bg-warn-soft px-2 py-0.5 text-warn">
+          {m.prices_stale()}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 function LotRow({
   holding,
   label,
   locations,
   tagNames,
+  value,
 }: {
   holding: Holding;
   label: string;
   locations: readonly Location[];
   tagNames: ReadonlyMap<string, string>;
+  value: LotValue | undefined;
 }) {
   const left = remaining(holding);
   const cost = remainingCost(holding);
@@ -98,6 +140,7 @@ function LotRow({
             where,
           ])}
         </span>
+        {value && left > 0 ? <ValueLine value={value} /> : null}
         {holding.tags.length ? (
           <span className="flex flex-wrap gap-1.5">
             {holding.tags.map((id) => (
@@ -128,7 +171,8 @@ function LotRow({
 
 /**
  * "In deiner Sammlung" on card and product pages (UX_SPEC.md §4.4, §4.5): every lot of the item
- * with what it cost, where it is and a menu (edit, duplicate, sell, open, delete, all undoable).
+ * with what it cost, what it's worth now (its series' price or its *Eigener Wert*) and the P/L,
+ * where it is and a menu (edit, own value, duplicate, sell, open, delete, all undoable).
  */
 export function HoldingsPanel({
   itemId,
@@ -141,6 +185,13 @@ export function HoldingsPanel({
   onAdd: () => void;
 }) {
   const holdings = useHoldingsOfItem(itemId);
+  const latest = useLatestPrices();
+  const settings = useSettings();
+  const options: ValuationOptions = {
+    today: todayIso(),
+    staleAfterDays: settings.price.staleAfterDays,
+    unpriced: settings.price.unpriced,
+  };
   const locations = useLocations() ?? [];
   const tags = useTags() ?? [];
   const [showClosed, setShowClosed] = useState(false);
@@ -176,6 +227,7 @@ export function HoldingsPanel({
               label={describe(h)}
               locations={locations}
               tagNames={tagNames}
+              value={latest ? valueLot(h, latest.get(seriesKeyOf(h)), options) : undefined}
             />
           ))}
         </ul>

@@ -29,10 +29,10 @@ A change is **done** only when all of the following hold:
 | Layer | Tool | Scope | Target |
 |---|---|---|---|
 | **Unit** | Vitest 5 | `src/domain/**` (money, allocation, valuation, P/L, time series, completion, series keys, CSV, migrations) and `src/lib/**` | ≥ 95 % branch coverage on `src/domain` |
-| **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed |
+| **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed. As built (M5): `tests/setup.ts` sets one seed for every property test; `FC_SEED=random` (nightly, printed) or `FC_SEED=<seed>` to replay a failure. M5 adds: merging into itself changes nothing, into an empty device gives the backup, two devices converge whichever merges which (`merge.test.ts`); export → import (replace) → export gives the same data and checksum on generated datasets (`db/import.test.ts`) |
 | **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
 | **Component** | Vitest Browser Mode (Playwright provider, `vitest-browser-react`), `*.test.tsx` next to the component | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
-| **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. Every test also fails on console errors and CSP violations (the preview server sends the production CSP) | All journeys green before merge to `main` |
+| **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. CI renders WebKit in software (frames of 100–600 ms with the glass layers), so the WebKit project allows 60 s per test instead of 30 s. Every test also fails on console errors and CSP violations (the preview server sends the production CSP). As built (M5): the fixture also listens for `securitypolicyviolation` events, because Chromium and WebKit don't log a violation the page catches itself. That's how Zod's `new Function` probe surfaced (only Firefox logged it); Zod now runs jitless (`src/lib/zod.ts`, and a lint rule keeps imports going through it) | All journeys green before merge to `main` |
 | **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
 | **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
@@ -57,10 +57,22 @@ A change is **done** only when all of the following hold:
 
 **Automated as of M3** (`tests/e2e/*.spec.ts`, desktop and phone Chromium; WebKit in CI): 4 (the sale; realized P/L arrives with M4), 8, 12 (next-free-slot rules as unit tests for 3×3 and 3×4, the move into a binder in e2e) and 13 (the exact sum as a property test, the flow in e2e). The collection spec also covers quick add with undo, the add sheet, Sammlung filters, table sort, tags, move and delete with undo, the backup download and `owned:` search, with axe on those screens in light and dark. The other journeys arrive with their milestones.
 
+**Added in M4** (`tests/e2e/prices.spec.ts`): 2 (a price on the card page with `P` and `Enter`, the lot's P/L, undo; the price sheet from `P` on a tile), 3 (the session with `Enter` and `S` and its summary; `U` in the price sheet), 11 (guide chips from a stubbed snapshot, `V`, `origin: guide`, a changed amount stays the user's), the value and P/L agreeing across Übersicht, Sammlung and Portfolio (the numbers themselves against the hand-calculated fixture in `valuation.test.ts`), and axe on the card page with prices, Übersicht, Preise, Portfolio, the session and the price sheet in light and dark. Journey 1 waits for onboarding (M6), 5–7 and 9–10 for M5/M6.
+
+**Added in M5** (`tests/e2e/data.spec.ts`):
+- Journey 6: export → *Alle Daten löschen* → import. A second export has the same checksum over its data, and the price is back on the card page.
+- Journey 7: a merge with a newer, an older, a deleted and a new lot from *another device*, the preview's counts, then *Wiederherstellen* from *Sicherungen vor Importen* back to the exact state before.
+- Refusals: a broken JSON file (line and column), a backup from a newer Settr, and an edited file (checksum warning, a skipped record and why).
+- CSV: Excel (Deutschland) from Daten, and International for a Sammlung selection.
+- The backup pill and the reminder toast (from a day-old install, once a day), and ⌘K *Backup exportieren* and *Backup einspielen …*.
+- axe on the Daten page, the import preview and the delete dialog, in light and dark.
+
+Every PR runs these on Chromium (desktop, phone) and WebKit (iPhone); `e2e-nightly.yml` runs them on Firefox (the M5 exit criterion). Journeys 1, 5, 9 and 10 remain for M6.
+
 ### 2.2 Test data
 
 - `tests/fixtures/catalog/`: a trimmed, frozen catalog (a few cards per print), so tests don't depend on the live pipeline. It contains at least two sets from two series, so no code path can assume a single set (ADR-028).
-- `tests/fixtures/backups/v1/…`: backups of every released schema version, used for the migration tests.
+- `tests/fixtures/backups/v1/…`: backups of every released schema version, used for the migration tests. As built (M5): `backups/v1/basic.settr.json` holds every table and most fields (a sale with fees, a graded copy with its own value, sealed, a custom item, a photo, a tombstone, non-default settings, a Cardmarket correction); `db/import.test.ts` checks it reads with a valid checksum and no issues and imports as it is.
 - A factory module (`tests/factories.ts`) builds valid holdings, prices and so on with sensible defaults.
 
 ---
@@ -96,7 +108,7 @@ Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Be
 
 | Metric | Budget |
 |---|---|
-| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB) |
+| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB, M3: 219.6 KB, M4: 220.3 KB) |
 | Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
 | CSS (gzip) | ≤ 35 KB initial; on-demand CSS ≤ 45 KB per file (one Noto CJK family's `@font-face` rules, loaded only where Japanese or Chinese names show) |
 | Web fonts on first render | ≤ 2 files, ≤ 125 KB total (latin subsets, variable; ADR-030). CJK fonts load lazily and only when CJK text is rendered |
@@ -157,7 +169,7 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 | Workflow | Trigger | Steps |
 |---|---|---|
 | `ci.yml` | PR, push to `main`, manual | pnpm install (cached) → Paraglide compile + `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → components (Vitest Browser Mode, Chromium) → build → CSP hash check (`pnpm csp`) → size-limit → `pnpm audit` (prod, high) → Playwright on the built app: desktop and phone on Chromium, iPhone on WebKit → reports uploaded on failure |
-| `e2e-nightly.yml` | nightly | Full browser matrix + visual regression + random-seed property tests |
+| `e2e-nightly.yml` | nightly + manual | As built (M5): property tests with a random seed (`FC_SEED=random`), and the data journeys (`tests/e2e/data.spec.ts`) on Firefox (a `firefox` Playwright project that only `NIGHTLY=1` enables). The full browser matrix and visual regression follow in M6 |
 | `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
 | `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
 | Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |

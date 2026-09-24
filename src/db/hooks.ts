@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { DEFAULT_SETTINGS, type Meta, type Settings } from '@/domain/schemas';
 import { db } from './instance';
-import { getMeta } from './repositories/meta';
+import { getDataVersion, getMeta } from './repositories/meta';
 import { getSettings } from './repositories/settings';
 
 /** Reactive settings with defaults while loading (ARCHITECTURE.md §5). */
@@ -24,4 +24,9 @@ export function useStoredDisplay(): Settings['display'] | undefined {
 /** Number of lots, open or closed; undefined while loading. */
 export function useHoldingCount(): number | undefined {
   return useLiveQuery(() => db.holdings.count(), []);
+}
+
+/** The change counter (bumped by every write); undefined while loading. */
+export function useDataVersion(): number | undefined {
+  return useLiveQuery(() => getDataVersion(db), []);
 }

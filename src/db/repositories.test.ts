@@ -12,11 +12,14 @@ import {
   getMeta,
   getSettings,
   listOpenHoldings,
+  listPricesOfItem,
   markBackupDone,
   purgeTombstones,
   rebuildPriceLatest,
   restoreHolding,
+  restorePrices,
   updateHolding,
+  updatePrice,
   updateSettings,
   type NewHolding,
   type NewPriceEntry,
@@ -165,6 +168,32 @@ describe('prices and priceLatest', () => {
     await deletePrice(db, older.id);
     expect(await db.priceLatest.get(series)).toBeUndefined();
     expect(await db.tombstones.where('table').equals('prices').count()).toBe(2);
+  });
+
+  it('edits an entry, keeps its place on the day and follows it in latest', async () => {
+    const first = await addPrice(db, { ...price('2026-09-22', 9490), note: 'Messe' });
+    const second = await addPrice(db, price('2026-09-22', 9390));
+    const { before, after } = await updatePrice(db, first.id, {
+      price: { minor: 9990, currency: 'EUR' },
+      date: '2026-09-23',
+      note: undefined,
+    });
+    expect(before.price.minor).toBe(9490);
+    expect(after).toMatchObject({ date: '2026-09-23', createdAt: first.createdAt });
+    expect(after).not.toHaveProperty('note');
+    expect((await db.priceLatest.get(series))?.entryId).toBe(first.id);
+    await updatePrice(db, first.id, { date: '2026-09-21' });
+    expect((await db.priceLatest.get(series))?.entryId).toBe(second.id);
+  });
+
+  it('restores deleted entries with their latest', async () => {
+    const only = await addPrice(db, price('2026-09-22', 9490));
+    const deleted = await deletePrice(db, only.id);
+    expect(await db.priceLatest.get(series)).toBeUndefined();
+    await restorePrices(db, deleted ? [deleted] : []);
+    expect((await db.priceLatest.get(series))?.entryId).toBe(only.id);
+    expect(await db.tombstones.get(only.id)).toBeUndefined();
+    expect(await listPricesOfItem(db, 'intl:30th:150')).toHaveLength(1);
   });
 
   it('rebuilds the cache from scratch', async () => {

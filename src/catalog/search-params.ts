@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { CARD_LANGUAGES } from '@/domain/catalog-types';
 import { CARD_SECTIONS } from '@/domain/catalog';
 

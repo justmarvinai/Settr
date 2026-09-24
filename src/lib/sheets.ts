@@ -14,6 +14,22 @@ export type SheetRequest =
   | { type: 'dispose'; holdingId: string }
   /** Open a sealed product and log its pulls (COL-12). */
   | { type: 'open'; holdingId: string }
+  /** The lot's own value per copy, *Eigener Wert* (PRC-07). */
+  | { type: 'value'; holdingId: string }
+  /**
+   * Record a price (PRC-01, UX_SPEC.md §4.9) for an item in one language; a card's variant and
+   * grade preselect its series. `holdingId` is the lot it came from: its snapshot stands in when
+   * the catalog lacks the item.
+   */
+  | {
+      type: 'price';
+      item: ItemRef;
+      setId?: string | undefined;
+      language: CardLanguage;
+      variant?: string | undefined;
+      grade?: string | undefined;
+      holdingId?: string | undefined;
+    }
   /** Schnellerfassung for a set (COL-06). */
   | { type: 'quick'; setId: string; language?: CardLanguage | undefined }
   /** Create a custom item (CAT-08), then add a lot of it. */

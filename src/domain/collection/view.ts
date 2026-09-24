@@ -1,6 +1,7 @@
 import type { CardLanguage } from '../catalog-types';
 import type { CatalogImage } from '../catalog/schema';
 import { money, type Money } from '../money';
+import type { LotValue } from '../valuation/value';
 import type { Holding } from '../schemas/holding';
 import { remaining } from '../schemas/holding';
 import { remainingCost } from './lots';
@@ -32,6 +33,8 @@ export interface LotRow {
   locationText?: string | undefined;
   /** False when the catalog no longer has the item (the lot shows its snapshot). */
   inCatalog: boolean;
+  /** Value, cost and P/L today (DATA_MODEL.md §6.3), once prices are loaded. */
+  value?: LotValue | undefined;
 }
 
 export type LotFilter = Omit<CollectionSearch, 'view' | 'sort' | 'dir' | 'group'>;
@@ -61,6 +64,11 @@ export function matchesFilter(row: LotRow, filter: LotFilter): boolean {
   } else if (filter.loc && h.location?.id !== filter.loc) {
     return false;
   }
+  if (filter.priced === 'yes' && !row.value?.unit) return false;
+  if (filter.priced === 'no' && row.value?.unit) return false;
+  if (filter.stale && !row.value?.stale) return false;
+  if (filter.pl === 'gain' && !((row.value?.pl?.minor ?? 0) > 0)) return false;
+  if (filter.pl === 'loss' && !((row.value?.pl?.minor ?? 0) < 0)) return false;
   const bought = boughtOn(h);
   if (filter.from && bought < filter.from) return false;
   if (filter.to && bought > filter.to) return false;
@@ -87,7 +95,20 @@ const COMPARE: Record<LotSort, (a: LotRow, b: LotRow) => number> = {
   bought: (a, b) => boughtOn(a.holding).localeCompare(boughtOn(b.holding)),
   cost: (a, b) => unitCostMinor(a) - unitCostMinor(b),
   quantity: (a, b) => remaining(a.holding) - remaining(b.holding),
+  // Lots without a price (or cost) sort as lowest, so "highest first" starts with real values.
+  unitValue: (a, b) => known(a.value?.unit?.price.minor, b.value?.unit?.price.minor),
+  value: (a, b) => known(a.value?.value?.minor, b.value?.value?.minor),
+  pl: (a, b) => known(a.value?.pl?.minor, b.value?.pl?.minor),
+  plRatio: (a, b) => known(a.value?.plRatio, b.value?.plRatio),
+  priceDate: (a, b) => (a.value?.unit?.date ?? '').localeCompare(b.value?.unit?.date ?? ''),
 };
+
+/** Compares numbers where unknown ranks below every known value (P/L can be negative). */
+function known(a: number | undefined, b: number | undefined): number {
+  if (a === undefined) return b === undefined ? 0 : -1;
+  if (b === undefined) return 1;
+  return a - b;
+}
 
 /** Remaining cost per remaining unit, for sorting; unknown costs sort as lowest. */
 function unitCostMinor(row: LotRow): number {
@@ -96,7 +117,7 @@ function unitCostMinor(row: LotRow): number {
   return cost && left > 0 ? cost.minor / left : -1;
 }
 
-/** Newest first by default; names and numbers A→Z. */
+/** Newest first by default; names and numbers A→Z; values highest first. */
 export function defaultDirection(sort: LotSort): 'asc' | 'desc' {
   return sort === 'name' || sort === 'number' ? 'asc' : 'desc';
 }
@@ -151,20 +172,58 @@ export interface CollectionSummary {
   invested: Money;
   /** Lots without a known cost. */
   unknownCost: number;
+  /** Value of the copies held that have a price (or stand in at cost, per the setting). */
+  value: Money;
+  /** Unrealized P/L of the lots with both a value and a cost, and its share of their cost. */
+  pl: Money;
+  plRatio?: number | undefined;
+  /** Open lots without a price of their own, and with one older than the stale threshold. */
+  unpriced: number;
+  stale: number;
 }
 
+/** The numbers above the lists; they follow the filters (UX_SPEC.md §4.6). */
 export function summarize(rows: readonly LotRow[]): CollectionSummary {
   let copies = 0;
   let invested = 0;
   let unknownCost = 0;
+  let value = 0;
+  let pricedValue = 0;
+  let pricedCost = 0;
+  let unpriced = 0;
+  let stale = 0;
   const items = new Set<string>();
   for (const row of rows) {
     const h = row.holding;
-    copies += remaining(h);
+    const left = remaining(h);
+    copies += left;
     items.add(h.item.id);
     const cost = remainingCost(h);
     if (cost) invested += cost.minor;
     else unknownCost += 1;
+    if (left <= 0) continue;
+    const v = row.value;
+    if (!v?.unit) unpriced += 1;
+    if (v?.stale) stale += 1;
+    if (v?.value) {
+      value += v.value.minor;
+      if (v.cost) {
+        pricedValue += v.value.minor;
+        pricedCost += v.cost.minor;
+      }
+    }
   }
-  return { lots: rows.length, copies, items: items.size, invested: money(invested), unknownCost };
+  const pl = pricedValue - pricedCost;
+  return {
+    lots: rows.length,
+    copies,
+    items: items.size,
+    invested: money(invested),
+    unknownCost,
+    value: money(value),
+    pl: money(pl),
+    plRatio: pricedCost > 0 ? pl / pricedCost : undefined,
+    unpriced,
+    stale,
+  };
 }

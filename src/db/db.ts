@@ -1,13 +1,14 @@
 import { Dexie, type EntityTable } from 'dexie';
-import type {
-  CustomItem,
-  Holding,
-  Location,
-  PriceEntry,
-  PriceLatest,
-  Tag,
-  Tombstone,
-  WishlistItem,
+import {
+  SCHEMA_VERSION,
+  type CustomItem,
+  type Holding,
+  type Location,
+  type PriceEntry,
+  type PriceLatest,
+  type Tag,
+  type Tombstone,
+  type WishlistItem,
 } from '@/domain/schemas';
 
 /** Rows of the `kv` table: settings, meta, session state, per-device UI prefs (DATA_MODEL.md §5.9). */
@@ -28,7 +29,7 @@ export interface MediaRow {
   bytes: number;
 }
 
-export const SCHEMA_VERSION = 1;
+export { SCHEMA_VERSION };
 
 /**
  * The only IndexedDB access in the app (ARCHITECTURE.md §4.1). Every schema change bumps the version

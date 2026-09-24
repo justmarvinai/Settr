@@ -1,4 +1,6 @@
 import type { CardLanguage, GradingCompany } from './catalog-types';
+import { STANDARD_VARIANT } from './catalog/vocab';
+import type { Holding } from './schemas/holding';
 
 /**
  * Price series keys (DATA_MODEL.md §6.1). All raw copies of the same card, language and variant
@@ -58,4 +60,11 @@ export function cardSeriesKey(
 
 export function sealedSeriesKey(productId: string, language: CardLanguage): string {
   return `sealed|${productId}|${language}`;
+}
+
+/** The series a lot is valued by: its item, language, variant and grade (DATA_MODEL.md §6.1). */
+export function seriesKeyOf(h: Pick<Holding, 'item' | 'language' | 'variant' | 'grading'>): string {
+  return h.item.kind === 'sealed'
+    ? sealedSeriesKey(h.item.id, h.language)
+    : cardSeriesKey(h.item.id, h.language, h.variant ?? STANDARD_VARIANT, gradeKey(h.grading));
 }
