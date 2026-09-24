@@ -62,11 +62,13 @@ export interface SetConfig {
   /**
    * Cardmarket expansion ids, checked when the product files are available (CI). `expansion` holds
    * the singles (Japanese ones for Asian prints; found through TCGdex's ids and the international
-   * counterparts' metacards when left out); `sealedExpansions` are extra expansions that only
-   * sell this set's sealed products.
+   * counterparts' metacards when left out); `otherExpansions` hold some of the set's prints
+   * Cardmarket files apart (pattern reverse holos, TCGplayer's "Deck Exclusives");
+   * `sealedExpansions` are extra expansions that only sell this set's sealed products.
    */
   cardmarket?: {
     expansion?: number;
+    otherExpansions?: number[];
     simplifiedChineseExpansion?: number;
     sealedExpansions?: number[];
   };
@@ -101,10 +103,12 @@ function international(
   set: string,
   options: Pick<SetConfig, 'code' | 'expectedCards' | 'printedTotal' | 'coverCard' | 'extras'> & {
     cardmarket: number;
+    /** Expansions Cardmarket files some of the set's prints under (SetConfig.cardmarket). */
+    cardmarketOther?: number[];
     tcgplayer?: number;
   },
 ): SetConfig {
-  const { cardmarket, tcgplayer, printedTotal, ...rest } = options;
+  const { cardmarket, cardmarketOther, tcgplayer, printedTotal, ...rest } = options;
   return {
     id,
     print: 'intl',
@@ -115,20 +119,32 @@ function international(
     section: printedTotal ? mainAndSecret(printedTotal) : () => 'main',
     ...(printedTotal ? { printedTotal } : {}),
     ...rest,
-    cardmarket: { expansion: cardmarket },
+    cardmarket: {
+      expansion: cardmarket,
+      ...(cardmarketOther ? { otherExpansions: cardmarketOther } : {}),
+    },
     ...(tcgplayer ? { tcgplayer: { category: 3, groupId: tcgplayer } } : {}),
   };
 }
 
-/** A Japanese Mega Evolution set; Traditional Chinese mirrors it (same list and numbering). */
+/**
+ * A Japanese Mega Evolution set; Traditional Chinese mirrors it (same list and numbering), except
+ * for the promo cards: Taiwan numbers its promos in a series of its own (`mirrored: false`).
+ */
 function japanese(
   set: string,
   options: Pick<
     SetConfig,
-    'expectedCards' | 'printedTotal' | 'coverCard' | 'counterpartSets' | 'rarities' | 'rarityMarks'
-  > & { name: LocalizedText; tcgplayer?: string },
+    | 'expectedCards'
+    | 'printedTotal'
+    | 'coverCard'
+    | 'counterpartSets'
+    | 'rarities'
+    | 'rarityMarks'
+    | 'cardmarket'
+  > & { name: LocalizedText; tcgplayer?: string; mirrored?: boolean },
 ): SetConfig {
-  const { name, tcgplayer, printedTotal, ...rest } = options;
+  const { name, tcgplayer, printedTotal, mirrored = true, ...rest } = options;
   return {
     id: `asia:${set}`,
     print: 'asia',
@@ -136,11 +152,11 @@ function japanese(
     series: SERIES.megaEvolution,
     name,
     code: set,
-    languages: ['ja', 'zh-tw'],
+    languages: mirrored ? ['ja', 'zh-tw'] : ['ja'],
     source: M(set),
     section: printedTotal ? mainAndSecret(printedTotal) : () => 'main',
     ...(printedTotal ? { printedTotal } : {}),
-    traditionalChinese: set,
+    ...(mirrored ? { traditionalChinese: set } : {}),
     ...rest,
     ...(tcgplayer ? { tcgplayer: { category: 85, groupName: tcgplayer } } : {}),
   };
@@ -238,6 +254,7 @@ export const CATALOG_SETS: SetConfig[] = [
     extras: [MEE_BASIC],
     coverCard: '178', // Mega Gardevoir ex, Special Illustration Rare
     cardmarket: 6209,
+    cardmarketOther: [6290], // deck exclusives
     tcgplayer: 24380,
   }),
   international('intl:me02', 'Phantasmal Flames', {
@@ -246,6 +263,7 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 94,
     coverCard: '125', // Mega Charizard X ex, Special Illustration Rare
     cardmarket: 6299,
+    cardmarketOther: [6300], // deck exclusives
     tcgplayer: 24448,
   }),
   international('intl:me02.5', 'Ascended Heroes', {
@@ -254,6 +272,7 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 217,
     coverCard: '276', // Pikachu ex, Special Illustration Rare
     cardmarket: 6395,
+    cardmarketOther: [6455], // pattern reverse holos
     tcgplayer: 24541,
   }),
   international('intl:me03', 'Perfect Order', {
@@ -262,6 +281,7 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 88,
     coverCard: '120', // Mega Zygarde ex, Special Illustration Rare
     cardmarket: 6443,
+    cardmarketOther: [6516], // deck exclusives
     tcgplayer: 24587,
   }),
   international('intl:me04', 'Chaos Rising', {
@@ -270,6 +290,7 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 86,
     coverCard: '116', // Mega Greninja ex, Special Illustration Rare
     cardmarket: 6517,
+    cardmarketOther: [6518], // deck exclusives
     tcgplayer: 24655,
   }),
   international('intl:me05', 'Pitch Black', {
@@ -278,6 +299,7 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 84,
     coverCard: '116', // Mega Darkrai ex, Special Illustration Rare
     cardmarket: 6569,
+    cardmarketOther: [6640], // deck exclusives
     tcgplayer: 24688,
   }),
   {
@@ -299,6 +321,7 @@ export const CATALOG_SETS: SetConfig[] = [
     counterpartSets: ['intl:me01'],
     rarityMarks: 'all',
     coverCard: '088', // メガルカリオex SAR
+    cardmarket: { expansion: 6189 },
     tcgplayer: 'M1L:',
   }),
   japanese('M1S', {
@@ -310,6 +333,7 @@ export const CATALOG_SETS: SetConfig[] = [
     rarities: { 'Secret Rare': 'ultra-rare' },
     rarityMarks: 'all',
     coverCard: '087', // メガサーナイトex SAR
+    cardmarket: { expansion: 6190 },
     tcgplayer: 'M1S:',
   }),
   japanese('M2', {
@@ -319,6 +343,7 @@ export const CATALOG_SETS: SetConfig[] = [
     counterpartSets: ['intl:me02'],
     rarityMarks: 'all',
     coverCard: '110', // メガリザードンXex SAR
+    cardmarket: { expansion: 6291 },
     tcgplayer: 'M2:',
   }),
   japanese('M2a', {
@@ -328,6 +353,7 @@ export const CATALOG_SETS: SetConfig[] = [
     counterpartSets: ['intl:me02.5'],
     rarityMarks: 'all',
     coverCard: '234', // ピカチュウex SAR
+    cardmarket: { expansion: 6380, otherExpansions: [6409] }, // 6409: the reverse holos
     tcgplayer: 'M2a:',
   }),
   japanese('M3', {
@@ -337,6 +363,7 @@ export const CATALOG_SETS: SetConfig[] = [
     counterpartSets: ['intl:me03'],
     rarityMarks: 'all',
     coverCard: '113', // メガジガルデex SAR
+    cardmarket: { expansion: 6427 },
     tcgplayer: 'M3:',
   }),
   japanese('M4', {
@@ -346,6 +373,7 @@ export const CATALOG_SETS: SetConfig[] = [
     counterpartSets: ['intl:me04'],
     rarityMarks: 'all',
     coverCard: '114', // メガゲッコウガex SAR
+    cardmarket: { expansion: 6494 },
     tcgplayer: 'M4:',
   }),
   japanese('M5', {
@@ -355,13 +383,16 @@ export const CATALOG_SETS: SetConfig[] = [
     counterpartSets: ['intl:me05'],
     rarityMarks: 'all',
     coverCard: '114', // メガダークライex SAR
+    cardmarket: { expansion: 6556 },
     tcgplayer: 'M5:',
   }),
   japanese('M-P', {
     name: { ja: 'メガ プロモカード', de: 'MEGA-Promokarten', en: 'MEGA Promo Cards' },
     expectedCards: 132,
     counterpartSets: ['intl:mep'],
+    mirrored: false,
     coverCard: '002', // ラプラスex
+    cardmarket: { expansion: 6230 },
     tcgplayer: 'M-P',
   }),
 ];

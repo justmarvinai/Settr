@@ -66,6 +66,8 @@ export interface CardmarketReport {
   unmatchedSingles: CardmarketProduct[];
   /** Sealed products listed for the configured expansions, to curate `refs.cardmarket`. */
   sealedCandidates: CardmarketProduct[];
+  /** A sealed product of each expansion the findings name, to tell what the expansion is. */
+  expansionHints: Record<number, string>;
 }
 
 type AsianLanguage = 'ja' | 'zh-cn';
@@ -108,6 +110,7 @@ export function applyCardmarket(
     names: [],
     unmatchedSingles: [],
     sealedCandidates: [],
+    expansionHints: {},
   };
   const expansions = new Set<number>();
   const sealedExpansions = new Set<number>();
@@ -115,8 +118,11 @@ export function applyCardmarket(
   for (const set of sets) {
     const expected = set.config.cardmarket;
     if (!expected) continue;
-    if (expected.expansion) expansions.add(expected.expansion);
-    if (expected.expansion && set.config.print === 'intl') intlExpansions.add(expected.expansion);
+    for (const id of [expected.expansion, ...(expected.otherExpansions ?? [])]) {
+      if (!id) continue;
+      expansions.add(id);
+      if (set.config.print === 'intl') intlExpansions.add(id);
+    }
     if (expected.simplifiedChineseExpansion) expansions.add(expected.simplifiedChineseExpansion);
     for (const id of expected.sealedExpansions ?? []) sealedExpansions.add(id);
   }
@@ -128,6 +134,7 @@ export function applyCardmarket(
   for (const set of sets.filter((s) => s.config.print === 'intl')) {
     const expected = set.config.cardmarket?.expansion;
     if (!expected) continue;
+    const allowed = new Set([expected, ...(set.config.cardmarket?.otherExpansions ?? [])]);
     for (const card of set.cards)
       for (const variant of card.variants) {
         const id = variant.refs?.cardmarket?.default;
@@ -139,7 +146,7 @@ export function applyCardmarket(
           problems.warnings.push(
             `${card.id} ${variant.id}: Cardmarket product ${id} not in products_singles_6.json`,
           );
-        else if (product.idExpansion !== expected && card.section !== 'energy' && !promo)
+        else if (!allowed.has(product.idExpansion) && card.section !== 'energy' && !promo)
           problems.warnings.push(
             `${card.id} ${variant.id}: Cardmarket product ${id} is in expansion ${product.idExpansion}, expected ${expected}`,
           );
@@ -191,9 +198,15 @@ export function applyCardmarket(
       ja: japanese,
       'zh-cn': expected.simplifiedChineseExpansion,
     };
+    // Prints Cardmarket files apart (MEGA Dream ex's reverse holos) are Japanese products too.
+    const expansionsOf: Record<AsianLanguage, number[]> = {
+      ja: japanese ? [japanese, ...(expected.otherExpansions ?? [])] : [],
+      'zh-cn': expected.simplifiedChineseExpansion ? [expected.simplifiedChineseExpansion] : [],
+    };
+    for (const id of expansionsOf.ja) expansions.add(id);
     const languageOf = (product: CardmarketProduct | undefined): AsianLanguage | undefined =>
       product
-        ? (['ja', 'zh-cn'] as const).find((l) => expansionOf[l] === product.idExpansion)
+        ? (['ja', 'zh-cn'] as const).find((l) => expansionsOf[l].includes(product.idExpansion))
         : undefined;
 
     for (const slot of slots) {
@@ -205,10 +218,19 @@ export function applyCardmarket(
       else if (expansionOf.ja)
         problems.warnings.push(
           product
-            ? `${slot.card.id} ${slot.variant.id}: Cardmarket product ${slot.tcgdex} is in expansion ${product.idExpansion}, expected ${expansionOf.ja}${expansionOf['zh-cn'] ? ` or ${expansionOf['zh-cn']}` : ''}`
+            ? `${slot.card.id} ${slot.variant.id}: Cardmarket product ${slot.tcgdex} is in expansion ${product.idExpansion}, expected ${[...expansionsOf.ja, ...expansionsOf['zh-cn']].join(' or ')}`
             : `${slot.card.id} ${slot.variant.id}: Cardmarket product ${slot.tcgdex} not in products_singles_6.json`,
         );
     }
+
+    // Curated ids count as found, so the metacard match neither reuses nor reports them.
+    const curated = curatedIds(set, overlays);
+    for (const slot of slots)
+      if (slot.variant === slot.card.variants[0])
+        for (const lang of ['ja', 'zh-cn'] as const) {
+          const id = curated[slot.card.id]?.[lang];
+          if (id) slot.found[lang] = id;
+        }
 
     /**
      * Fills `lang` for slots that lack it: each known product (another language's, or the
@@ -280,13 +302,10 @@ export function applyCardmarket(
       slot.variant.refs = { ...slot.variant.refs, cardmarket: { byLanguage: { ...slot.found } } };
       for (const id of Object.values(slot.found)) used.add(id);
     }
-    for (const ids of Object.values(curatedIds(set, overlays)))
-      for (const id of Object.values(ids)) used.add(id);
+    for (const ids of Object.values(curated)) for (const id of Object.values(ids)) used.add(id);
     report.unmatchedSingles.push(
       ...[...cm.singles.values()].filter(
-        (p) =>
-          (p.idExpansion === expansionOf.ja || p.idExpansion === expansionOf['zh-cn']) &&
-          !used.has(p.idProduct),
+        (p) => languageOf(p) !== undefined && !used.has(p.idProduct),
       ),
     );
   }
@@ -319,6 +338,15 @@ export function applyCardmarket(
       );
   }
   report.sealedCandidates = [...cm.nonsingles.values()].filter((p) => sealedIn(p.idExpansion));
+  const named = new Set(
+    report.expansions.flatMap((e) => [...e.fromTcgdex, ...e.byMetacard].map(([id]) => id)),
+  );
+  for (const p of [...cm.nonsingles.values()].toSorted((a, b) => a.idProduct - b.idProduct)) {
+    const hint = report.expansionHints[p.idExpansion];
+    // A booster says best what an expansion is; else its first product.
+    if (named.has(p.idExpansion) && (!hint || (/booster/i.test(p.name) && !/booster/i.test(hint))))
+      report.expansionHints[p.idExpansion] = p.name;
+  }
   return report;
 }
 

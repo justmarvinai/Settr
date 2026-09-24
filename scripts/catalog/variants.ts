@@ -72,9 +72,31 @@ export interface DerivedVariant extends VariantDef {
 
 const FINISH_ORDER = ['normal', 'holo', 'reverse'];
 
-/** One TCGdex variant as a Settr variant definition. */
-export function deriveVariant(raw: RawVariant, where: string): DerivedVariant {
+/**
+ * A non-holo print of a card the booster packs only carry as a holo (a Rare): TCGplayer's "Deck
+ * Exclusives", from the Build & Battle Boxes. Promotional, so outside the master set.
+ */
+const DECK_PRINT: DerivedVariant = {
+  id: 'normal+deck',
+  kind: 'stamp',
+  label: { de: 'Nicht-Holo (Deck)', en: 'Non-Holo (Deck)' },
+  rank: 100,
+};
+
+/** Neither a foil pattern nor a stamp or special size. */
+export const isPlainVariant = (raw: RawVariant) => !raw.foil && !raw.stamp?.length && !raw.size;
+
+/**
+ * One TCGdex variant as a Settr variant definition. `deckPrint` marks a plain non-holo next to a
+ * plain holo of the same card in a numbered set (see DECK_PRINT).
+ */
+export function deriveVariant(
+  raw: RawVariant,
+  where: string,
+  options: { deckPrint?: boolean } = {},
+): DerivedVariant {
   const type = raw.type ?? 'normal';
+  if (options.deckPrint && type === 'normal' && isPlainVariant(raw)) return { ...DECK_PRINT };
   const base = known(TYPES, type, 'type', where);
   let id = type;
   let label: LocalizedText = base;

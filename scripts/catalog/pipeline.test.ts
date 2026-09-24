@@ -206,6 +206,9 @@ describe('cross-print matching of trainers', () => {
   });
 });
 
+const deck = (raw: Parameters<typeof deriveVariant>[0]) =>
+  deriveVariant(raw, 'test', { deckPrint: true });
+
 const variant = (raw: Parameters<typeof deriveVariant>[0]) => {
   const { id, kind, label } = deriveVariant(raw, 'test');
   return { id, kind, de: label.de };
@@ -248,6 +251,18 @@ describe('variants', () => {
       kind: 'finish',
       de: 'Gold-Holo',
     });
+  });
+
+  it('keeps the non-holo deck print of a Rare apart from the set', () => {
+    expect(deck({ type: 'normal' })).toMatchObject({
+      id: 'normal+deck',
+      kind: 'stamp',
+      label: { de: 'Nicht-Holo (Deck)' },
+    });
+    // Only the plain non-holo: holos, reverses and stamped prints stay what they are.
+    expect(deck({ type: 'holo' }).id).toBe('holo');
+    expect(deck({ type: 'reverse' }).id).toBe('reverse');
+    expect(deck({ type: 'normal', stamp: ['set-logo'] }).id).toBe('normal+set-logo');
   });
 
   it('stops on values it does not know', () => {

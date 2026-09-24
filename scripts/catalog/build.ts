@@ -25,7 +25,7 @@ import {
   type RawVariant,
   type SourceSet,
 } from './tcgdex';
-import { deriveVariant, variantLanguages } from './variants';
+import { deriveVariant, isPlainVariant, variantLanguages } from './variants';
 import {
   ENERGY_ORDER,
   mapCategory,
@@ -155,8 +155,13 @@ function cardVariants(
     string,
     { def: ReturnType<typeof deriveVariant>; raw: RawVariant; langs?: CardLanguage[] }
   >();
+  // In a numbered set, a plain non-holo next to a plain holo is a deck exclusive (variants.ts).
+  const deckPrint =
+    config.printedTotal !== undefined &&
+    list.some((v) => v.type === 'holo' && isPlainVariant(v)) &&
+    list.some((v) => (v.type ?? 'normal') === 'normal' && isPlainVariant(v));
   for (const variant of list) {
-    const def = deriveVariant(variant, where);
+    const def = deriveVariant(variant, where, { deckPrint });
     const langs = variantLanguages(variant, languages);
     if (langs && langs.length === 0) continue; // only in languages Settr doesn't carry
     const seen = byId.get(def.id);

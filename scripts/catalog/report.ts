@@ -86,6 +86,18 @@ export function renderReport(input: {
         (e) =>
           `| ${e.setId} | ${e.japanese ?? '?'} | ${e.fromTcgdex.map(([id, n]) => `${id} (${n})`).join(', ') || '—'} | ${e.byMetacard.map(([id, n]) => `${id} (${n})`).join(', ') || '—'} |`,
       ),
+      ...(Object.keys(cardmarket.expansionHints).length
+        ? [
+            '',
+            '<details><summary>What these expansions sell (a sealed product of each)</summary>',
+            '',
+            '| Expansion | Product |',
+            '|---|---|',
+            ...Object.entries(cardmarket.expansionHints).map(([id, name]) => `| ${id} | ${name} |`),
+            '',
+            '</details>',
+          ]
+        : []),
       ...(cardmarket.names.length
         ? [
             '',

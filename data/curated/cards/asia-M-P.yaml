@@ -4,13 +4,46 @@ setId: asia:M-P
 cards:
   '033': { counterpart: 'intl:mep:028', note: Celebratory Fanfare · Yuu Nishida }
   '075': { counterpart: 'intl:me05:079', note: Jett · GIDORA }
-  '144': { counterpart: 'intl:me02.5:183', note: Boss's Orders · akagi }
-  '060':
-    curatedName: { de: Kampfsucher, en: Battle Searcher }
-    note: Provisional; no English print found yet. To check against Cardmarket's product name.
+  '144':
+    counterpart: 'intl:me02.5:183'
+    cardmarket: { ja: 897863 }
+    note: Boss's Orders · akagi; Cardmarket has two, this one follows 143 (897862).
   '099':
-    curatedName: { de: Guri, en: Guri }
-    note: A Pokémon Legends Z-A character without an international card yet; provisional romanization. To check against Cardmarket's product name.
+    curatedName: { de: Gris, en: Grisham }
+    note: A Pokémon Legends Z-A character without an international card yet; names from the games (Cardmarket sells it as Grisham).
   '143':
-    curatedName: { de: Deuro, en: Deuro }
-    note: A Pokémon Legends Z-A character without an international card yet; provisional romanization. To check against Cardmarket's product name.
+    curatedName: { de: Duro, en: Lida }
+    note: A Pokémon Legends Z-A character without an international card yet; names from the games (Cardmarket sells it as Lida).
+  # Cardmarket products TCGdex has no id for, matched by name and by the product numbers of the
+  # neighbouring promos (Cardmarket adds each batch in number order; report of the 2026-09-24 sync).
+  '023': { cardmarket: { ja: 850492 }, note: 'Basic Grass Energy' }
+  '024': { cardmarket: { ja: 850493 }, note: 'Basic Fire Energy' }
+  '025': { cardmarket: { ja: 850494 }, note: 'Basic Water Energy' }
+  '026': { cardmarket: { ja: 850495 }, note: 'Basic Lightning Energy' }
+  '027': { cardmarket: { ja: 850496 }, note: 'Basic Psychic Energy' }
+  '028': { cardmarket: { ja: 850497 }, note: 'Basic Fighting Energy' }
+  '029': { cardmarket: { ja: 850498 }, note: 'Basic Darkness Energy' }
+  '030': { cardmarket: { ja: 850499 }, note: 'Basic Metal Energy' }
+  '035': { cardmarket: { ja: 850500 }, note: 'Basic Grass Energy' }
+  '036': { cardmarket: { ja: 850501 }, note: 'Basic Fire Energy' }
+  '037': { cardmarket: { ja: 850502 }, note: 'Basic Water Energy' }
+  '039': { cardmarket: { ja: 850504 }, note: 'Basic Psychic Energy' }
+  '040': { cardmarket: { ja: 850505 }, note: 'Basic Fighting Energy' }
+  '041': { cardmarket: { ja: 850506 }, note: 'Basic Darkness Energy' }
+  '042': { cardmarket: { ja: 850507 }, note: 'Basic Metal Energy' }
+  '044': { cardmarket: { ja: 843815 }, note: Brave Bangle (after 043 at 843814) }
+  '049': { cardmarket: { ja: 858267 }, note: Adversity Policy (between 048 and 050) }
+  '059': { cardmarket: { ja: 864271 }, note: Battle Compressor (between 058 and 060) }
+  '074': { cardmarket: { ja: 871037 }, note: Brave Bangle (between 073 and 075) }
+  '085': { cardmarket: { ja: 873883 }, note: Poké Pad (before 086 at 873884) }
+  '087': { cardmarket: { ja: 878047 }, note: 'Basic Grass Energy' }
+  '088': { cardmarket: { ja: 878048 }, note: 'Basic Fire Energy' }
+  '089': { cardmarket: { ja: 878049 }, note: 'Basic Water Energy' }
+  '090': { cardmarket: { ja: 878050 }, note: 'Basic Lightning Energy' }
+  '091': { cardmarket: { ja: 878051 }, note: 'Basic Psychic Energy' }
+  '092': { cardmarket: { ja: 878052 }, note: 'Basic Fighting Energy' }
+  '093': { cardmarket: { ja: 878053 }, note: 'Basic Darkness Energy' }
+  '094': { cardmarket: { ja: 878054 }, note: 'Basic Metal Energy' }
+  '134': { cardmarket: { ja: 903112 }, note: Eevee (the only Eevee product) }
+  '155': { cardmarket: { ja: 912734 }, note: Riolu }
+  '164': { cardmarket: { ja: 912743 }, note: Mega Zeraora ex }
