@@ -1,5 +1,5 @@
 import { AxeBuilder } from '@axe-core/playwright';
-import { test as base, expect, type Page } from '@playwright/test';
+import { test as base, expect, type Locator, type Page } from '@playwright/test';
 
 /** 1×1 transparent GIF: stands in for card and product pictures. */
 const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
@@ -50,6 +50,17 @@ export async function settle(page: Page): Promise<void> {
       .filter((a) => a.effect?.getComputedTiming().endTime !== Infinity);
     await Promise.all(finite.map((a) => a.finished.catch(() => undefined)));
   });
+}
+
+/**
+ * Waits until a sheet or dialog has finished opening, as a person would before using it. In CI's
+ * software-rendered WebKit a sheet can sit off-screen in its starting style for a second, then
+ * slide in while a click waits for its target to hold still.
+ */
+export async function opened(dialog: Locator): Promise<void> {
+  await expect(dialog).toBeVisible();
+  await expect(dialog).not.toHaveAttribute('data-starting-style');
+  await settle(dialog.page());
 }
 
 /** WCAG 2.2 A/AA checks with axe; returns violations as readable strings. */
