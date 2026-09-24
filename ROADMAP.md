@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M6 · Polish & Launch** ⏳ in progress (started 2026-09-24; M1–M5 are merged, the Brave and iPhone checks are still open) · question rounds 1–7 decided
+> Last updated: 2026-09-24 · Current phase: **M6 · Polish & Launch** ✅ built, v1.0.0 release candidate: waiting for your check in Brave and on the iPhone (M1–M5 are merged) · question rounds 1–7 decided, round 8 open without blockers
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -16,7 +16,7 @@
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
-| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ⏳ in progress |
+| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ built · 🔒 your check, then the merge and the `v1.0.0` tag |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
 | **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | 🔒 |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
@@ -171,21 +171,24 @@
 
 ---
 
-## M6 · Polish & Launch ⏳ → v1.0.0 (started 2026-09-24)
+## M6 · Polish & Launch ✅ built → v1.0.0 (started 2026-09-24)
 
 - [x] Holo card viewer (DSN-01), shared-element transitions (DSN-02), foil progress rings (DSN-03), with the rings also in the sidebar's sets
 - [x] Onboarding (APP-06, no demo data) and empty states
 - [x] Microcopy pass (German review): plurals, one term per concept, clearer hints, unused messages removed (I18N.md §5–§6)
 - [x] Palette commands (Schnellerfassung, Backup exportieren) and arrow-key navigation in grids (UX_SPEC.md §7)
 - [x] PWA polish: install prompts (iOS guidance), offline indicator, update flow
-- [ ] Accessibility audit (axe + manual keyboard/screen-reader pass), performance audit (Lighthouse CI budgets)
+- [x] Accessibility audit (axe on every page in light and dark, the keyboard-only journey, forced colors; the screen-reader pass with VoiceOver is part of your iPhone check), performance audit (Lighthouse CI: desktop is the gate, the phone profile a report, R8.3)
 - [x] "Über & Rechtliches": disclaimer, credits (TCGdex, PokéAPI, Cardmarket data), privacy note, license texts. No Impressum while private (APP-08, ADR-022)
-- [ ] Glass performance and legibility pass on Windows laptops + iPhone (DSN-05)
-- [ ] Visual regression baseline
-- [ ] Release **v1.0.0**: tag, changelog, production deployment
+- [x] Glass performance and legibility pass (DSN-05): at most three blur layers at once, one while a sheet is open; legibility checked by axe on glass. How it feels on your laptop and iPhone is part of your check
+- [x] Visual regression baseline: six screens in light and dark, made on CI's runner (`visual.yml`, ADR-049)
+- [ ] Release **v1.0.0**: version and changelog ✅; the tag and the production deployment follow your merge (R8.4)
 - [x] Carried forward from M3–M5: the long-press menu on phone tiles and swipe between cards
+- [x] Also done: journeys 1, 5, 9 and 10 (all 13 journeys automated), the nightly Firefox and Pixel runs, `N` on card and product pages, the hero odometer, `licenses.txt`
 
 **Exit:** all Musts in `PRODUCT_SPEC.md` are done, all quality gates are green, and you've signed off.
+
+**Exit status (2026-09-24):** every Must is built; `pnpm check` and the full e2e suite are green locally, CI runs desktop, phone and WebKit on the branch, and Lighthouse's desktop gate passes (LCP ≈ 1.1 s). What's left is yours: the Brave smoke test (QUALITY.md §3.1) and the iPhone check (USER_QUESTIONS.md round 8), then the merge; the tag `v1.0.0` and the production deployment follow.
 
 ---
 

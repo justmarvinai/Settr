@@ -8,8 +8,12 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-24
+
+The first complete release: everything planned for v1 (M1–M6) for the *30 Jahre / 30th CELEBRATION* catalog. The tag `v1.0.0` goes on `main` once Marvin has checked M6 in Brave and on the iPhone and merged it (ROADMAP.md, USER_QUESTIONS.md R8.4).
+
 ### Added
-- **M6 · Polish & Launch (in progress, 2026-09-24).**
+- **M6 · Polish & Launch (2026-09-24).**
   - **Keyboard (UX §7):** `G` then `O`/`S`/`K`/`P`/`F`/`E` goes to a main area, and `V` then `G`/`T` switches between grid and table. `/` searches, `?` lists every shortcut (also from the palette and *Über*), `H` hides values, `N` adds, and `+` adds one copy of the focused set tile. Arrow keys, `Home` and `End` move through card and product grids, which take one tab stop each. On card and product pages, `N` adds that item. A palette pick that opens a page moves focus into the page, not back to the field you came from.
   - **Palette:** *Schnellerfassung* for a set, *Tastenkürzel anzeigen*, *Werte verbergen* and the theme, next to the backup actions from M5.
   - **Offline pill** in the toolbar. **Fehlerbericht kopieren** on error pages and under *Über*: the version, the browser and the last errors from a log on the device, never collection data.

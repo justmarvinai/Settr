@@ -107,6 +107,7 @@ Route slugs are English and language-neutral. Labels are localized.
 - **Sidebar:** the wordmark with the short tagline *"Jede Karte zählt."* underneath (R2.7) · navigation (Übersicht, Sammlung, Katalog, Preise, Portfolio) · a **Sets** quick-access section with pinned and recently opened sets, each with its progress ring, so it stays useful as sets are added after v1 (R2.5) · footer with the backup status and Einstellungen.
 - **Backup status (DAT-04):** a pill in the sidebar footer, e.g. *"Backup vor 3 Tagen"*. Once a backup is due (after N days, default 7, Q7.1) it turns amber and reads *"Backup fällig · Zuletzt vor 12 Tagen"*. It links to `/settings/data`. **As built (M5, ADR-043):** due means the data changed since the last backup and that backup is older than the interval, or 50 changes piled up; without any backup it's due as soon as there's data. A toast (*"Letztes Backup vor 12 Tagen. Jetzt sichern?"*, *Jetzt sichern*) follows at most once a day, never on the Daten page, and on a new install only from its second day (or after 50 changes).
 - The badge on **Preise** shows the number of stale prices.
+- **As built (M6):** the *Sets* section lists up to four sets you collect (most lots first), each with its *Basis* ring in the language you collect most; the tablet rail shows only the rings. Pinned and recently opened sets aren't built (they matter once there are many sets). While there's no network, the top bar shows the pill *Offline · alles funktioniert*.
 
 ### 3.3 Mobile shell
 
@@ -163,12 +164,14 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 - **Unpriced notice:** when holdings have no price, a subtle line such as "12 Positionen ohne Preis. Nicht im Gesamtwert enthalten." links to a filtered collection.
 - **Empty state (first run):** a 3-step welcome ("Set öffnen → Karte hinzufügen → Preis eintragen") and the backup/persistence explainer. There's no demo data (I-19 = no).
 - **As built (M4):** the hero shows Gesamtwert, P/L (arrow, sign and color), *Investiert* and *Realisiert*; its step chart switches between *Wert* and *Gewinn/Verlust* (with a dashed *Investiert* line in value mode), keeps range and mode per device, and scrubbing shows any day's numbers and the change since the range began. The number doesn't count up (motion stays for M6). The stale tile starts the session for stale prices, progress shows up to four sets × languages, movers link to their cards (abs or %), the allocation is cards / graded / sealed, and *Zuletzt hinzugefügt* lists the latest lots. The unpriced notice links to Sammlung filtered to unpriced lots.
+- **As built (M6):** Gesamtwert counts up once per session the first time the Übersicht (or the Portfolio) shows it, never under reduced motion. The set progress tile shows rings.
 
 ### 4.2 Katalog › Sets · CAT-01
 
 - A grid of **set tiles**: logo artwork, series, localized name, release date per language, card counts (official/total) and the user's **progress ring**.
 - **Print switcher** (segmented): *International (DE/EN/…)* · *Asien (JA/ZH/…)*. The two prints are separate set structures with different card lists and numbering (see `DATA_MODEL.md` §2). A language filter narrows further (e.g. only sets available in `zh-tw`).
 - v1 has very few sets. The layout must still scale to 150+ sets later, so it's grouped by series with sticky series headers and a per-series collapse. Screens and routes are multi-set and multi-era from day one (ADR-028), because Marvin's sets are added era by era after v1 (R2.5).
+- **As built (M6):** a tile shows a cover card instead of logo artwork (the catalog has no logos for the v1 sets), and for a set you collect its *Basis* ring with the share, the language and *x von y Karten*.
 
 ### 4.3 Set detail · CAT-02, COL-07
 
@@ -198,6 +201,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
   - *Hover or keyboard focus (desktop):* a subtle lift and tilt with a **＋** quick-add button and a **€** quick-price button.
   - **Quick add (R2.1):** **＋** adds one copy immediately with defaults (the language of the current view, NM, no price) and shows an undo toast (*"Hinzugefügt: <Nr.> <Name> · DE · NM"* · *Rückgängig*). It counts as one interaction. The full add sheet (§4.7, ≤ 3 interactions) stays one step away: `N` on the focused tile, *Hinzufügen* on the card page, or the long-press menu on mobile.
   - *Long-press (mobile):* a context sheet with Hinzufügen, Preis eintragen and Details (+ Zur Wunschliste once I-06 ships).
+  - **As built (M6):** `+` on a focused tile adds one copy. The arrow keys, `Home` and `End` move between tiles, one tab stop per grid (ADR-044). A long press on a phone opens a sheet named after the card with *Hinzufügen …*, *Preis eintragen …* and *Details* (ADR-048). *Basis* is a 56 px ring, *Komplett* and *Master* 36 px rings; completing a set turns its ring to foil with one sweep and lifts the summary for a moment.
 - **Progress definitions** (Q5.5, all three shown): *Basis* counts the numbered main set, *Komplett* adds secret rares, and *Master* adds subsets and energies (every card × variant). They're computed per selected language, with an "any language" toggle.
 - **Density control:** S / M / L tile sizes, persisted per device.
 - **Sealed tab:** the set's products in the same tile language, showing product images.
@@ -243,6 +247,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 - **Prev/next:** ← / → keys and swipe on mobile, in set order.
 - **Shared-element transition (DSN-02):** the tile image morphs into the hero image.
 - **As built (M4):** the language follows the page's language switch; variant and grade selectors appear only where a card has them. The chart marks every entry by type, draws the purchase price per copy (average of the lots) dashed, compares other card languages as dashed lines with their own color and pattern, scrubs with the pointer or the arrow keys, and has a table view. `P` focuses *Neuer Preis*; the inline form shows the live delta to the last price and *Unverändert · 31,50 €* when the last price is older than today. Price-guide chips read *"Cardmarket-Preisführer vom 23.09.2026 · alle Sprachen, Länder und Zustände"* with *ab* and *Trend*; accepted values are listed as *Preisführer ab/Trend*. The lot menu is Bearbeiten, Duplizieren, *Preis eintragen…*, *Eigener Wert…*, Verkaufen…, Öffnen… (sealed), Löschen. Holo viewer, swipe and the shared-element transition stay for M6.
+- **As built (M6):** the picture is the holo viewer (DSN-01). It leans towards the pointer, and on phones with the gyroscope (after *Holo aktivieren* on the iPhone, after the first touch elsewhere). A click or tap opens it fullscreen, where a finger leans it too. The tile's picture morphs into it and back (DSN-02, ADR-047). Swiping the picture turns to the previous or next card in set order. `N` adds this card.
 
 ### 4.5 Sealed product detail · CAT-05
 
@@ -386,6 +391,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
   - **Achtung bei „Daten beim Beenden löschen“.**
   - **Alle Daten löschen:** a dialog that asks you to type *LÖSCHEN*, with *Backup exportieren* inside, then a fresh start.
 - **As built (M4), Preise:** default price type (a select), the Cardmarket filters (sellers from Germany, fixed while it's the only verified country; *Nur Angebote in der Sprache der Karte*; the minimum condition MT…PO), *Vorschläge aus dem Cardmarket-Preisführer* on/off, *Preis veraltet* (*Nach 7/14/30/60/90 Tagen*) and *Positionen ohne Preis im Gesamtwert* (*Nicht mitzählen* / *Mit Kaufpreis*). Changes apply at once.
+- **As built (M6), Über & Rechtliches (APP-08):** the logo and the long tagline, what Settr is, the version and the catalog (version and date), *Tastenkürzel* and *Fehlerbericht kopieren*; then *Datenquellen* (TCGdex, PTCG-database, PokéAPI, TCGCSV, Cardmarket, with their licenses), *Schriften und Open Source* (with *Alle Lizenztexte*, the build's `licenses.txt`, ADR-050), *Datenschutz* and *Rechtliches*. No Impressum while Settr is private.
 
 ### 4.14 Onboarding · APP-06
 
@@ -395,6 +401,8 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
    - On Windows it recommends installing Settr as an app (in Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*), because Chromium grants `persist()` to installed apps without a prompt (ADR-027).
    - It warns that browser settings which delete site data on exit erase the collection (in Brave: Shields *"Forget me when I close this site"*, *"Delete data on exit"*, per-site *"clear cookies on exit"*; all off by default, R3.4).
 3. **Los geht's:** pick your default card language(s) and open the 30th Anniversary set.
+
+- **As built (M6, ADR-046):** every step shows *Schritt x von 3* and *Überspringen*, and its heading takes focus. Step 1 preselects all five card languages. Step 2 requests persistent storage (and says whether the browser agreed), shows how to install (Windows and iPhone) and warns about browsers that delete data on exit. Step 3 picks the default card language, then *„30 Jahre“ öffnen* or *Ich habe schon ein Backup* (Einstellungen › Daten). A device that already holds lots skips it; *Alle Daten löschen* shows it again.
 
 ---
 
@@ -423,6 +431,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 - **Destructive actions:** deleting a lot uses undo only. Deleting a whole set or all data requires a typed confirmation.
 - **Errors:** route-level error boundaries with "Neu laden" and "Fehlerbericht kopieren", which copies a diagnostic JSON without user data. Import errors list exactly which records failed validation.
 - **Offline:** a small pill ("Offline · alles funktioniert") shows. Only images not yet cached fall back to placeholders.
+- **As built (M6):** the offline pill sits in the top bar (*Offline* on phones). Error pages and *Über* copy the report; errors are logged on the device only (ADR-045).
 - **Storage pressure:** `QuotaExceededError` gets a dedicated dialog explaining how to free space and urging a backup. **As built (M5):** a toast that stays until closed (*Der Speicher ist voll* · *Sichere jetzt ein Backup und gib Speicher frei.* · *Zu den Daten*) wherever a write fails for lack of space.
 - **Image fallback chain** (`DATA_SOURCES.md` §5):
   1. The selected language's image.
@@ -450,6 +459,8 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 | Grid navigation | Arrow keys move focus between tiles (roving tabindex), `Enter` opens, `Space` selects |
 
 Shortcuts are suppressed while typing in inputs, and every action is also reachable without a keyboard.
+
+**As built (M6, ADR-044):** `/` and `Strg K` open the palette (`Strg K` also from inside a field); `?` shows every shortcut. `G` then `O`/`S`/`K`/`P`/`F`/`E` goes to an area (`E`: Einstellungen); `V` then `G`/`T` switches grid and table in Sammlung and on set pages (`B` arrives with the binder view). `N` adds the focused set tile's card or the card or product of the page, and opens the add palette elsewhere; `+` on a focused set tile adds one copy; `Space` selects in Sammlung. A palette pick that opens a page moves focus into it. On phones: a long press on set tiles and a swipe on the card picture.
 
 ---
 
