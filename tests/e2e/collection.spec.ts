@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import type { Page } from '@playwright/test';
-import { axeViolations, expect, opened, pageTitle, test } from './fixtures';
+import { axeViolations, expect, pageTitle, test } from './fixtures';
 
 /** Adds lots to 30 Jahre through Schnellerfassung (COL-06): `25`, `25x3`, `25 4,50`. */
 async function quickAdd(page: Page, entries: readonly string[], language?: 'EN') {
@@ -84,7 +84,6 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
   await page.getByRole('button', { name: /^Filter/ }).click();
   const filters = page.getByRole('dialog', { name: 'Filter' });
-  await opened(filters);
   await filters.getByLabel('Sprache').selectOption({ label: 'Englisch' });
   await expect(filters.getByRole('button', { name: '1 Position anzeigen' })).toBeVisible();
   await filters.getByRole('button', { name: '1 Position anzeigen' }).click();
@@ -126,19 +125,15 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await expect(page.getByText('2 Positionen nach VaultX 9er verschoben')).toBeVisible();
 
   await page.getByRole('button', { name: /^Filter/ }).click();
-  await opened(filters);
   await filters.getByLabel('Tag').selectOption({ label: 'Tauschordner' });
   await filters.getByLabel('Lagerort').selectOption({ label: 'VaultX 9er' });
-  // From the keyboard, like the header box below: after filter changes CI's software-rendered
-  // WebKit sometimes stops producing frames for a while, and a click waits for frames.
-  await filters.getByRole('button', { name: '2 Positionen anzeigen' }).press('Enter');
+  await filters.getByRole('button', { name: '2 Positionen anzeigen' }).click();
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
-  await page.getByRole('button', { name: 'Alle Filter entfernen' }).press('Enter');
+  await page.getByRole('button', { name: 'Alle Filter entfernen' }).click();
   await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
   await expect(table.getByRole('row')).toHaveCount(6); // the header and all five lots
 
-  // Delete everything shown, then take it back. The header box works from the keyboard too; a
-  // click here often hung in CI's WebKit (Playwright's stability check after the re-render).
+  // Delete everything shown, then take it back. The header box works from the keyboard too.
   await table
     .getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' })
     .press('Space');

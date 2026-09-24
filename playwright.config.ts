@@ -32,7 +32,9 @@ export default defineConfig({
       },
     },
     { name: 'phone', use: { ...devices['iPhone 15'], browserName: 'chromium', ...chromiumLaunch } },
-    // Real WebKit (iPhone Safari engine) runs in CI; the sandbox has no WebKit build.
-    ...(CI ? [{ name: 'webkit-phone', use: { ...devices['iPhone 15'] } }] : []),
+    // Real WebKit (iPhone Safari engine) runs in CI; the sandbox has no WebKit build. CI renders it
+    // in software (frames of 100-600 ms with the glass layers), so the longer journeys need more
+    // than the default 30 s per test.
+    ...(CI ? [{ name: 'webkit-phone', use: { ...devices['iPhone 15'] }, timeout: 60_000 }] : []),
   ],
 });
