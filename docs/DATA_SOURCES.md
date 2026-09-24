@@ -257,13 +257,13 @@ Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow colle
 
 ### 6.5 Adding sets after v1 (R2.5, ADR-028)
 
-v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1). Marvin's other sets follow **one by one, era by era, once the core site is fully functional** (suggested order, to confirm when v1 is done: Mega Evolution → Scarlet & Violet → Sword & Shield → Sun & Moon → Base Set). Adding a set means:
+v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1), and the same day **21 sets Marvin listed**, from Scarlet & Violet back to the Base Set (§2.2). Further sets follow **one by one, era by era**, as Marvin asks. Adding a set means:
 
-1. A `catalog.config.ts` entry (TCGdex set IDs per print, plus subsets and energies where they exist).
-2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections).
-3. A reviewed catalog-sync PR (counts, images, Cardmarket IDs).
+1. An entry in `scripts/catalog/config.ts` (TCGdex set per print, plus subsets and energies where they exist). The options for older sets: `printedNumber` (numbers TCGdex stores differently), `printRun` (one print run of several), `rareIsHolo: false` (before Scarlet & Violet), `picturesIn` (pictures filed in another set's folder), `cardmarket` (an expansion TCGdex lacks, and side expansions).
+2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections, English-only cards).
+3. Catalog syncs on the network (`catalog-sync.yml`, `commit: true`) until the report is clean: counts, images, Cardmarket IDs and expansions.
 
-The output is one more set chunk plus its manifest (series) and search-index entries, not a refactor. Old-set specifics use the existing variant model: Base Set *1st Edition* vs *Unlimited*, for example, are variants of kind `edition`.
+The output is one more set chunk plus its manifest (series) and search-index entries, not a refactor. Old-set specifics use the existing variant model: Base Set *1st Edition* vs *Unlimited* would be variants of kind `edition` (for now the Grundset holds the Unlimited print, R10.4).
 
 ---
 
