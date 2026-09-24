@@ -1,0 +1,5 @@
+# Verborgenes Schicksal Glitzer-Tresor: TCGdex has no Cardmarket ids, and the name match left one
+# Lycanroc-GX open; between SV66's and SV68's products (card order), 2026-09-24 sync.
+setId: intl:sma
+cards:
+  SV67: { cardmarket: { en: 396972 }, note: Lycanroc-GX (Shiny) }

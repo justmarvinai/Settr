@@ -1,0 +1,5 @@
+# Sturm am Firmament: three "Steven's Resolve" products for two cards; the full art sits between
+# its neighbours' products (card order), 2026-09-24 sync. 145 opens the search until confirmed.
+setId: intl:sm7
+cards:
+  '165': { cardmarket: { en: 361402 }, note: "Steven's Resolve (Ultra Rare), between 164 and 166" }

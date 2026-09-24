@@ -134,3 +134,33 @@ test('before Scarlet & Violet, the holo of a Common is a promo print', async ({ 
     'Holo (Promo)',
   ]);
 });
+
+test('the rest of the eras: finishes from TCGplayer, vaults as sections, original numbers, M6 rarities', async ({
+  page,
+}) => {
+  // TCGdex has no variants for Sonne & Mond; a Common comes as Normal and Reverse-Holo (ADR-057).
+  await page.goto('/catalog/sets/intl:sm1/cards/intl:sm1:1');
+  await expect(page.getByRole('heading', { name: 'Raupy', level: 2 })).toBeVisible();
+  await holdings(page).getByRole('button', { name: 'Hinzufügen' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Karte hinzufügen' });
+  await expect(sheet.getByRole('radiogroup', { name: 'Variante' }).getByRole('radio')).toHaveText([
+    'Normal',
+    'Reverse-Holo',
+  ]);
+  await page.keyboard.press('Escape');
+
+  // Hidden Fates' Shiny Vault is a section of its set, numbered as printed.
+  await page.goto('/catalog/sets/intl:sm115');
+  await expect(page.getByRole('heading', { name: /^Glitzer-Tresor/, level: 3 })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^SV1\/SV94, / })).toBeVisible();
+
+  // Celebrations' Klassische Kollektion keeps the original numbers, with the originals' German names.
+  await page.goto('/catalog/sets/intl:cel25');
+  await expect(page.getByRole('link', { name: /^4\/102, Glurak/ })).toBeVisible();
+
+  // Storm Emerald: TCGdex calls every secret card MUR; the M sets' layout tells them apart (ADR-058).
+  await page.goto('/catalog/sets/asia:M6/cards/asia:M6:107');
+  await expect(
+    page.getByRole('definition').filter({ hasText: 'Special Illustration Rare' }),
+  ).toContainText('SAR');
+});

@@ -540,6 +540,27 @@ describe('Cardmarket products by name', () => {
     expect(problems.warnings).toEqual([]);
   });
 
+  it("reads Cardmarket's HTML entities and a trainer's character in brackets", () => {
+    const set = svSet([
+      unlinked('054', 'Nidoran♀', ['Call for Family', 'Scratch']),
+      unlinked('057', 'Nidoran♂', ['Peck', 'Horn Attack']),
+      unlinked('062', "Professor's Research (Professor Magnolia)", []),
+    ]);
+    const products = [
+      product(368_984, 'Nidoran &female; [Call for Family | Scratch]'),
+      product(368_987, 'Nidoran &male; [Peck | Horn Attack]'),
+      product(500_165, "Professor's Research - Professor Magnolia"),
+    ];
+    const cm: CardmarketIndex = {
+      singles: new Map(products.map((p) => [p.idProduct, p])),
+      nonsingles: new Map(),
+    };
+    applyCardmarket([set], cm, [], new Map(), { errors: [], warnings: [] });
+    expect(productOf(set, '054', 'normal')).toBe(368_984);
+    expect(productOf(set, '057', 'normal')).toBe(368_987);
+    expect(productOf(set, '062', 'normal')).toBe(500_165);
+  });
+
   it('keeps the products it found in offline builds', () => {
     const set = svSet([unlinked('063', 'Pikachu', ['Thunder Shock'])]);
     const before = card('intl:sv01:063', {

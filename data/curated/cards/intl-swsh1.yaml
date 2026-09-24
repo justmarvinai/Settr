@@ -1,0 +1,15 @@
+# Schwert & Schild: five "Professor's Research - Professor Magnolia" products for three cards; two
+# sit between their neighbours' products (card order), 2026-09-24 sync. 201 (the full art) opens
+# the search until confirmed.
+setId: intl:swsh1
+cards:
+  '178':
+    {
+      cardmarket: { en: 436984 },
+      note: "Professor's Research (Professor Magnolia), between 177 and 179",
+    }
+  '209':
+    {
+      cardmarket: { en: 437134 },
+      note: "Professor's Research (Professor Magnolia, gold), between 208 and 210",
+    }

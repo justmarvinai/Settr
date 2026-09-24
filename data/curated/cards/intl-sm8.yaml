@@ -1,0 +1,15 @@
+# Echo des Donners: Cardmarket names the Fairy Charms by an energy letter ("Fairy Charm [G]",
+# N = Dragon) and lists seven "Professor Elm's Lecture" products; ids between their neighbours'
+# products (card order), 2026-09-24 sync.
+setId: intl:sm8
+cards:
+  '174': { cardmarket: { en: 365810 }, note: 'Fairy Charm Grass · Fairy Charm [G]' }
+  '175': { cardmarket: { en: 365811 }, note: 'Fairy Charm Psychic · Fairy Charm [P]' }
+  '176': { cardmarket: { en: 365812 }, note: 'Fairy Charm Fighting · Fairy Charm [F]' }
+  '177': { cardmarket: { en: 365813 }, note: 'Fairy Charm Dragon · Fairy Charm [N]' }
+  '188': { cardmarket: { en: 365822 }, note: "Professor Elm's Lecture, between 187 and 189" }
+  '213':
+    {
+      cardmarket: { en: 365846 },
+      note: "Professor Elm's Lecture (Ultra Rare), between 212 and 214",
+    }

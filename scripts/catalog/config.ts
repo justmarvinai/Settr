@@ -527,6 +527,7 @@ export const CATALOG_SETS: SetConfig[] = [
   ),
   international('intl:sv03', SV('Obsidian Flames'), {
     ...SCARLET_VIOLET,
+    name: { de: 'Obsidianflammen' }, // TCGdex: "Obsidian Flammen"
     code: 'OBF',
     expectedCards: 230,
     printedTotal: 197,
@@ -615,6 +616,7 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 88,
     printedTotal: 78,
     coverCard: '011', // Radiant Charizard
+    cardmarket: 5051, // TCGdex's set says 4786; its cards' ids point here
   }),
   international('intl:swsh10', SWSH('Astral Radiance'), {
     ...SWORD_SHIELD,
@@ -821,6 +823,7 @@ export const CATALOG_SETS: SetConfig[] = [
   }),
   international('intl:sm9', SM('Team Up'), {
     ...SUN_MOON,
+    name: { de: 'Teams sind Trumpf' }, // TCGdex capitalizes every word
     code: 'TEU',
     expectedCards: 196,
     printedTotal: 181,
@@ -837,6 +840,7 @@ export const CATALOG_SETS: SetConfig[] = [
   }),
   international('intl:sm7.5', SM('Dragon Majesty'), {
     ...SUN_MOON,
+    name: { de: 'Majestät der Drachen' },
     code: 'DRM',
     expectedCards: 78,
     printedTotal: 70,
@@ -845,6 +849,7 @@ export const CATALOG_SETS: SetConfig[] = [
   }),
   international('intl:sm7', SM('Celestial Storm'), {
     ...SUN_MOON,
+    name: { de: 'Sturm am Firmament' },
     code: 'CES',
     expectedCards: 183,
     printedTotal: 168,
@@ -853,6 +858,7 @@ export const CATALOG_SETS: SetConfig[] = [
   }),
   international('intl:sm6', SM('Forbidden Light'), {
     ...SUN_MOON,
+    name: { de: 'Grauen der Lichtfinsternis' },
     code: 'FLI',
     expectedCards: 146,
     printedTotal: 131,
@@ -898,14 +904,21 @@ export const CATALOG_SETS: SetConfig[] = [
     tcgplayerGroup: 1919,
     coverCard: '155', // Tapu Lele GX, Secret Rare
   }),
-  international('intl:sm1', SM('Sun & Moon'), {
-    ...SUN_MOON,
-    code: 'SUM',
-    expectedCards: 172,
-    printedTotal: 149,
-    tcgplayerGroup: 1863,
-    coverCard: '154', // Umbreon GX, Secret Rare
-  }),
+  {
+    ...international('intl:sm1', SM('Sun & Moon'), {
+      ...SUN_MOON,
+      code: 'SUM',
+      expectedCards: 172,
+      printedTotal: 149,
+      tcgplayerGroup: 1863,
+      coverCard: '154', // Umbreon GX, Secret Rare
+      cardmarket: 1745,
+      cardmarketOther: [6697], // the basic Energy 164–172
+    }),
+    // The basic Energy is numbered after the Secret Rares (164–172).
+    section: (localId) =>
+      Number(localId) >= 164 ? 'energy' : Number(localId) > 149 ? 'secret' : 'main',
+  },
   international('intl:smp', SM('SM Black Star Promos'), {
     ...SUN_MOON,
     name: { de: 'Sonne & Mond Promos', en: 'SM Black Star Promos' },

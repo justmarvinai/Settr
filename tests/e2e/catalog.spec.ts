@@ -123,11 +123,12 @@ test('command palette finds cards in any script and opens them', async ({ page, 
   // The Classic Collection's Glurak and the Base Set's original share the number 4/102.
   await expect(page.getByRole('option', { name: /Glurak.*4\/102/ })).toHaveCount(2);
   await expect(page.getByRole('option', { name: /Glurak-Figuren-Geschenkbox/ })).toBeVisible();
+  // A Japanese name finds the Japanese cards first (ADR-060); the list shows their German names.
   await input.fill('ピカチュウ');
   await expect(page.getByRole('option').first()).toContainText('Pikachu');
   await input.press('Enter');
-  await expect(page).toHaveURL(/\/catalog\/sets\/[^/]+\/cards\/[^/]+$/);
-  await expect(page.getByRole('heading', { name: /Pikachu/, level: 2 })).toBeVisible();
+  await expect(page).toHaveURL(/\/catalog\/sets\/asia:[^/]+\/cards\/[^/]+$/);
+  await expect(page.getByRole('heading', { name: 'ピカチュウ', level: 2 })).toBeVisible();
 });
 
 test('card search: numbers, power-user filters and the URL', async ({ page }) => {
