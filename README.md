@@ -4,7 +4,7 @@
 
 Settr is a local-first collection tracker for Pokémon TCG **singles and sealed products**, covering German, English, Japanese and Chinese (Simplified and Traditional) cards, with a German interface. You record the prices you check on Cardmarket, **per card language**, and Settr turns them into price trends, portfolio value and profit/loss against what you paid. Everything stays private in your browser. There are no accounts and no server database, and you get full import/export.
 
-> **Status: v1 complete, sets growing.** M1–M6 are merged: foundation, catalog, collection, prices and portfolio, data safety, polish. The tag v1.0.0 goes on `main` once Marvin says go. The Mega Evolution series is built (PR #5) and waits for Marvin's check. Planning is complete (spec v0.4, rounds 1–7 decided, rounds 8–9 open without blockers); coding started on 2026-09-23. The catalog holds *30 Jahre / 30th CELEBRATION* in DE, EN, JA, ZH-CN and ZH-TW, and the Mega Evolution series in DE, EN, JA and ZH-TW: 2,489 cards and 191 sealed products. The design direction, **D · Bold Studio**, is on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link).
+> **Status: v1 complete, sets growing.** M1–M6 are merged: foundation, catalog, collection, prices and portfolio, data safety, polish. The tag v1.0.0 goes on `main` once Marvin says go. The Mega Evolution series is merged (PR #5); Marvin's 21 older sets, from the Base Set to Schwarze Blitze, are built and wait for his check. Planning is complete (spec v0.4, rounds 1–7 and 10 decided, rounds 8–9 open without blockers); coding started on 2026-09-23. The catalog holds *30 Jahre / 30th CELEBRATION* in DE, EN, JA, ZH-CN and ZH-TW, the Mega Evolution series in DE, EN, JA and ZH-TW, and the older sets in DE and EN: 6,167 cards and 191 sealed products. The design direction, **D · Bold Studio**, is on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link).
 >
 > Private project: unlisted deployment, not indexed, shared with a few friends.
 
@@ -13,6 +13,7 @@ Settr is a local-first collection tracker for Pokémon TCG **singles and sealed 
 - **Catalog:**
   - the 30th-anniversary expansion *30 Jahre / 30th Celebration* (EN/DE incl. Classic Collection and Energies; JP, Simplified and Traditional Chinese *30th CELEBRATION* M6a);
   - the **Mega Evolution series**: Mega-Entwicklung to Dunkelnacht, Erhabene Helden and the MEP promos in EN/DE, and the Japanese sets Mega Brave to Abyss Eye with Traditional Chinese;
+  - Marvin's **older sets** in EN/DE: nine Scarlet & Violet sets (Schwarze Blitze to Karmesin & Purpur and its promos), seven Sword & Shield sets with their Trainer and Galar galleries, Nacht in Flammen and the Grundset (Unlimited);
   - more sets follow one by one.
 
   Card data comes from TCGdex; sealed products are curated.

@@ -104,6 +104,11 @@ export interface SetConfig {
   /** Local id of the card shown on the set's tile. */
   coverCard?: string;
   /**
+   * Another TCGdex set folder of the same series to look for pictures in when the set's own has
+   * none: a gallery's main set (Trainer Gallery cards may be filed there).
+   */
+  picturesIn?: string;
+  /**
    * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group id or the beginnings of group
    * names (any case: "m1L: Mega Brave"), to find the set's sealed products on TCGCSV for their
    * pictures (DATA_SOURCES.md §4).
@@ -142,6 +147,7 @@ function international(
     | 'rareIsHolo'
     | 'coverCard'
     | 'extras'
+    | 'picturesIn'
   > & {
     series?: SetConfig['series'];
     /** A subset of this main set (a Trainer Gallery): one section of the parent's chunk. */
@@ -483,6 +489,7 @@ export const CATALOG_SETS: SetConfig[] = [
     code: 'CRZ',
     expectedCards: 70,
     printedNumber: gallery('GG70'),
+    picturesIn: 'swsh12.5',
   }),
   international('intl:swsh11', SWSH('Lost Origin'), {
     ...SWORD_SHIELD,
@@ -497,6 +504,7 @@ export const CATALOG_SETS: SetConfig[] = [
     code: 'LOR',
     expectedCards: 30,
     printedNumber: gallery('TG30'),
+    picturesIn: 'swsh11',
   }),
   // Without Astral Radiance itself, its Trainer Gallery stands alone (R10.5).
   international('intl:swsh10tg', SWSH('Astral Radiance Trainer Gallery'), {
@@ -504,6 +512,7 @@ export const CATALOG_SETS: SetConfig[] = [
     code: 'ASR',
     expectedCards: 30,
     printedNumber: gallery('TG30'),
+    picturesIn: 'swsh10',
     coverCard: 'TG30', // Shadow Rider Calyrex VMAX, Secret Rare
     cardmarket: 4979, // Astral Radiance, which sells its gallery
   }),
@@ -520,6 +529,7 @@ export const CATALOG_SETS: SetConfig[] = [
     code: 'BRS',
     expectedCards: 30,
     printedNumber: gallery('TG30'),
+    picturesIn: 'swsh9',
   }),
   international('intl:swsh4', SWSH('Vivid Voltage'), {
     ...SWORD_SHIELD,

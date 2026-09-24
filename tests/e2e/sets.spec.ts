@@ -1,7 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
-// Several sets and their prints (the Mega Evolution series, ADR-051–053).
+// Several sets and their prints: the Mega Evolution series (ADR-051–053) and the older series
+// (ADR-054–056).
 
 // The service worker would fetch card pictures itself once it controls the page, past the
 // fixtures' picture stubs; the PWA spec covers it.

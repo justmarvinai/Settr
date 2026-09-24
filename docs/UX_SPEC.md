@@ -446,7 +446,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 
 | Keys | Action |
 |---|---|
-| `Strg K` (Windows) / `⌘K` (Mac, iPad) / `/` | Command palette (search catalog, collection, actions, settings). As built (M5), *Aktionen*: *Backup exportieren* (runs right away) and *Backup einspielen …* (opens the import on the Daten page) |
+| `Strg K` (Windows) / `⌘K` (Mac, iPad) / `/` | Command palette (search catalog, collection, actions, settings). As built (M5), *Aktionen*: *Backup exportieren* (runs right away) and *Backup einspielen …* (opens the import on the Daten page). Up to 6 cards and 4 sealed products, searched apart, so a name many cards share (*Glurak*) still shows its products (2026-09-24) |
 | `N` | New holding (add sheet for the focused card, or palette otherwise) |
 | `P` | Record a price for the focused/selected item |
 | `Q` | Quick-add mode (in set context) |
