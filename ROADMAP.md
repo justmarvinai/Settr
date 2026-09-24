@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M6 · Polish & Launch** ✅ built, v1.0.0 release candidate: waiting for your check in Brave and on the iPhone (M1–M5 are merged) · question rounds 1–7 decided, round 8 open without blockers
+> Last updated: 2026-09-24 · Current phase: **M6 · Polish & Launch** ✅ built, v1.0.0 release candidate in PR #4: waiting for your check in Brave and on the iPhone (M1–M5 are merged) · question rounds 1–7 decided, round 8 open without blockers
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -16,7 +16,7 @@
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
-| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ built · 🔒 your check, then the merge and the `v1.0.0` tag |
+| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ built, PR #4 · 🔒 your check, then the merge and the `v1.0.0` tag |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
 | **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | 🔒 |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
