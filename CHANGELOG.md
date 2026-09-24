@@ -86,6 +86,9 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - `vercel.json`: `/catalog/*` app routes reach the SPA (only `/catalog/v1/` is static); `/img/tcgp/*` proxies TCGplayer pictures.
 
 ### Fixed
+- The CSP (no `'unsafe-eval'`) blocked Zod's `new Function` probe on every page load since M1. Zod caught the error, but browsers reported the violation, and Firefox logged it. Zod now runs jitless (`src/lib/zod.ts`, imported by every schema module, with a lint rule against importing `zod` directly), and the e2e fixture fails on any CSP violation event, in every browser.
+- The theme toggle (and *Einstellungen › Darstellung*) could be switched back by the first stored-settings read landing after the click, which also wrote the old theme to the pre-paint copy. It showed as a flaky reload test in CI. Older stored values are now ignored until the store has the change.
+- A backup date that isn't a timestamp reads as unknown instead of breaking the import preview.
 - On phones a toast could cover an open dialog's buttons; while a dialog or sheet is open, toasts show at the top.
 - Einstellungen › Daten works offline again (it no longer asks for the catalog to show the page).
 - A picture's loading placeholder pulses three times instead of forever.

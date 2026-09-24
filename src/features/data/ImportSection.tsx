@@ -335,6 +335,8 @@ export function ImportSection() {
         data-testid="import-drop"
         className={cn(
           'flex flex-wrap items-center gap-3 rounded-[18px] border-2 border-dashed px-5 py-4 transition-colors duration-(--dur-fast)',
+          // Touch screens don't drag files: just the button there.
+          'pointer-coarse:border-0 pointer-coarse:p-0',
           dragging ? 'border-accent bg-hover' : 'border-line',
         )}
         onDragOver={(event) => {
@@ -349,8 +351,15 @@ export function ImportSection() {
           if (file) void read(file);
         }}
       >
-        <UploadSimpleIcon size={22} weight="bold" aria-hidden className="shrink-0 text-ink-muted" />
-        <span className="type-ui text-ink-muted">{m.settings_data_import_drop()}</span>
+        <UploadSimpleIcon
+          size={22}
+          weight="bold"
+          aria-hidden
+          className="shrink-0 text-ink-muted pointer-coarse:hidden"
+        />
+        <span className="type-ui text-ink-muted pointer-coarse:hidden">
+          {m.settings_data_import_drop()}
+        </span>
         <Button variant="outline" disabled={reading} onClick={() => input.current?.click()}>
           {m.settings_data_import_pick()}
         </Button>

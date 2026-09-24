@@ -81,7 +81,9 @@ test('export → delete all data → import gives back exactly the same data', a
   await expect(submit).toBeDisabled();
   await wipe.getByLabel('Tippe LÖSCHEN zur Bestätigung').fill('löschen');
   await submit.click();
+  // A fresh start: the page reloads on Übersicht (let it finish before navigating on).
   await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Übersicht');
   await page.goto('/collection/cards');
   await expect(page.getByText(/^Noch keine Karten/)).toBeVisible();
 
