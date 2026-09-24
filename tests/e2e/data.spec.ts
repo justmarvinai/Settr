@@ -247,22 +247,22 @@ test('the backup reminder: amber at once, a toast from the next day, Jetzt siche
     () =>
       new Promise<void>((resolve, reject) => {
         const open = indexedDB.open('settr');
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
+        open.addEventListener('error', () => reject(open.error));
+        open.addEventListener('success', () => {
           const idb = open.result;
           const tx = idb.transaction('kv', 'readwrite');
           const kv = tx.objectStore('kv');
           const read = kv.get('meta');
-          read.onsuccess = () => {
+          read.addEventListener('success', () => {
             const row = read.result as { key: string; value: { createdAt: string } };
             const createdAt = new Date(Date.now() - 2 * 86_400_000).toISOString();
             kv.put({ ...row, value: { ...row.value, createdAt } });
-          };
-          tx.oncomplete = () => {
+          });
+          tx.addEventListener('complete', () => {
             idb.close();
             resolve();
-          };
-        };
+          });
+        });
       }),
   );
   await page.reload();

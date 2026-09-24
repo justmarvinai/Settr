@@ -102,7 +102,7 @@ describe('export → import (replace) round trip', () => {
           new Set(tables.prices.map((p) => p.seriesKey)).size,
         );
       }),
-      { seed: 20260924, numRuns: 25 },
+      { numRuns: 25 },
     );
   });
 

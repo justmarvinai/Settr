@@ -1,0 +1,56 @@
+name: Nightly
+
+# What every PR doesn't run (QUALITY.md §5): the property tests with a random seed, and the data
+# journeys (export → wipe → import, merge with conflicts, CSV, reminders) in Firefox. A failing
+# property run prints its seed; replay it locally with FC_SEED=<seed> pnpm test.
+on:
+  schedule:
+    - cron: '17 2 * * *' # 04:17 CEST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  properties:
+    name: Property tests (random seed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm i18n
+      - run: pnpm test
+        env:
+          FC_SEED: random
+
+  firefox:
+    name: Playwright (firefox, data journeys)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps firefox
+      - run: pnpm e2e --project=firefox tests/e2e/data.spec.ts
+        env:
+          NIGHTLY: '1'
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-firefox
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7

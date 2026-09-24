@@ -36,5 +36,14 @@ export default defineConfig({
     // in software (frames of 100-600 ms with the glass layers), so the longer journeys need more
     // than the default 30 s per test.
     ...(CI ? [{ name: 'webkit-phone', use: { ...devices['iPhone 15'] }, timeout: 60_000 }] : []),
+    // Nightly only (e2e-nightly.yml): the data journeys in Firefox as well (M5 exit criterion).
+    ...(process.env.NIGHTLY
+      ? [
+          {
+            name: 'firefox',
+            use: { ...devices['Desktop Firefox'], viewport: { width: 1440, height: 900 } },
+          },
+        ]
+      : []),
   ],
 });

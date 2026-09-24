@@ -222,7 +222,7 @@ describe('planMerge: properties', () => {
         expect(totals.added + totals.updated + totals.deleted + totals.skipped).toBe(0);
         expect(snapshot(mergedTables(tables, plan))).toEqual(snapshot(tables));
       }),
-      { seed: 20260924, numRuns: 150 },
+      { numRuns: 150 },
     );
   });
 
@@ -232,7 +232,7 @@ describe('planMerge: properties', () => {
         const plan = planMerge(side(emptyTables(), 'a'), side(tables, 'b'));
         expect(snapshot(mergedTables(emptyTables(), plan))).toEqual(snapshot(tables));
       }),
-      { seed: 20260924, numRuns: 150 },
+      { numRuns: 150 },
     );
   });
 
@@ -249,7 +249,7 @@ describe('planMerge: properties', () => {
           expect(mergeTotals(again)).toMatchObject({ added: 0, updated: 0, deleted: 0 });
         },
       ),
-      { seed: 20260924, numRuns: 200 },
+      { numRuns: 200 },
     );
   });
 });

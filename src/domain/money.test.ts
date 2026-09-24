@@ -57,7 +57,7 @@ describe('allocate (largest remainder)', () => {
           });
         },
       ),
-      { seed: 42, numRuns: 500 },
+      { numRuns: 500 },
     );
   });
 });

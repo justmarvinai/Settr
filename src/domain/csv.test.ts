@@ -50,7 +50,6 @@ describe('toCsv', () => {
       fc.property(fc.integer({ min: -1e12, max: 1e12 }), (minor) => {
         expect(Math.round(Number(decimalOf(money(minor))) * 100)).toBe(minor);
       }),
-      { seed: 20260924 },
     );
   });
 });
