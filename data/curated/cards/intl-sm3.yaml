@@ -1,0 +1,4 @@
+# Burning Shadows: TCGdex calls Tapu Fini-GX Rare; it is an Ultra Rare like the set's other GX.
+setId: intl:sm3
+cards:
+  '39': { rarity: ultra-rare, note: Tapu Fini-GX }

@@ -291,6 +291,7 @@ function toCard(
       : (n ?? prefixedNumber(localId) ?? 1000 + ['R', 'G', 'B'].indexOf(localId)));
 
   const listedRarity =
+    overlay?.rarity ??
     config.forceRarity ??
     (n === null ? undefined : config.rarityRanges?.find((r) => n >= r.from && n <= r.to)?.rarity) ??
     (raw.rarity ? config.rarities?.[raw.rarity] : undefined) ??

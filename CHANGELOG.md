@@ -53,7 +53,9 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - Catalog pipeline:
   - offline builds keep the sealed pictures even after an offline build that couldn't verify every card picture;
   - regular variants take the card's Cardmarket and TCGplayer products where TCGdex keeps them per card (Karmesin & Purpur, Nacht in Flammen, the Japanese Mega sets);
-  - German set names as printed: *Obsidianflammen*, *Teams sind Trumpf*, *Majestät der Drachen*, *Sturm am Firmament*, *Grauen der Lichtfinsternis*.
+  - German set names as printed: *Obsidianflammen*, *Teams sind Trumpf*, *Majestät der Drachen*, *Sturm am Firmament*, *Grauen der Lichtfinsternis*;
+  - four GX cards TCGdex lists as Rare are Ultra Rares like every other GX: Sylveon-GX, Tapu Fini-GX, Entei-GX and Guzzlord-GX 63a (curated `rarity`);
+  - finishes TCGplayer doesn't list: basic Energy comes as non-holo only, a GX as a holo; the last build's finishes stand in only when TCGplayer's printings couldn't be loaded (ADR-057);
   - a throttled image server no longer reads as missing pictures;
   - the MEGA promos no longer take Traditional Chinese names by number (Taiwan numbers its promos differently);
   - Traditional Chinese trainer names lose PTCG-database's angle brackets;

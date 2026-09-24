@@ -4,6 +4,7 @@ import { parse } from 'yaml';
 import { z } from 'zod';
 import { CARD_LANGUAGES } from '../../src/domain/catalog-types';
 import { catalogProductSchema } from '../../src/domain/catalog/schema';
+import { RARITY_IDS } from '../../src/domain/catalog/vocab';
 import { CURATED } from './paths';
 
 const text = z.partialRecord(z.enum(CARD_LANGUAGES), z.string().min(1));
@@ -13,6 +14,8 @@ const cardOverlaySchema = z
   .object({
     printedNumber: z.string().optional(),
     sort: z.number().optional(),
+    /** The rarity where TCGdex's is wrong (a GX it calls Rare). */
+    rarity: z.enum(RARITY_IDS).optional(),
     /** Official names that TCGdex lacks or gets wrong. */
     name: text.optional(),
     /** Hand-typed translations (shown as "übersetzt"). */

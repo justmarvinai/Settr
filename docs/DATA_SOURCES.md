@@ -159,6 +159,7 @@ Every other set of the eras Marvin collects from, except the Base Set's (R11.1):
 - **Vaults and galleries:** the Glitzer-Tresore print `SV001/SV122` (Glänzendes Schicksal) and `SV1/SV94` (Verborgenes Schicksal); Silberne Sturmwinde's gallery `TG01/TG30`. Their pictures may sit in the main set's folder (`picturesIn`).
 - **Klassische Kollektion (Celebrations):** TCGdex has no German data and numbers the cards `CC001`–`CC025`; the original numbers and the originals' German names are curated (`data/curated/cards/intl-cel25cc.yaml`, checked by number and illustrator).
 - **Aufziehen der Sturmröte 63a:** the alternate-art Guzzlord-GX of the Guzzlord-GX Box, numbered `63a/111`.
+- **GX cards TCGdex calls Rare:** Sylveon-GX (GRI 92), Tapu Fini-GX (BUS 39), Entei-GX (SLG 10) and Guzzlord-GX 63a. They're Ultra Rares like every other GX of these sets (curated `rarity`).
 - **English only:** My First Battle, Pokémon Futsal 2020 and the Ash's Pikachu promos SM108–SM114 (`data/curated/cards/intl-smp.yaml`).
 - **Karmesin & Purpur Energie:** SVE 001–008 came with the first set, 009–024 with later products; the set holds all 24.
 - **German set names:** TCGdex capitalizes some (*Teams Sind Trumpf*) or splits them (*Obsidian Flammen*); the config names them as printed.
@@ -311,6 +312,13 @@ setId: intl:swshp
 cards:
   SWSH074: { languages: [en], note: 'Special Delivery Pikachu (Pokémon Center USA, 2020)' }
   # SWSH029: { cardmarket: { en: 123456 } }   # international cards: one product for DE and EN
+```
+
+```yaml
+# data/curated/cards/intl-sm3.yaml   (a rarity TCGdex gets wrong)
+setId: intl:sm3
+cards:
+  '39': { rarity: ultra-rare, note: Tapu Fini-GX }
 ```
 
 Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow collections split on commas.
