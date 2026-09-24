@@ -612,7 +612,8 @@ function Runner() {
         priceType: latestEntry?.priceType ?? settings.price.defaultType,
         source: latestEntry?.source ?? sourceOf(settings.price.defaultType),
         ...(latestEntry?.context ? { context: latestEntry.context } : {}),
-        origin: 'manual',
+        // A confirmed guide value stays one (ADR-040): it says where the number came from.
+        origin: latestEntry?.origin ?? 'manual',
       });
       await advance({
         outcome: 'unchanged',
