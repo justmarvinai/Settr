@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "startServerCommand": "pnpm preview --port 4180 --strictPort",
-      "startServerReadyPattern": "localhost:4180",
+      "startServerReadyPattern": "Local",
       "url": [
         "http://localhost:4180/onboarding",
         "http://localhost:4180/catalog/sets/intl:30th",
