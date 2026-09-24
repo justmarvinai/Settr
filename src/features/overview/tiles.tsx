@@ -1,6 +1,6 @@
 import { ArrowRightIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
-import { Suspense, useState, type ReactNode } from 'react';
+import { Suspense, useState } from 'react';
 import { CardImage } from '@/components/domain/CardImage';
 import { PLDelta } from '@/components/domain/PLDelta';
 import { ProductImage } from '@/components/domain/ProductImage';
@@ -16,48 +16,10 @@ import { ratio as shareOf } from '@/domain/collection';
 import { money } from '@/domain/money';
 import { remaining } from '@/domain/schemas';
 import { rankMovers, type LotValue } from '@/domain/valuation';
-import { useSetOwnership, type LibraryRow } from '@/features/collection';
+import { LotLink, useSetOwnership, type LibraryRow } from '@/features/collection';
 import { htmlLang, languageCode, m } from '@/i18n';
 import { gradingText } from '@/i18n/collection-labels';
 import { formatCount, formatMoney, formatShare } from '@/i18n/format';
-
-/** Where a lot's item page is: its card (in its set) or its product; none for custom items. */
-function ItemLink({
-  row,
-  children,
-  className,
-}: {
-  row: LibraryRow;
-  children: ReactNode;
-  className?: string;
-}) {
-  const h = row.holding;
-  if (h.item.kind === 'card' && row.pageSetId) {
-    return (
-      <Link
-        to="/catalog/sets/$setId/cards/$cardId"
-        params={{ setId: row.pageSetId, cardId: h.item.id }}
-        search={{ lang: h.language }}
-        className={className}
-      >
-        {children}
-      </Link>
-    );
-  }
-  if (h.item.kind === 'sealed' && row.inCatalog && !row.info.custom) {
-    return (
-      <Link
-        to="/catalog/sealed/$productId"
-        params={{ productId: h.item.id }}
-        search={{ lang: h.language }}
-        className={className}
-      >
-        {children}
-      </Link>
-    );
-  }
-  return <span className={className}>{children}</span>;
-}
 
 // ── Stale prices ───────────────────────────────────────────────────────────────────────────────
 
@@ -180,7 +142,7 @@ function MoverList({
           if (!row || !v.pl) return null;
           return (
             <li key={v.holding.id}>
-              <ItemLink
+              <LotLink
                 row={row}
                 className="flex items-center justify-between gap-3 rounded-[12px] px-2 py-1.5 hover:bg-hover"
               >
@@ -201,7 +163,7 @@ function MoverList({
                   show={by === 'abs' ? 'amount' : 'ratio'}
                   className="type-small"
                 />
-              </ItemLink>
+              </LotLink>
             </li>
           );
         })}
@@ -213,14 +175,18 @@ function MoverList({
 export function MoversTile({
   values,
   rows,
+  count = 5,
+  className,
 }: {
   values: readonly LotValue[];
   rows: ReadonlyMap<string, LibraryRow>;
+  count?: number;
+  className?: string;
 }) {
   const [by, setBy] = useState<'abs' | 'ratio'>('abs');
-  const { gainers, losers } = rankMovers(values, by, 5);
+  const { gainers, losers } = rankMovers(values, by, count);
   return (
-    <Panel aria-labelledby="movers-title" className="flex flex-col gap-3 p-5">
+    <Panel aria-labelledby="movers-title" className={cn('flex flex-col gap-3 p-5', className)}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="movers-title" className="type-label m-0 text-ink-muted uppercase">
           {m.overview_movers_title()}
@@ -318,7 +284,7 @@ export function RecentTile({ rows }: { rows: readonly LibraryRow[] }) {
       <ul className="-mx-1 m-0 flex list-none gap-3 overflow-x-auto p-1 pb-2">
         {recent.map((row) => (
           <li key={row.holding.id} className="w-24 shrink-0">
-            <ItemLink row={row} className="flex flex-col gap-1.5 rounded-[12px]">
+            <LotLink row={row} className="flex flex-col gap-1.5 rounded-[12px]">
               {row.holding.item.kind === 'card' ? (
                 <CardImage image={row.image} size="small" alt="" />
               ) : (
@@ -336,7 +302,7 @@ export function RecentTile({ rows }: { rows: readonly LibraryRow[] }) {
               <span className="money text-[12px] leading-4 text-ink-muted tabular-nums">
                 {row.value?.value ? formatMoney(row.value.value) : m.lot_unpriced()}
               </span>
-            </ItemLink>
+            </LotLink>
           </li>
         ))}
       </ul>

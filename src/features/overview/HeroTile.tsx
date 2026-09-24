@@ -46,6 +46,7 @@ export function HeroTile({
   totals,
   today,
   unpriced,
+  title = m.overview_value(),
   className,
 }: {
   holdings: readonly Holding[];
@@ -53,6 +54,8 @@ export function HeroTile({
   totals: PortfolioTotals;
   today: string;
   unpriced: 'exclude' | 'cost';
+  /** What the numbers cover: Gesamtwert, or e.g. the Portfolio page's filtered part. */
+  title?: string;
   className?: string;
 }) {
   const [range, setRange] = useUiChoice('overview.range', CHART_RANGES, 'max');
@@ -112,7 +115,7 @@ export function HeroTile({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
           <h2 id="hero-title" className="type-label m-0 text-ink-muted uppercase">
-            {m.overview_value()}
+            {title}
             <span className="ml-2 normal-case">
               {point ? m.overview_on({ date: formatDate(point.date) }) : m.overview_today()}
             </span>

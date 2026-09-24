@@ -1,12 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ComingSoon } from '@/components/ui/ComingSoon';
+import { manifestQuery } from '@/catalog';
+import { portfolioSearchSchema } from '@/domain/valuation/portfolio-search';
+import { CatalogErrorPage } from '@/features/catalog';
+import { PortfolioPage } from '@/features/portfolio';
 import { m } from '@/i18n';
 
 export const Route = createFileRoute('/portfolio/')({
   staticData: { title: m.nav_portfolio },
+  validateSearch: portfolioSearchSchema,
+  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(manifestQuery),
   component: PortfolioPage,
+  errorComponent: CatalogErrorPage,
 });
-
-function PortfolioPage() {
-  return <ComingSoon badge={m.page_coming_title()} body={m.page_coming_portfolio()} />;
-}

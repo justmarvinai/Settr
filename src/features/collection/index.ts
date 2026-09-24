@@ -19,6 +19,7 @@ export {
 } from './ownership';
 export { HoldingsPanel } from './HoldingsPanel';
 export { locationText } from './location';
+export { LotLink } from './LotLink';
 export { lotMenuActions } from './lot-menu';
 export {
   cardInfo,

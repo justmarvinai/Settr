@@ -7,10 +7,12 @@ import type { PriceEntry } from '../schemas/price';
 import { cardSeriesKey, sealedSeriesKey, seriesKeyOf } from '../series';
 import {
   gridDays,
+  groupTotals,
   portfolioSeries,
   portfolioTotals,
   priceSessionSchema,
   rankMovers,
+  realizedEvents,
   realizedTotal,
   seriesStates,
   sessionQueue,
@@ -373,5 +375,58 @@ describe('price session (PRC-04)', () => {
       ],
     });
     expect(priceSessionSchema.safeParse({ ...state, position: -1 }).success).toBe(false);
+  });
+});
+
+describe('portfolio page (PRT-02…04)', () => {
+  const values = valueLots(HOLDINGS, latestOf(PRICES), OPTIONS);
+
+  it('totals per group, most valuable first, on the same rules as the whole portfolio', () => {
+    const byKind = groupTotals(values, (v) => v.holding.item.kind);
+    expect(byKind.map((g) => g.key)).toEqual(['sealed', 'card']);
+    const cards = byKind[1]?.totals;
+    // A 16,00 + D 8,00 + E 1,50 + F 3,00; invested A 10 + B 20 + E 1 + F 4; P/L over A, E, F.
+    expect(cards?.value).toEqual(eur(2850));
+    expect(cards?.invested).toEqual(eur(3500));
+    expect(cards?.pl).toEqual(eur(550));
+    expect(byKind[0]?.totals.pl).toEqual(eur(501));
+    // The groups add up to the whole.
+    const whole = portfolioTotals(values);
+    expect(byKind.reduce((n, g) => n + g.totals.value.minor, 0)).toBe(whole.value.minor);
+    expect(byKind.reduce((n, g) => n + g.totals.pl.minor, 0)).toBe(whole.pl.minor);
+  });
+
+  it('leaves out lots without a key and closed lots', () => {
+    const closed = lot({
+      acquisition: { type: 'purchase', priceTotal: eur(100) },
+      disposals: [sale({ proceedsTotal: eur(200) })],
+    });
+    const all = valueLots([...HOLDINGS, closed], latestOf(PRICES), OPTIONS);
+    const english = groupTotals(all, (v) => (v.holding.language === 'en' ? 'en' : undefined));
+    expect(english).toHaveLength(1);
+    expect(english[0]?.totals.value).toEqual(eur(0)); // B has no price
+    expect(english[0]?.totals.unpriced).toBe(1);
+    const lots = groupTotals(all, () => 'all')[0]?.totals.lots;
+    expect(lots).toBe(HOLDINGS.length);
+  });
+
+  it('lists sales and trades with their result, newest first', () => {
+    const traded = lot({
+      acquisition: { type: 'purchase', priceTotal: eur(1000) },
+      disposals: [sale({ type: 'trade', date: '2026-09-15', proceedsTotal: eur(1200) })],
+    });
+    const gifted = lot({
+      acquisition: { type: 'purchase', priceTotal: eur(500) },
+      disposals: [sale({ type: 'gift', date: '2026-09-16' })],
+    });
+    const unknown = lot({ disposals: [sale({ date: '2026-09-12', proceedsTotal: eur(300) })] });
+    const events = realizedEvents([...HOLDINGS, traded, gifted, unknown]);
+    expect(events.map((e) => e.disposal.date)).toEqual(['2026-09-15', '2026-09-12', '2026-09-08']);
+    expect(events[0]?.result).toEqual(eur(200));
+    expect(events[1]).toMatchObject({ net: eur(300), cost: undefined, result: undefined });
+    // E: 2 of 3 sold for 5,00 − 0,50 fees; they cost 2,00.
+    expect(events[2]).toMatchObject({ net: eur(450), cost: eur(200), result: eur(250) });
+    const sum = events.reduce((n, e) => n + (e.result?.minor ?? 0), 0);
+    expect(sum).toBe(realizedTotal([...HOLDINGS, traded, gifted, unknown]).minor);
   });
 });
