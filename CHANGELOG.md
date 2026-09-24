@@ -21,6 +21,7 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - **Empty states** for Sammlung, Preise and Portfolio, with the next step. On iPhones, a hint to add Settr to the home screen.
   - **Foil progress rings (DSN-03):** Basis progress as a ring on set pages, the Sets page, the Übersicht and in the sidebar, which now lists the sets you collect. At 100 % the ring turns to foil with one sweep, and the set's progress lifts.
   - **Holo card viewer (DSN-01):** on card pages the picture leans towards the pointer, with a glare and a foil for each rarity. It's our own implementation, without GPL code. Phones use the gyroscope after a tap (the iPhone asks first), a tap opens fullscreen, and everything stays still under reduced motion.
+  - **Gesamtwert counts up** the first time the Übersicht or the Portfolio shows it in a session (the hero odometer), except with reduced motion. Screen readers get the final number.
   - **Grid → card morph (DSN-02):** the tile's picture grows into the card page and back again (View Transitions), except with reduced motion.
   - **Phones:** a long press on a set tile opens *Hinzufügen …*, *Preis eintragen …* and *Details*. Swiping the card picture turns to the previous or next card.
   - **Über & Rechtliches (APP-08):**
@@ -33,7 +34,8 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
     - e2e journeys 5 (a sealed product's P/L), 9 (offline with the service worker, including a reload without network) and 10 (keyboard only, from adding a card to the price session);
     - every journey nightly in Firefox and on an Android phone (Pixel 7);
     - visual regression for six screens in light and dark (`visual.yml`), with the baselines made on CI's Ubuntu runner;
-    - Lighthouse CI on every PR (`lighthouse.yml`): LCP, CLS and blocking time against the budgets, on the production build.
+    - Lighthouse CI on every PR (`lighthouse.yml`), on the production build: desktop is the gate (LCP, CLS, blocking time, scores), and the phone profile is a report (R8.3).
+  - **Glass and high contrast:** under an open sheet or dialog the chrome stops blurring, so at most three blur layers run at once (one while a sheet is open). With forced colors, big numbers no longer cover their labels.
 - **M5 · Data Safety (v0.5.0 candidate, 2026-09-24).**
   - **Backup einspielen (DAT-02):**
     - A backup file by button or drag and drop is read in a worker and checked: checksum, migration, every record against its schema.

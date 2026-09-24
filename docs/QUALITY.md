@@ -35,7 +35,7 @@ A change is **done** only when all of the following hold:
 | **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. CI renders WebKit in software (frames of 100–600 ms with the glass layers), so the WebKit project allows 60 s per test instead of 30 s. Every test also fails on console errors and CSP violations (the preview server sends the production CSP). As built (M5): the fixture also listens for `securitypolicyviolation` events, because Chromium and WebKit don't log a violation the page catches itself. That's how Zod's `new Function` probe surfaced (only Firefox logged it); Zod now runs jitless (`src/lib/zod.ts`, and a lint rule keeps imports going through it) | All journeys green before merge to `main` |
 | **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts. As built (M6, ADR-049): `tests/visual`, a fixed clock, stubbed pictures and no service worker; the baselines are made and compared on GitHub's Ubuntu runner only (`visual.yml`: nightly, and by hand with `update` to regenerate and commit them) |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
-| **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI. As built (M6, ADR-049): Lighthouse CI runs on the production build behind `vite preview` (`lighthouse.yml`, `lighthouserc.json`): LCP and CLS fail the job, blocking time and the performance score warn |
+| **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI. As built (M6, ADR-049): Lighthouse CI runs on the production build behind `vite preview` (`lighthouse.yml`): the desktop profile is the gate (`lighthouserc.json`: LCP, CLS, blocking time and the scores fail the job), the phone profile is a report (`lighthouserc.phone.json`: layout shift and accessibility fail, the rest warns) |
 | **Catalog pipeline** | Vitest + Zod | Generated JSON validates. Counts match the manifest. Image URL sampling (HEAD) runs as a non-blocking job | Every catalog PR |
 | **Manual Brave check** | Brave (current stable) on Windows, **default Shields** | The Brave smoke test (§3.1): install as app, offline, `persist()`, backup download with Save-As, CJK rendering, glass | Before each release |
 
@@ -120,7 +120,7 @@ Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Be
 | Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
 | CSS (gzip) | ≤ 35 KB initial; on-demand CSS ≤ 45 KB per file (one Noto CJK family's `@font-face` rules, loaded only where Japanese or Chinese names show) |
 | Web fonts on first render | ≤ 2 files, ≤ 125 KB total (latin subsets, variable; ADR-030). CJK fonts load lazily and only when CJK text is rendered |
-| LCP (Lighthouse mobile, simulated 4G) | ≤ 2.0 s |
+| LCP (Lighthouse mobile, simulated 4G) | ≤ 2.0 s. As built (M6, ADR-049): the Lighthouse gate measures **desktop** (≈ 1.1 s); the phone profile on simulated 4G is reported and warns above 4 s (≈ 5.2 s for a first visit: a client-rendered app paints after its code has loaded and run; installed, it starts from the cache). Reaching 2 s there needs prerendered first screens (R8.3) |
 | INP (P75) | ≤ 200 ms |
 | CLS | ≤ 0.05 (image slots have a fixed aspect ratio of 63∶88) |
 | Grid scroll | 60 fps with 300+ tiles (virtualized above ~150) |
@@ -182,7 +182,7 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 | `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
 | `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
 | Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |
-| `lighthouse.yml` | PR + manual | Lighthouse CI on the production build behind `vite preview`, with the budgets of §4 (ADR-049; planned against the Vercel preview, which deployment protection would block) |
+| `lighthouse.yml` | PR + manual | Lighthouse CI on the production build behind `vite preview`: desktop as the gate, the phone profile as a report (ADR-049; planned against the Vercel preview, which deployment protection would block) |
 
 Local git hooks (`lefthook.yml`, installed by `pnpm install`): **pre-commit** formats and lints the staged files, **pre-push** runs the typecheck and the unit tests.
 

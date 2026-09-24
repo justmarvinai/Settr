@@ -1,9 +1,11 @@
 name: Lighthouse
 
-# The performance budgets of QUALITY.md §4 (LCP, CLS, blocking time) and the Lighthouse scores, on
-# the production build served by `vite preview` with the production headers, as a phone on a
-# simulated 4G network. Local rather than the Vercel preview: no deployment protection to get
-# past, and the deployment URL stays out of the repository (ADR-029).
+# The performance budgets of QUALITY.md §4 on the production build, served by `vite preview` with
+# the production headers (ADR-049). Desktop, Settr's primary platform (Brave on Windows), is the
+# gate: LCP, CLS, blocking time and the scores fail the job. The phone profile (a slow phone on
+# simulated 4G) is reported alongside and only warns, except for layout shift. Local rather than
+# the Vercel preview: no deployment protection to get past, and the deployment URL stays out of
+# the repository (ADR-029).
 on:
   pull_request:
   workflow_dispatch:
@@ -30,10 +32,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       # Pinned, and not a dependency: only this job needs Lighthouse (the runner brings Chrome).
-      - run: npx --yes @lhci/cli@0.15.1 autorun
+      - name: Desktop (the gate)
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json
+      - name: Phone (a report)
+        if: success() || failure()
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.phone.json
       - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse
           path: .lighthouseci
+          include-hidden-files: true # the reports' folder starts with a dot
           retention-days: 14

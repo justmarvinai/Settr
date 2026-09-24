@@ -35,9 +35,12 @@
 - [x] ⭐ Nightly, so design tweaks don't block PRs.
 - [ ] On every PR (stricter: every design change needs a baseline run first).
 
-**R8.3 · Performance budgets in Lighthouse.** Every PR measures the built app as a phone on a 4G connection. An LCP over 2 s or layout shift over 0.05 fails the check; blocking time and the overall score only warn (ADR-049).
-- [x] ⭐ Like that.
-- [ ] Fail on the overall score too (below 90).
+**R8.3 · The phone budget in Lighthouse.** Every PR measures the built app twice:
+- **Desktop** (Brave on Windows) is the gate. The page is usable after about 1.1 s (LCP; budget 2 s), with a score of 96–98.
+- **Phone** is Lighthouse's slow phone on simulated 4G, first visit. It shows up after about 5.2 s, with a score of about 67, because an app that renders in the browser can't show anything before its code has loaded and run.
+- Installed on your iPhone, Settr starts from its cache and doesn't wait for the network. The spec's phone budget (2 s) would need prerendered first screens: a bigger change (ADR-049).
+- [x] ⭐ Desktop as the gate, the phone as a report. Prerendering can come after v1 if the iPhone ever feels slow.
+- [ ] Make the phone budget a gate too (then I prerender the first screens before v1).
 
 **R8.4 · Releasing v1.0.0.** After you merge the M6 PR, the tag `v1.0.0` goes on `main`, and Vercel deploys `main` to production as usual. Before the merge, the Brave smoke test (QUALITY §3.1) runs on your PC.
 - [x] ⭐ I set the tag once you've merged and said go.
