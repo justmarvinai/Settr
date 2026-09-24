@@ -18,6 +18,7 @@ import {
 import { toastError } from '@/features/collection';
 import { m } from '@/i18n';
 import { formatDate, formatMoney, formatMoneyShort } from '@/i18n/format';
+import { useCountUp } from '@/lib/useCountUp';
 
 type Mode = 'value' | 'pl';
 const MODES: readonly Mode[] = ['value', 'pl'];
@@ -47,6 +48,7 @@ export function HeroTile({
   today,
   unpriced,
   title = m.overview_value(),
+  view = 'overview',
   className,
 }: {
   holdings: readonly Holding[];
@@ -56,11 +58,14 @@ export function HeroTile({
   unpriced: 'exclude' | 'cost';
   /** What the numbers cover: Gesamtwert, or e.g. the Portfolio page's filtered part. */
   title?: string;
+  /** The page it's on: the number counts up the first time each page shows it. */
+  view?: 'overview' | 'portfolio';
   className?: string;
 }) {
   const [range, setRange] = useUiChoice('overview.range', CHART_RANGES, 'max');
   const [mode, setMode] = useUiChoice('overview.mode', MODES, 'value');
   const [active, setActive] = useState<number>();
+  const odometer = useCountUp(view, totals.value.minor);
 
   const to = dayNumber(today);
   const firstDay = holdings.reduce(
@@ -120,7 +125,16 @@ export function HeroTile({
               {point ? m.overview_on({ date: formatDate(point.date) }) : m.overview_today()}
             </span>
           </h2>
-          <span className="money type-display-m tabular-nums">{formatMoney(value)}</span>
+          <span className="money type-display-m tabular-nums">
+            {point || !odometer.counting ? (
+              formatMoney(value)
+            ) : (
+              <>
+                <span aria-hidden>{formatMoney(money(odometer.value, value.currency))}</span>
+                <span className="sr-only">{formatMoney(value)}</span>
+              </>
+            )}
+          </span>
           <span className="type-small flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-muted">
             <PLDelta delta={pl} ratio={plRatio} className="type-ui" />
             <span className="money">{m.overview_invested({ amount: formatMoney(invested) })}</span>

@@ -130,6 +130,7 @@ function Portfolio() {
             today={todayIso()}
             unpriced={settings.price.unpriced}
             title={filtered ? m.portfolio_value_part() : m.overview_value()}
+            view="portfolio"
             className="p-6"
           />
           <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
