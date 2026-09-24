@@ -1,6 +1,7 @@
 import {
   ArrowsLeftRightIcon,
   CurrencyEurIcon,
+  FileCsvIcon,
   TagIcon,
   TrashIcon,
   XIcon,
@@ -27,7 +28,8 @@ import { remaining, type Holding, type Location, type Tag } from '@/domain/schem
 import { seriesKeyOf } from '@/domain/series';
 import { m } from '@/i18n';
 import { formatCount } from '@/i18n/format';
-import { toastError, toastWithUndo } from '@/features/collection';
+import { toastError, toastWithUndo, type LibraryRow } from '@/features/collection';
+import { downloadCollectionCsv, useCsvDialect } from '@/features/data';
 
 const counted = (n: number) => ({ n, count: formatCount(n) });
 
@@ -289,11 +291,11 @@ function MoveForm({
 }
 
 /**
- * Multi-select actions (UX_SPEC.md §4.6): tags, move to a location (binders fill their next free
- * pockets), delete. Each is one transaction with Rückgängig. The price session and CSV export for
- * a selection follow with M4 and M5.
+ * Multi-select actions (UX_SPEC.md §4.6): a price session, tags, move to a location (binders fill
+ * their next free pockets), CSV (DAT-03) and delete. Changes are one transaction with Rückgängig.
  */
 export function BulkBar({
+  rows,
   lots,
   total,
   locations,
@@ -301,7 +303,9 @@ export function BulkBar({
   onSelectAll,
   onClear,
 }: {
-  /** Selected lots in list order. */
+  /** Selected lots in list order, as rows (names and values for CSV). */
+  rows: readonly LibraryRow[];
+  /** The same lots. */
   lots: readonly Holding[];
   /** Lots shown, for "Alle auswählen". */
   total: number;
@@ -311,6 +315,7 @@ export function BulkBar({
   onClear: () => void;
 }) {
   const [dialog, setDialog] = useState<'tags' | 'move' | null>(null);
+  const [dialect] = useCsvDialect();
   const navigate = useNavigate();
   const count = lots.length;
   const close = () => setDialog(null);
@@ -385,6 +390,18 @@ export function BulkBar({
         >
           <ArrowsLeftRightIcon size={16} weight="bold" aria-hidden />
           <span className="max-sm:hidden">{m.bulk_move()}</span>
+        </Button>
+        <Button
+          variant="quiet"
+          size="sm"
+          disabled={!count}
+          onClick={() =>
+            downloadCollectionCsv(rows, new Map(tags.map((t) => [t.id, t.name])), dialect)
+          }
+          aria-label={m.bulk_csv()}
+        >
+          <FileCsvIcon size={16} weight="bold" aria-hidden />
+          <span className="max-sm:hidden">{m.bulk_csv()}</span>
         </Button>
         <Button
           variant="quiet"

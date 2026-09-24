@@ -21,6 +21,7 @@ import { formatDate } from '@/i18n/format';
 import { priceTypeLabel } from '@/i18n/price-labels';
 import {
   BackupSection,
+  CsvSection,
   ImportSection,
   InstallSection,
   SnapshotsSection,
@@ -243,6 +244,9 @@ export function DataSettings() {
           <SnapshotsSection snapshots={snapshots} />
         </Section>
       ) : null}
+      <Section id="settings-csv" title={m.settings_data_csv()}>
+        <CsvSection />
+      </Section>
       <Section id="settings-storage" title={m.settings_data_storage()}>
         <StorageSection />
       </Section>

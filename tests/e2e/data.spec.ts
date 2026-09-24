@@ -191,6 +191,38 @@ test('a broken file, a newer backup and an edited one are explained', async ({ p
   await expect(dialog(page)).toBeHidden();
 });
 
+test('CSV for spreadsheets: Excel (Deutschland) from Daten, International for a selection', async ({
+  page,
+}) => {
+  await quickAdd(page, ['25 4,50', '150 26']);
+  await page.goto('/settings/data');
+  const csv = page.getByRole('region', { name: 'CSV für Tabellen' });
+  await expect(csv.getByRole('button', { name: 'Verkäufe exportieren' })).toBeDisabled();
+  const downloading = page.waitForEvent('download');
+  await csv.getByRole('button', { name: 'Sammlung exportieren' }).click();
+  const download = await downloading;
+  expect(download.suggestedFilename()).toMatch(/^settr-sammlung-\d{4}-\d{2}-\d{2}\.csv$/);
+  const excel = await readFile(await download.path(), 'utf8');
+  expect(excel.startsWith('\uFEFFID;Art;Name;Set;Nr.;Sprache;')).toBe(true);
+  const lines = excel.trim().split('\r\n');
+  expect(lines).toHaveLength(3);
+  expect(lines.find((l) => l.includes(';025/128;'))).toMatch(
+    /;Karte;Pikachu;30 Jahre;025\/128;DE;.*;4,50;/,
+  );
+
+  // International, remembered on this device, for two selected lots in Sammlung.
+  await csv.getByRole('radio', { name: 'International' }).click();
+  await expect(csv.getByRole('radio', { name: 'International' })).toBeChecked(); // stored
+  await page.goto('/collection/cards?view=table');
+  await page.getByRole('button', { name: 'Auswahl' }).click();
+  await page.getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' }).click();
+  const selected = page.waitForEvent('download');
+  await page.getByRole('region', { name: 'Auswahl' }).getByRole('button', { name: 'CSV' }).click();
+  const intl = await readFile(await (await selected).path(), 'utf8');
+  expect(intl.startsWith('ID,Art,Name,Set,Nr.,Sprache,')).toBe(true);
+  expect(intl).toContain(',26.00,');
+});
+
 test.describe('accessibility of the Daten page', () => {
   test.beforeEach(({ browserName }) => {
     test.slow(browserName === 'webkit', 'axe takes several seconds per page in WebKit');

@@ -447,6 +447,7 @@ export function LibraryPage({
 
       {selecting ? (
         <BulkBar
+          rows={chosen}
           lots={chosen.map((row) => row.holding)}
           total={rows.length}
           locations={locations}
