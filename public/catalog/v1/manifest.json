@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.24.18",
-  "generatedAt": "2026-09-24T23:43:05.197Z",
+  "catalogVersion": "2026.09.24.19",
+  "generatedAt": "2026-09-24T23:44:38.292Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
@@ -399,23 +399,23 @@
       },
       "intl:sm4": {
         "path": "sets/intl_sm4.json",
-        "sha256": "3b1fbbd8175cd6954f43b66621a3d4023769bf22b935f35249e8fd629fa1bc77",
-        "bytes": 77996
+        "sha256": "c3cc94c7fc82af230e85c8251d8843b4d7db505621da063a7cae1380bdc290f3",
+        "bytes": 78002
       },
       "intl:sm3.5": {
         "path": "sets/intl_sm3.5.json",
-        "sha256": "917b05df421ce5ab38953b52f13ef3e5386348fddfe05fd57f73d7aa6b355ccc",
-        "bytes": 49671
+        "sha256": "5e2df539232ccf4458e59f71f5306a948a88b343a9628397e3677a34bcd10c66",
+        "bytes": 49672
       },
       "intl:sm3": {
         "path": "sets/intl_sm3.json",
-        "sha256": "456f2f97e3bf2f766b355cb30e15fb8ef3d521f7c21fa6f06b5223abf122354d",
-        "bytes": 105092
+        "sha256": "58dbf3b34a84703a61ed3fd6a772491b15819cdae457cfa162b6de46fc086ebb",
+        "bytes": 105098
       },
       "intl:sm2": {
         "path": "sets/intl_sm2.json",
-        "sha256": "edba5fe7d807d94ca25b5381814775e88e52b809260af96a3484054fda4e5bcc",
-        "bytes": 105049
+        "sha256": "64241076d4969d2da166f71aa364f12fdebdc1f5b0f795614ce2fdd970b45100",
+        "bytes": 105050
       },
       "intl:sm1": {
         "path": "sets/intl_sm1.json",
@@ -495,8 +495,8 @@
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "9f4c27b84b175a6fe444b9d906e3af1e37d89e67ab546539ad9cdc16d70e9442",
-      "bytes": 5421470
+      "sha256": "a243b0d1c0a7a22f3f746850a81c7685ea792cf9baa6cb410c2b1cdd4ab50e3a",
+      "bytes": 5421484
     }
   }
 }
