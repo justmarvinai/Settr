@@ -54,8 +54,7 @@ export async function settle(page: Page): Promise<void> {
 
 /**
  * Waits until a sheet or dialog has finished opening, as a person would before using it. In CI's
- * software-rendered WebKit a sheet can sit off-screen in its starting style for a second, then
- * slide in while a click waits for its target to hold still.
+ * software-rendered WebKit a sheet can sit off-screen in its starting style for a second.
  */
 export async function opened(dialog: Locator): Promise<void> {
   await expect(dialog).toBeVisible();

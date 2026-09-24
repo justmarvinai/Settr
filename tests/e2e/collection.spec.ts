@@ -129,9 +129,11 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await opened(filters);
   await filters.getByLabel('Tag').selectOption({ label: 'Tauschordner' });
   await filters.getByLabel('Lagerort').selectOption({ label: 'VaultX 9er' });
-  await filters.getByRole('button', { name: '2 Positionen anzeigen' }).click();
+  // From the keyboard, like the header box below: after filter changes CI's software-rendered
+  // WebKit sometimes stops producing frames for a while, and a click waits for frames.
+  await filters.getByRole('button', { name: '2 Positionen anzeigen' }).press('Enter');
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
-  await page.getByRole('button', { name: 'Alle Filter entfernen' }).click();
+  await page.getByRole('button', { name: 'Alle Filter entfernen' }).press('Enter');
   await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
   await expect(table.getByRole('row')).toHaveCount(6); // the header and all five lots
 
