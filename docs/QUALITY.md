@@ -1,6 +1,6 @@
 # Settr: Quality, Testing, Performance, Accessibility and Security
 
-> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.4** (question rounds 1–7 incorporated) · Last updated: 2026-09-24
 > Defines what "done" means and how quality is enforced automatically. Referenced by `AGENTS.md` (Definition of Done) and CI.
 
 ---

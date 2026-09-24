@@ -1,6 +1,6 @@
 # Settr: UX Specification
 
-> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.4** (question rounds 1–7 incorporated) · Last updated: 2026-09-24
 > Covers the information architecture, navigation, screen specifications, key flows, states and keyboard model.
 > Visual language (colors, type, motion) lives in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md): direction **D · Bold Studio**, light and dark (R2.1). Its artboards on the design canvas are the visual reference for the shell (§3) and the Übersicht, set and card screens (§4.1, §4.3, §4.4); Marvin confirmed the final look with the *Indigo* accent (R3.1). Feature IDs (`CAT-02`, `PRC-04`, …) refer to [`PRODUCT_SPEC.md`](./PRODUCT_SPEC.md).
 > References like (Q6.3) or (R2.1) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
@@ -301,7 +301,7 @@ This screen uses the same structure as card detail, but:
 - **Sealed variant:** no variant or condition. It has *Status* (versiegelt/beschädigt) instead.
 - **As built (M3):**
   - Opens from *＋ Hinzufügen* (the palette in add mode lists cards, products and your custom items, plus *Eigenen Eintrag anlegen* for what the catalog lacks), `N` on a focused tile, and *Hinzufügen* on card and product pages. A side sheet on desktop, a bottom sheet on phones; the price field has focus.
-  - Defaults: the language of the view you came from (else the last used), the first variant that exists, the condition from Einstellungen (NM), today's date, and the last-used source and Lagerort (per device, not in backups). Whether the condition should follow the last-used one too is round 5's R5.1.
+  - Defaults: the language of the view you came from (else the last used), the first variant that exists, the condition from Einstellungen (NM), today's date, and the last-used source and Lagerort (per device, not in backups). The condition always starts at the default, not the last-used one (R5.1, decided 2026-09-24).
   - Fees, grading, tags and note sit under *Mehr Details*. `Enter` saves, `⇧ Enter` is *Hinzufügen & nächste*; on phones the button reads *& nächste*.
   - Editing uses the same form. Every save, edit, duplicate and delete toasts with *Rückgängig*. The "far above the latest price" warning waits for prices (M4).
   - **Verkaufen oder abgeben …** (lot menu): what happened (verkauft, getauscht, verschenkt, verloren), how many, the proceeds for all (the value received, for trades), fees and date; the lot keeps its history and shows "1 von 3".

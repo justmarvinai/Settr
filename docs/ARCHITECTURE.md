@@ -1,6 +1,6 @@
 # Settr: Architecture
 
-> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23 · Versions verified against the npm registry on 2026-09-23.
+> Status: **Draft v0.4** (question rounds 1–7 incorporated) · Last updated: 2026-09-24 · Versions verified against the npm registry on 2026-09-23.
 > **Primary platform:** Windows desktop, **Brave** (Chromium; R2.9, ADR-027). **Secondary:** iPhone as an installed PWA (Safari/WebKit). **UI language:** German only (translation-ready).
 > Decisions and their alternatives are logged in [`DECISIONS.md`](./DECISIONS.md). Data shapes → [`DATA_MODEL.md`](./DATA_MODEL.md). Data origins → [`DATA_SOURCES.md`](./DATA_SOURCES.md).
 

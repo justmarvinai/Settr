@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M5 · Data Safety** ✅ built, waiting for your check (M1–M3 are merged, M4 and M5 are in PR #3 with a Vercel preview; Brave and iPhone checks still open) · next: **M6 · Polish & Launch**
+> Last updated: 2026-09-24 · Current phase: **M6 · Polish & Launch** ⏳ in progress (started 2026-09-24; M1–M5 are merged, the Brave and iPhone checks are still open) · question rounds 1–7 decided
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -14,9 +14,9 @@
 | **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
 | **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
-| **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ built · PR #3 · 🔒 your check |
-| **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ built · PR #3 · 🔒 your check |
-| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | 🔒 |
+| **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
+| **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
+| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ⏳ in progress |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
 | **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | 🔒 |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
@@ -89,7 +89,7 @@
 - [x] Cardmarket deep links (PRC-06): exact product + **copy's language + seller country Germany** + **Near Mint or better** (`minCondition=2`, R2.2); TC copies on the JP product with the T-Chinese filter
 - [x] Japanese and Chinese names with the right glyphs (`lang` by script) and self-hosted Noto fallbacks loaded on demand
 
-**Exit:** every card and product of the v1 scope is browsable and searchable in all in-scope languages, with correct images or graceful fallbacks. ✅ (Open data points are listed in `USER_QUESTIONS.md`, round 4.)
+**Exit:** every card and product of the v1 scope is browsable and searchable in all in-scope languages, with correct images or graceful fallbacks. ✅ (The open data points of `USER_QUESTIONS.md` round 4 are decided: the recommended defaults, 2026-09-24.)
 
 ---
 
@@ -102,12 +102,12 @@
 - [x] Quick-add mode (COL-06): number grammar, sticky defaults, running list with undo, `Q` on set pages
 - [x] Tags and **binder-aware storage locations**: 3×3 / 3×4 / 4×3 layouts, page + slot, next-free-slot suggestion (COL-09, ADR-023); Lagerorte in Einstellungen
 - [x] Sell/trade/gift disposals (COL-11, Q6.5)
-- [x] Open sealed + optional pull logging with proportional cost allocation (COL-12, Q5.8; mixed priced/unpriced case is R5.3)
+- [x] Open sealed + optional pull logging with proportional cost allocation (COL-12, Q5.8; when only some pulls have a price, unpriced pulls get 0 €, R5.3)
 - [x] Custom items (CAT-08)
 - [x] **DAT-01 lite:** the full backup as one JSON download in Einstellungen › Daten, so development data is safe from day one
 - [x] `owned:ja|nein` in card search and the palette
 - [x] e2e + axe for the collection flows (desktop and phone Chromium; WebKit in CI)
-- [ ] **You:** check M1–M3 in Brave and on the iPhone, answer rounds 4 and 5 in `USER_QUESTIONS.md` when convenient
+- [ ] **You:** check M1–M3 in Brave and on the iPhone (rounds 4 and 5 are decided: the recommended defaults)
 
 **Exit:** the whole personal collection can be entered comfortably. Completion numbers match the manual counts.
 
@@ -115,7 +115,7 @@
 
 ---
 
-## M4 · Prices & Portfolio ✅ → v0.4.0 (built 2026-09-24, waiting for your check)
+## M4 · Prices & Portfolio ✅ → v0.4.0 (merged as PR #3 on 2026-09-24, waiting for your check)
 
 - [x] Price entry (PRC-01), history list with edit/delete (PRC-02): inline on card and product pages (`P` focuses it); *Preis eintragen* as a sheet (ADR-040) from `P` on set and Sammlung tiles and table rows, the € button on set tiles and the lot menu; `Enter` saves, `U` confirms the last price for today, every change undoable
 - [x] Item price chart with markers, purchase baseline, ranges, language compare (PRC-03): hand-written SVG with scrubbing and a table view (ADR-038)
@@ -131,7 +131,7 @@
 - [x] Sammlung: value and P/L in the summary, tiles and table; price columns and a column chooser; *Bepreist*, *Preis veraltet* and *G/V* filters; the price session for a selection (from M3)
 - [x] Einstellungen › Preise editable: default price type, Cardmarket language filter and minimum condition, suggestions on/off, stale threshold, how unpriced cards count
 - [x] e2e + axe for the price flows, Übersicht, Preise, Portfolio, the session and the price sheet
-- [ ] **You:** create a Vercel deploy hook for `main` and store it as the Actions secret `VERCEL_DEPLOY_HOOK` (Vercel is connected: PR #3 has a preview), check M4 in Brave and on the iPhone, answer round 6 in `USER_QUESTIONS.md`
+- [ ] **You:** create a Vercel deploy hook for `main` and store it as the Actions secret `VERCEL_DEPLOY_HOOK` (Vercel is connected), check M4 in Brave and on the iPhone (round 6 is decided: the recommended defaults)
 
 **Exit:** 30 prices can be updated in ≤ 5 min (the session: type, `Enter`, next; to confirm on your collection). Dashboard numbers reconcile with a hand-calculated fixture (unit test) and agree across Übersicht, Sammlung and Portfolio (e2e).
 
@@ -139,7 +139,7 @@
 
 ---
 
-## M5 · Data Safety ✅ → v0.5.0 (built 2026-09-24, waiting for your check)
+## M5 · Data Safety ✅ → v0.5.0 (merged as PR #3 on 2026-09-24, waiting for your check)
 
 - [x] Full backup export with checksum, embedded photos option (DAT-01; the export itself ships with M3, M5 adds the options and the ⌘K entry). *As built:* *Fotos einschließen* appears once there are photos (none in v1 yet); ⌘K › *Aktionen* › *Backup exportieren*; the Daten page shows the changes since the last backup
 - [x] Import: parse in a worker → migrate → validate → preview → replace/merge → snapshot → undo (DAT-02). *As built (ADR-041, ADR-042):*
@@ -161,7 +161,7 @@
   - Merge properties: self-merge changes nothing, and devices converge.
   - One fixed fast-check seed for all property tests, and a random one nightly.
 - [x] e2e (`tests/e2e/data.spec.ts`): export → delete all → import, merge with conflicts and restore, refusals, CSV, the reminder, ⌘K, axe in light and dark
-- [ ] **You:** check M5 in Brave and on the iPhone (export, import on the other device, merge back), answer round 7 in `USER_QUESTIONS.md`
+- [ ] **You:** check M5 in Brave and on the iPhone (export, import on the other device, merge back; round 7 is decided: the recommended defaults)
 
 **Exit:** the E2E journeys "export → wipe → import" and "merge with conflicts" pass on Chromium and WebKit on every PR, and on Firefox nightly. *Status:* met on `11ac12e` (2026-09-24).
 - `ci.yml` runs them on every PR: Chromium (desktop and phone) and WebKit (iPhone).
@@ -171,7 +171,7 @@
 
 ---
 
-## M6 · Polish & Launch 🔒 → v1.0.0
+## M6 · Polish & Launch ⏳ → v1.0.0 (started 2026-09-24)
 
 - [ ] Holo card viewer (DSN-01), shared-element transitions (DSN-02), foil progress rings (DSN-03)
 - [ ] Onboarding (APP-06, no demo data), empty states, microcopy pass (German review)

@@ -1,6 +1,6 @@
 # Settr: Product Specification (PRD)
 
-> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.4** (question rounds 1–7 incorporated) · Last updated: 2026-09-24
 > References like (Q6.3) or (R2.2) point to the decision record in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 > Owner: Marvin (product) · Author: Claude (planning)
 > Related: [`UX_SPEC.md`](./UX_SPEC.md) · [`DATA_MODEL.md`](./DATA_MODEL.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) · [`ROADMAP.md`](../ROADMAP.md)

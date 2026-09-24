@@ -7,7 +7,7 @@
 
 ## 0. Phase gate (applies to every agent)
 
-**Current phase: M5 · DATA SAFETY built, waiting for Marvin's check** (coding approved 2026-09-23, spec v0.3, direction D with the *Indigo* accent; M6 starts when Marvin says so). The status line in `CLAUDE.md` is authoritative. If it doesn't say a milestone is approved, **stop and ask**.
+**Current phase: M6 · POLISH & LAUNCH in progress** (approved 2026-09-24; coding approved 2026-09-23, spec v0.4, direction D with the *Indigo* accent). The status line in `CLAUDE.md` is authoritative. If it doesn't say a milestone is approved, **stop and ask**.
 
 ---
 

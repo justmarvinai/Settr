@@ -1,6 +1,6 @@
 # Settr: Design System
 
-> Status: **Draft v0.3**. Direction **D · Bold Studio** chosen (R2.1): C's bold type, B's floating glass sidebar, calmer color, light and dark. Marvin confirmed the look and the *Indigo* accent on the design canvas (R3.1). Last updated: 2026-09-23.
+> Status: **Draft v0.4** (question rounds 1–7 incorporated). Direction **D · Bold Studio** chosen (R2.1): C's bold type, B's floating glass sidebar, calmer color, light and dark. Marvin confirmed the look and the *Indigo* accent on the design canvas (R3.1). Last updated: 2026-09-24.
 > Screens and flows → [`UX_SPEC.md`](./UX_SPEC.md). Accessibility requirements → [`QUALITY.md`](./QUALITY.md) §5. Platform priority: **Windows desktop first** (Brave, Chromium; R2.9), iPhone second (Q9.8).
 
 ---

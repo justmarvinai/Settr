@@ -4,9 +4,9 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M5 · DATA SAFETY ✅ built, waiting for Marvin's check** (M1–M4 too). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1 + M2 are merged into `main` (PR #1), M3 too (PR #2, 2026-09-23). The CI fixes after that merge, M4 and M5 are in PR #3 on `claude/great-edison-uri1z0` (opened 2026-09-24 for M4; M5 joined it, because a cloud session can't keep unpushed work; squash merge recommended). Vercel is connected (PR #3 got a preview deployment). Open on Marvin's side: add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, check the app in Brave and on the iPhone (for M5: export, import on the other device, merge back), answer rounds 4–7 in `USER_QUESTIONS.md` when convenient, then say whether to start **M6 · Polish & Launch**.
+**Current phase: M6 · POLISH & LAUNCH ⏳ in progress** (Marvin, 2026-09-24: "start M6 now"). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1–M5 are merged into `main`: PR #1 (M1 + M2), PR #2 (M3), PR #3 (M4 + M5, 2026-09-24). M6 is built on `claude/great-edison-uri1z0`, restarted from `main` after PR #3; its PR opens when Marvin asks. Vercel is connected. Open on Marvin's side: add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, and check the app in Brave and on the iPhone.
 
-- Rounds 1–3 are answered and incorporated (spec v0.3). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
+- Question rounds 1–7 are decided and incorporated (spec v0.4; for rounds 4–7 Marvin chose every recommendation). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
 - The repository stays **public** for now (R3.2): never commit price-guide snapshots or the deployment URL (ADR-029).
 
@@ -123,4 +123,4 @@ pnpm catalog:sync    # regenerate public/catalog/v1 from the pinned sources + da
 
 - For a milestone: read the relevant docs → plan (plan mode) → implement in small verified steps → run typecheck/lint/tests → update docs.
 - Use subagents for independent workstreams (roles in `AGENTS.md` §2) and for broad research. Keep the main context for integration and review.
-- When Marvin answers `USER_QUESTIONS.md`, propagate the answers into every affected doc, bump the spec version (v0.3 …) and log changes in `CHANGELOG.md`.
+- When Marvin answers `USER_QUESTIONS.md`, propagate the answers into every affected doc, bump the spec version (v0.4 …) and log changes in `CHANGELOG.md`.

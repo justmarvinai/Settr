@@ -94,6 +94,7 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - A picture's loading placeholder pulses three times instead of forever.
 
 ### Docs
+- **Spec v0.4: question rounds 4–7 decided, 2026-09-24.** Marvin chose every recommendation (⭐): the catalog check (R4.1–R4.5), collection details (R5.1–R5.5), prices and portfolio (R6.1–R6.3) and data safety (R7.1–R7.4). The app already works this way, so nothing changes. The decisions are recorded in `USER_QUESTIONS.md`, `ROADMAP.md`, `DATA_MODEL.md` (R5.3: unpriced pulls get 0 €) and `UX_SPEC.md` (R5.1: the condition starts at NM), and the spec status lines move to v0.4.
 - **M5 notes:**
   - ADR-041 (import in a worker, snapshots in their own database, one guarded transaction), ADR-042 (merge rules as built), ADR-043 (backup reminders).
   - `IMPORT_EXPORT.md` v0.4 as built (§2–§6, §8).

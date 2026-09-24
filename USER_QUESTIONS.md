@@ -1,9 +1,8 @@
 # Settr: Questions and Decisions
 
 > Last updated: 2026-09-24.
-> **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) and M5 (Data Safety) are in PR #3 and wait for your check.
-> **Rounds 4 (M2), 5 (M3), 6 (M4) and 7 (M5): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
+> **Rounds 1–7: decided ✓.** Rounds 1–3 were answered one by one (spec v0.3). For rounds 4–7 you chose my recommendation (⭐) everywhere on 2026-09-24 (spec v0.4).
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M5 are merged (PRs #1–#3). M6 · Polish & Launch started on 2026-09-24.
 
 ## How to answer
 
@@ -13,92 +12,100 @@
 
 ---
 
-## Round 7: data safety (M5, open, nothing blocking)
+## Round 7: data safety (M5, decided 2026-09-24)
+
+**Decided:** my recommendation (⭐) for every question (Marvin, 2026-09-24: "For all new Questions you asked over the last few Milestones, go with your recommended default."). The app already works this way, so nothing changes.
 
 **To try when you check M5:** export a backup on the PC, import it on the iPhone (*Einstellungen › Daten › Backup einspielen*, *Ersetzen*, or *Einspielen* on an empty phone), change something on both, then bring the phone's backup back to the PC with *Zusammenführen*. The preview says what will happen before anything is written, and *Sicherungen vor Importen* can put the old state back.
 
 **R7.1 · When the backup reminder speaks up.** The pill turns amber once your data changed since the last backup and that backup is older than 7 days (or after 50 changes). A toast (*Letztes Backup vor 12 Tagen. Jetzt sichern?*) comes at most once a day. Without any backup, the pill is amber right away, but the toast waits for the second day (or 50 changes), so a first session isn't interrupted (ADR-043).
-- [ ] ⭐ Keep it like that.
+- [x] ⭐ Keep it like that.
 - [ ] Remind me right away on the first day too.
 - [ ] No toasts, the pill is enough.
 
 **R7.2 · What *Alle Daten löschen* deletes.** It deletes everything on this device: collection, prices, tags, Lagerorte, own items, settings, device preferences, and also the *Sicherungen vor Importen*. The dialog asks you to type *LÖSCHEN* and offers *Backup exportieren* first.
-- [ ] ⭐ Everything, snapshots included (it's what the button says, e.g. before handing a device on).
+- [x] ⭐ Everything, snapshots included (it's what the button says, e.g. before handing a device on).
 - [ ] Keep the last snapshot, so it can be undone once.
 
 **R7.3 · The Sammlung CSV from Einstellungen › Daten.** It lists the lots you still own; sold, traded and given-away copies are in *Verkäufe*. A selection in Sammlung exports exactly what you selected, closed lots included.
-- [ ] ⭐ Open lots only.
+- [x] ⭐ Open lots only.
 - [ ] All lots, closed ones with quantity 0.
 
 **R7.4 · Folding tags and Lagerorte when merging.** If both devices have a tag (or a Lagerort) with the same name, they become one, and lots keep pointing at it. This only happens when it's unambiguous: two binders called *Binder* on one device stay two (ADR-042).
-- [ ] ⭐ Fold them like that.
+- [x] ⭐ Fold them like that.
 - [ ] Never fold, keep both (then they show twice).
 
 ---
 
-## Round 6: prices and portfolio (M4, open, nothing blocking)
+## Round 6: prices and portfolio (M4, decided 2026-09-24)
 
-**To do on your side (Vercel is connected now, PR #3 has a preview):** in Vercel › Project › Settings › Git › *Deploy Hooks*, create a hook for `main` and store its URL in GitHub › Settings › Secrets and variables › Actions as `VERCEL_DEPLOY_HOOK`. Then the daily `price-guide.yml` job redeploys every morning and the Cardmarket price-guide suggestions appear. Without it everything else works; the chips just stay hidden. And when you try the price session on your collection: does 30 prices in about 5 minutes feel right (the M4 exit criterion)?
+**Decided:** my recommendation (⭐) for every question (Marvin, 2026-09-24: "For all new Questions you asked over the last few Milestones, go with your recommended default."). The app already works this way, so nothing changes.
+
+**Still to do on your side:** in Vercel › Project › Settings › Git › *Deploy Hooks*, create a hook for `main` and store its URL in GitHub › Settings › Secrets and variables › Actions as `VERCEL_DEPLOY_HOOK`. Then the daily `price-guide.yml` job redeploys every morning and the Cardmarket price-guide suggestions appear. Without it everything else works; the chips just stay hidden. And when you try the price session on your collection: does 30 prices in about 5 minutes feel right (the M4 exit criterion)?
 
 **R6.1 · Seller country for *ab (DE)*.** Only Germany is a verified Cardmarket country id, so the Cardmarket links and every *ab (DE)* price assume German sellers; Einstellungen › Preise shows it as fixed. The language filter and the minimum condition can be changed.
-- [ ] ⭐ Keep German sellers fixed (your rule, R2.2).
+- [x] ⭐ Keep German sellers fixed (your rule, R2.2).
 - [ ] Add *alle Länder* as an option (prices then read *ab (alle Länder)*).
 
 **R6.2 · What `V` copies from the price guide.** Next to the price field the guide shows *ab* (the cheapest offer on Cardmarket, over all languages, countries and conditions) and *Trend*. `V` copies *ab*, the same type as your default. For German cards the guide's *ab* is often below "cheapest German seller, German, NM or better", because it includes every language and condition.
-- [ ] ⭐ `V` copies *ab*; *Trend* is one click on its chip.
+- [x] ⭐ `V` copies *ab*; *Trend* is one click on its chip.
 - [ ] `V` copies *Trend*.
 
 **R6.3 · *Preis eintragen* as a sheet.** The spec described a small popover at the tile. It's built as the same sheet as *Hinzufügen*, *Eigener Wert* or *Verkaufen* (right on desktop, from the bottom on the iPhone; ADR-040): `P` on a tile or row, the € button on set tiles, or *Preis eintragen…* in a lot's menu. On a card page `P` jumps to the price field instead.
-- [ ] ⭐ Keep the sheet.
+- [x] ⭐ Keep the sheet.
 - [ ] I'd rather have a small popover at the tile on desktop.
 
 ---
 
-## Round 5: collection details (M3, open, nothing blocking)
+## Round 5: collection details (M3, decided 2026-09-24)
+
+**Decided:** my recommendation (⭐) for every question (Marvin, 2026-09-24: "For all new Questions you asked over the last few Milestones, go with your recommended default."). The app already works this way, so nothing changes.
 
 **R5.1 · Condition in the add sheet.** Language, source and Lagerort start with what you used last; the condition always starts at your default from Einstellungen (NM).
-- [ ] ⭐ Keep NM as the start (most cards you add are NM; an LP copy is a deliberate choice).
+- [x] ⭐ Keep NM as the start (most cards you add are NM; an LP copy is a deliberate choice).
 - [ ] Start with the last-used condition, like the source.
 
 **R5.2 · Lots in a binder.** A lot of several copies (e.g. ×3) takes one pocket, as a stack. *Verschieben* into a binder gives every selected lot the next free pocket, in the order of the list; lots already in that binder keep theirs.
-- [ ] ⭐ Keep one pocket per lot. If you want copies in separate pockets, split the lot (edit the quantity, then duplicate).
+- [x] ⭐ Keep one pocket per lot. If you want copies in separate pockets, split the lot (edit the quantity, then duplicate).
 - [ ] One pocket per copy: moving a ×3 lot into a binder splits it into three lots.
 
 **R5.3 · Opening costs when only some pulls have a price.** *Abschließen* splits the product's cost by the pulls' current prices. If none has a price, it splits evenly per card. If some have one, the unpriced pulls get 0 € (the spec's "the rest evenly" leaves no rest).
-- [ ] ⭐ Keep it that way. Unpriced pulls are usually bulk.
+- [x] ⭐ Keep it that way. Unpriced pulls are usually bulk.
 - [ ] Unpriced pulls count as the average of the priced ones.
 - [ ] Split evenly unless every pull has a price.
 
 **R5.4 · Missing cards on set pages.** Missing cards appear faded with a dashed outline once you own at least one card of the set, in any language; which cards count as missing follows the language shown (or any language with *Alle Sprachen*). Sets you don't collect keep normal tiles.
-- [ ] ⭐ Keep it.
+- [x] ⭐ Keep it.
 - [ ] Always show owned/missing, even for sets you don't collect.
 
 **R5.5 · Columns in Sammlung › Tabelle.** Now: Karte (with set and variant), Nr., Sprache, Zustand, Menge, Einkauf/Stk., Investiert, Kaufdatum, Lagerort; narrower windows drop the last ones first. M4 adds Wert/Stk., Wert, G/V, G/V % and Preis vom, and lets you choose columns.
-- [ ] ⭐ OK. Tell me if a column you need is missing or in the wrong place.
+- [x] ⭐ OK. Tell me if a column you need is missing or in the wrong place.
 - [ ] Other: **Antwort:**
 
 ---
 
-## Round 4: catalog check (M2, open, nothing blocking)
+## Round 4: catalog check (M2, decided 2026-09-24)
+
+**Decided:** my recommendation (⭐) for every question (Marvin, 2026-09-24: "For all new Questions you asked over the last few Milestones, go with your recommended default."). The app already works this way, so nothing changes.
 
 **R4.1 · German product names.** Where pokemon.de doesn't list a product yet, the German name is my translation and marked "to confirm" in `data/curated/sealed/30th-intl.yaml`: *Knock-Out-Kollektion*, *Tech-Sticker-Kollektion*, *ex-Box*, *Mini-Tin Tag & Nacht*, *Ultra-Premium-Kollektion Tag/Nacht*, *Ditto-Premium-Kollektion*, *Figuren-Kollektion*, *Sammelalbum-Kollektion*, *Booster der Klassischen Sammlung*, *Mini-Tin-Display*.
-- [ ] ⭐ Keep them; I correct them when pokemon.de lists the products (or you tell me what the German boxes say).
+- [x] ⭐ Keep them; I correct them when pokemon.de lists the products (or you tell me what the German boxes say).
 - [ ] Other: **Antwort:**
 
 **R4.2 · RGB Mews on Cardmarket (JP/SC).** TCGdex has no Cardmarket ids for M6a's three RGB Mews. Cardmarket lists three identical "Mew [Psychic | 30C]" products per expansion; I assumed the same order as in English (R, G, B = consecutive ids). Check: *Katalog › 30th CELEBRATION › R* (Mew) → *Auf Cardmarket ansehen*: is it the red one?
-- [ ] ⭐ It's right (or tell me which is which).
+- [x] ⭐ It's right (or tell me which is which).
 - [ ] Other: **Antwort:**
 
 **R4.3 · Sylveon ex 059 and 130 (JP) on Cardmarket.** Cardmarket's data links both SC cards to one Japanese product, so I can't tell which Japanese product belongs to which number. Their Japanese link falls back to a Cardmarket search; SC and TC work.
-- [ ] ⭐ Leave it until Cardmarket fixes its data (the weekly sync picks it up).
+- [x] ⭐ Leave it until Cardmarket fixes its data (the weekly sync picks it up).
 - [ ] Other: **Antwort:**
 
 **R4.4 · Product pictures.** TCGplayer has pictures for 35 of 52 products. German products show the English box (marked "Bild der Verpackung auf Englisch"); Traditional and Simplified Chinese products and the two Pikachu mini tins show a product-type icon.
-- [ ] ⭐ OK for v1; your own photos come later (I-12).
+- [x] ⭐ OK for v1; your own photos come later (I-12).
 - [ ] Other: **Antwort:**
 
 **R4.5 · Card names in the catalog.** The catalog shows German names by default, also for Japanese and Chinese cards (marked *übersetzt*), with a switch to *Namen wie gedruckt* on set pages (I18N.md §1).
-- [ ] ⭐ Keep German as the default.
+- [x] ⭐ Keep German as the default.
 - [ ] Printed names by default for Asian sets.
 
 ---
