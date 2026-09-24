@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M5 · Data Safety** ✅ built, waiting for your check (M1–M3 are merged, M4 is in PR #3 with a Vercel preview; Brave and iPhone checks still open) · next: **M6 · Polish & Launch**
+> Last updated: 2026-09-24 · Current phase: **M5 · Data Safety** ✅ built, waiting for your check (M1–M3 are merged, M4 and M5 are in PR #3 with a Vercel preview; Brave and iPhone checks still open) · next: **M6 · Polish & Launch**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -15,7 +15,7 @@
 | **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ built · PR #3 · 🔒 your check |
-| **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ built · 🔒 your check |
+| **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ built · PR #3 · 🔒 your check |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | 🔒 |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
 | **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | 🔒 |

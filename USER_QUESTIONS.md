@@ -2,7 +2,7 @@
 
 > Last updated: 2026-09-24.
 > **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) is in PR #3; M5 (Data Safety) is built and waits for your check.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) and M5 (Data Safety) are in PR #3 and wait for your check.
 > **Rounds 4 (M2), 5 (M3), 6 (M4) and 7 (M5): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
 
 ## How to answer
