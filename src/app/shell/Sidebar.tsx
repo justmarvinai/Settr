@@ -1,12 +1,14 @@
 import { Link } from '@tanstack/react-router';
+import { lazy, Suspense } from 'react';
 import { GearSixGlyph } from '@/components/ui/glyphs';
 import { Logo } from '@/components/ui/Logo';
 import { m } from '@/i18n';
+import { useMediaQuery } from '@/lib/useMediaQuery';
 import { BackupPill } from './BackupPill';
-import { NAV_ITEMS, type NavItem } from './nav';
+import { NAV_ITEMS, SIDE_ITEM_CLASS as itemClass, type NavItem } from './nav';
 
-const itemClass =
-  'flex h-11 items-center gap-3 rounded-[14px] px-3 type-ui text-ink-muted transition-colors duration-(--dur-fast) hover:bg-hover hover:text-ink data-[status=active]:bg-accent-soft data-[status=active]:font-extrabold data-[status=active]:text-accent-text max-lg:justify-center max-lg:px-0';
+// The sets you collect, with their rings: loaded after the shell (it reads set chunks).
+const SidebarSets = lazy(() => import('./SidebarSets'));
 
 function SideLink({ item }: { item: NavItem }) {
   const Icon = item.icon;
@@ -23,6 +25,7 @@ function SideLink({ item }: { item: NavItem }) {
  * tablets, hidden on phones (tab bar instead).
  */
 export function Sidebar() {
+  const shown = useMediaQuery('(min-width: 48rem)');
   return (
     <nav
       aria-label={m.nav_main_label()}
@@ -44,6 +47,11 @@ export function Sidebar() {
       {NAV_ITEMS.map((item) => (
         <SideLink key={item.to} item={item} />
       ))}
+      {shown ? (
+        <Suspense fallback={null}>
+          <SidebarSets />
+        </Suspense>
+      ) : null}
       <div className="mt-auto flex flex-col gap-1.5">
         <BackupPill />
         <Link to="/settings" className={itemClass}>

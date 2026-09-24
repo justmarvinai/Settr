@@ -14,7 +14,7 @@ test('set page: sections, filters and search live in the URL', async ({ page }) 
   await page.goto('/catalog/sets/intl:30th');
   await expect(page.getByRole('heading', { name: '30 Jahre', level: 2 })).toBeVisible();
   await expect(page).toHaveTitle('30 Jahre · Settr');
-  for (const section of ['Hauptset', 'Geheim-Seltenheiten', 'Klassische Sammlung', 'Energien'])
+  for (const section of ['Hauptset', 'Secret Rares', 'Klassische Sammlung', 'Energien'])
     await expect(page.getByRole('heading', { name: new RegExp(section), level: 3 })).toBeVisible();
 
   await page
@@ -27,7 +27,7 @@ test('set page: sections, filters and search live in the URL', async ({ page }) 
   await expect(page).toHaveURL(/q=pikachu/);
   await expect(page.getByRole('link', { name: /^150\/128, Pikachu-ex/ })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Listenansicht' }).click();
+  await page.getByRole('button', { name: 'Tabellenansicht' }).click();
   await expect(page).toHaveURL(/view=list/);
   await expect(page.getByRole('table')).toBeVisible();
 });
@@ -42,7 +42,7 @@ test('card page: names, Cardmarket link per language, prev/next', async ({ page 
   await page.goto('/catalog/sets/intl:30th/cards/intl:30th:150');
   await expect(page.getByRole('heading', { name: 'Pikachu-ex', level: 2 })).toBeVisible();
   await expect(page).toHaveTitle('Pikachu-ex · 150/128 · Settr');
-  const cardmarket = page.getByRole('link', { name: /Auf Cardmarket ansehen/ });
+  const cardmarket = page.getByRole('link', { name: /Auf Cardmarket öffnen/ });
   await expect(cardmarket).toHaveAttribute(
     'href',
     /idProduct=\d+&language=3&sellerCountry=7&minCondition=2$/,
@@ -68,7 +68,7 @@ test('Traditional Chinese copies link to the Japanese product with the T-Chinese
   page,
 }) => {
   await page.goto('/catalog/sets/asia:M6a/cards/asia:M6a:127?lang=ja');
-  const cardmarket = page.getByRole('link', { name: /Auf Cardmarket ansehen/ });
+  const cardmarket = page.getByRole('link', { name: /Auf Cardmarket öffnen/ });
   const japanese = new URL((await cardmarket.getAttribute('href')) ?? '');
   expect(japanese.searchParams.get('language')).toBe('7');
   await page.getByRole('radio', { name: 'ZH-TW' }).click();
@@ -91,7 +91,7 @@ test('sealed list filters and product page details', async ({ page }) => {
   await page.getByRole('link', { name: /Psiana & Mauzi/ }).click();
   await expect(page.getByRole('heading', { name: /Psiana & Mauzi/, level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Weitere Motive' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Auf Cardmarket ansehen/ })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: /Auf Cardmarket öffnen/ })).toHaveAttribute(
     'href',
     /idProduct=895565&language=3&sellerCountry=7/,
   );

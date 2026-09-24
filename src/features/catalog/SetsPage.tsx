@@ -1,10 +1,16 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { useManifest } from '@/catalog';
+import { Suspense, type ReactNode } from 'react';
+import { useCatalogSet, useManifest } from '@/catalog';
 import { CardImage } from '@/components/domain/CardImage';
+import { SetProgressRing } from '@/components/domain/SetProgressRing';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { groupBySeries, pickText, type CatalogSetSummary } from '@/domain/catalog';
+import { useHoldings } from '@/db';
+import { chunkSetId, groupBySeries, pickText, type CatalogSetSummary } from '@/domain/catalog';
+import type { CardLanguage } from '@/domain/catalog-types';
+import { collectedSets, ratio } from '@/domain/collection';
+import { useSetOwnership } from '@/features/collection';
 import { languageCode, m, printLabel } from '@/i18n';
-import { formatCount } from '@/i18n/format';
+import { formatCount, formatShare } from '@/i18n/format';
 import { setReleaseText } from './dates';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/');
@@ -22,6 +28,14 @@ export function SetsPage() {
   const main = manifest.sets.filter((s) => s.kind === 'main');
   const groups = groupBySeries(main.filter((s) => print === 'all' || s.print === print));
   const subsetsOf = (id: string) => manifest.sets.filter((s) => s.parentSetId === id);
+  // Your progress (CAT-01) in the language you collect most of each set.
+  const holdings = useHoldings();
+  const collectedIn = new Map<string, CardLanguage>();
+  for (const { setId, language } of collectedSets(holdings ?? [], (id) =>
+    chunkSetId(id, manifest.sets),
+  )) {
+    if (!collectedIn.has(setId)) collectedIn.set(setId, language);
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -56,7 +70,20 @@ export function SetsPage() {
           <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-4 p-0">
             {group.sets.map((set) => (
               <li key={set.id}>
-                <SetTile set={set} subsets={subsetsOf(set.id)} />
+                <SetTile
+                  set={set}
+                  subsets={subsetsOf(set.id)}
+                  progress={
+                    collectedIn.has(set.id) ? (
+                      <Suspense fallback={<span className="block h-11" />}>
+                        <SetTileProgress
+                          setId={set.id}
+                          language={collectedIn.get(set.id) ?? 'de'}
+                        />
+                      </Suspense>
+                    ) : null
+                  }
+                />
               </li>
             ))}
           </ul>
@@ -66,7 +93,42 @@ export function SetsPage() {
   );
 }
 
-function SetTile({ set, subsets }: { set: CatalogSetSummary; subsets: CatalogSetSummary[] }) {
+/** Basis progress of a set you collect: the ring, the share and the cards (DSN-03). */
+function SetTileProgress({ setId, language }: { setId: string; language: CardLanguage }) {
+  const loaded = useCatalogSet(setId);
+  const { completion } = useSetOwnership(loaded, language);
+  const share = ratio(completion.basis);
+  return (
+    <span className="flex items-center gap-3">
+      <SetProgressRing value={share} size={44} />
+      <span className="flex flex-col">
+        <span className="type-ui font-bold text-ink tabular-nums">
+          {formatShare(share)}
+          <span className="ml-2 font-mono font-normal text-ink-muted">
+            {languageCode(language)}
+          </span>
+        </span>
+        <span className="type-small text-ink-muted">
+          {m.overview_progress_basis({
+            owned: formatCount(completion.basis.owned),
+            total: formatCount(completion.basis.total),
+          })}
+        </span>
+      </span>
+    </span>
+  );
+}
+
+function SetTile({
+  set,
+  subsets,
+  progress,
+}: {
+  set: CatalogSetSummary;
+  subsets: CatalogSetSummary[];
+  /** Your progress when you collect the set. */
+  progress: ReactNode;
+}) {
   const lang = set.languages[0] ?? 'de';
   const total = set.counts.total + subsets.reduce((sum, s) => sum + s.counts.total, 0);
   return (
@@ -101,6 +163,7 @@ function SetTile({ set, subsets }: { set: CatalogSetSummary; subsets: CatalogSet
             {m.catalog_set_subset({ name: pickText(subset.name), count: subset.counts.total })}
           </p>
         ))}
+        {progress ? <span className="pt-1">{progress}</span> : null}
         <ul className="m-0 mt-auto flex list-none flex-wrap gap-1.5 p-0">
           {set.languages.map((l) => (
             <li

@@ -12,6 +12,7 @@ import {
 import { money, type Money } from '@/domain/money';
 import type { Holding, Location, Settings } from '@/domain/schemas';
 import { m } from '@/i18n';
+import { formatCount } from '@/i18n/format';
 import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
 import { snapshotOf, type ItemInfo } from '@/features/collection';
 
@@ -117,10 +118,12 @@ export function holdingFormSchema(today: string, locations: readonly Location[])
       const binder = locations.find((l) => l.id === v.locationId);
       if (binder?.layout && wholeNumber(v.slot)) {
         const pockets = pocketsPerPage(binder.layout);
-        if (Number(v.slot) > pockets) issue('slot', m.error_slot_range({ count: pockets }));
+        if (Number(v.slot) > pockets) {
+          issue('slot', m.error_slot_range({ n: pockets, count: formatCount(pockets) }));
+        }
       }
       if (binder?.pages && wholeNumber(v.page) && Number(v.page) > binder.pages) {
-        issue('page', m.error_page_range({ count: binder.pages }));
+        issue('page', m.error_page_range({ n: binder.pages, count: formatCount(binder.pages) }));
       }
       if (v.graded && !v.grade.trim()) issue('grade', m.error_grade_required());
     });

@@ -4,9 +4,9 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M5 · DATA SAFETY ✅ built, waiting for Marvin's check** (M1–M4 too). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1 + M2 are merged into `main` (PR #1), M3 too (PR #2, 2026-09-23). The CI fixes after that merge, M4 and M5 are in PR #3 on `claude/great-edison-uri1z0` (opened 2026-09-24 for M4; M5 joined it, because a cloud session can't keep unpushed work; squash merge recommended). Vercel is connected (PR #3 got a preview deployment). Open on Marvin's side: add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, check the app in Brave and on the iPhone (for M5: export, import on the other device, merge back), answer rounds 4–7 in `USER_QUESTIONS.md` when convenient, then say whether to start **M6 · Polish & Launch**.
+**Current phase: M6 · POLISH & LAUNCH ✅ built — v1.0.0 release candidate, waiting for Marvin's check** (M6 started 2026-09-24: "start M6 now"). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1–M5 are merged into `main`: PR #1 (M1 + M2), PR #2 (M3), PR #3 (M4 + M5, 2026-09-24). M6 is in PR #4 on `claude/great-edison-uri1z0` (restarted from `main` after PR #3; opened 2026-09-24, squash merge recommended). After his merge the tag `v1.0.0` goes on `main` (R8.4) and Vercel deploys it. Vercel is connected. Open on Marvin's side: add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, run the Brave smoke test (`docs/QUALITY.md` §3.1) and the iPhone check (`USER_QUESTIONS.md` round 8, "To try"), answer round 8 when convenient, then merge PR #4 and say go for the tag.
 
-- Rounds 1–3 are answered and incorporated (spec v0.3). Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
+- Question rounds 1–7 are decided and incorporated (spec v0.4; for rounds 4–7 Marvin chose every recommendation). Round 8 (M6) is open without blockers: the app works like its ⭐ options. Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
 - The repository stays **public** for now (R3.2): never commit price-guide snapshots or the deployment URL (ADR-029).
 
@@ -49,10 +49,10 @@ Settr is a **local-first Pokémon TCG collection tracker** for **singles and sea
 
 - **Core:** Vite 8 (Rolldown) · React 19.3 + React Compiler · TypeScript 7 (strict) · TanStack Router (file routes, Zod search params) · TanStack Query (catalog JSON).
 - **Data:** Dexie 4.4 + `useLiveQuery` (user data).
-- **UI:** Tailwind 4.3 + OKLCH tokens · shadcn-style primitives on **Base UI**, hand-written (ADR-031) · Motion 13 · Recharts 3 · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
-- **Libraries:** Paraglide JS 2 (i18n, DE base) · TanStack Form + Zod 4 · TanStack Table 9 / Virtual 3 · MiniSearch (worker) · Zustand (tiny UI state) · vite-plugin-pwa.
+- **UI:** Tailwind 4.3 + OKLCH tokens · shadcn-style primitives on **Base UI**, hand-written (ADR-031) · motion in CSS, View Transitions and WAAPI (no animation library) · hand-written SVG charts (ADR-038) · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
+- **Libraries:** Paraglide JS 2 (i18n, DE base) · TanStack Form + Zod 4 · TanStack Virtual 3 (no table library, ADR-036) · MiniSearch (worker) · Zustand (tiny UI state) · vite-plugin-pwa.
 - **Tooling:** Oxlint (type-aware) + oxfmt · Vitest 5 (+ Browser Mode) + Playwright + axe · size-limit · lefthook · pnpm 10.33 · Node 24 LTS.
-- **Jobs (GitHub Actions):** `ci.yml` (PRs, `main`, manual) · `catalog-sync.yml` (weekly catalog PR; manual run with `commit: true` commits to the branch) · `price-guide.yml` (M4, daily; a deploy hook while the repo is public, ADR-029) · `e2e-nightly.yml` (M5, nightly + manual: property tests with a random seed, the data journeys in Firefox).
+- **Jobs (GitHub Actions):** `ci.yml` (PRs, `main`, manual) · `catalog-sync.yml` (weekly catalog PR; manual run with `commit: true` commits to the branch) · `price-guide.yml` (M4, daily; a deploy hook while the repo is public, ADR-029) · `e2e-nightly.yml` (nightly + manual: property tests with a random seed, every journey in Firefox and on a Pixel) · `visual.yml` (M6, nightly + manual; `update: true` regenerates and commits the screenshot baselines) · `lighthouse.yml` (M6, PRs + manual: the desktop gate and the phone report, ADR-049).
 
 ## Commands
 
@@ -123,4 +123,4 @@ pnpm catalog:sync    # regenerate public/catalog/v1 from the pinned sources + da
 
 - For a milestone: read the relevant docs → plan (plan mode) → implement in small verified steps → run typecheck/lint/tests → update docs.
 - Use subagents for independent workstreams (roles in `AGENTS.md` §2) and for broad research. Keep the main context for integration and review.
-- When Marvin answers `USER_QUESTIONS.md`, propagate the answers into every affected doc, bump the spec version (v0.3 …) and log changes in `CHANGELOG.md`.
+- When Marvin answers `USER_QUESTIONS.md`, propagate the answers into every affected doc, bump the spec version (v0.4 …) and log changes in `CHANGELOG.md`.

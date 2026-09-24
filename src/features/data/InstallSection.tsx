@@ -1,7 +1,7 @@
 import { CheckCircleIcon, DownloadSimpleIcon } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/Button';
 import { m } from '@/i18n';
-import { promptInstall, useInstall } from '@/features/pwa';
+import { isIOS, promptInstall, useInstall } from '@/features/pwa';
 
 /** "Als App installieren" (APP-04, DAT-05): one click in Brave, instructions everywhere else. */
 export function InstallSection() {
@@ -24,7 +24,9 @@ export function InstallSection() {
           {m.settings_data_install_action()}
         </Button>
       ) : (
-        <p className="type-small m-0 text-ink-muted">{m.settings_data_install_manual()}</p>
+        <p className="type-small m-0 text-ink-muted">
+          {isIOS() ? m.install_ios() : m.settings_data_install_manual()}
+        </p>
       )}
     </div>
   );

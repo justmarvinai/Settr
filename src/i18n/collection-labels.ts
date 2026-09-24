@@ -6,7 +6,7 @@ import type { Condition } from '@/domain/catalog-types';
 import { lookup } from './labels';
 import { m } from './paraglide/messages.js';
 
-/** Cardmarket's condition scale (Q5.2): `Near Mint`, `Poor (beschädigt)` … */
+/** Cardmarket's condition scale (Q5.2), as its German UI names it: `Near Mint`, `Poor` … */
 export const conditionLabel = /* @__PURE__ */ lookup<Condition>({
   MT: m.condition_mt,
   NM: m.condition_nm,

@@ -157,9 +157,9 @@ For Excel/Numbers/Google Sheets analysis. **CSV isn't a backup format** because 
 
 | File | Columns (German headers; English when UI = EN) |
 |---|---|
-| `settr-sammlung.csv` | ID · Art (Karte/Sealed) · Name · Set · Nr. · Sprache · Variante · Zustand · Grading · Menge (aktuell) · Kaufdatum · Einkauf gesamt · Gebühren · Einkauf/Stk. · Preis/Stk. · Preis vom · Wert · G/V · G/V % · Quelle · Tags · Lagerort · Notiz |
-| `settr-preise.csv` | Serie · Name · Set · Nr. · Sprache · Variante · Grade · Datum · Preis · Währung · Preistyp · Quelle · Notiz |
-| `settr-verkaeufe.csv` (if sales tracking) | Name · Set · Nr. · Sprache · Menge · Datum · Erlös · Gebühren · Einstand · Realisierter G/V |
+| `settr-sammlung.csv` | ID · Art (Karte/Sealed) · Name · Set · Nr. · Sprache · Variante · Zustand · Grading · Menge (aktuell) · Kaufdatum · Einkauf gesamt · Gebühren · Einkauf/Stk. · Wert/Stk. · Preis vom · Wert · G/V · G/V % · Quelle · Tags · Lagerort · Notiz |
+| `settr-preise.csv` | Preisreihe · Name · Set · Nr. · Sprache · Variante · Note · Datum · Preis · Währung · Preistyp · Quelle · Notiz |
+| `settr-verkaeufe.csv` (if sales tracking) | Name · Set · Nr. · Sprache · Menge · Datum · Erlös · Gebühren · Einkauf · Realisierter G/V |
 
 - **Dialect:** default *Excel (Deutschland)*: `;` delimiter, decimal comma, `dd.mm.yyyy`, UTF-8 with BOM. The alternative is *International*: `,`, a decimal point and ISO dates.
 - **CSV-injection safe:** text cells starting with `= + - @ \t \r` are prefixed with `'`. Numeric columns are written as numbers.
@@ -167,8 +167,8 @@ For Excel/Numbers/Google Sheets analysis. **CSV isn't a backup format** because 
 
 **As built (M5):**
 - *CSV für Tabellen* on the Daten page exports three files:
-  - *Sammlung*: the open lots, with the columns above plus *Preis/Stk.* and *Preis vom* from the lot's value.
-  - *Preise*: every entry, series by series, oldest first; *Grade* is empty for raw copies.
+  - *Sammlung*: the open lots, with the columns above plus *Wert/Stk.* and *Preis vom* from the lot's value.
+  - *Preise*: every entry, series by series (*Preisreihe*), oldest first; *Note* (the grade) is empty for raw copies.
   - *Verkäufe*: sales and trades, with an *Art* and a *Notiz* column.
 - The Sammlung selection bar exports the chosen lots, open or closed.
 - The dialect is remembered per device (kv `ui:csv.dialect`).
@@ -198,7 +198,7 @@ Presets (TCG Collector, Cardmarket stock/shipment exports) follow on demand. The
 |---|---|
 | **Persistent storage** | Settr requests `navigator.storage.persist()` after onboarding, after the first holding is added (as built: once per session while there's data), and after installation as an app (`appinstalled`). Chromium browsers (incl. Brave) don't prompt: they grant it to installed apps and to often-used or bookmarked sites, and never while the site's cookies are blocked or cleared on exit. A `false` result is retried later. Status is shown in Einstellungen › Daten |
 | **Delete-on-exit warning** (Brave, ADR-027) | Brave's Shields *"Forget me when I close this site"* (per site, or globally at `brave://settings/shields`), the *"Delete data on exit"* tab under *Clear browsing data*, and a per-site *"clear cookies on exit"* exception all erase IndexedDB. They're off by default. The first wipes all site data about 30 s after the last tab closes, even for installed apps, and the last also blocks `persist()`. Onboarding and Einstellungen › Daten warn about them (R3.4) |
-| **Backup reminder** | The sidebar pill turns amber (*"Backup fällig · Letztes vor 12 Tagen"*) and a toast appears when `lastBackupAt` is older than **7 days** (Q7.1) **and** there were changes since. The interval is configurable (3/7/14/30 days). **As built (ADR-043):** without any backup the pill is amber at once, but the toast waits until the install is a day old (or 50 changes); the toast shows at most once a day, never on the Daten page, and *Jetzt sichern* exports right away |
+| **Backup reminder** | The sidebar pill turns amber (*"Backup fällig · Zuletzt vor 12 Tagen"*) and a toast appears when `lastBackupAt` is older than **7 days** (Q7.1) **and** there were changes since. The interval is configurable (3/7/14/30 days). **As built (ADR-043):** without any backup the pill is amber at once, but the toast waits until the install is a day old (or 50 changes); the toast shows at most once a day, never on the Daten page, and *Jetzt sichern* exports right away |
 | **Change counter** | After 50 changes without a backup, a gentle reminder. **As built:** `meta.backupDataVersion` keeps the change counter (kv `dataVersion`) at the last backup; the Daten page shows *12 Änderungen seit dem letzten Backup* |
 | **Auto-backup to folder** (I-15, **post-v1** per Q7.2; needs the File System Access API: Chromium browsers, and Brave only after enabling `brave://flags/#file-system-access-api`, ADR-027) | Settr feature-detects the picker functions (`'showDirectoryPicker' in window`), never `FileSystemHandle`, and explains Brave's flag when the picker is missing. The user grants a directory once (the handle is stored in IndexedDB). Settr writes `settr-backup-latest.settr.json` and rotating dated copies (keeps the last 10) after changes (debounced 60 s) and on `visibilitychange: hidden`. Permission is re-requested per session when needed. Without the API, backups stay downloads |
 | **iOS/Safari caveat** | Script-writable storage can be evicted after 7 days without use when *not* installed to the home screen. Onboarding recommends installing the PWA. See `ARCHITECTURE.md` §8 |

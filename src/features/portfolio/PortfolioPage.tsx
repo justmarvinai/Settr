@@ -2,6 +2,7 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 import { Suspense } from 'react';
 import { useManifest } from '@/catalog';
 import { buttonVariants } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { NativeSelect } from '@/components/ui/NativeSelect';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -90,12 +91,17 @@ function Portfolio() {
   const all = [...cardRows, ...sealedRows];
   if (!all.length) {
     return (
-      <Panel className="flex flex-col items-start gap-4 p-6">
-        <p className="type-body m-0 max-w-[60ch] text-ink-muted">{m.portfolio_empty()}</p>
-        <Link to="/catalog" className={buttonVariants({ variant: 'primary' })}>
-          {m.nav_catalog()}
-        </Link>
-      </Panel>
+      <EmptyState
+        id="portfolio-empty"
+        title={m.empty_collection_title()}
+        actions={
+          <Link to="/catalog" className={buttonVariants({ variant: 'primary' })}>
+            {m.library_empty_cards_action()}
+          </Link>
+        }
+      >
+        {m.portfolio_empty()}
+      </EmptyState>
     );
   }
 
@@ -124,6 +130,7 @@ function Portfolio() {
             today={todayIso()}
             unpriced={settings.price.unpriced}
             title={filtered ? m.portfolio_value_part() : m.overview_value()}
+            view="portfolio"
             className="p-6"
           />
           <div className="grid gap-4 lg:grid-cols-2 lg:items-start">

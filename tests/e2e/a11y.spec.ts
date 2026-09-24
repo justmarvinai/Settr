@@ -15,6 +15,7 @@ const PAGES = [
   '/settings',
   '/settings/appearance',
   '/settings/data',
+  '/settings/about',
 ];
 
 test.describe('pages', () => {

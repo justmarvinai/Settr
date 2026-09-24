@@ -64,6 +64,34 @@
   --dur-slow: 320ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-spatial: 420ms;
+
+  /* Holo foil (§3.2), the same in both themes. Scarce on purpose: the holo viewer, a 100 % progress
+     ring, the set-complete moment and the palette's focus glow. Build it with the .foil class. */
+  --foil-1: oklch(0.86 0.12 200);
+  --foil-2: oklch(0.8 0.14 285);
+  --foil-3: oklch(0.82 0.13 340);
+  --foil-4: oklch(0.88 0.12 70);
+  --foil-5: oklch(0.86 0.13 145);
+
+  /* Holo viewer (DSN-01): metal foils and the light, the same in both themes. Only holo.css uses
+     them as blend inputs: the metals sit around overlay's neutral grey (L ≈ 0.6) so their streaks
+     stay faint, black is neutral for color-dodge, white is the glare. */
+  --foil-silver-1: oklch(0.97 0.004 250);
+  --foil-silver-2: oklch(0.66 0.008 250);
+  --foil-silver-3: oklch(0.55 0.01 250);
+  --foil-gold-1: oklch(0.94 0.08 95);
+  --foil-gold-2: oklch(0.7 0.12 85);
+  --foil-gold-3: oklch(0.58 0.1 72);
+  --foil-light: oklch(1 0 0);
+  --foil-dark: oklch(0 0 0);
+}
+
+/* Turned by the foil sweep; registered so it can animate. */
+@property --foil-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
 [data-theme='dark'] {

@@ -1,5 +1,5 @@
 import { PlusIcon } from '@phosphor-icons/react';
-import { Fragment, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useEffectEvent, useState, type ReactNode } from 'react';
 import { PLDelta } from '@/components/domain/PLDelta';
 import { Button } from '@/components/ui/Button';
 import { ActionMenu } from '@/components/ui/Menu';
@@ -13,6 +13,8 @@ import { valueLot, type LotValue, type ValuationOptions } from '@/domain/valuati
 import { languageCode, m } from '@/i18n';
 import { disposalText, gradingText, sealedStateLabel } from '@/i18n/collection-labels';
 import { formatCount, formatDate, formatMoney } from '@/i18n/format';
+import { inDialog, isPlain, isTyping } from '@/lib/keys';
+import { useSheets } from '@/lib/sheets';
 import { locationText } from './location';
 import { lotMenuActions } from './lot-menu';
 
@@ -202,6 +204,21 @@ export function HoldingsPanel({
   const shown = showClosed ? lots : open;
   const copies = open.reduce((n, h) => n + remaining(h), 0);
 
+  // N adds a lot of the page's card or product (UX_SPEC.md §7). It listens while capturing, so
+  // it comes before the shell's N, which opens the add palette everywhere else.
+  const onKey = useEffectEvent((event: KeyboardEvent) => {
+    if (!isPlain(event) || event.key.toLowerCase() !== 'n') return;
+    if (event.defaultPrevented || isTyping(event.target) || inDialog(event.target)) return;
+    if (useSheets.getState().open) return;
+    event.preventDefault();
+    onAdd();
+  });
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => onKey(event);
+    window.addEventListener('keydown', listener, { capture: true });
+    return () => window.removeEventListener('keydown', listener, { capture: true });
+  }, []);
+
   return (
     <Panel aria-labelledby="holdings-title" className="flex flex-col gap-4 p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -213,7 +230,7 @@ export function HoldingsPanel({
             </span>
           ) : null}
         </h3>
-        <Button variant="primary" size="sm" onClick={onAdd}>
+        <Button variant="primary" size="sm" aria-keyshortcuts="N" onClick={onAdd}>
           <PlusIcon size={16} weight="bold" aria-hidden />
           {m.holdings_add()}
         </Button>

@@ -9,6 +9,8 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+// With its extension: Vite's native config loader (its next default) resolves no bare paths.
+import { licensesPlugin } from './scripts/licenses.ts';
 
 const isTest = process.env.VITEST === 'true';
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
@@ -53,6 +55,8 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
+    // licenses.txt: the notices of the open-source code Settr ships (Einstellungen › Über)
+    licensesPlugin(fileURLToPath(new URL('.', import.meta.url))),
     !isTest &&
       VitePWA({
         registerType: 'prompt',
@@ -91,7 +95,7 @@ export default defineConfig({
           // every install download ~450 KB for languages it may never show.
           globIgnores: ['**/assets/ja-*.css', '**/assets/zh-cn-*.css', '**/assets/zh-tw-*.css'],
           navigateFallback: '/index.html',
-          navigateFallbackDenylist: [/^\/catalog\/v1\//, /^\/img\//],
+          navigateFallbackDenylist: [/^\/catalog\/v1\//, /^\/img\//, /^\/licenses\.txt$/],
           cleanupOutdatedCaches: true,
           // Catalog and pictures at runtime (ARCHITECTURE.md §8.1). Hashed catalog files carry
           // their hash in the query, so CacheFirst never serves an outdated chunk.

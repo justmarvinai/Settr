@@ -13,6 +13,7 @@ export function ProductTile({ product, lang }: { product: CatalogProduct; lang?:
       to="/catalog/sealed/$productId"
       params={{ productId: product.id }}
       search={lang ? { lang } : {}}
+      data-roving
       className="group flex h-full flex-col gap-2.5 rounded-card outline-offset-4"
     >
       <ProductImage

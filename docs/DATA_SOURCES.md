@@ -1,6 +1,6 @@
 # Settr: Data Sources, Catalog Pipeline and Licensing
 
-> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23 · Research date: 2026-09-23 (TCGdex repo commit `a211f11`, 2026-09-22).
+> Status: **Draft v0.4** (question rounds 1–7 incorporated) · Last updated: 2026-09-24 · Research date: 2026-09-23 (TCGdex repo commit `a211f11`, 2026-09-22).
 > Evidence labels: **[V]** verified by us in source data or compiler output · **[V-src]** verified in server/SDK source code · **[M]** checked live by Marvin (dated) · **[3P]** dated live measurements published by other projects · **[D]** vendor docs · **[U]** unverified.
 > References like (Q6.3) or (R2.3) point to decisions in [`USER_QUESTIONS.md`](../USER_QUESTIONS.md). All three question rounds are answered (R3.x = round 3, 2026-09-23).
 > Our cloud environment blocked live HTTP checks to most hosts (see `CLAUDE.md`), so all **[3P]** items must be re-verified from an unrestricted network in M0/M1.

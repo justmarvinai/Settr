@@ -1,0 +1,443 @@
+/*
+ * HoloCard (DSN-01, DESIGN_SYSTEM.md §7 moment 2): our own clean-room holo effect (ADR-014), made of
+ * layered gradients and blend modes over the picture. tilt.ts writes these on .holo-card while it
+ * moves (and removes them at rest):
+ *   --pointer-x, --pointer-y   where the light is, in % of the card (rest 50%)
+ *   --tilt-x, --tilt-y         the lean, −1…1 (rest 0)
+ *   --tilt                     how far the card leans, 0…1 (rest 0)
+ * Colors come from the --foil-* tokens only. Legibility first: the color-dodge foils use darkened
+ * foil colors (black is neutral for color-dodge, so dark text stays dark while mid-tones and
+ * highlights shimmer), and the metals sit near overlay's neutral grey. Faint at rest, stronger
+ * with the lean.
+ */
+
+.holo-stage {
+  position: relative;
+  border-radius: 4.8% / 3.4%;
+}
+/* Fullscreen: one finger leans the card, two still zoom */
+.holo-stage[data-touch-tilt] {
+  touch-action: pinch-zoom;
+}
+
+/* The shadow leans with the card: on the unmoving stage it would outline an empty box */
+.holo-card {
+  position: relative;
+  border-radius: inherit;
+  box-shadow: 0 24px 60px -28px color-mix(in oklch, var(--foil-dark) 50%, transparent);
+}
+
+/* Blend modes act on the picture only */
+.holo-clip {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  isolation: isolate;
+}
+
+.holo-open {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  cursor: zoom-in;
+}
+
+.holo-foil,
+.holo-shine,
+.holo-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+/* ---------- Foil: faint at rest, stronger with the lean ---------- */
+
+.holo-foil,
+.holo-shine {
+  /* How much of the foil color a color-dodge source keeps; the rest is black, i.e. no effect */
+  --holo-depth: 48%;
+  --holo-1: color-mix(in oklch, var(--foil-1) var(--holo-depth), var(--foil-dark));
+  --holo-2: color-mix(in oklch, var(--foil-2) var(--holo-depth), var(--foil-dark));
+  --holo-3: color-mix(in oklch, var(--foil-3) var(--holo-depth), var(--foil-dark));
+  --holo-4: color-mix(in oklch, var(--foil-4) var(--holo-depth), var(--foil-dark));
+  --holo-5: color-mix(in oklch, var(--foil-5) var(--holo-depth), var(--foil-dark));
+  --holo-rest: 0.2;
+  --holo-gain: 0.6;
+  opacity: calc(var(--holo-rest) + var(--holo-gain) * var(--tilt, 0));
+  mix-blend-mode: color-dodge;
+}
+
+/* A second layer with its own blend mode, for the foils that need one */
+.holo-shine {
+  display: none;
+}
+
+/* ---------- Glare: the light, brighter the further the card leans ---------- */
+
+.holo-glare {
+  opacity: calc(var(--tilt, 0) * 0.5);
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(
+    circle farthest-corner at var(--pointer-x, 50%) var(--pointer-y, 50%),
+    color-mix(in oklch, var(--foil-light) 75%, transparent) 0%,
+    color-mix(in oklch, var(--foil-light) 20%, transparent) 28%,
+    transparent 55%,
+    color-mix(in oklch, var(--foil-dark) 30%, transparent) 100%
+  );
+}
+
+/* ---------- Reduced motion: still, with a faint static sheen ---------- */
+
+.holo-stage[data-level='reduced'] .holo-card {
+  --pointer-x: 36%;
+  --pointer-y: 28%;
+}
+.holo-stage[data-level='reduced'] .holo-foil {
+  opacity: calc(var(--holo-rest) * 0.8);
+}
+.holo-stage[data-level='reduced'] .holo-shine {
+  display: none;
+}
+
+/* ---------- The foils ---------- */
+
+/* holo (rare, promo): rainbow bands in the art's own brightness, and a sweep of light */
+.holo-foil[data-foil='holo'] {
+  --holo-rest: 0.08;
+  --holo-gain: 0.3;
+  mix-blend-mode: color;
+  background-image: repeating-linear-gradient(
+    110deg,
+    var(--foil-1) 0%,
+    var(--foil-2) 4%,
+    var(--foil-3) 8%,
+    var(--foil-4) 12%,
+    var(--foil-5) 16%,
+    var(--foil-1) 20%
+  );
+  background-size: 200% 200%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+}
+.holo-shine[data-foil='holo'] {
+  display: block;
+  --holo-rest: 0.12;
+  --holo-gain: 0.6;
+  background-image: linear-gradient(
+    110deg,
+    transparent 30%,
+    var(--holo-1) 40%,
+    var(--holo-3) 46%,
+    var(--holo-4) 52%,
+    var(--holo-5) 58%,
+    transparent 68%
+  );
+  background-size: 250% 250%;
+  background-position: calc(100% - var(--pointer-x, 50%)) calc(100% - var(--pointer-y, 50%));
+}
+
+/* rainbow (double, ultra, ACE SPEC, shiny): finer bands plus glitter that twinkles in color */
+.holo-foil[data-foil='rainbow'] {
+  --holo-rest: 0.08;
+  --holo-gain: 0.32;
+  mix-blend-mode: color;
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--foil-3) 0%,
+    var(--foil-4) 3%,
+    var(--foil-5) 6%,
+    var(--foil-1) 9%,
+    var(--foil-2) 12%,
+    var(--foil-3) 15%
+  );
+  background-size: 250% 250%;
+  background-position: calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%);
+}
+.holo-shine[data-foil='rainbow'] {
+  display: block;
+  --holo-rest: 0.15;
+  --holo-gain: 0.6;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--foil-1) 0%,
+    var(--foil-3) 5%,
+    var(--foil-4) 10%,
+    var(--foil-5) 15%,
+    var(--foil-2) 20%,
+    var(--foil-1) 25%
+  );
+  background-size: 300% 300%;
+  background-position: var(--pointer-y, 50%) var(--pointer-x, 50%);
+  mask-image:
+    radial-gradient(circle at 30% 40%, var(--foil-dark) 0 0.6px, transparent 1.2px),
+    radial-gradient(circle at 70% 20%, var(--foil-dark) 0 0.8px, transparent 1.5px),
+    radial-gradient(circle at 20% 80%, var(--foil-dark) 0 0.5px, transparent 1.1px);
+  mask-size:
+    31px 29px,
+    43px 47px,
+    37px 41px;
+  mask-position:
+    calc(var(--tilt-x, 0) * 9px) calc(var(--tilt-y, 0) * 7px),
+    calc(var(--tilt-x, 0) * -14px) calc(var(--tilt-y, 0) * 11px),
+    calc(var(--tilt-x, 0) * 5px) calc(var(--tilt-y, 0) * -6px);
+}
+
+/* etched (illustration rares): fine engraved arcs that catch the light, tinted by the rainbow */
+.holo-foil[data-foil='etched'] {
+  --holo-depth: 72%;
+  --holo-rest: 0.14;
+  --holo-gain: 0.56;
+  background-image: linear-gradient(
+    115deg,
+    var(--holo-1) 10%,
+    var(--holo-2) 25%,
+    var(--holo-3) 40%,
+    var(--holo-4) 55%,
+    var(--holo-5) 70%,
+    var(--holo-1) 85%
+  );
+  background-size: 200% 200%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+  mask-image: repeating-radial-gradient(
+    circle at calc(-30% + var(--tilt-x, 0) * 10%) calc(-40% + var(--tilt-y, 0) * 10%),
+    var(--foil-dark) 0 0.8px,
+    transparent 1.2px 2.8px
+  );
+}
+.holo-shine[data-foil='etched'] {
+  display: block;
+  --holo-rest: 0.05;
+  --holo-gain: 0.3;
+  mix-blend-mode: color;
+  background-image: linear-gradient(
+    115deg,
+    var(--foil-1) 10%,
+    var(--foil-2) 25%,
+    var(--foil-3) 40%,
+    var(--foil-4) 55%,
+    var(--foil-5) 70%,
+    var(--foil-1) 85%
+  );
+  background-size: 200% 200%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+}
+
+/* fireworks (Pikachu rare): bursts of rays that turn with the lean */
+.holo-foil[data-foil='fireworks'] {
+  --holo-rest: 0.14;
+  --holo-gain: 0.5;
+  background-image:
+    radial-gradient(circle at 72% 64%, var(--holo-4) 0, transparent 24%),
+    radial-gradient(circle at 24% 78%, var(--holo-1) 0, transparent 18%);
+  background-position: calc(var(--tilt-x, 0) * -12px) calc(var(--tilt-y, 0) * -12px);
+}
+.holo-foil[data-foil='fireworks']::before,
+.holo-foil[data-foil='fireworks']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-conic-gradient(
+    from calc(var(--tilt-x, 0) * 30deg) at var(--burst-x) var(--burst-y),
+    var(--burst-color) 0deg 1.2deg,
+    transparent 1.8deg 7.5deg
+  );
+  mask-image: radial-gradient(
+    circle at var(--burst-x) var(--burst-y),
+    var(--foil-dark) 0 3%,
+    transparent 30%
+  );
+}
+.holo-foil[data-foil='fireworks']::before {
+  --burst-x: calc(30% - var(--tilt-x, 0) * 8%);
+  --burst-y: calc(24% - var(--tilt-y, 0) * 8%);
+  --burst-color: var(--foil-4);
+}
+.holo-foil[data-foil='fireworks']::after {
+  --burst-x: calc(70% - var(--tilt-x, 0) * 5%);
+  --burst-y: calc(58% - var(--tilt-y, 0) * 5%);
+  --burst-color: var(--foil-3);
+}
+
+/* metallic (futuristic rare) and gold (hyper rare): fine brushed streaks and a moving highlight */
+.holo-foil[data-foil='metallic'],
+.holo-foil[data-foil='gold'] {
+  --holo-rest: 0.16;
+  --holo-gain: 0.5;
+  mix-blend-mode: overlay;
+  background-image:
+    linear-gradient(105deg, transparent 36%, var(--metal-1) 50%, transparent 64%),
+    repeating-linear-gradient(
+      97deg,
+      var(--metal-2) 0 0.9px,
+      var(--metal-3) 1.3px 2.1px,
+      var(--metal-2) 2.9px 3.7px
+    ),
+    repeating-linear-gradient(
+      99deg,
+      var(--metal-3) 0 1.7px,
+      var(--metal-2) 2.3px 5.3px,
+      var(--metal-3) 6.1px 7.9px
+    );
+  background-size:
+    300% 300%,
+    100% 100%,
+    100% 100%;
+  background-position:
+    var(--pointer-x, 50%) var(--pointer-y, 50%),
+    0 0,
+    0 0;
+  background-blend-mode: normal, overlay, normal;
+}
+.holo-foil[data-foil='metallic'] {
+  --metal-1: var(--foil-silver-1);
+  --metal-2: var(--foil-silver-2);
+  --metal-3: var(--foil-silver-3);
+}
+.holo-foil[data-foil='gold'] {
+  --metal-1: var(--foil-gold-1);
+  --metal-2: var(--foil-gold-2);
+  --metal-3: var(--foil-gold-3);
+}
+
+/* spectral (RGB rare): the art's hues turn with the lean, and a prism band sweeps across */
+.holo-foil[data-foil='spectral'] {
+  --foil-angle: calc(var(--tilt-x, 0) * 140deg - var(--tilt-y, 0) * 70deg);
+  --holo-rest: 0.08;
+  --holo-gain: 0.3;
+  mix-blend-mode: color;
+  background-image: conic-gradient(
+    from var(--foil-angle) at 50% 50%,
+    var(--foil-1),
+    var(--foil-2),
+    var(--foil-3),
+    var(--foil-4),
+    var(--foil-5),
+    var(--foil-1)
+  );
+}
+.holo-shine[data-foil='spectral'] {
+  display: block;
+  --holo-rest: 0.1;
+  --holo-gain: 0.6;
+  background-image: linear-gradient(
+    100deg,
+    transparent 32%,
+    var(--holo-3) 40%,
+    var(--holo-4) 45%,
+    var(--holo-5) 50%,
+    var(--holo-1) 55%,
+    var(--holo-2) 60%,
+    transparent 68%
+  );
+  background-size: 300% 300%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+}
+
+/* classic (Classic Collection): vintage starlight, stars scattered in a warm sheen */
+.holo-foil[data-foil='classic'] {
+  --holo-depth: 70%;
+  --holo-rest: 0.16;
+  --holo-gain: 0.56;
+  background-image: linear-gradient(
+    160deg,
+    var(--holo-4) 0%,
+    var(--holo-3) 30%,
+    var(--holo-2) 55%,
+    var(--holo-1) 80%,
+    var(--holo-5) 100%
+  );
+  background-size: 200% 200%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+  mask-image:
+    radial-gradient(circle at 13% 27%, var(--foil-dark) 0 0.8px, transparent 1.8px),
+    radial-gradient(circle at 61% 71%, var(--foil-dark) 0 1.1px, transparent 2.4px),
+    radial-gradient(circle at 33% 85%, var(--foil-dark) 0 0.7px, transparent 1.6px),
+    radial-gradient(circle at 80% 15%, var(--foil-dark) 0 0.6px, transparent 1.4px),
+    radial-gradient(
+      circle at 45% 40%,
+      color-mix(in oklch, var(--foil-dark) 55%, transparent) 0 1.5px,
+      transparent 7px
+    );
+  mask-size:
+    53px 61px,
+    71px 67px,
+    97px 89px,
+    43px 47px,
+    113px 127px;
+  mask-position:
+    calc(var(--tilt-x, 0) * -10px) calc(var(--tilt-y, 0) * -10px),
+    calc(var(--tilt-x, 0) * 6px) calc(var(--tilt-y, 0) * 6px),
+    calc(var(--tilt-x, 0) * -4px) calc(var(--tilt-y, 0) * 8px),
+    calc(var(--tilt-x, 0) * 12px) calc(var(--tilt-y, 0) * -5px),
+    0 0;
+}
+.holo-shine[data-foil='classic'] {
+  display: block;
+  --holo-rest: 0.2;
+  --holo-gain: 0.4;
+  mix-blend-mode: soft-light;
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    var(--foil-gold-1) 50%,
+    transparent 70%
+  );
+  background-size: 250% 250%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+}
+
+/* Windows high contrast: the plain picture */
+@media (forced-colors: active) {
+  .holo-foil,
+  .holo-shine,
+  .holo-glare {
+    display: none;
+  }
+}
+
+/* ---------- Fullscreen ---------- */
+
+.holo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in oklch, var(--bg) 86%, transparent);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.holo-backdrop[data-starting-style],
+.holo-backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+/* As large as fits: at most 90 % of the height, with room for the close button above */
+.holo-dialog {
+  --holo-height: min(90dvh, 100dvh - 136px, (100dvw - 32px) * 88 / 63);
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  margin: auto;
+  width: calc(var(--holo-height) * 63 / 88);
+  height: var(--holo-height);
+  outline: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.holo-dialog[data-starting-style],
+.holo-dialog[data-ending-style] {
+  opacity: 0;
+}
+.holo-dialog[data-level='full'] > .holo-stage {
+  transition: scale var(--dur-slow) var(--ease-out);
+}
+.holo-dialog[data-level='full'][data-starting-style] > .holo-stage,
+.holo-dialog[data-level='full'][data-ending-style] > .holo-stage {
+  scale: 0.94;
+}
+
+/* The popup has no transform, so this sits in the window's corner */
+.holo-close {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+}

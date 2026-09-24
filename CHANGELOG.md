@@ -8,7 +8,38 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-24
+
+The first complete release: everything planned for v1 (M1–M6) for the *30 Jahre / 30th CELEBRATION* catalog. The tag `v1.0.0` goes on `main` once Marvin has checked M6 in Brave and on the iPhone and merged it (ROADMAP.md, USER_QUESTIONS.md R8.4).
+
 ### Added
+- **M6 · Polish & Launch (2026-09-24).**
+  - **Keyboard (UX §7):** `G` then `O`/`S`/`K`/`P`/`F`/`E` goes to a main area, and `V` then `G`/`T` switches between grid and table. `/` searches, `?` lists every shortcut (also from the palette and *Über*), `H` hides values, `N` adds, and `+` adds one copy of the focused set tile. Arrow keys, `Home` and `End` move through card and product grids, which take one tab stop each. On card and product pages, `N` adds that item. A palette pick that opens a page moves focus into the page, not back to the field you came from.
+  - **Palette:** *Schnellerfassung* for a set, *Tastenkürzel anzeigen*, *Werte verbergen* and the theme, next to the backup actions from M5.
+  - **Offline pill** in the toolbar. **Fehlerbericht kopieren** on error pages and under *Über*: the version, the browser and the last errors from a log on the device, never collection data.
+  - **Onboarding (APP-06):** three steps on a fresh device, then the set:
+    - the languages you collect;
+    - why your data stays here, with persistent storage, installing and the warning about browsers that delete data on exit;
+    - your default card language.
+    - *Überspringen* and *Ich habe schon ein Backup* are there too. Devices that already hold lots skip it.
+  - **Empty states** for Sammlung, Preise and Portfolio, with the next step. On iPhones, a hint to add Settr to the home screen.
+  - **Foil progress rings (DSN-03):** Basis progress as a ring on set pages, the Sets page, the Übersicht and in the sidebar, which now lists the sets you collect. At 100 % the ring turns to foil with one sweep, and the set's progress lifts.
+  - **Holo card viewer (DSN-01):** on card pages the picture leans towards the pointer, with a glare and a foil for each rarity. It's our own implementation, without GPL code. Phones use the gyroscope after a tap (the iPhone asks first), a tap opens fullscreen, and everything stays still under reduced motion.
+  - **Gesamtwert counts up** the first time the Übersicht or the Portfolio shows it in a session (the hero odometer), except with reduced motion. Screen readers get the final number.
+  - **Grid → card morph (DSN-02):** the tile's picture grows into the card page and back again (View Transitions), except with reduced motion.
+  - **Phones:** a long press on a set tile opens *Hinzufügen …*, *Preis eintragen …* and *Details*. Swiping the card picture turns to the previous or next card.
+  - **Über & Rechtliches (APP-08):**
+    - the version and catalog;
+    - the data sources with their licenses, plus the fonts and libraries;
+    - every license text in `licenses.txt`, which the build generates from what Settr ships;
+    - the privacy note and the disclaimer;
+    - *Tastenkürzel* and *Fehlerbericht kopieren*.
+  - **Quality gates (QUALITY.md §2, §4):**
+    - e2e journeys 5 (a sealed product's P/L), 9 (offline with the service worker, including a reload without network) and 10 (keyboard only, from adding a card to the price session);
+    - every journey nightly in Firefox and on an Android phone (Pixel 7);
+    - visual regression for six screens in light and dark (`visual.yml`), with the baselines made on CI's Ubuntu runner; a screen may differ by at most 100 pixels;
+    - Lighthouse CI on every PR (`lighthouse.yml`), on the production build: desktop is the gate (LCP, CLS, blocking time, scores), and the phone profile is a report (R8.3).
+  - **Glass and high contrast:** under an open sheet or dialog the chrome stops blurring, so at most three blur layers run at once (one while a sheet is open). With forced colors, big numbers no longer cover their labels.
 - **M5 · Data Safety (v0.5.0 candidate, 2026-09-24).**
   - **Backup einspielen (DAT-02):**
     - A backup file by button or drag and drop is read in a worker and checked: checksum, migration, every record against its schema.
@@ -70,6 +101,12 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - **Quality:** Oxlint (type-aware, layer boundaries) + oxfmt, Vitest unit/integration tests and Browser Mode component tests, Playwright e2e on Chromium (desktop, phone) and WebKit (iPhone) with axe in light and dark plus a console/CSP guard, size-limit budgets, lefthook hooks, and GitHub Actions CI.
 
 ### Changed
+- **M6 · German copy pass (UX §8, I18N.md §5–§6):**
+  - Every count has a singular form (*1 Karte*, *1 Produkt*, *Nur 1 freier Platz*, *Kosten auf 1 Pull verteilt*), and a full binder says *Kein freier Platz mehr*.
+  - One term per concept: *Kaufpreis* (not *Einkaufspreis*), *gegradet*, *Reverse-Holo*, *Plätze* in binders, *aktueller Preis* (not *Marktpreis*), *Illustrator*, *Im Besitz*, *Secret Rares*, *Klassische Sammlung*, *Display (Asien)*, *Poor*, *Zertifikatsnummer*, *Auf Cardmarket öffnen*, *… anzeigen* on buttons and links, *Speichern & weiter* / *Anlegen & weiter*.
+  - CSV headers: *Wert/Stk.*, *Preisreihe*, *Note* and *Einkauf* (for a sale's cost).
+  - Clearer hints: the Daten page (backup, import, snapshots, delete on exit), splitting a product's cost over its pulls, *Eigener Wert*, binder pages, the Cardmarket filters and *Seit dem Kauf*; the sidebar pill reads *Zuletzt vor 3 Tagen*; Schnellerfassung errors say what's wrong. A set page's search hint is *Name oder Nr.*, so it fits next to the *Im Besitz* filter at 1440 px.
+  - 18 messages nothing used are gone.
 - M5:
   - `SCHEMA_VERSION` lives in `domain/schemas/version.ts`.
   - `meta` records the change counter at the last backup (`backupDataVersion`, optional, not exported: no schema change).
@@ -94,6 +131,8 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - A picture's loading placeholder pulses three times instead of forever.
 
 ### Docs
+- **M6 copy pass:** `I18N.md` records the conventions (§2 plurals, §5 tone, §6 glossary); `UX_SPEC.md`, `PRODUCT_SPEC.md`, `IMPORT_EXPORT.md` (the CSV headers), `DATA_MODEL.md` and `QUALITY.md` quote the new copy.
+- **Spec v0.4: question rounds 4–7 decided, 2026-09-24.** Marvin chose every recommendation (⭐): the catalog check (R4.1–R4.5), collection details (R5.1–R5.5), prices and portfolio (R6.1–R6.3) and data safety (R7.1–R7.4). The app already works this way, so nothing changes. The decisions are recorded in `USER_QUESTIONS.md`, `ROADMAP.md`, `DATA_MODEL.md` (R5.3: unpriced pulls get 0 €) and `UX_SPEC.md` (R5.1: the condition starts at NM), and the spec status lines move to v0.4.
 - **M5 notes:**
   - ADR-041 (import in a worker, snapshots in their own database, one guarded transaction), ADR-042 (merge rules as built), ADR-043 (backup reminders).
   - `IMPORT_EXPORT.md` v0.4 as built (§2–§6, §8).

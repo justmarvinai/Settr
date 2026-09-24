@@ -49,6 +49,13 @@
 | 041 | Import as built: read in a worker, safety snapshots in their own database, one guarded transaction | Accepted (M5; amends ADR-016) |
 | 042 | Merge rules as built: instants, tombstone hygiene, conservative name folding | Accepted (M5; amends ADR-016) |
 | 043 | Backup reminders: the pill says due, the toast waits for a settled install, once a day | Accepted (M5) |
+| 044 | Keyboard as built: one tab stop per grid with list semantics, two-key sequences, page keys first | Accepted (M6) |
+| 045 | The error log lives in localStorage, not IndexedDB | Accepted (M6) |
+| 046 | First run: a localStorage flag, and a device with lots counts as onboarded | Accepted (M6) |
+| 047 | Grid → card morph with view transitions: one named picture, typed back and forward | Accepted (M6) |
+| 048 | Phone gestures: long press on set tiles, swipe on the card picture | Accepted (M6) |
+| 049 | Quality gates as built: visual baselines made in CI, Lighthouse on the local build, a nightly browser matrix | Accepted (M6) |
+| 050 | Third-party notices generated at build time (`licenses.txt`) | Accepted (M6) |
 
 ---
 
@@ -429,3 +436,110 @@
   - A toast right away on a new install: it interrupts the first session.
   - Counting settings changes as well: they're rare and small, and they'd need their own counter.
   - A blocking dialog: too heavy-handed for a reminder.
+
+### ADR-044 · Keyboard as built: one tab stop per grid with list semantics, two-key sequences, page keys first (Accepted, M6)
+- **Context:** `UX_SPEC.md` §7 asks for arrow keys in grids, `G` then a letter to switch areas, `V` then a letter to switch views, and page keys like `N` and `P` on the focused item. Card grids have up to 199 tiles, each a link with a ＋ and a € button.
+- **Decision:**
+  - **Grids stay lists.** They're `ul`/`li` with links, plus a roving tab stop: `Tab` enters a grid once, and the arrow keys, `Home` and `End` move by screen position (`src/lib/useRovingFocus.ts`). The active tile's own buttons stay tabbable. `role="grid"` was left out: it promises cell navigation and row semantics that a wrapping card grid doesn't have, and screen readers read a list of links better.
+  - **Two-key sequences** (`src/lib/useKeySequence.ts`): `G` or `V` waits 1.5 s for its second key. They listen while capturing, so a page can't swallow the second key. Like every single-key shortcut, they're quiet in fields, inside dialogs and while a sheet is open.
+  - **Page keys first:** `N` on a focused set tile, or on a card or product page, adds that item. The page listens while capturing and marks the key handled, so the shell's `N` (the add palette) only runs elsewhere.
+  - **Focus follows navigation:** a palette pick that opens a page sends focus into the new page, not back to the field the palette was opened from.
+- **Consequences:**
+  - A keyboard user needs one `Tab` to pass a grid.
+  - The journey "keyboard only" (QUALITY.md §2.1, journey 10) runs without a mouse: from adding a card to the price session.
+  - Each key has one owner at a time.
+- **Alternatives:**
+  - `role="grid"` with cell navigation: heavier markup and semantics the layout doesn't have.
+  - Every tile in the tab order: 199 stops per set.
+  - `N` always opening the palette: an extra search for the card that's already on screen.
+
+### ADR-045 · The error log lives in localStorage, not IndexedDB (Accepted, M6)
+- **Context:** `QUALITY.md` §6 planned a ring buffer of errors in IndexedDB (200 entries) for *Fehlerbericht kopieren*.
+- **Decision:** The log lives in localStorage under `settr:errors`, with 200 entries at most. Each entry has the error text, stack, kind and the page's path without query or hash. *Alle Daten löschen* clears it with the other `settr:` keys.
+- **Consequences:**
+  - The errors most worth reporting (a blocked or full database, a failed migration) are logged even when IndexedDB is the problem.
+  - Writes are synchronous, so an error logged just before a crash or reload isn't lost.
+  - The size stays small (a few KB), well within localStorage's limits.
+- **Alternatives:**
+  - IndexedDB: loses exactly the database errors, and writes asynchronously while the page is failing.
+  - No log: bug reports would depend on the console, which phones don't show.
+
+### ADR-046 · First run: a localStorage flag, and a device with lots counts as onboarded (Accepted, M6)
+- **Context:** APP-06 shows the onboarding on the first run. Devices that used Settr before M6, or that got a backup, already have lots. The check runs before the Übersicht renders, and the startup budget has little room (ADR-037).
+- **Decision:**
+  - `settr:onboarded` in localStorage marks a finished or skipped onboarding. The `/` route checks it synchronously.
+  - Only without the flag does the route load the onboarding module and count the lots. A device with lots gets the flag and goes on to the Übersicht; an empty one goes to `/onboarding`.
+  - *Alle Daten löschen* clears the flag, so the fresh start shows the onboarding again.
+- **Consequences:**
+  - Returning devices never see the onboarding, and the check costs them nothing: no database read and no extra code at startup.
+  - The flag is per browser, like the data.
+- **Alternatives:**
+  - A settings field in IndexedDB: a database read before the first paint, and a user-data shape change for a UI fact.
+  - Always counting the lots: loads the database code on every start.
+
+### ADR-047 · Grid → card morph with view transitions: one named picture, typed back and forward (Accepted, M6)
+- **Context:** DSN-02 wants the tile's picture to grow into the card page. The View Transitions API does this without keeping both pages mounted, but a `view-transition-name` must be unique on the page, or the browser skips the transition.
+- **Decision:**
+  - Only the clicked tile's picture gets the name `card-hero`, as it's clicked; the card page's picture carries the same name. On the way back, the grid names the tile of the card you came from (`src/lib/hero.ts`).
+  - Links opt in (`viewTransition` on the tile links and the card page's back link). The router adds typed transitions for back and forward between a grid and a card page, only where the browser supports view-transition types; everything else stays instant.
+  - Off under reduced motion (the OS or *Darstellung › Animationen*), and where the API is missing.
+- **Consequences:**
+  - No animation library, and no layout measuring in JavaScript.
+  - Browsers without the API (or without types, for back and forward) simply navigate.
+  - The e2e test fails on a skipped transition, since duplicate names log an error.
+- **Alternatives:**
+  - Motion's shared layout animations: both elements must be mounted at once, which route changes don't allow.
+  - A FLIP animation by hand: measuring across routes, and more code than the platform feature.
+
+### ADR-048 · Phone gestures: long press on set tiles, swipe on the card picture (Accepted, M6)
+- **Context:** `UX_SPEC.md` §4.3 gives set tiles a long-press menu on phones, and §4.4 wants swiping between cards. Browsers have their own long press (Android's link menu, iOS's link preview), and swipes compete with scrolling.
+- **Decision:**
+  - **Long press** (`src/lib/useLongPress.ts`): a finger resting 500 ms, or Android's own long press (`contextmenu`), opens a sheet with *Hinzufügen …*, *Preis eintragen …* and *Details*. It replaces the browser's menu, and iOS's preview is off on tiles (`-webkit-touch-callout: none`). The click that may follow the lift is swallowed. It's set tiles only, as specified; other grids keep their menus and buttons.
+  - **Swipe** (`src/lib/useSwipe.ts`): only on the card picture, with `touch-action: pan-y pinch-zoom`, so the page still scrolls and zooms. The picture follows the finger (resisting where there's no next card), and past 64 px or a quick flick the next card slides in. The lift never opens the fullscreen view.
+  - Mouse and pen are left alone.
+- **Consequences:**
+  - Phones reach the add sheet and the price sheet without the hover buttons.
+  - Scrolling is never blocked.
+  - The e2e test drives both through Chromium's touch emulation.
+- **Alternatives:**
+  - Swipe on the whole card page: collides with the chart's scrubbing and the segmented controls.
+  - A gesture library: more code than two small hooks.
+
+### ADR-049 · Quality gates as built: visual baselines made in CI, Lighthouse on the local build, a nightly browser matrix (Accepted, M6)
+- **Context:** `QUALITY.md` §2 and §7 plan visual regression (Chromium, light and dark), Lighthouse CI against the Vercel preview, and a nightly Firefox and Pixel run.
+- **Decision:**
+  - **Visual regression** (`visual.yml`, `tests/visual`):
+    - six screens in light and dark, with a fixed clock, stubbed pictures and no service worker;
+    - the baselines are made and compared only on GitHub's Ubuntu runner, since other machines render text slightly differently;
+    - it runs nightly, not on every PR; a manual run with `update` regenerates every baseline and commits them to the branch;
+    - a screen may differ by at most 100 pixels (each beyond Playwright's color threshold): stray antialiasing passes, a missing line of text doesn't. Each screen waits until the collection has loaded, not just the catalog.
+  - **Lighthouse CI** (`lighthouse.yml`) on every PR, against `vite preview` with the production headers instead of the Vercel preview:
+    - Vercel's deployment protection would block it, and the deployment URL stays out of the repository (ADR-029);
+    - **desktop is the gate** (Brave on Windows, the primary platform, R2.9): LCP ≤ 2 s, CLS ≤ 0.05, blocking time ≤ 200 ms, performance ≥ 90, accessibility ≥ 95 and best practices ≥ 90 fail the job (measured in M6: LCP about 1.1 s, performance 96–98);
+    - **the phone profile is a report**: a slow phone on simulated 4G for a first visit. Only layout shift and accessibility fail; LCP (warns above 4 s), blocking time and the score warn. The first CI run measured LCP about 5.2 s and a score of about 0.67: an app that renders in the browser can't paint before its code (225 KB) has arrived and run on a 4× slowed CPU. Installed, Settr starts from the service worker's cache, so real phones don't wait for the network.
+    - The planned mobile budget (LCP ≤ 2 s on simulated 4G) would need prerendered first screens; it's round 8's question R8.3.
+  - **Nightly** (`e2e-nightly.yml`): every journey in Firefox and on a Pixel 7 (Chromium), plus the property tests with a random seed.
+- **Consequences:**
+  - An intended design change needs one manual run to refresh the baselines.
+  - A visual regression shows up the next morning, not in the PR.
+  - Lighthouse numbers are from a local server: network timing is simulated anyway.
+- **Alternatives:**
+  - Baselines from a developer machine: flaky diffs in CI.
+  - Visual checks on every PR: every design tweak would need a baseline run before its PR could go green.
+  - Lighthouse against the preview URL: needs a bypass secret and the URL at runtime.
+
+### ADR-050 · Third-party notices generated at build time (`licenses.txt`) (Accepted, M6)
+- **Context:** MIT, Apache-2.0 and OFL ask for their notices to travel with the software. The minified bundle drops license comments, and APP-08's *Über & Rechtliches* credits the main libraries.
+- **Decision:**
+  - A build plugin (`scripts/licenses.ts`) writes `licenses.txt` with the license text of every package Settr ships to the browser:
+    - the runtime dependency tree of `package.json`, workers included;
+    - Workbox's service-worker modules;
+    - Tailwind's base styles and Paraglide's runtime, without their compilers.
+  - *Über & Rechtliches* links to it. The service worker lets it through (not the app shell).
+- **Consequences:**
+  - The notices stay complete as dependencies change, without a hand-kept list.
+  - About 130 KB, fetched only when someone opens it.
+- **Alternatives:**
+  - A hand-written list: goes stale.
+  - A license plugin that scans the bundle: misses what the workers and the service worker ship.
+

@@ -2,6 +2,7 @@ import { useMatches } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { Button, IconButton } from '@/components/ui/Button';
 import {
+  CloudSlashGlyph,
   DotsThreeOutlineGlyph,
   EyeGlyph,
   EyeSlashGlyph,
@@ -14,9 +15,9 @@ import { Kbd } from '@/components/ui/Kbd';
 import { useSettings } from '@/db/core';
 import { changeDisplay, resolvedTheme } from '@/features/appearance';
 import { m } from '@/i18n';
+import { isApple } from '@/lib/platform';
+import { useOnline } from '@/lib/useOnline';
 import { usePrivacy } from '../privacy';
-
-const isApple = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 const pageTitleOf = (loaderData: unknown): string | undefined =>
   loaderData && typeof loaderData === 'object' && 'pageTitle' in loaderData
@@ -55,6 +56,24 @@ function ThemeToggle() {
   );
 }
 
+/** "Offline · alles funktioniert" (UX_SPEC.md §6): everything but uncached pictures keeps working. */
+function OfflinePill() {
+  const online = useOnline();
+  return (
+    <output className="shrink-0">
+      {online ? null : (
+        <span className="inline-flex h-9 items-center gap-1.5 rounded-pill bg-hover px-3 type-small font-semibold text-ink-muted">
+          <CloudSlashGlyph size={16} aria-hidden />
+          <span className="max-sm:sr-only">{m.offline_pill()}</span>
+          <span aria-hidden className="sm:hidden">
+            {m.offline_short()}
+          </span>
+        </span>
+      )}
+    </output>
+  );
+}
+
 function PrivacyToggle() {
   const { on, toggle } = usePrivacy();
   return (
@@ -87,6 +106,7 @@ export function Toolbar({
       <h1 className="type-h1 m-0 min-w-0 flex-1 truncate max-sm:text-[22px] max-sm:[font-stretch:112%]">
         {title}
       </h1>
+      <OfflinePill />
       <button
         type="button"
         onClick={onOpenSearch}

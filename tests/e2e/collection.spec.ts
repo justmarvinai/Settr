@@ -123,7 +123,7 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await expect(bar).toContainText('5 ausgewählt');
   await bar.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByText('5 Positionen gelöscht')).toBeVisible();
-  await expect(page.getByText('Noch keine Karten. Öffne ein Set und tippe auf ＋.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Noch keine Karten' })).toBeVisible();
   await page
     .getByRole('dialog', { name: '5 Positionen gelöscht' })
     .getByRole('button', { name: 'Rückgängig' })

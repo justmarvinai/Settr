@@ -24,3 +24,5 @@ coverage/
 
 # Cardmarket's price guide is built at deploy time, never committed while the repo is public (ADR-029)
 cm-prices.json
+.lighthouseci/
+.vitest/

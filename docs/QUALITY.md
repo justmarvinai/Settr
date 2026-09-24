@@ -1,6 +1,6 @@
 # Settr: Quality, Testing, Performance, Accessibility and Security
 
-> Status: **Draft v0.3** (round-2 answers incorporated) · Last updated: 2026-09-23
+> Status: **Draft v0.4** (question rounds 1–7 incorporated) · Last updated: 2026-09-24
 > Defines what "done" means and how quality is enforced automatically. Referenced by `AGENTS.md` (Definition of Done) and CI.
 
 ---
@@ -33,9 +33,9 @@ A change is **done** only when all of the following hold:
 | **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
 | **Component** | Vitest Browser Mode (Playwright provider, `vitest-browser-react`), `*.test.tsx` next to the component | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
 | **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. CI renders WebKit in software (frames of 100–600 ms with the glass layers), so the WebKit project allows 60 s per test instead of 30 s. Every test also fails on console errors and CSP violations (the preview server sends the production CSP). As built (M5): the fixture also listens for `securitypolicyviolation` events, because Chromium and WebKit don't log a violation the page catches itself. That's how Zod's `new Function` probe surfaced (only Firefox logged it); Zod now runs jitless (`src/lib/zod.ts`, and a lint rule keeps imports going through it) | All journeys green before merge to `main` |
-| **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
+| **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts. As built (M6, ADR-049): `tests/visual`, a fixed clock, stubbed pictures and no service worker; the baselines are made and compared on GitHub's Ubuntu runner only (`visual.yml`: nightly, and by hand with `update` to regenerate and commit them). A screen may differ by at most 100 pixels |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
-| **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
+| **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI. As built (M6, ADR-049): Lighthouse CI runs on the production build behind `vite preview` (`lighthouse.yml`): the desktop profile is the gate (`lighthouserc.json`: LCP, CLS, blocking time and the scores fail the job), the phone profile is a report (`lighthouserc.phone.json`: layout shift and accessibility fail, the rest warns) |
 | **Catalog pipeline** | Vitest + Zod | Generated JSON validates. Counts match the manifest. Image URL sampling (HEAD) runs as a non-blocking job | Every catalog PR |
 | **Manual Brave check** | Brave (current stable) on Windows, **default Shields** | The Brave smoke test (§3.1): install as app, offline, `persist()`, backup download with Save-As, CJK rendering, glass | Before each release |
 
@@ -67,7 +67,15 @@ A change is **done** only when all of the following hold:
 - The backup pill and the reminder toast (from a day-old install, once a day), and ⌘K *Backup exportieren* and *Backup einspielen …*.
 - axe on the Daten page, the import preview and the delete dialog, in light and dark.
 
-Every PR runs these on Chromium (desktop, phone) and WebKit (iPhone); `e2e-nightly.yml` runs them on Firefox (the M5 exit criterion). Journeys 1, 5, 9 and 10 remain for M6.
+Every PR runs these on Chromium (desktop, phone) and WebKit (iPhone); `e2e-nightly.yml` runs them on Firefox (the M5 exit criterion).
+
+**Added in M6** (all 13 journeys are now automated):
+- Journey 1 (`onboarding.spec.ts`): the first run through the onboarding into the set, a card with a purchase price and a price, and the Übersicht's value and P/L. It also covers *Überspringen*, the backup path and axe on the steps.
+- Journeys 5 and 10 (`journeys.spec.ts`): a sealed product's P/L on its page, in Sammlung › Sealed and the Übersicht; keyboard only, from `N` in the palette through `/`, `P`, `Strg K` and `N` on a card page to the price session.
+- Journey 9 (`offline.spec.ts`, Chromium): with the service worker in charge, navigating, adding a lot and reloading without a network. The service worker fetches pictures past the test stubs, so the picture host points at a closed local port.
+- `design.spec.ts`: the progress rings, the grid → card morph (a skipped transition fails), the holo card leaning and its fullscreen view, and on phones the long-press menu and swiping between cards (Chromium touch emulation).
+- `about.spec.ts`: *Über & Rechtliches* and `licenses.txt`, also with the service worker in charge.
+- The nightly run adds every journey in Firefox and on a Pixel 7.
 
 ### 2.2 Test data
 
@@ -108,11 +116,11 @@ Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Be
 
 | Metric | Budget |
 |---|---|
-| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB, M3: 219.6 KB, M4: 220.3 KB) |
+| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB, M3: 219.6 KB, M4: 220.3 KB, M6: 225.6 KB) |
 | Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
 | CSS (gzip) | ≤ 35 KB initial; on-demand CSS ≤ 45 KB per file (one Noto CJK family's `@font-face` rules, loaded only where Japanese or Chinese names show) |
 | Web fonts on first render | ≤ 2 files, ≤ 125 KB total (latin subsets, variable; ADR-030). CJK fonts load lazily and only when CJK text is rendered |
-| LCP (Lighthouse mobile, simulated 4G) | ≤ 2.0 s |
+| LCP (Lighthouse mobile, simulated 4G) | ≤ 2.0 s. As built (M6, ADR-049): the Lighthouse gate measures **desktop** (≈ 1.1 s); the phone profile on simulated 4G is reported and warns above 4 s (≈ 5.2 s for a first visit: a client-rendered app paints after its code has loaded and run; installed, it starts from the cache). Reaching 2 s there needs prerendered first screens (R8.3) |
 | INP (P75) | ≤ 200 ms |
 | CLS | ≤ 0.05 (image slots have a fixed aspect ratio of 63∶88) |
 | Grid scroll | 60 fps with 300+ tiles (virtualized above ~150) |
@@ -132,7 +140,7 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 - Contrast is ≥ 4.5:1 for text and ≥ 3:1 for UI components and chart strokes, in **both themes of direction D** (light and dark are equals, *System* is the default; `DESIGN_SYSTEM.md` §3.1). It's checked with automated token tests (OKLCH contrast in `tokens.test.ts`) for every token pair, in light and in dark.
 - P/L is never color-only: a sign, an arrow and text are always shown. An optional colorblind-safe palette (blue/orange) is available.
 - Keyboard: everything is operable, with a visible focus ring (`--focus`: 3 px with a 2 px offset, `DESIGN_SYSTEM.md` §3.1). Grids use a roving tabindex. Sheets/dialogs trap focus and restore it on close. Skip-link to the main content.
-- Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
+- Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse-Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
 - Motion: `prefers-reduced-motion` disables tilt, foil animation, morph transitions and number tickers. There's also an in-app motion setting.
 - **Glass legibility:** text on Liquid Glass meets AA against the worst-case backdrop (bright card art beneath). `prefers-reduced-transparency` and the in-app toggle make glass solid. Windows `forced-colors` mode is supported.
 - Touch targets are ≥ 44 × 44 px. No hover-only functionality: every hover action has a tap/long-press or menu equivalent.
@@ -159,7 +167,7 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 - **Untrusted input:** imported files and CSVs are validated with Zod. Data is never rendered as HTML (no `dangerouslySetInnerHTML`). Import size is capped (200 MB) and parsing runs in a worker.
 - **External links** (Cardmarket) use `rel="noopener noreferrer"`.
 - **Dependencies:** minimal and well-maintained, with a committed lockfile, Renovate for updates (grouped weekly) and `pnpm audit` in CI.
-- **Analytics and telemetry:** none (Q8.3). Never add Vercel Analytics (it's on EasyPrivacy, so Brave would block it anyway). Errors go to a local ring-buffer log (IndexedDB, 200 entries) that the user can copy into a bug report. It contains no collection data.
+- **Analytics and telemetry:** none (Q8.3). Never add Vercel Analytics (it's on EasyPrivacy, so Brave would block it anyway). Errors go to a local ring-buffer log (200 entries) that the user can copy into a bug report. It contains no collection data. As built (M6, ADR-045): the log lives in localStorage (`settr:errors`), so database failures are logged too.
 - **Repository (ADR-029):** no secrets and no personal collection data are ever committed. While the GitHub repository is public (it stays public for now, R3.2), neither are Cardmarket price-guide snapshots (`cm-prices.json`) nor the deployment URL.
 
 ---
@@ -169,11 +177,12 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 | Workflow | Trigger | Steps |
 |---|---|---|
 | `ci.yml` | PR, push to `main`, manual | pnpm install (cached) → Paraglide compile + `tsc --noEmit` (TS 7) → `oxlint --type-aware` + `oxfmt --check` → unit/integration (Vitest) → components (Vitest Browser Mode, Chromium) → build → CSP hash check (`pnpm csp`) → size-limit → `pnpm audit` (prod, high) → Playwright on the built app: desktop and phone on Chromium, iPhone on WebKit → reports uploaded on failure |
-| `e2e-nightly.yml` | nightly + manual | As built (M5): property tests with a random seed (`FC_SEED=random`), and the data journeys (`tests/e2e/data.spec.ts`) on Firefox (a `firefox` Playwright project that only `NIGHTLY=1` enables). The full browser matrix and visual regression follow in M6 |
+| `e2e-nightly.yml` | nightly + manual | Property tests with a random seed (`FC_SEED=random`), and every journey on Firefox and a Pixel 7 (the `firefox` and `pixel` Playwright projects, enabled by `NIGHTLY=1`; M6) |
+| `visual.yml` | nightly + manual | Visual regression on desktop Chromium (`VISUAL=1`, `tests/visual`). By hand with `update`: regenerate the baselines and commit them to the branch (ADR-049) |
 | `catalog-sync.yml` | weekly + manual | Run the catalog pipeline → validate → if there are changes, open a PR with a diff summary (new sets/cards, changed names, image coverage) |
 | `price-guide.yml` | daily (~05:00 CET) | Download Cardmarket's price guide → filter to catalog products → **private repo:** commit `cm-prices.json` if changed; **public repo:** never commit it, only call the Vercel deploy hook so the build fetches and filters the guide (ADR-029, R3.2). Opens an issue after 3 consecutive failures (`DATA_SOURCES.md` §8.3) |
 | Vercel Git integration | every push/PR | Preview deployment per PR; `main` → production |
-| `lighthouse.yml` | PR (after the Vercel preview is ready) | Lighthouse CI against the preview URL with budgets |
+| `lighthouse.yml` | PR + manual | Lighthouse CI on the production build behind `vite preview`: desktop as the gate, the phone profile as a report (ADR-049; planned against the Vercel preview, which deployment protection would block) |
 
 Local git hooks (`lefthook.yml`, installed by `pnpm install`): **pre-commit** formats and lints the staged files, **pre-push** runs the typecheck and the unit tests.
 

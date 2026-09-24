@@ -11,6 +11,12 @@
 .ui-backdrop[data-ending-style] {
   opacity: 0;
 }
+/* Under a modal the chrome's glass stops blurring: the dim hides the difference, and no more than
+   three blur layers run at once with the sheet’s own (DESIGN_SYSTEM.md §3.5, QUALITY.md §4). */
+html:has(.ui-backdrop) .glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
 
 .ui-dialog {
   position: fixed;
@@ -265,4 +271,122 @@
 }
 .value-flash-loss {
   animation: value-flash-loss 500ms var(--ease-out);
+}
+
+/* The holo foil (DESIGN_SYSTEM.md §3.2) as a background. Animate --foil-angle to sweep it. */
+.foil {
+  background-image: conic-gradient(
+    from var(--foil-angle),
+    var(--foil-1),
+    var(--foil-2),
+    var(--foil-3),
+    var(--foil-4),
+    var(--foil-5),
+    var(--foil-1)
+  );
+}
+
+/* Arrow keys in tile grids scroll the focused tile clear of the sticky filter bar too (the page's
+   scroll padding already keeps it clear of the toolbar and the tab bar). */
+[data-roving] {
+  scroll-margin-top: 72px;
+}
+
+/* Set progress rings (DSN-03, DESIGN_SYSTEM.md §7 moment 4): the accent arc draws in when the ring
+   first shows and eases to every new value; a complete set turns to foil with one sweep. */
+@property --ring-p {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+.progress-ring {
+  --ring-p: var(--ring-value, 0);
+  display: inline-block;
+  flex-shrink: 0;
+  inline-size: var(--ring-size, 40px);
+  block-size: var(--ring-size, 40px);
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) calc(var(--ring-p) * 1turn), var(--hover-strong) 0);
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--ring-thickness, 4px) - 0.5px),
+    black calc(100% - var(--ring-thickness, 4px))
+  );
+  transition: --ring-p var(--dur-spatial) var(--ease-out);
+}
+@starting-style {
+  .progress-ring {
+    --ring-p: 0;
+  }
+}
+.progress-ring[data-complete] {
+  background: conic-gradient(
+    from var(--foil-angle),
+    var(--foil-1),
+    var(--foil-2),
+    var(--foil-3),
+    var(--foil-4),
+    var(--foil-5),
+    var(--foil-1)
+  );
+  animation: ring-foil-sweep 1.6s var(--ease-in-out) 1;
+}
+@keyframes ring-foil-sweep {
+  from {
+    --foil-angle: -180deg;
+  }
+  to {
+    --foil-angle: 0deg;
+  }
+}
+/* The moment the last card of a set arrives: the ring lifts and glows once. The glow sits on the
+   wrapper, because the ring's own mask would cut it off. */
+.progress-ring-wrap {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.progress-ring-wrap[data-celebrate] {
+  animation: ring-celebrate 1.6s var(--ease-out) 1;
+}
+@keyframes ring-celebrate {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  30% {
+    transform: scale(1.14);
+    filter: drop-shadow(0 0 14px var(--foil-2)) drop-shadow(0 0 6px var(--foil-4));
+  }
+}
+@media (forced-colors: active) {
+  .progress-ring,
+  .progress-ring[data-complete] {
+    background: conic-gradient(Highlight calc(var(--ring-p) * 1turn), GrayText 0);
+    forced-color-adjust: none;
+  }
+}
+
+/* Grid → detail morph (DSN-02, DESIGN_SYSTEM.md §7 moment 1): the tile's picture grows into the
+   card page's hero and back; the rest of the page cross-fades. */
+::view-transition-group(card-hero) {
+  animation-duration: var(--dur-spatial);
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+html[data-motion]::view-transition-group(*),
+html[data-motion]::view-transition-old(*),
+html[data-motion]::view-transition-new(*) {
+  animation: none !important;
 }

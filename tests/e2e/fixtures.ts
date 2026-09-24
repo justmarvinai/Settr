@@ -10,7 +10,27 @@ const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBR
  * here first.
  * Pictures from TCGdex and the TCGplayer proxy are stubbed, so tests never depend on other hosts.
  */
-export const test = base.extend<{ problems: string[]; pictures: void }>({
+export const test = base.extend<{
+  problems: string[];
+  pictures: void;
+  onboarded: boolean;
+  firstRun: void;
+}>({
+  /** The device has been through onboarding (APP-06); `test.use({ onboarded: false })` for journey 1. */
+  onboarded: [true, { option: true }],
+  firstRun: [
+    async ({ page, onboarded }, use) => {
+      // Also after "Alle Daten löschen", which clears Settr's localStorage keys and reloads.
+      if (onboarded) {
+        await page.addInitScript(() => {
+          if (!localStorage.getItem('settr:onboarded'))
+            localStorage.setItem('settr:onboarded', 'e2e');
+        });
+      }
+      await use();
+    },
+    { auto: true },
+  ],
   pictures: [
     async ({ context }, use) => {
       const stub = { status: 200, contentType: 'image/gif', body: PIXEL };

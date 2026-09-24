@@ -1,2 +1,2 @@
-export { listenForInstall, promptInstall, useInstall } from './install';
+export { isIOS, listenForInstall, promptInstall, useInstall } from './install';
 export { UpdatePrompt } from './UpdatePrompt';

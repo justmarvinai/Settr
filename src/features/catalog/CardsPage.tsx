@@ -13,6 +13,8 @@ import { ACTIVE_CARD_LANGUAGES, type CardLanguage } from '@/domain/catalog-types
 import { ENERGY_TYPES } from '@/domain/catalog';
 import { categoryLabel, languageLabel, m, printLabel, rarityLabel, typeLabel } from '@/i18n';
 import { formatCount } from '@/i18n/format';
+import { heroStyle, morphWanted, nameHeroTile } from '@/lib/hero';
+import { rovingFocusRef } from '@/lib/useRovingFocus';
 import type { PrintFilter } from './SetsPage';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/cards');
@@ -147,14 +149,17 @@ export function CardsPage() {
           >
             {pending && results.length === 0
               ? m.catalog_searching()
-              : m.catalog_cards_count({ count: formatCount(results.length) })}
+              : m.catalog_cards_count({ n: results.length, count: formatCount(results.length) })}
           </output>
           {!pending && results.length === 0 ? (
             <p className="type-body m-0 px-1 text-ink-muted">{m.catalog_cards_empty()}</p>
           ) : null}
-          <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(132px,1fr))] gap-x-3 gap-y-5 p-0">
+          <ul
+            ref={rovingFocusRef}
+            className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(132px,1fr))] gap-x-3 gap-y-5 p-0"
+          >
             {results.slice(0, shown).map(({ doc }) => (
-              <li key={doc.id}>
+              <li key={doc.id} data-roving-tile>
                 <ResultTile doc={doc} />
               </li>
             ))}
@@ -179,6 +184,9 @@ function ResultTile({ doc }: { doc: SearchDoc }) {
       aria-label={[doc.number, doc.name, doc.rarity ? rarityLabel(doc.rarity) : '']
         .filter(Boolean)
         .join(', ')}
+      data-roving
+      viewTransition={morphWanted()}
+      onClick={(event) => nameHeroTile(event.currentTarget, doc.id)}
       className="group block rounded-[14px] outline-offset-4"
     >
       <CardTile
@@ -188,6 +196,7 @@ function ResultTile({ doc }: { doc: SearchDoc }) {
         nameLang="de"
         rarity={ABBREVIATIONS.get(doc.rarity ?? '')}
         missingLabel={m.catalog_image_missing()}
+        artStyle={heroStyle(doc.id)}
       />
     </Link>
   );

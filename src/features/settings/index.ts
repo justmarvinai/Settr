@@ -1,6 +1,6 @@
 export { SettingsLayout } from './SettingsLayout';
+export { AboutSettings } from './About';
 export {
-  AboutSettings,
   AppearanceSettings,
   DataSettings,
   GeneralSettings,

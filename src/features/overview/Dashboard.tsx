@@ -1,11 +1,11 @@
 import { useAllPrices, useHoldings, useSettings } from '@/db';
 import { chunkSetId } from '@/domain/catalog';
-import type { CardLanguage } from '@/domain/catalog-types';
-import { todayIso } from '@/domain/ids';
+import { collectedSets } from '@/domain/collection';
 import { remaining } from '@/domain/schemas';
+import { todayIso } from '@/domain/ids';
 import { portfolioTotals, realizedTotal, type LotValue } from '@/domain/valuation';
 import { useManifest } from '@/catalog';
-import { useLibraryRows, type LibraryRow } from '@/features/collection';
+import { useLibraryRows } from '@/features/collection';
 import { m } from '@/i18n';
 import { HeroTile } from './HeroTile';
 import {
@@ -16,27 +16,6 @@ import {
   StaleTile,
   UnpricedNotice,
 } from './tiles';
-
-/** Set chunks × languages with open card lots, most lots first (the progress tile's rows). */
-function collectedSets(
-  rows: readonly LibraryRow[],
-  chunkOf: (setId: string) => string,
-): { setId: string; language: CardLanguage }[] {
-  const counts = new Map<string, { setId: string; language: CardLanguage; lots: number }>();
-  for (const row of rows) {
-    const h = row.holding;
-    if (!row.inCatalog || row.info.custom || !h.setId || remaining(h) <= 0) continue;
-    const setId = chunkOf(h.setId);
-    const key = `${setId}|${h.language}`;
-    const entry = counts.get(key);
-    if (entry) entry.lots += 1;
-    else counts.set(key, { setId, language: h.language, lots: 1 });
-  }
-  return [...counts.values()]
-    .toSorted((a, b) => b.lots - a.lots)
-    .slice(0, 4)
-    .map(({ setId, language }) => ({ setId, language }));
-}
 
 /**
  * Übersicht with a collection (PRT-01, UX_SPEC.md §4.1): what it's worth and how it's doing,
@@ -76,7 +55,10 @@ export function Dashboard() {
         <div className="flex flex-col gap-4">
           <StaleTile stale={totals.stale} staleAfterDays={settings.price.staleAfterDays} />
           <ProgressTile
-            sets={collectedSets(cardRows, (setId) => chunkSetId(setId, manifest.sets))}
+            sets={collectedSets(
+              cardRows.filter((row) => row.inCatalog && !row.info.custom).map((row) => row.holding),
+              (setId) => chunkSetId(setId, manifest.sets),
+            ).slice(0, 4)}
           />
         </div>
       </div>

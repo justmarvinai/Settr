@@ -7,6 +7,18 @@ const chromiumLaunch = executablePath ? { launchOptions: { executablePath } } : 
 
 export default defineConfig({
   testDir: 'tests/e2e',
+  // Visual baselines (tests/visual): one set, made on GitHub's Ubuntu runner (visual.yml)
+  snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
+  expect: {
+    toHaveScreenshot: {
+      animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
+      // Baselines and comparisons run on the same runner, so stray antialiasing stays far below
+      // this; a missing line of text (a few hundred pixels) doesn't (ADR-049).
+      maxDiffPixels: 100,
+    },
+  },
   fullyParallel: true,
   forbidOnly: CI,
   retries: 0, // a flaky test is a bug to fix, not to retry (QUALITY.md §5)
@@ -36,12 +48,27 @@ export default defineConfig({
     // in software (frames of 100-600 ms with the glass layers), so the longer journeys need more
     // than the default 30 s per test.
     ...(CI ? [{ name: 'webkit-phone', use: { ...devices['iPhone 15'] }, timeout: 60_000 }] : []),
-    // Nightly only (e2e-nightly.yml): the data journeys in Firefox as well (M5 exit criterion).
+    // Nightly only (e2e-nightly.yml): every journey in Firefox and on an Android phone as well.
     ...(process.env.NIGHTLY
       ? [
           {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'], viewport: { width: 1440, height: 900 } },
+          },
+          { name: 'pixel', use: { ...devices['Pixel 7'], ...chromiumLaunch } },
+        ]
+      : []),
+    // Visual regression (visual.yml): desktop Chromium, light and dark.
+    ...(process.env.VISUAL
+      ? [
+          {
+            name: 'visual',
+            testDir: 'tests/visual',
+            use: {
+              ...devices['Desktop Chrome'],
+              viewport: { width: 1440, height: 900 },
+              ...chromiumLaunch,
+            },
           },
         ]
       : []),

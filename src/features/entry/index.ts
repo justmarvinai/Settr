@@ -5,6 +5,7 @@
  */
 export { AddHoldingBody, EditHoldingBody, SheetLoading } from './HoldingSheet';
 export { CustomItemBody } from './CustomItem';
+export { ItemActionsBody } from './ItemActions';
 export { DisposeBody, OpenBody } from './LotActions';
 export { PriceBody } from './PriceEntry';
 export { QuickAddBody } from './QuickAdd';

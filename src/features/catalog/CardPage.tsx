@@ -1,8 +1,9 @@
 import { ArrowLeftIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
-import { useEffect, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useEffectEvent, type ReactNode } from 'react';
 import { useCatalogSet, useManifest } from '@/catalog';
 import { CardImage } from '@/components/domain/CardImage';
+import { foilOf } from '@/components/domain/holo/foil';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
@@ -24,6 +25,11 @@ import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
 import { cardInfo, HoldingsPanel, lotLabel, openAdd, snapshotOf } from '@/features/collection';
 import { cardmarketLinkOf, ItemPrices } from '@/features/prices';
+import { HERO_NAME, morphWanted, setHeroCard } from '@/lib/hero';
+import { useSwipe } from '@/lib/useSwipe';
+
+// The holo viewer (DSN-01) loads with the first card page; the picture shows until then.
+const HoloCard = lazy(() => import('@/components/domain/holo/HoloCard'));
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/cards/$cardId');
 
@@ -69,25 +75,45 @@ export function CardPage() {
   const prev = loaded.cards[index - 1];
   const next = loaded.cards[index + 1];
 
+  // Prev/next in set order: ← →, the step buttons and a swipe on the picture (UX_SPEC.md §4.4)
+  const step = (target: CatalogCard) =>
+    void navigate({
+      to: '/catalog/sets/$setId/cards/$cardId',
+      params: { setId, cardId: target.id },
+      search: { lang: search.lang },
+      replace: true,
+    });
+
+  const onKey = useEffectEvent((event: KeyboardEvent) => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (ownsArrows(event.target)) return;
+    const target = event.key === 'ArrowLeft' ? prev : event.key === 'ArrowRight' ? next : null;
+    if (!target) return;
+    event.preventDefault();
+    step(target);
+  });
+
   useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
-      if (ownsArrows(event.target)) return;
-      const target = event.key === 'ArrowLeft' ? prev : event.key === 'ArrowRight' ? next : null;
-      if (!target) return;
-      event.preventDefault();
-      void navigate({
-        to: '/catalog/sets/$setId/cards/$cardId',
-        params: { setId, cardId: target.id },
-        search: { lang: search.lang },
-        replace: true,
-      });
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [navigate, next, prev, search.lang, setId]);
+    const listener = (event: KeyboardEvent) => onKey(event);
+    window.addEventListener('keydown', listener);
+    return () => window.removeEventListener('keydown', listener);
+  }, []);
+
+  const swipe = useSwipe(
+    cardId,
+    (direction) => (direction === 'next' ? next : prev) !== undefined,
+    (direction) => {
+      const target = direction === 'next' ? next : prev;
+      if (target) step(target);
+    },
+  );
 
   useCjkFonts(card ? Object.keys(card.name) : []);
+
+  // On the way back, the grid names this card's tile, so the picture morphs back (DSN-02).
+  useEffect(() => {
+    if (card) setHeroCard(card.id);
+  }, [card]);
 
   if (!card) return null; // the loader answers 404 first
   const lang = pickLanguage(search.lang, card.languages, settings);
@@ -111,14 +137,39 @@ export function CardPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)] lg:items-start xl:gap-10">
       <div className="flex flex-col gap-3 lg:sticky lg:top-[96px]">
-        <CardImage
-          image={image}
-          size="large"
-          eager
-          alt={`${name.text}, ${number}`}
-          label={m.catalog_image_missing()}
-          className="mx-auto max-w-[400px] shadow-[0_24px_60px_-28px_oklch(0_0_0/0.5)]"
-        />
+        <div {...swipe} className="touch-pan-y touch-pinch-zoom">
+          <Suspense
+            fallback={
+              <div
+                style={{ viewTransitionName: HERO_NAME }}
+                className="mx-auto w-full max-w-[400px]"
+              >
+                <CardImage
+                  image={image}
+                  size="large"
+                  eager
+                  alt={`${name.text}, ${number}`}
+                  label={m.catalog_image_missing()}
+                />
+              </div>
+            }
+          >
+            <HoloCard
+              image={image}
+              alt={`${name.text}, ${number}`}
+              label={m.catalog_image_missing()}
+              foil={foilOf(card.rarity)}
+              motion={settings.display.motion}
+              labels={{
+                enableGyro: m.holo_enable_gyro(),
+                openFullscreen: m.holo_open_fullscreen({ name: name.text }),
+                closeFullscreen: m.dialog_close(),
+              }}
+              heroName={HERO_NAME}
+              className="mx-auto w-full max-w-[400px]"
+            />
+          </Suspense>
+        </div>
         {imageNote ? (
           <p className="type-small m-0 text-center text-ink-muted">{imageNote}</p>
         ) : null}
@@ -133,6 +184,7 @@ export function CardPage() {
             to="/catalog/sets/$setId"
             params={{ setId: loaded.set.id }}
             search={{ lang: search.lang }}
+            viewTransition={morphWanted()}
             className="inline-flex items-center gap-1.5 type-small text-ink-muted hover:text-ink"
           >
             <ArrowLeftIcon size={16} weight="bold" aria-hidden />

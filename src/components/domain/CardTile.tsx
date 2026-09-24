@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { CatalogImage } from '@/domain/catalog';
 import { htmlLang } from '@/i18n';
 import { CardImage } from './CardImage';
@@ -21,6 +21,7 @@ export function CardTile({
   ownedLabel,
   ghost = false,
   meta,
+  artStyle,
 }: {
   image: CatalogImage | undefined;
   number: string;
@@ -39,10 +40,16 @@ export function CardTile({
   ghost?: boolean;
   /** Second caption line, e.g. a lot's "×2 · DE · NM" in the collection. */
   meta?: ReactNode;
+  /** The picture's style, e.g. its view-transition name on the way back from the card (DSN-02). */
+  artStyle?: CSSProperties | undefined;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-2">
-      <div className="relative transition-transform duration-(--dur-fast) group-hover:-translate-y-0.5">
+      <div
+        data-card-art
+        style={artStyle}
+        className="relative transition-transform duration-(--dur-fast) group-hover:-translate-y-0.5"
+      >
         <div
           className={
             ghost

@@ -3,6 +3,7 @@ export {
   openAdd,
   openDispose,
   openEdit,
+  openItemActions,
   openLotPrice,
   openOpening,
   openPrice,
@@ -12,6 +13,7 @@ export {
 export {
   CompletionSummary,
   QuickAddButton,
+  quickAdd,
   quickAddInput,
   QuickPriceButton,
   useSetOwnership,
