@@ -12,8 +12,10 @@ describe('foilOf', () => {
       'double-rare': 'rainbow',
       'ultra-rare': 'rainbow',
       'illustration-rare': 'etched',
+      'mega-attack-rare': 'etched',
       'special-illustration-rare': 'etched',
       'hyper-rare': 'gold',
+      'mega-hyper-rare': 'gold',
       'pikachu-rare': 'fireworks',
       'futuristic-rare': 'metallic',
       'rgb-rare': 'spectral',
@@ -27,7 +29,7 @@ describe('foilOf', () => {
   it('gives no foil without a rarity or for one it does not know', () => {
     expect(foilOf(undefined)).toBe('none');
     expect(foilOf('')).toBe('none');
-    expect(foilOf('mega-hyper-rare')).toBe('none');
+    expect(foilOf('black-white-rare')).toBe('none');
     // Object.prototype keys are not rarities
     expect(foilOf('constructor')).toBe('none');
     expect(foilOf('toString')).toBe('none');

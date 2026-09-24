@@ -43,31 +43,57 @@ export interface SetConfig {
   printedTotal?: number;
   /** Rarity for every card of the set (TCGdex leaves the Classic Collection at "None"). */
   forceRarity?: RarityId;
+  /** TCGdex rarity values that mean something else in this set (M1S calls its SRs "Secret Rare"). */
+  rarities?: Record<string, RarityId>;
+  /**
+   * `single`: every card exists once, whatever TCGdex lists (30 Jahre is all foil, DATA_MODEL.md
+   * §2), as the variant `std`. `detailed` (default): TCGdex's variants (variants.ts).
+   */
+  variants?: 'single' | 'detailed';
   extras?: ExtraCards[];
   /**
+   * Asian prints: the international sets whose cards show the same artwork (DE/EN names and
+   * pictures come from them). Pairing only looks there, so a Pokémon drawn twice by one artist
+   * in different sets can't pair across sets.
+   */
+  counterpartSets?: string[];
+  /** Folder in PTCG-database's `data_tc` with the official Traditional Chinese names. */
+  traditionalChinese?: string;
+  /**
    * Cardmarket expansion ids, checked when the product files are available (CI). `expansion` holds
-   * the singles (Japanese ones for Asian prints); `sealedExpansions` are extra expansions that only
+   * the singles (Japanese ones for Asian prints; found through TCGdex's ids and the international
+   * counterparts' metacards when left out); `sealedExpansions` are extra expansions that only
    * sell this set's sealed products.
    */
   cardmarket?: {
-    expansion: number;
+    expansion?: number;
     simplifiedChineseExpansion?: number;
     sealedExpansions?: number[];
   };
-  /** Japanese rarity marks: only RR/AR/SAR/FUR are printed (DATA_SOURCES.md §2). */
-  japaneseRarityMarks?: boolean;
+  /**
+   * Japanese rarity marks as printed (DATA_SOURCES.md §2): `all` for regular sets (C, U, R, RR,
+   * AR, SR, SAR, MUR), `special` where only RR/AR/SAR/FUR are printed (M6a).
+   */
+  rarityMarks?: 'all' | 'special';
   /** Names for sections that aren't a subset of their own. */
   sectionNames?: Partial<Record<CardSection, LocalizedText>>;
   /** Local id of the card shown on the set's tile. */
   coverCard?: string;
   /**
-   * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group-name fragment, to find the
-   * set's sealed products on TCGCSV for their pictures (DATA_SOURCES.md §4).
+   * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group id or group-name fragment, to
+   * find the set's sealed products on TCGCSV for their pictures (DATA_SOURCES.md §4).
    */
-  tcgplayer?: { category: number; groupName: string };
+  tcgplayer?: { category: number; groupId?: number; groupName?: string };
 }
 
 const numeric = (localId: string) => (/^\d+$/.test(localId) ? Number(localId) : null);
+
+/** Numbered main set with secret rares above the printed total. */
+const mainAndSecret = (total: number) => (localId: string) =>
+  (numeric(localId) ?? 999) <= total ? 'main' : 'secret';
+
+const MEGA = (set: string): SourceSet => ({ pool: 'data', serie: 'Mega Evolution', set });
+const M = (set: string): SourceSet => ({ pool: 'data-asia', serie: 'M', set });
 
 export const CATALOG_SETS: SetConfig[] = [
   {
@@ -77,13 +103,14 @@ export const CATALOG_SETS: SetConfig[] = [
     series: SERIES.megaEvolution,
     code: '30C',
     languages: ['de', 'en'],
-    source: { pool: 'data', serie: 'Mega Evolution', set: '30th Celebration' },
+    source: MEGA('30th Celebration'),
     expectedCards: 161,
     printedTotal: 128,
-    section: (localId) => ((numeric(localId) ?? 999) <= 128 ? 'main' : 'secret'),
+    section: mainAndSecret(128),
+    variants: 'single',
     extras: [
       {
-        source: { pool: 'data', serie: 'Mega Evolution', set: 'Mega Evolution Energy' },
+        source: MEGA('Mega Evolution Energy'),
         localIds: ['009', '010', '011', '012', '013', '014', '015', '016'],
         section: 'energy',
         idPrefix: 'intl:mee',
@@ -101,10 +128,11 @@ export const CATALOG_SETS: SetConfig[] = [
     series: SERIES.megaEvolution,
     code: '30C',
     languages: ['de', 'en'],
-    source: { pool: 'data', serie: 'Mega Evolution', set: '30th Classic Collection' },
+    source: MEGA('30th Classic Collection'),
     expectedCards: 30,
     section: () => 'subset',
     forceRarity: 'classic-collection',
+    variants: 'single',
     cardmarket: { expansion: 6601 },
   },
   {
@@ -122,7 +150,7 @@ export const CATALOG_SETS: SetConfig[] = [
     code: 'M6a',
     languages: ['ja', 'zh-cn', 'zh-tw'],
     releaseDates: { ja: '2026-09-16' },
-    source: { pool: 'data-asia', serie: 'M', set: 'M6a' },
+    source: M('M6a'),
     expectedCards: 176,
     printedTotal: 103,
     section: (localId) => {
@@ -131,23 +159,49 @@ export const CATALOG_SETS: SetConfig[] = [
       if (n <= 103) return 'main';
       return n >= 136 && n <= 165 ? 'subset' : 'secret';
     },
+    variants: 'single',
+    counterpartSets: ['intl:30th', 'intl:30th-c'],
+    traditionalChinese: 'M6a',
     // 6628 is MF, the premium deck set's own expansion (its cards stay out of the v1 catalog).
     // The international print keeps these 30 reprints in a subset of its own (intl:30th-c).
     sectionNames: { subset: { de: 'Klassische Sammlung', en: 'Classic Collection' } },
     coverCard: '127', // ピカチュウex SAR, the same artwork as intl:30th:150
     cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603, sealedExpansions: [6628] },
     tcgplayer: { category: 85, groupName: '30th Celebration' },
-    japaneseRarityMarks: true,
+    rarityMarks: 'special',
   },
+];
+
+/**
+ * International series whose cards lend Asian cards their German and English names (and
+ * pictures) when the artwork matches but the card isn't in the catalog: Japanese sets reprint
+ * Scarlet & Violet cards the Mega Evolution sets don't carry (build.ts, ADR-051).
+ */
+export const NAME_DONORS: SourceSet[] = [
+  { pool: 'data', serie: 'Scarlet & Violet', set: '*' },
+  { pool: 'data', serie: 'Mega Evolution', set: '*' },
 ];
 
 /** Japanese rarity marks per rarity id (DATA_SOURCES.md §2); unlisted rarities print no mark. */
 export const JAPANESE_RARITY_MARKS: Partial<Record<RarityId, string>> = {
+  common: 'C',
+  uncommon: 'U',
+  rare: 'R',
   'double-rare': 'RR',
   'illustration-rare': 'AR',
+  'ultra-rare': 'SR',
   'special-illustration-rare': 'SAR',
+  'mega-hyper-rare': 'MUR',
+  'hyper-rare': 'UR',
   'futuristic-rare': 'FUR',
 };
+/** M6a prints only these (DATA_SOURCES.md §2). */
+export const SPECIAL_RARITY_MARKS: readonly RarityId[] = [
+  'double-rare',
+  'illustration-rare',
+  'special-illustration-rare',
+  'futuristic-rare',
+];
 
 /** Japanese basic-energy codes used by TCGdex for M6a. */
 export const JAPANESE_ENERGY_CODES: Record<string, string> = {

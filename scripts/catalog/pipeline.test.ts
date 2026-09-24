@@ -3,6 +3,7 @@ import type { CatalogCard } from '../../src/domain/catalog';
 import { matchCounterparts } from './crossprint';
 import { fileNameFor, stableJson } from './emit';
 import { deriveFromSpecies, parseJapaneseName, simplify, type SpeciesNames } from './names';
+import { deriveVariant } from './variants';
 
 const species = new Map<number, SpeciesNames>([
   [
@@ -36,6 +37,28 @@ const species = new Map<number, SpeciesNames>([
       en: 'Greninja',
       'zh-Hant': '甲賀忍蛙',
       'zh-Hans': '甲贺忍蛙',
+    },
+  ],
+  [
+    6,
+    {
+      ja: 'リザードン',
+      'ja-kana': 'リザードン',
+      de: 'Glurak',
+      en: 'Charizard',
+      'zh-Hant': '噴火龍',
+      'zh-Hans': '喷火龙',
+    },
+  ],
+  [
+    154,
+    {
+      ja: 'メガニウム',
+      'ja-kana': 'メガニウム',
+      de: 'Meganie',
+      en: 'Meganium',
+      'zh-Hant': '大竺葵',
+      'zh-Hans': '大竺葵',
     },
   ],
   [
@@ -82,6 +105,16 @@ describe('Japanese card names', () => {
     // "Dark Tyranitar" isn't species + suffix: it must come from a counterpart or curation.
     expect(deriveFromSpecies('わるいバンギラス', [248], species)).toBeNull();
     expect(deriveFromSpecies('ピカチュウ&ゼクロムGX', [25, 644], species)).toBeNull();
+  });
+
+  it('derives Mega Evolution names, with X and Y forms, without mistaking メガニウム', () => {
+    expect(deriveFromSpecies('メガリザードンXex', [6], species)).toEqual({
+      de: 'Mega-Glurak X-ex',
+      en: 'Mega Charizard X ex',
+      'zh-tw': '超級噴火龍Xex',
+    });
+    expect(deriveFromSpecies('メガニウム', [154], species)?.en).toBe('Meganium');
+    expect(deriveFromSpecies('メガメガニウムex', [154], species)?.de).toBe('Mega-Meganie-ex');
   });
 
   it('converts Traditional to Simplified Chinese', () => {
@@ -146,6 +179,81 @@ describe('cross-print matching', () => {
       'asia:M6a:152': 'intl:30th-c:020',
       'asia:M6a:101': 'intl:30th:128',
     });
+  });
+});
+
+const trainer = (id: string, extra: Partial<CatalogCard>) =>
+  card(id, { category: 'trainer', trainerType: 'supporter', ...extra });
+
+describe('cross-print matching of trainers', () => {
+  it('pairs a unique trainer per tier and leaves several Items by one artist for curation', () => {
+    const intl = [
+      trainer('intl:me01:120', { illustrator: 'Hideki Ishikawa', sort: 120 }),
+      trainer('intl:me01:170', { illustrator: 'Hideki Ishikawa', sort: 170, section: 'secret' }),
+      trainer('intl:me01:116', { trainerType: 'item', illustrator: 'Toyste Beach', sort: 116 }),
+      trainer('intl:me01:124', { trainerType: 'item', illustrator: 'Toyste Beach', sort: 124 }),
+    ];
+    const asia = [
+      trainer('asia:M1L:061', { illustrator: 'Hideki Ishikawa', sort: 61 }),
+      trainer('asia:M1L:085', { illustrator: 'Hideki Ishikawa', sort: 85, section: 'secret' }),
+      trainer('asia:M1L:058', { trainerType: 'item', illustrator: 'Toyste Beach', sort: 58 }),
+      trainer('asia:M1L:059', { trainerType: 'item', illustrator: 'Toyste Beach', sort: 59 }),
+    ];
+    expect(Object.fromEntries(matchCounterparts(asia, intl, new Map()))).toEqual({
+      'asia:M1L:061': 'intl:me01:120',
+      'asia:M1L:085': 'intl:me01:170',
+    });
+  });
+});
+
+const variant = (raw: Parameters<typeof deriveVariant>[0]) => {
+  const { id, kind, label } = deriveVariant(raw, 'test');
+  return { id, kind, de: label.de };
+};
+
+describe('variants', () => {
+  it('reads finishes, patterns and promotional prints', () => {
+    expect(variant({ type: 'normal' })).toEqual({ id: 'normal', kind: 'finish', de: 'Normal' });
+    expect(variant({ type: 'reverse' })).toEqual({
+      id: 'reverse',
+      kind: 'finish',
+      de: 'Reverse-Holo',
+    });
+    expect(variant({ type: 'reverse', foil: 'pokeball' })).toEqual({
+      id: 'reverse-pokeball',
+      kind: 'pattern',
+      de: 'Reverse-Holo Pokéball',
+    });
+    expect(variant({ type: 'holo', foil: 'cosmos' })).toEqual({
+      id: 'holo-cosmos',
+      kind: 'stamp',
+      de: 'Cosmos-Holo',
+    });
+    expect(variant({ type: 'holo', stamp: ['set-logo', 'staff'] })).toEqual({
+      id: 'holo+set-logo+staff',
+      kind: 'stamp',
+      de: 'Holo · Set-Logo · Staff',
+    });
+    expect(variant({ type: 'reverse', foil: 'league', stamp: ['30th-pokeday'] })).toEqual({
+      id: 'reverse-league+30th-pokeday',
+      kind: 'stamp',
+      de: 'Liga-Reverse-Holo · Pokémon Day (30 Jahre)',
+    });
+    expect(variant({ type: 'lenticular', size: 'jumbo' })).toMatchObject({
+      id: 'lenticular+jumbo',
+      kind: 'stamp',
+    });
+    expect(variant({ type: 'holo', foil: 'gold' })).toEqual({
+      id: 'holo-gold',
+      kind: 'finish',
+      de: 'Gold-Holo',
+    });
+  });
+
+  it('stops on values it does not know', () => {
+    expect(() => deriveVariant({ type: 'holo', foil: 'galaxy' }, 'x:1')).toThrow(
+      /unknown variant foil/,
+    );
   });
 });
 

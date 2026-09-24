@@ -74,7 +74,30 @@ export function renderReport(input: {
           .map(([id, n]) => `${id}: ${n}`)
           .join(', ') || 'none'
       }.`,
-      `Asian cards with a Japanese product: ${cardmarket.asia.ja}; with a Simplified Chinese product: ${cardmarket.asia['zh-cn']}.`,
+      `Asian card variants with a Japanese product: ${cardmarket.asia.ja}; with a Simplified Chinese product: ${cardmarket.asia['zh-cn']}.`,
+      '',
+      '### Asian expansions',
+      '',
+      "Japanese = the expansion used (configured, or where most of TCGdex's ids point). By metacard = expansions selling the same cards as the international counterparts (the Japanese set, Simplified Chinese mirrors, reprints), with the number of this set's cards each covers.",
+      '',
+      '| Set | Japanese | TCGdex ids | By metacard |',
+      '|---|---|---|---|',
+      ...cardmarket.expansions.map(
+        (e) =>
+          `| ${e.setId} | ${e.japanese ?? '?'} | ${e.fromTcgdex.map(([id, n]) => `${id} (${n})`).join(', ') || '—'} | ${e.byMetacard.map(([id, n]) => `${id} (${n})`).join(', ') || '—'} |`,
+      ),
+      ...(cardmarket.names.length
+        ? [
+            '',
+            "<details><summary>Asian cards named by curation or PokéAPI, with Cardmarket's product name</summary>",
+            '',
+            '| Card | Japanese | English | Cardmarket |',
+            '|---|---|---|---|',
+            ...cardmarket.names.map((n) => `| ${n.cardId} | ${n.ja} | ${n.en} | ${n.cardmarket} |`),
+            '',
+            '</details>',
+          ]
+        : []),
       ...(cardmarket.asia.unresolved.length
         ? ['', 'Unresolved:', ...cardmarket.asia.unresolved.map((u) => `- ${u}`)]
         : []),

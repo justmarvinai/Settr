@@ -112,9 +112,11 @@ export async function resolveImages(
   };
 
   if (!options.verify) {
-    const carried = previous.manifest?.imagesVerified ? previous.cards : null;
+    // Per card: a card the last build knew keeps its pictures (checked, if that build was),
+    // one it didn't gets its exact-language candidate until the next network build.
+    const carried = previous.cards;
     for (const card of cards) {
-      const before = carried?.get(card.id);
+      const before = carried.get(card.id);
       if (before) {
         card.images = before.images;
         stats.carried++;
@@ -131,9 +133,9 @@ export async function resolveImages(
       }
       for (const lang of card.languages) count(lang, card.images[lang]);
     }
-    stats.verified = carried !== null && stats.carried === cards.length;
+    stats.verified = previous.manifest?.imagesVerified === true && stats.carried === cards.length;
     for (const set of sets) {
-      const before = carried ? previous.sets.get(set.config.id) : undefined;
+      const before = previous.sets.get(set.config.id);
       if (before?.logo) set.summary.logo = before.logo;
       if (before?.symbol) set.summary.symbol = before.symbol;
       if (set.summary.logo) stats.logos++;
@@ -171,6 +173,16 @@ export async function resolveImages(
             }
           }
           if (picked) break;
+        }
+        // A donor card with the same artwork (ADR-051): a Scarlet & Violet reprint, say.
+        const donor = picked ? undefined : card.source.donor;
+        for (const candidate of donor ? POOL.intl : []) {
+          if (!donor) break;
+          const url = assetBase(candidate, donor.set, donor.localId);
+          if (await checker.check(`${url}/low.webp`)) {
+            picked = { url, lang: candidate, counterpart: true };
+            break;
+          }
         }
         count(lang, picked);
         if (picked) images[lang] = picked;

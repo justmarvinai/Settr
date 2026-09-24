@@ -14,6 +14,7 @@ import {
   type CatalogProduct,
   type CatalogSetFile,
   type SearchDoc,
+  type VariantDef,
 } from '../../src/domain/catalog';
 import type { BuiltCard, BuiltSet } from './build';
 import { speciesAliases, type SpeciesNames } from './names';
@@ -42,6 +43,11 @@ export function stableJson(value: unknown, indent = ''): string {
 const sha256 = (text: string) => createHash('sha256').update(text).digest('hex');
 /** Chunk file name for a set id (ids are opaque; this only has to be unique and URL-safe). */
 export const fileNameFor = (setId: string) => `${setId.replace(/[^A-Za-z0-9._-]/g, '_')}.json`;
+
+const KIND_ORDER: VariantDef['kind'][] = ['finish', 'pattern', 'edition', 'stamp'];
+/** Legend order: finishes, patterns, editions, then promotional prints; ids alphabetically. */
+const byKind = ([a, x]: [string, VariantDef], [b, y]: [string, VariantDef]) =>
+  KIND_ORDER.indexOf(x.kind) - KIND_ORDER.indexOf(y.kind) || a.localeCompare(b);
 
 function publicCard(card: BuiltCard): CatalogCard {
   const { source: _source, ...rest } = card;
@@ -124,7 +130,7 @@ export function emitCatalog(
       set: set.summary,
       subsets: members.filter((s) => s !== set).map((s) => s.summary),
       cards: members.flatMap((s) => s.cards.map(publicCard)).toSorted(compareCards),
-      variantsLegend: [{ id: 'std', kind: 'finish', label: { de: 'Standard', en: 'Standard' } }],
+      variantsLegend: [...new Map(members.flatMap((s) => [...s.legend]).toSorted(byKind)).values()],
     });
     setFiles[set.config.id] = write(`sets/${fileNameFor(set.config.id)}`, `${stableJson(file)}\n`);
   }

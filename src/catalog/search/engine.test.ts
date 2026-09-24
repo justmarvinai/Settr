@@ -25,6 +25,17 @@ const namesOf = (doc: SearchDoc) => [doc.name, ...doc.names].map((name) => norma
 const numberHead = (doc: SearchDoc) => canonicalNumber(doc.number?.split('/')[0] ?? '');
 const setRank = (doc: SearchDoc) => sets.findIndex((set) => set.id === doc.setId);
 
+/** Ids of the results whose number is exactly the query's, which must all come first. */
+function exactFirst(query: string): string[] {
+  const results = search(query);
+  const head = canonicalNumber(query);
+  const firstInexact = results.findIndex((r) => numberHead(r.doc) !== head);
+  const exact = results.slice(0, firstInexact === -1 ? results.length : firstInexact);
+  expect(exact.length).toBeGreaterThan(1);
+  expect(results.slice(exact.length).some((r) => numberHead(r.doc) === head)).toBe(false);
+  return exact.map((r) => r.id);
+}
+
 const testSet = (id: string): CatalogSetSummary => ({
   id,
   print: 'intl',
@@ -154,15 +165,11 @@ describe('search engine: card numbers', () => {
   });
 
   it('ranks exact numbers first', () => {
-    expect(ids('025').slice(0, 2).toSorted()).toEqual(['asia:M6a:025', 'intl:30th:025']);
+    // Every set has a 025 (and a 004): all of them come before 250, 040–049, 41/122 and the like.
+    expect(exactFirst('025')).toEqual(expect.arrayContaining(['asia:M6a:025', 'intl:30th:025']));
+    expect(exactFirst('4')).toContain('intl:30th-c:001');
     expect(ids('025/128')[0]).toBe('intl:30th:025');
     expect(ids('4/102')[0]).toBe('intl:30th-c:001');
-    // `4`: 004/128, 004/103 and 4/102 before 040–049, 41/122 and the like.
-    const four = search('4');
-    expect(four.slice(0, 3).map((r) => r.id)).toContain('intl:30th-c:001');
-    const firstInexact = four.findIndex((r) => numberHead(r.doc) !== '4');
-    expect(firstInexact).toBeGreaterThanOrEqual(3);
-    expect(four.slice(firstInexact).some((r) => numberHead(r.doc) === '4')).toBe(false);
   });
 
   it('finds Classic Collection cards by their printed number', () => {

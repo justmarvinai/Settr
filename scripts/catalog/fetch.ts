@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { CATALOG_SETS } from './config';
 import { dirs, LOCK_FILE, readLock, type SourceName } from './paths';
 
 const git = (cwd: string, ...args: string[]) =>
@@ -25,9 +26,10 @@ function checkout(name: SourceName, dir: string, sparse?: string[]): string {
     if (sparse) {
       git(dir, 'config', 'remote.origin.promisor', 'true');
       git(dir, 'config', 'remote.origin.partialclonefilter', 'blob:none');
-      git(dir, 'sparse-checkout', 'set', '--cone', ...sparse);
     }
   }
+  // Every run, so a cached checkout picks up folders of newly configured sets.
+  if (sparse) git(dir, 'sparse-checkout', 'set', '--cone', ...sparse);
   const head = (() => {
     try {
       return git(dir, 'rev-parse', 'HEAD');
@@ -73,7 +75,14 @@ export function updateLock(): string[] {
 export async function fetchSources(options: { network: boolean }): Promise<void> {
   const lock = readLock();
   if (!process.env.TCGDEX_DIR) checkout('tcgdex', dirs.tcgdex);
-  if (!process.env.PTCG_DIR) checkout('ptcgDatabase', dirs.ptcgDatabase, ['data_tc/M6a']);
+  if (!process.env.PTCG_DIR)
+    checkout(
+      'ptcgDatabase',
+      dirs.ptcgDatabase,
+      CATALOG_SETS.flatMap((c) =>
+        c.traditionalChinese ? [`data_tc/${c.traditionalChinese}`] : [],
+      ),
+    );
 
   mkdirSync(dirs.pokeapi, { recursive: true });
   for (const file of ['pokemon_species_names.csv']) {

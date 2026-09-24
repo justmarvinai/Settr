@@ -18,6 +18,8 @@ const RARITY: Record<string, RarityId | null> = {
   'Illustration rare': 'illustration-rare',
   'Special illustration rare': 'special-illustration-rare',
   'Hyper rare': 'hyper-rare',
+  'Mega Hyper Rare': 'mega-hyper-rare',
+  'Mega Attack Rare': 'mega-attack-rare',
   'Pikachu Rare': 'pikachu-rare',
   'Futuristic Rare': 'futuristic-rare',
   'RGB Rare': 'rgb-rare',

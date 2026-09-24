@@ -23,6 +23,8 @@ const cardOverlaySchema = z
     namesFrom: z.string().optional(),
     /** Cardmarket product per card language, where TCGdex's id or the metacard match fails. */
     cardmarket: z.partialRecord(z.enum(CARD_LANGUAGES), z.number().int().positive()).optional(),
+    /** Card languages when fewer than the set's exist (e.g. an English-only promo). */
+    languages: z.array(z.enum(CARD_LANGUAGES)).min(1).optional(),
     note: z.string().optional(),
   })
   .strict();
@@ -70,6 +72,32 @@ export function loadSealed(): CuratedProduct[] {
   return yamlFiles(join(CURATED, 'sealed')).flatMap(
     (file) => sealedFileSchema.parse(readYaml(join(CURATED, 'sealed', file))).products,
   );
+}
+
+/**
+ * German and English names for Japanese card names that no artwork match resolves (mostly Items
+ * one artist drew several of): the international card to take them from, or the names.
+ */
+const japaneseNameSchema = z
+  .object({
+    from: z.string().optional(),
+    de: z.string().min(1).optional(),
+    en: z.string().min(1).optional(),
+    note: z.string().optional(),
+  })
+  .strict()
+  .refine((n) => n.from || (n.de && n.en), 'needs `from` or both `de` and `en`');
+export type JapaneseName = z.infer<typeof japaneseNameSchema>;
+
+export function loadJapaneseNames(): Map<string, JapaneseName> {
+  const names = new Map<string, JapaneseName>();
+  for (const file of yamlFiles(join(CURATED, 'names'))) {
+    const parsed = z
+      .record(z.string(), japaneseNameSchema)
+      .parse(readYaml(join(CURATED, 'names', file)) ?? {});
+    for (const [ja, entry] of Object.entries(parsed)) names.set(ja, entry);
+  }
+  return names;
 }
 
 /** Upstream id changes: old catalog id → new id (DATA_MODEL.md §3). */

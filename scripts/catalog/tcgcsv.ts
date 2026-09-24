@@ -47,11 +47,12 @@ export async function loadTcgcsv(sets: BuiltSet[]): Promise<Omit<TcgplayerReport
   for (const category of new Set(wanted.map((w) => w.category))) {
     const file = join(dirs.tcgcsv, `groups-${category}.json`);
     await download(`https://tcgcsv.com/tcgplayer/${category}/groups`, file);
-    const fragments = wanted
-      .filter((w) => w.category === category)
-      .map((w) => w.groupName.toLowerCase());
+    const inCategory = wanted.filter((w) => w.category === category);
+    const ids = new Set(inCategory.flatMap((w) => (w.groupId ? [w.groupId] : [])));
+    const fragments = inCategory.flatMap((w) => (w.groupName ? [w.groupName.toLowerCase()] : []));
     for (const group of readResults<TcgcsvGroup>(file)) {
-      if (!fragments.some((f) => group.name.toLowerCase().includes(f))) continue;
+      const name = group.name.toLowerCase();
+      if (!ids.has(group.groupId) && !fragments.some((f) => name.includes(f))) continue;
       groups.push({ ...group, categoryId: category });
       const productsFile = join(dirs.tcgcsv, `products-${group.groupId}.json`);
       await download(

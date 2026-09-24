@@ -8,6 +8,8 @@ export interface RawVariant {
   type?: string;
   foil?: string;
   stamp?: string[];
+  size?: string;
+  subtype?: string;
   languages?: string[];
   thirdParty?: { cardmarket?: number; tcgplayer?: number };
 }
@@ -58,6 +60,25 @@ export async function loadTcgdexSet(
   for (const file of files)
     cards.set(file.slice(0, -3), await importDefault<RawCard>(join(base, source.set, file)));
   return { set, cards };
+}
+
+/** Every set of a TCGdex series folder (name donors, build.ts). */
+export async function loadTcgdexSerie(
+  pool: SourceSet['pool'],
+  serie: string,
+): Promise<{ set: RawSet; cards: Map<string, RawCard> }[]> {
+  const base = join(dirs.tcgdex, pool, serie);
+  const folders = new Set(
+    readdirSync(base, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name),
+  );
+  const sets = readdirSync(base)
+    .filter((f) => f.endsWith('.ts') && folders.has(f.slice(0, -3)))
+    .toSorted();
+  const out: { set: RawSet; cards: Map<string, RawCard> }[] = [];
+  for (const file of sets) out.push(await loadTcgdexSet({ pool, serie, set: file.slice(0, -3) }));
+  return out;
 }
 
 /** TCGdex asset path segments (`https://assets.tcgdex.net/{lang}/{serieId}/{setId}/{localId}`). */

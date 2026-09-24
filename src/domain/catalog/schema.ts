@@ -84,6 +84,8 @@ export const catalogCardSchema = z.object({
   images: z.partialRecord(languageSchema, catalogImageSchema),
   /** Cards with the same artwork in the other print (JP ↔ EN/DE). */
   counterparts: z.array(z.string()).optional(),
+  /** The set of each counterpart, in the same order (a card id is never parsed, DATA_MODEL.md §3). */
+  counterpartSets: z.array(z.string()).optional(),
   refs: z.object({ tcgdex: z.string().optional() }).optional(),
 });
 
@@ -105,6 +107,11 @@ export const catalogSetSummarySchema = z.object({
   sectionNames: z.partialRecord(z.enum(CARD_SECTIONS), localizedTextSchema).optional(),
   /** The same expansion in the other print (intl:30th ↔ asia:M6a), from the cards' counterparts. */
   otherPrint: z.string().optional(),
+  /**
+   * Every set of the other print that shares cards with this one, most shared first
+   * (Mega-Entwicklung ↔ Mega Brave and Mega Symphonia); `otherPrint` is the first.
+   */
+  otherPrints: z.array(z.string()).optional(),
   /** A signature card for set tiles, so the Sets page needs no set chunk. */
   cover: z
     .object({
