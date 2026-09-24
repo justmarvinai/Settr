@@ -2,7 +2,7 @@ import { DeviceMobileIcon, XIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { IconButton } from '@/components/ui/Button';
 import { m } from '@/i18n';
-import { isIOS, useInstall } from './install';
+import { isIOS, useInstall } from '@/features/pwa';
 
 const KEY = 'settr:ios-hint';
 const QUIET_DAYS = 14;

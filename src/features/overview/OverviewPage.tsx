@@ -5,7 +5,7 @@ import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { useHoldingCount } from '@/db';
 import { m } from '@/i18n';
-import { IosInstallHint } from '@/features/pwa';
+import { IosInstallHint } from './IosInstallHint';
 import { Dashboard } from './Dashboard';
 
 /**
