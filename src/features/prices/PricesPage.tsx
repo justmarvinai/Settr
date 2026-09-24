@@ -2,6 +2,7 @@ import { ArrowRightIcon, PlayIcon } from '@phosphor-icons/react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Suspense, useState } from 'react';
 import { Button, buttonVariants } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { clearPriceSession, db, useAllPrices, usePriceSession } from '@/db';
@@ -242,9 +243,17 @@ function Hub() {
   if (!data) return <div aria-busy="true" className="min-h-[50vh]" />;
   if (!data.states.length) {
     return (
-      <Panel className="p-6">
-        <p className="type-body m-0 max-w-[60ch] text-ink-muted">{m.prices_hub_empty()}</p>
-      </Panel>
+      <EmptyState
+        id="prices-empty"
+        title={m.empty_collection_title()}
+        actions={
+          <Link to="/catalog" className={buttonVariants({ variant: 'primary' })}>
+            {m.library_empty_cards_action()}
+          </Link>
+        }
+      >
+        {m.prices_hub_empty()}
+      </EmptyState>
     );
   }
   const stale = data.states.filter((s) => s.stale).length;

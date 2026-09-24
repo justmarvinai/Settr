@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogRouteRouteImport } from './routes/catalog/route'
 import { Route as CollectionRouteRouteImport } from './routes/collection/route'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as CatalogIndexRouteImport } from './routes/catalog/index'
 import { Route as CatalogCardsRouteImport } from './routes/catalog/cards'
@@ -45,6 +46,11 @@ const CatalogRouteRoute = CatalogRouteRouteImport.update({
 const CollectionRouteRoute = CollectionRouteRouteImport.update({
   id: '/collection',
   path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRouteRoute = SettingsRouteRouteImport.update({
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/catalog': typeof CatalogRouteRouteWithChildren
   '/collection': typeof CollectionRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
   '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/onboarding': typeof OnboardingRoute
   '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/catalog': typeof CatalogRouteRouteWithChildren
   '/collection': typeof CollectionRouteRouteWithChildren
   '/settings': typeof SettingsRouteRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
   '/catalog/cards': typeof CatalogCardsRoute
   '/collection/cards': typeof CollectionCardsRoute
   '/collection/sealed': typeof CollectionSealedRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/catalog'
     | '/collection'
     | '/settings'
+    | '/onboarding'
     | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/onboarding'
     | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/catalog'
     | '/collection'
     | '/settings'
+    | '/onboarding'
     | '/catalog/cards'
     | '/collection/cards'
     | '/collection/sealed'
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   CatalogRouteRoute: typeof CatalogRouteRouteWithChildren
   CollectionRouteRoute: typeof CollectionRouteRouteWithChildren
   SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
+  OnboardingRoute: typeof OnboardingRoute
   PricesSessionRoute: typeof PricesSessionRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
   PricesIndexRoute: typeof PricesIndexRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/collection'
       fullPath: '/collection'
       preLoaderRoute: typeof CollectionRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -520,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogRouteRoute: CatalogRouteRouteWithChildren,
   CollectionRouteRoute: CollectionRouteRouteWithChildren,
   SettingsRouteRoute: SettingsRouteRouteWithChildren,
+  OnboardingRoute: OnboardingRoute,
   PricesSessionRoute: PricesSessionRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
   PricesIndexRoute: PricesIndexRoute,

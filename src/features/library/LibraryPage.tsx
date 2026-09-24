@@ -14,6 +14,7 @@ import { useState, type ReactNode } from 'react';
 import { PLDelta } from '@/components/domain/PLDelta';
 import { buttonVariants, Button, IconButton } from '@/components/ui/Button';
 import { cn } from '@/components/ui/cn';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { Select } from '@/components/ui/Select';
 import { useLocations, useTags } from '@/db';
 import {
@@ -86,19 +87,29 @@ function HintFilter({ label, onClick }: { label: string; onClick: () => void }) 
   );
 }
 
+/** Nothing collected yet (UX_SPEC.md §6): where adding starts, or a backup from another device. */
 function EmptyLibrary({ kind }: { kind: LibraryKind }) {
+  const cards = kind === 'card';
   return (
-    <div className="tile flex flex-col items-start gap-4 p-8">
-      <p className="type-body m-0 max-w-[48ch] text-ink-muted">
-        {kind === 'card' ? m.library_empty_cards() : m.library_empty_sealed()}
-      </p>
-      <Link
-        to={kind === 'card' ? '/catalog' : '/catalog/sealed'}
-        className={buttonVariants({ variant: 'primary' })}
-      >
-        {kind === 'card' ? m.library_empty_cards_action() : m.library_empty_sealed_action()}
-      </Link>
-    </div>
+    <EmptyState
+      id="library-empty"
+      title={cards ? m.library_empty_cards_title() : m.library_empty_sealed_title()}
+      actions={
+        <>
+          <Link
+            to={cards ? '/catalog' : '/catalog/sealed'}
+            className={buttonVariants({ variant: 'primary' })}
+          >
+            {cards ? m.library_empty_cards_action() : m.library_empty_sealed_action()}
+          </Link>
+          <Link to="/settings/data" hash="settings-import" className={buttonVariants()}>
+            {m.library_empty_import()}
+          </Link>
+        </>
+      }
+    >
+      {cards ? m.library_empty_cards() : m.library_empty_sealed()}
+    </EmptyState>
   );
 }
 

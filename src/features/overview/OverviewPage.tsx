@@ -5,6 +5,7 @@ import { buttonVariants } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { useHoldingCount } from '@/db';
 import { m } from '@/i18n';
+import { IosInstallHint } from '@/features/pwa';
 import { Dashboard } from './Dashboard';
 
 /**
@@ -14,14 +15,18 @@ import { Dashboard } from './Dashboard';
 export function OverviewPage() {
   const count = useHoldingCount();
   if (count === undefined) return <div aria-busy="true" className="min-h-[60vh]" />;
-  if (count > 0) {
-    return (
-      <Suspense fallback={<div aria-busy="true" className="min-h-[60vh]" />}>
-        <Dashboard />
-      </Suspense>
-    );
-  }
-  return <Welcome />;
+  return (
+    <div className="flex flex-col gap-4">
+      <IosInstallHint />
+      {count > 0 ? (
+        <Suspense fallback={<div aria-busy="true" className="min-h-[60vh]" />}>
+          <Dashboard />
+        </Suspense>
+      ) : (
+        <Welcome />
+      )}
+    </div>
+  );
 }
 
 function Welcome() {
@@ -49,6 +54,10 @@ function Welcome() {
             ))}
           </ol>
         </div>
+        <Link to="/catalog" className={buttonVariants({ variant: 'primary', className: 'w-fit' })}>
+          {m.overview_welcome_action()}
+          <ArrowRightIcon size={18} weight="bold" aria-hidden />
+        </Link>
       </Panel>
       <Panel className="flex flex-col gap-4">
         <h2 className="type-h2 m-0">{m.overview_storage_title()}</h2>

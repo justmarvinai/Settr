@@ -19,6 +19,14 @@ interface InstallState {
   installed: boolean;
 }
 
+/** iPhone and iPad (iPadOS reports a Mac, but one with touch). Safari there never offers install. */
+export function isIOS(): boolean {
+  return (
+    /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+}
+
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
   ('standalone' in navigator && navigator.standalone === true);

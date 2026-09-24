@@ -280,9 +280,8 @@
   );
 }
 
-/* Arrow keys in tile grids scroll the focused tile clear of the sticky toolbar and filter bar
-   (and of the phone's tab bar). */
+/* Arrow keys in tile grids scroll the focused tile clear of the sticky filter bar too (the page's
+   scroll padding already keeps it clear of the toolbar and the tab bar). */
 [data-roving] {
-  scroll-margin-top: 168px;
-  scroll-margin-bottom: 112px;
+  scroll-margin-top: 72px;
 }

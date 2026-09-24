@@ -149,6 +149,12 @@
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
     -webkit-tap-highlight-color: transparent;
+    /* Focus moves and anchor jumps land clear of the floating toolbar and the phone's tab bar. */
+    scroll-padding-top: 96px;
+    scroll-padding-bottom: 24px;
+    @media (width < 48rem) {
+      scroll-padding-bottom: 112px;
+    }
   }
   body {
     min-height: 100dvh;

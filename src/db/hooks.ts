@@ -30,3 +30,8 @@ export function useHoldingCount(): number | undefined {
 export function useDataVersion(): number | undefined {
   return useLiveQuery(() => getDataVersion(db), []);
 }
+
+/** Lots on this device, open or closed: the first-run check (onboarding). */
+export function countHoldings(): Promise<number> {
+  return db.holdings.count();
+}
