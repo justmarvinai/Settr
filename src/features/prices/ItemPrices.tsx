@@ -15,22 +15,30 @@ import { isStale } from '@/domain/valuation';
 import { toastError } from '@/features/collection';
 import { languageLabel, m } from '@/i18n';
 import { formatDate, formatMoney, formatRelative } from '@/i18n/format';
-import { parseMoneyInput } from '@/i18n/money-input';
-import { priceTypeLabel } from '@/i18n/price-labels';
+import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
+import { entryTypeLabel, priceTypeLabel } from '@/i18n/price-labels';
 import { isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
 import type { CardmarketLink } from './cardmarket-link';
+import { GuideChips, GuideKey, isGuideKey, useGuide, type GuidePick } from './guide';
 import { PriceChartPanel } from './PriceChartPanel';
 import { amountError, dateError, savePrice, type PricedItem, type SeriesTarget } from './record';
 import { SeriesSelectors, useSeriesChoice } from './SeriesChoice';
 import { priceTypeOf } from './series';
 
-/** The price context of an entry (R2.2, R2.6): `Deutsch · ab (DE) · NM oder besser`. */
-export function contextText(entry: Pick<PriceEntry, 'language' | 'priceType' | 'context'>) {
+/**
+ * The price context of an entry (R2.2, R2.6): `Deutsch · ab (DE) · NM oder besser`, or
+ * `Deutsch · Preisführer ab` for an accepted guide value (PRC-09).
+ */
+export function contextText(
+  entry: Pick<PriceEntry, 'language' | 'priceType' | 'context' | 'origin'>,
+) {
   return [
     languageLabel(entry.language),
-    priceTypeLabel(entry.priceType),
-    entry.context?.minCondition ? m.price_context_nm() : undefined,
+    entryTypeLabel(entry),
+    entry.context?.minCondition
+      ? m.price_context_min({ condition: entry.context.minCondition })
+      : undefined,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -126,8 +134,10 @@ function CurrentPrice({
   const [date, setDate] = useState(today);
   const [type, setType] = useState<PriceType>(settings.price.defaultType);
   const [tried, setTried] = useState(false);
+  const [picked, setPicked] = useState<GuidePick>();
   const amountRef = useRef<HTMLInputElement>(null);
   const { language } = target;
+  const guide = useGuide(target.item, language, target, cardmarket.productId);
 
   const errors = { amount: amountError(amount), date: dateError(date, today) };
   const parsed = parseMoneyInput(amount);
@@ -159,14 +169,25 @@ function CurrentPrice({
     return entry;
   };
 
+  // A guide value copied into the field (a chip or V) is saved as one while it stays unchanged.
+  const pick = (value: GuidePick) => {
+    setAmount(formatAmountInput(money(value.minor)));
+    setType(value.type);
+    setPicked(value);
+    setTried(false);
+    amountRef.current?.focus();
+  };
+
   const submit = async () => {
     setTried(true);
     if (errors.amount || errors.date || !parsed.ok) return;
     try {
-      await save({ minor: parsed.minor, date, type });
+      const fromGuide = picked?.minor === parsed.minor && picked.type === type;
+      await save({ minor: parsed.minor, date, type, fromGuide });
       setAmount('');
       setDate(todayIso());
       setTried(false);
+      setPicked(undefined);
       amountRef.current?.focus();
     } catch (error) {
       toastError(error);
@@ -234,6 +255,8 @@ function CurrentPrice({
 
       {selectors}
 
+      {guide ? <GuideChips guide={guide} onPick={pick} keyHint={<GuideKey />} /> : null}
+
       <form
         noValidate
         onSubmit={(event) => {
@@ -252,6 +275,12 @@ function CurrentPrice({
               id={`${id}-amount`}
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
+              onKeyDown={(event) => {
+                if (guide && isGuideKey(event)) {
+                  event.preventDefault();
+                  pick(guide.preferred);
+                }
+              }}
               placeholder="0,00"
               aria-invalid={tried && errors.amount ? true : undefined}
               aria-describedby={feedback ? `${id}-feedback` : undefined}

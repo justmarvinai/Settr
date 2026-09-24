@@ -15,7 +15,7 @@ import {
 import { toastError } from '@/features/collection';
 import { htmlLang, languageCode, m } from '@/i18n';
 import { formatCount, formatDate, formatMoney, formatRelative } from '@/i18n/format';
-import { priceTypeLabel } from '@/i18n/price-labels';
+import { entryTypeLabel } from '@/i18n/price-labels';
 import { newestFirst } from './series';
 import { useSessionData, type SessionData } from './session-data';
 
@@ -224,7 +224,7 @@ function RecentEntries() {
               <span className="type-small shrink-0 text-right text-ink-muted">
                 <span className="money font-mono text-ink">{formatMoney(e.price)}</span>
                 <span className="ml-2">
-                  {formatDate(e.date)} · {priceTypeLabel(e.priceType)}
+                  {formatDate(e.date)} · {entryTypeLabel(e)}
                 </span>
               </span>
             </li>

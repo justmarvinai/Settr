@@ -99,6 +99,12 @@ export default defineConfig({
               options: { cacheName: 'catalog-manifest', networkTimeoutSeconds: 3 },
             },
             {
+              // The price guide changes daily (PRC-09): shown from the cache, refreshed behind.
+              urlPattern: ({ url }) => url.pathname === '/catalog/v1/cm-prices.json',
+              handler: 'StaleWhileRevalidate',
+              options: { cacheName: 'price-guide', cacheableResponse: { statuses: [200] } },
+            },
+            {
               urlPattern: ({ url }) => url.pathname.startsWith('/catalog/v1/'),
               handler: 'CacheFirst',
               options: {

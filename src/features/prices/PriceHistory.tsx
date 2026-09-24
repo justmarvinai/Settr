@@ -14,7 +14,7 @@ import { toastError, toastWithUndo } from '@/features/collection';
 import { m } from '@/i18n';
 import { formatCount, formatDate, formatMoney } from '@/i18n/format';
 import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
-import { priceTypeLabel } from '@/i18n/price-labels';
+import { entryTypeLabel, priceTypeLabel } from '@/i18n/price-labels';
 import { contextOf, newestFirst, priceTypeOf, sourceOf } from './series';
 
 const COLLAPSED = 5;
@@ -60,12 +60,7 @@ export function PriceHistory({ entries, what }: { entries: readonly PriceEntry[]
               <span className="money type-ui font-mono font-bold tabular-nums">
                 {formatMoney(entry.price)}
               </span>
-              <span className="type-small text-ink-muted">{priceTypeLabel(entry.priceType)}</span>
-              {entry.origin === 'guide' ? (
-                <span className="type-label rounded-pill bg-hover px-2 py-0.5 text-ink-muted">
-                  {m.history_from_guide()}
-                </span>
-              ) : null}
+              <span className="type-small text-ink-muted">{entryTypeLabel(entry)}</span>
               {entry.note ? (
                 <span className="type-small basis-full text-ink-muted italic">{entry.note}</span>
               ) : null}

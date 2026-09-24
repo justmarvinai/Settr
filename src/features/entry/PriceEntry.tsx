@@ -17,15 +17,20 @@ import {
   cardmarketLinkOf,
   contextText,
   dateError,
+  GuideChips,
+  GuideKey,
+  isGuideKey,
   ownedVariant,
   savePrice,
   SeriesSelectors,
+  useGuide,
   useSeriesChoice,
+  type GuidePick,
   type PricedItem,
 } from '@/features/prices';
 import { languageLabel, m } from '@/i18n';
 import { formatDate, formatMoney, formatRelative } from '@/i18n/format';
-import { parseMoneyInput } from '@/i18n/money-input';
+import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
 import { priceTypeLabel } from '@/i18n/price-labels';
 import { closeSheet, useSheets, type SheetRequest } from '@/lib/sheets';
 import { ItemHeader } from './fields';
@@ -95,7 +100,9 @@ function PriceForm({
   const [note, setNote] = useState('');
   const [tried, setTried] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [picked, setPicked] = useState<GuidePick>();
   const amountRef = useRef<HTMLInputElement>(null);
+  const guide = useGuide(item, language, choice, cardmarket.productId);
 
   const errors = { amount: amountError(amount), date: dateError(date, today) };
   const parsed = parseMoneyInput(amount);
@@ -115,7 +122,16 @@ function PriceForm({
   const submit = () => {
     setTried(true);
     if (errors.amount || errors.date || !parsed.ok) return;
-    run({ minor: parsed.minor, date, type, note });
+    const fromGuide = picked?.minor === parsed.minor && picked.type === type;
+    run({ minor: parsed.minor, date, type, note, fromGuide });
+  };
+  // A guide value copied into the field (a chip or V) is saved as one while it stays unchanged.
+  const pick = (value: GuidePick) => {
+    setAmount(formatAmountInput(money(value.minor)));
+    setType(value.type);
+    setPicked(value);
+    setTried(false);
+    amountRef.current?.focus();
   };
   const unchanged = () => {
     if (!latest) return;
@@ -196,6 +212,8 @@ function PriceForm({
         <SeriesSelectors choice={choice} />
       </div>
 
+      {guide ? <GuideChips guide={guide} onPick={pick} keyHint={<GuideKey />} /> : null}
+
       <FormRow
         label={m.prices_new()}
         htmlFor={`${id}-amount`}
@@ -218,6 +236,12 @@ function PriceForm({
           id={`${id}-amount`}
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
+          onKeyDown={(event) => {
+            if (guide && isGuideKey(event)) {
+              event.preventDefault();
+              pick(guide.preferred);
+            }
+          }}
           placeholder="0,00"
           aria-invalid={tried && errors.amount ? true : undefined}
           aria-describedby={`${id}-amount-feedback`}

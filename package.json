@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsx scripts/price-guide/index.ts",
     "preview": "vite preview",
     "i18n": "paraglide-js compile --project ./src/i18n/project.inlang --outdir ./src/i18n/paraglide --emit-ts-declarations",
     "typecheck": "pnpm i18n && tsc --noEmit",

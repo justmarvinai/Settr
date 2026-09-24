@@ -1,0 +1,34 @@
+name: Price guide
+
+# Daily Cardmarket price-guide suggestions (PRC-09, DATA_SOURCES.md §8.3). While the repository is
+# public the snapshot is never committed (ADR-029): this job only asks Vercel for a fresh production
+# deployment, and the build (scripts/price-guide) downloads and filters the guide itself.
+#
+# Setup (once): Vercel › Project › Settings › Git › Deploy Hooks › create one for `main`, then store
+# its URL as the Actions secret VERCEL_DEPLOY_HOOK. Without the secret the job only says so.
+on:
+  schedule:
+    - cron: '23 3 * * *' # 05:23 CEST / 04:23 CET, after Cardmarket publishes (~02:48 CEST)
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: price-guide
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger the production deployment
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::notice::No VERCEL_DEPLOY_HOOK secret yet, so no deployment was triggered."
+            exit 0
+          fi
+          curl --fail --silent --show-error --retry 3 --retry-delay 10 -X POST "$HOOK" > /dev/null
+          echo "Deployment requested; its build fetches today's price guide."

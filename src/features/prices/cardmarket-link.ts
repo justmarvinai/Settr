@@ -9,6 +9,8 @@ export interface CardmarketLink {
   href: string;
   exact: boolean;
   hint: string;
+  /** The exact product, when known: its price-guide values become suggestions (PRC-09). */
+  productId?: number | undefined;
 }
 
 /**
@@ -27,6 +29,7 @@ export function cardmarketLinkOf(
     return {
       href: cardmarketUrl(productId, cardmarketFilters(settings, language)),
       exact: true,
+      productId,
       hint:
         info.ref.kind === 'card'
           ? m.catalog_cardmarket_filters(hint)

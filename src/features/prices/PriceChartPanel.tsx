@@ -15,11 +15,11 @@ import type { CardLanguage } from '@/domain/catalog-types';
 import { dayNumber, isoFromDayNumber } from '@/domain/dates';
 import { todayIso } from '@/domain/ids';
 import { money } from '@/domain/money';
-import type { Holding, PriceEntry, PriceType } from '@/domain/schemas';
+import type { Holding, PriceEntry } from '@/domain/schemas';
 import { toastError } from '@/features/collection';
 import { languageCode, languageLabel, m } from '@/i18n';
 import { formatDate, formatMoney, formatMoneyShort } from '@/i18n/format';
-import { priceTypeLabel } from '@/i18n/price-labels';
+import { entryTypeLabel, priceTypeLabel } from '@/i18n/price-labels';
 import type { PricedItem } from './record';
 import { PriceHistory } from './PriceHistory';
 import {
@@ -110,16 +110,16 @@ export function PriceChartPanel({
   const startIndex = points.findLastIndex((p) => p.day <= from);
   const start = startIndex >= 0 ? points[startIndex] : points.find((p) => p.day >= from);
   const change = shown && start && shown !== start ? shown.value - start.value : undefined;
-  const typeOf = (p: ChartPoint): PriceType | undefined =>
-    p.id ? byId.get(p.id)?.priceType : undefined;
-  const pointText = (p: ChartPoint) => {
-    const type = typeOf(p);
-    return m.chart_point({
+  const typeOf = (p: ChartPoint): string | undefined => {
+    const entry = p.id ? byId.get(p.id) : undefined;
+    return entry ? entryTypeLabel(entry) : undefined;
+  };
+  const pointText = (p: ChartPoint) =>
+    m.chart_point({
       date: formatDate(isoFromDayNumber(p.day)),
       amount: formatMoney(money(p.value)),
-      type: type ? priceTypeLabel(type) : '',
+      type: typeOf(p) ?? '',
     });
-  };
 
   const visibleTypes = [
     ...new Set(series.filter((e) => dayNumber(e.date) >= from).map((e) => e.priceType)),
@@ -163,10 +163,7 @@ export function PriceChartPanel({
                 {formatMoney(money(shown.value))}
               </span>
               <span className="type-small text-ink-muted">
-                {[
-                  formatDate(isoFromDayNumber(shown.day)),
-                  typeOf(shown) ? priceTypeLabel(typeOf(shown) ?? 'from') : undefined,
-                ]
+                {[formatDate(isoFromDayNumber(shown.day)), typeOf(shown)]
                   .filter(Boolean)
                   .join(' · ')}
               </span>
@@ -216,7 +213,7 @@ export function PriceChartPanel({
                         <td className="money py-2 pr-4 font-mono whitespace-nowrap tabular-nums">
                           {formatMoney(entry.price)}
                         </td>
-                        <td className="py-2 pr-4">{priceTypeLabel(entry.priceType)}</td>
+                        <td className="py-2 pr-4">{entryTypeLabel(entry)}</td>
                         {comparing ? (
                           <td className="py-2">{languageCode(entry.language)}</td>
                         ) : null}

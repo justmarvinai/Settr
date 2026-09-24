@@ -36,10 +36,11 @@ import { snapshotOf, toastError, type LibraryRow } from '@/features/collection';
 import { htmlLang, languageLabel, m } from '@/i18n';
 import { gradingText } from '@/i18n/collection-labels';
 import { formatCount, formatMoney, formatRelative } from '@/i18n/format';
-import { parseMoneyInput } from '@/i18n/money-input';
-import { priceTypeLabel } from '@/i18n/price-labels';
+import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
+import { entryTypeLabel, priceTypeLabel } from '@/i18n/price-labels';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 import { cardmarketLinkOf } from './cardmarket-link';
+import { GuideChips, GuideKey, isGuideKey, useGuide, type GuidePick } from './guide';
 import { SCOPE_LABELS } from './PricesPage';
 import { contextOf, priceTypeOf, sourceOf } from './series';
 import { startSession, useSessionData, type SessionData } from './session-data';
@@ -48,7 +49,8 @@ const route = /* @__PURE__ */ getRouteApi('/prices/session');
 
 /** What a step can do; the view wires them to buttons and keys. */
 interface StepActions {
-  save: (minor: number, type: PriceType) => Promise<void>;
+  /** `fromGuide`: an accepted price-guide value (PRC-09), stored with `origin: 'guide'`. */
+  save: (minor: number, type: PriceType, fromGuide: boolean) => Promise<void>;
   unchanged: () => Promise<void>;
   skip: () => Promise<void>;
   back: () => Promise<void>;
@@ -91,7 +93,8 @@ function StepView({
   latestEntry,
   actions,
   position,
-}: StepProps & { href: string; exact: boolean }) {
+  productId,
+}: StepProps & { href: string; exact: boolean; productId: number | undefined }) {
   const id = useId();
   const settings = useSettings();
   const desktop = useMediaQuery('(min-width: 1024px)');
@@ -99,8 +102,15 @@ function StepView({
   const [type, setType] = useState<PriceType>(settings.price.defaultType);
   const [tried, setTried] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [picked, setPicked] = useState<GuidePick>();
   const inputRef = useRef<HTMLInputElement>(null);
   const lot = state.lots[0];
+  const guide = useGuide(
+    row?.info ?? { ref: { kind: 'card', id: '' }, languages: [] },
+    lot?.language ?? 'de',
+    { variant: lot?.variant ?? STANDARD_VARIANT, grade: gradeKey(lot?.grading) },
+    productId,
+  );
   const parsed = parseMoneyInput(amount);
   const latest = state.latest;
   const delta = latest && parsed.ok ? parsed.minor - latest.price.minor : undefined;
@@ -123,7 +133,17 @@ function StepView({
   };
   const submit = () => {
     setTried(true);
-    if (parsed.ok) run(() => actions.save(parsed.minor, type));
+    if (!parsed.ok) return;
+    const fromGuide = picked?.minor === parsed.minor && picked.type === type;
+    run(() => actions.save(parsed.minor, type, fromGuide));
+  };
+  // A guide value copied into the field (a chip or V) is saved as one while it stays unchanged.
+  const pick = (value: GuidePick) => {
+    setAmount(formatAmountInput(money(value.minor)));
+    setType(value.type);
+    setPicked(value);
+    setTried(false);
+    inputRef.current?.focus();
   };
 
   // Each step starts in the amount field: the session is made for typing (UX_SPEC.md §4.10).
@@ -152,6 +172,9 @@ function StepView({
       } else if (key === 's') {
         event.preventDefault();
         run(actions.skip);
+      } else if (guide && isGuideKey(event)) {
+        event.preventDefault();
+        pick(guide.preferred);
       } else if (event.key === 'ArrowLeft' && position > 0 && (!inAmount || amount === '')) {
         event.preventDefault();
         run(actions.back);
@@ -192,7 +215,9 @@ function StepView({
               <span className="money">
                 {m.session_last({
                   amount: formatMoney(latest.price),
-                  type: priceTypeLabel(latestEntry?.priceType ?? settings.price.defaultType),
+                  type: latestEntry
+                    ? entryTypeLabel(latestEntry)
+                    : priceTypeLabel(settings.price.defaultType),
                   age: formatRelative(latest.date),
                 })}
               </span>
@@ -229,6 +254,8 @@ function StepView({
         <Kbd>{m.key_c()}</Kbd>
         <span className="sr-only">{m.catalog_opens_new_tab()}</span>
       </a>
+
+      {guide ? <GuideChips guide={guide} onPick={pick} keyHint={<GuideKey />} /> : null}
 
       <form
         noValidate
@@ -324,7 +351,14 @@ function Step(props: StepProps) {
   const link = props.row
     ? cardmarketLinkOf(props.row.info, lot.language, lot.variant, settings)
     : { href: cardmarketSearchUrl(lot.snapshot.name), exact: false };
-  return <StepView {...props} href={link.href} exact={link.exact} />;
+  return (
+    <StepView
+      {...props}
+      href={link.href}
+      exact={link.exact}
+      productId={'productId' in link ? link.productId : undefined}
+    />
+  );
 }
 
 function Summary({ session, data }: { session: PriceSessionState; data: SessionData }) {
@@ -534,11 +568,11 @@ function Runner() {
   const row = data.rowOf(state);
   const before = result?.before ?? state.latest?.price.minor;
   const actions: StepActions = {
-    save: async (minor, type) => {
+    save: async (minor, type, fromGuide) => {
       if (!lot) return;
       // Saving a step again replaces what this session entered for it.
       if (result?.entryId) await deletePrice(db, result.entryId);
-      const context = contextOf(type, settings, lot.language);
+      const context = fromGuide ? undefined : contextOf(type, settings, lot.language);
       const entry = await addPrice(db, {
         seriesKey: state.seriesKey,
         item: lot.item,
@@ -549,9 +583,9 @@ function Runner() {
         date: todayIso(),
         price: money(minor),
         priceType: type,
-        source: sourceOf(type),
+        source: fromGuide ? 'cardmarket' : sourceOf(type),
         ...(context ? { context } : {}),
-        origin: 'manual',
+        origin: fromGuide ? 'guide' : 'manual',
       });
       await advance({
         outcome: 'saved',

@@ -42,23 +42,31 @@ export function dateError(date: string, today: string): string | undefined {
   return date > today ? m.error_date_future() : undefined;
 }
 
-/**
- * Records one price (PRC-01) with how it was looked up (R2.2) and offers undo. `like` is the entry
- * a price is confirmed from ("Unverändert"): its type, source and context carry over.
- */
+/** What a new entry is: typed in, confirmed from `like` ("Unverändert") or taken from the guide. */
+export interface NewPrice {
+  minor: number;
+  date: string;
+  type: PriceType;
+  note?: string | undefined;
+  /** The entry a price is confirmed from: its type, source, context and origin carry over. */
+  like?: PriceEntry | undefined;
+  /** An accepted price-guide value (PRC-09): no filters apply, so no context is stored. */
+  fromGuide?: boolean | undefined;
+}
+
+/** Records one price (PRC-01) with how it was looked up (R2.2) and offers undo. */
 export async function savePrice(
   target: SeriesTarget,
   settings: Settings,
-  input: {
-    minor: number;
-    date: string;
-    type: PriceType;
-    note?: string | undefined;
-    like?: PriceEntry | undefined;
-  },
+  input: NewPrice,
 ): Promise<PriceEntry> {
   const { item, language } = target;
-  const context = input.like ? input.like.context : contextOf(input.type, settings, language);
+  const guide = input.fromGuide ?? input.like?.origin === 'guide';
+  const context = guide
+    ? undefined
+    : input.like
+      ? input.like.context
+      : contextOf(input.type, settings, language);
   const note = input.note?.trim();
   const entry = await addPrice(db, {
     seriesKey: target.seriesKey,
@@ -70,9 +78,9 @@ export async function savePrice(
     date: input.date,
     price: money(input.minor),
     priceType: input.type,
-    source: input.like?.source ?? sourceOf(input.type),
+    source: guide ? 'cardmarket' : (input.like?.source ?? sourceOf(input.type)),
     ...(context ? { context } : {}),
-    origin: 'manual',
+    origin: guide ? 'guide' : 'manual',
     ...(note ? { note } : {}),
   });
   toastWithUndo(
