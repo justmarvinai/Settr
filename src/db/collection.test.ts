@@ -21,11 +21,13 @@ import {
   duplicateHolding,
   ensureTag,
   getMeta,
+  countStaleMovedCards,
   listHoldingsInSets,
   listPulls,
   recordBackup,
   removeDisposal,
   renameTag,
+  repairMovedCards,
   restoreHoldings,
   restoreTagOrLocation,
   updateHolding,
@@ -136,6 +138,29 @@ describe('holdings: bulk, duplicate, undo', () => {
         .map((h) => h.tags.join(','))
         .toSorted((a, b) => a.localeCompare(b)),
     ).toEqual(['x,y', 'y']);
+  });
+});
+
+describe('cards that moved to another set (ADR-061)', () => {
+  it('points their lots at the set the card is in now, without touching anything else', async () => {
+    const [energy, other] = await createHoldings(db, [
+      card('intl:sve:001', { setId: 'intl:sv01' }),
+      card('intl:sv01:001', { setId: 'intl:sv01' }),
+    ]);
+    const moved = { 'intl:sve:001': 'intl:sve' };
+    expect(await countStaleMovedCards(db, moved)).toBe(1);
+
+    expect(await repairMovedCards(db, moved)).toBe(1);
+    const after = await db.holdings.get(energy!.id);
+    expect(after?.setId).toBe('intl:sve');
+    // A catalog reference, not an edit: a merge still sees the lot as it was.
+    expect(after?.updatedAt).toBe(energy?.updatedAt);
+    expect((await db.holdings.get(other!.id))?.setId).toBe('intl:sv01');
+    expect((await listHoldingsInSets(db, ['intl:sve'])).map((h) => h.id)).toEqual([energy!.id]);
+
+    expect(await countStaleMovedCards(db, moved)).toBe(0);
+    expect(await repairMovedCards(db, moved)).toBe(0);
+    expect(await repairMovedCards(db, {})).toBe(0);
   });
 });
 

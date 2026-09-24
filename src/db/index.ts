@@ -10,5 +10,6 @@ export * from './repositories/tombstones';
 export * from './hooks';
 export * from './collection-hooks';
 export * from './import';
+export * from './moved-cards';
 export * from './snapshots';
 export * from './data-hooks';

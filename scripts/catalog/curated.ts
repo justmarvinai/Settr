@@ -100,6 +100,12 @@ export function loadJapaneseNames(): Map<string, JapaneseName> {
   return names;
 }
 
+/** Cards that moved to another set: card id → the set it was in (ADR-061). */
+export function loadMovedCards(): Record<string, string> {
+  const file = join(CURATED, 'moved-cards.yaml');
+  return existsSync(file) ? z.record(z.string(), z.string()).parse(readYaml(file) ?? {}) : {};
+}
+
 /** Upstream id changes: old catalog id → new id (DATA_MODEL.md §3). */
 export function loadIdAliases(): Record<string, string> {
   const file = join(CURATED, 'id-aliases.json');

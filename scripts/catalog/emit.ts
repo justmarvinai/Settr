@@ -112,7 +112,13 @@ export function emitCatalog(
   sets: BuiltSet[],
   products: CatalogProduct[],
   species: Map<number, SpeciesNames>,
-  options: { imagesVerified: boolean; generatedAt: string; previous: CatalogManifest | null },
+  options: {
+    imagesVerified: boolean;
+    generatedAt: string;
+    previous: CatalogManifest | null;
+    /** Cards that moved to another set: id → its set now (ADR-061). */
+    movedCards?: Record<string, string>;
+  },
 ): CatalogManifest {
   const { previous } = options;
   const manifestFile = join(OUT, 'manifest.json');
@@ -182,6 +188,9 @@ export function emitCatalog(
     ],
     imagesVerified: options.imagesVerified,
     sets: sets.map((s) => s.summary),
+    ...(options.movedCards && Object.keys(options.movedCards).length
+      ? { movedCards: options.movedCards }
+      : {}),
     files: { sets: setFiles, sealed, search },
   });
   writeFileSync(manifestFile, `${stableJson(manifest)}\n`);

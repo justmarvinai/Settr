@@ -1,6 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { ToastViewport } from '@/components/ui/Toasts';
+import { useHoldingCount } from '@/db/core';
 import { m } from '@/i18n';
 import { inDialog, isPlain, isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
@@ -18,6 +19,8 @@ const MoreSheet = lazy(() => import('./MoreSheet'));
 const ShortcutsDialog = lazy(() => import('./ShortcutsDialog'));
 // The add/edit sheets and their forms load when a page first asks for one.
 const CollectionSheets = lazy(() => import('./CollectionSheets'));
+// Needs the catalog, so it loads only once the collection has lots.
+const CatalogRepairs = lazy(() => import('./CatalogRepairs'));
 
 export type SearchMode = 'go' | 'add';
 
@@ -42,6 +45,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     setMoreOpen(true);
   };
   const shortcuts = useShortcuts();
+  const holdingCount = useHoldingCount();
 
   // G then O / S / K / P / F / E goes to a main area (UX_SPEC.md §7).
   const navigate = useNavigate();
@@ -132,6 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {shortcuts.requested ? (
           <ShortcutsDialog open={shortcuts.open} onOpenChange={setShortcutsOpen} />
         ) : null}
+        {holdingCount ? <CatalogRepairs /> : null}
       </Suspense>
       <ToastViewport />
       <BackupReminder />

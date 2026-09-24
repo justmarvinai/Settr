@@ -210,6 +210,8 @@ export const catalogManifestSchema = z.object({
   /** False when built without network access: image URLs are then unverified candidates. */
   imagesVerified: z.boolean(),
   sets: z.array(catalogSetSummarySchema),
+  /** Cards that moved to another set in an update, by id: their set now (ADR-061). */
+  movedCards: z.record(z.string(), z.string()).optional(),
   files: z.object({
     /** Keyed by main set id; subsets live in their parent's chunk. */
     sets: z.record(z.string(), fileRefSchema),
