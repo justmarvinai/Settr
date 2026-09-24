@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.24.9",
-  "generatedAt": "2026-09-24T17:19:46.026Z",
+  "catalogVersion": "2026.09.24.10",
+  "generatedAt": "2026-09-24T17:28:32.318Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
     {"name":"PokéAPI (species names)","version":"575291cdb197a7e3a320297be276c9de4ef8401a","license":"BSD-3-Clause","url":"https://github.com/PokeAPI/pokeapi"}
   ],
-  "imagesVerified": false,
+  "imagesVerified": true,
   "sets": [
     {"id":"intl:30th","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"30 Jahre","en":"30th Celebration"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":128,"total":169},"otherPrint":"asia:M6a","cover":{"cardId":"intl:30th:150","images":{"de":{"url":"https://assets.tcgdex.net/de/me/30th/150","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en"}}}},
     {"id":"intl:30th-c","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"subset","parentSetId":"intl:30th","name":{"de":"30 Jahre: Klassische Sammlung","en":"30th Classic Collection"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":30,"total":30}},
@@ -19,27 +19,27 @@
     {"id":"intl:me04","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Wachsendes Chaos","en":"Chaos Rising"},"code":"CRI","languages":["de","en"],"releaseDates":{"de":"2026-05-22","en":"2026-05-22"},"counts":{"official":86,"total":122},"otherPrint":"asia:M4","cover":{"cardId":"intl:me04:116","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me04/116","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me04/116","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me04/logo","en":"https://assets.tcgdex.net/en/me/me04/logo"}},
     {"id":"intl:me05","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Dunkelnacht","en":"Pitch Black"},"code":"PBL","languages":["de","en"],"releaseDates":{"de":"2026-07-17","en":"2026-07-17"},"counts":{"official":84,"total":120},"otherPrint":"asia:M5","cover":{"cardId":"intl:me05:116","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me05/116","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me05/116","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/me/me05/logo"}},
     {"id":"intl:mep","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Mega-Entwicklung Promos","en":"MEP Black Star Promos"},"code":"MEP","languages":["de","en"],"releaseDates":{"de":"2025-09-26","en":"2025-09-26"},"counts":{"official":0,"total":90},"otherPrint":"asia:M-P","cover":{"cardId":"intl:mep:001","images":{"de":{"url":"https://assets.tcgdex.net/de/me/mep/001","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/mep/001","lang":"en"}}}},
-    {"id":"intl:sv10.5b","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Schwarze Blitze","en":"Black Bolt"},"code":"BLK","languages":["de","en"],"releaseDates":{"de":"2025-07-17","en":"2025-07-17"},"counts":{"official":86,"total":172},"cover":{"cardId":"intl:sv10.5b:172","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv10.5b/172","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv10.5b/172","lang":"en"}}}},
-    {"id":"intl:sv10.5w","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Weiße Flammen","en":"White Flare"},"code":"WHT","languages":["de","en"],"releaseDates":{"de":"2025-07-17","en":"2025-07-17"},"counts":{"official":86,"total":173},"cover":{"cardId":"intl:sv10.5w:173","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv10.5w/173","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv10.5w/173","lang":"en"}}}},
-    {"id":"intl:sv10","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Ewige Rivalen","en":"Destined Rivals"},"code":"DRI","languages":["de","en"],"releaseDates":{"de":"2025-05-30","en":"2025-05-30"},"counts":{"official":182,"total":244},"cover":{"cardId":"intl:sv10:231","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv10/231","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv10/231","lang":"en"}}}},
-    {"id":"intl:sv08.5","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Prismatische Entwicklungen","en":"Prismatic Evolutions"},"code":"PRE","languages":["de","en"],"releaseDates":{"de":"2025-01-17","en":"2025-01-17"},"counts":{"official":131,"total":180},"cover":{"cardId":"intl:sv08.5:161","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv08.5/161","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv08.5/161","lang":"en"}}}},
-    {"id":"intl:sv08","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Stürmische Funken","en":"Surging Sparks"},"code":"SSP","languages":["de","en"],"releaseDates":{"de":"2024-11-08","en":"2024-11-08"},"counts":{"official":191,"total":252},"cover":{"cardId":"intl:sv08:238","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv08/238","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv08/238","lang":"en"}}}},
-    {"id":"intl:sv04.5","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Paldeas Schicksale","en":"Paldean Fates"},"code":"PAF","languages":["de","en"],"releaseDates":{"de":"2024-01-26","en":"2024-01-26"},"counts":{"official":91,"total":245},"cover":{"cardId":"intl:sv04.5:234","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv04.5/234","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv04.5/234","lang":"en"}}}},
-    {"id":"intl:sv03.5","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"151","en":"151"},"code":"MEW","languages":["de","en"],"releaseDates":{"de":"2023-09-22","en":"2023-09-22"},"counts":{"official":165,"total":207},"cover":{"cardId":"intl:sv03.5:199","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv03.5/199","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv03.5/199","lang":"en"}}}},
-    {"id":"intl:sv01","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"},"code":"SVI","languages":["de","en"],"releaseDates":{"de":"2023-03-31","en":"2023-03-31"},"counts":{"official":198,"total":266},"cover":{"cardId":"intl:sv01:244","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv01/244","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv01/244","lang":"en"}}}},
+    {"id":"intl:sv10.5b","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Schwarze Blitze","en":"Black Bolt"},"code":"BLK","languages":["de","en"],"releaseDates":{"de":"2025-07-17","en":"2025-07-17"},"counts":{"official":86,"total":172},"cover":{"cardId":"intl:sv10.5b:172","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv10.5b/172","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv10.5b/172","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/sv/sv10.5b/logo"}},
+    {"id":"intl:sv10.5w","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Weiße Flammen","en":"White Flare"},"code":"WHT","languages":["de","en"],"releaseDates":{"de":"2025-07-17","en":"2025-07-17"},"counts":{"official":86,"total":173},"cover":{"cardId":"intl:sv10.5w:173","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv10.5w/173","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv10.5w/173","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/sv/sv10.5w/logo"}},
+    {"id":"intl:sv10","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Ewige Rivalen","en":"Destined Rivals"},"code":"DRI","languages":["de","en"],"releaseDates":{"de":"2025-05-30","en":"2025-05-30"},"counts":{"official":182,"total":244},"cover":{"cardId":"intl:sv10:231","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv10/231","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv10/231","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/sv/sv10/logo","en":"https://assets.tcgdex.net/en/sv/sv10/logo"}},
+    {"id":"intl:sv08.5","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Prismatische Entwicklungen","en":"Prismatic Evolutions"},"code":"PRE","languages":["de","en"],"releaseDates":{"de":"2025-01-17","en":"2025-01-17"},"counts":{"official":131,"total":180},"cover":{"cardId":"intl:sv08.5:161","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv08.5/161","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv08.5/161","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/sv/sv08.5/logo","en":"https://assets.tcgdex.net/en/sv/sv08.5/logo"}},
+    {"id":"intl:sv08","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Stürmische Funken","en":"Surging Sparks"},"code":"SSP","languages":["de","en"],"releaseDates":{"de":"2024-11-08","en":"2024-11-08"},"counts":{"official":191,"total":252},"cover":{"cardId":"intl:sv08:238","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv08/238","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv08/238","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/sv/sv08/logo","en":"https://assets.tcgdex.net/en/sv/sv08/logo"}},
+    {"id":"intl:sv04.5","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Paldeas Schicksale","en":"Paldean Fates"},"code":"PAF","languages":["de","en"],"releaseDates":{"de":"2024-01-26","en":"2024-01-26"},"counts":{"official":91,"total":245},"cover":{"cardId":"intl:sv04.5:234","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv04.5/234","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv04.5/234","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/sv/sv04.5/logo","en":"https://assets.tcgdex.net/en/sv/sv04.5/logo"}},
+    {"id":"intl:sv03.5","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"151","en":"151"},"code":"MEW","languages":["de","en"],"releaseDates":{"de":"2023-09-22","en":"2023-09-22"},"counts":{"official":165,"total":207},"cover":{"cardId":"intl:sv03.5:199","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv03.5/199","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv03.5/199","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/sv/sv03.5/logo","en":"https://assets.tcgdex.net/en/sv/sv03.5/logo"}},
+    {"id":"intl:sv01","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"},"code":"SVI","languages":["de","en"],"releaseDates":{"de":"2023-03-31","en":"2023-03-31"},"counts":{"official":198,"total":266},"cover":{"cardId":"intl:sv01:244","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/sv01/244","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/sv01/244","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/sv/sv01/logo","en":"https://assets.tcgdex.net/en/sv/sv01/logo"}},
     {"id":"intl:svp","print":"intl","series":{"id":"scarlet-violet","name":{"de":"Karmesin & Purpur","en":"Scarlet & Violet"}},"kind":"main","name":{"de":"Karmesin & Purpur Promos","en":"SVP Black Star Promos"},"code":"SVP","languages":["de","en"],"releaseDates":{"de":"2023-03-31","en":"2023-03-31"},"counts":{"official":225,"total":226},"cover":{"cardId":"intl:svp:001","images":{"de":{"url":"https://assets.tcgdex.net/de/sv/svp/001","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sv/svp/001","lang":"en"}}}},
-    {"id":"intl:swsh12.5","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Zenit der Könige","en":"Crown Zenith"},"code":"CRZ","languages":["de","en"],"releaseDates":{"de":"2023-01-20","en":"2023-01-20"},"counts":{"official":159,"total":160},"cover":{"cardId":"intl:swsh12.5:160","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh12.5/160","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh12.5/160","lang":"en"}}}},
+    {"id":"intl:swsh12.5","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Zenit der Könige","en":"Crown Zenith"},"code":"CRZ","languages":["de","en"],"releaseDates":{"de":"2023-01-20","en":"2023-01-20"},"counts":{"official":159,"total":160},"cover":{"cardId":"intl:swsh12.5:160","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh12.5/160","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh12.5/160","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh12.5/logo","en":"https://assets.tcgdex.net/en/swsh/swsh12.5/logo"}},
     {"id":"intl:swsh12.5gg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"subset","parentSetId":"intl:swsh12.5","name":{"de":"Zenit der Könige Galar-Galerie","en":"Crown Zenith Galarian Gallery"},"code":"CRZ","languages":["de","en"],"releaseDates":{"de":"2023-01-20","en":"2023-01-20"},"counts":{"official":70,"total":70}},
-    {"id":"intl:swsh11","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Verlorener Ursprung","en":"Lost Origin"},"code":"LOR","languages":["de","en"],"releaseDates":{"de":"2022-09-09","en":"2022-09-09"},"counts":{"official":196,"total":217},"cover":{"cardId":"intl:swsh11:186","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh11/186","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh11/186","lang":"en"}}}},
+    {"id":"intl:swsh11","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Verlorener Ursprung","en":"Lost Origin"},"code":"LOR","languages":["de","en"],"releaseDates":{"de":"2022-09-09","en":"2022-09-09"},"counts":{"official":196,"total":217},"cover":{"cardId":"intl:swsh11:186","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh11/186","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh11/186","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh11/logo","en":"https://assets.tcgdex.net/en/swsh/swsh11/logo"}},
     {"id":"intl:swsh11tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"subset","parentSetId":"intl:swsh11","name":{"de":"Verlorener Ursprung Trainer-Galerie","en":"Lost Origin Trainer Gallery"},"code":"LOR","languages":["de","en"],"releaseDates":{"de":"2022-09-09","en":"2022-09-09"},"counts":{"official":30,"total":30}},
-    {"id":"intl:swsh10tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Astralglanz Trainer-Galerie","en":"Astral Radiance Trainer Gallery"},"code":"ASR","languages":["de","en"],"releaseDates":{"de":"2022-05-27","en":"2022-05-27"},"counts":{"official":30,"total":30},"cover":{"cardId":"intl:swsh10tg:TG30","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh10tg/TG30","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh10tg/TG30","lang":"en"}}}},
-    {"id":"intl:swsh9","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Strahlende Sterne","en":"Brilliant Stars"},"code":"BRS","languages":["de","en"],"releaseDates":{"de":"2022-02-25","en":"2022-02-25"},"counts":{"official":172,"total":186},"cover":{"cardId":"intl:swsh9:154","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh9/154","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh9/154","lang":"en"}}}},
+    {"id":"intl:swsh10tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Astralglanz Trainer-Galerie","en":"Astral Radiance Trainer Gallery"},"code":"ASR","languages":["de","en"],"releaseDates":{"de":"2022-05-27","en":"2022-05-27"},"counts":{"official":30,"total":30},"cover":{"cardId":"intl:swsh10tg:TG30","images":{}}},
+    {"id":"intl:swsh9","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Strahlende Sterne","en":"Brilliant Stars"},"code":"BRS","languages":["de","en"],"releaseDates":{"de":"2022-02-25","en":"2022-02-25"},"counts":{"official":172,"total":186},"cover":{"cardId":"intl:swsh9:154","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh9/154","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh9/154","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh9/logo","en":"https://assets.tcgdex.net/en/swsh/swsh9/logo"}},
     {"id":"intl:swsh9tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"subset","parentSetId":"intl:swsh9","name":{"de":"Strahlende Sterne Trainer-Galerie","en":"Brilliant Stars Trainer Gallery"},"code":"BRS","languages":["de","en"],"releaseDates":{"de":"2022-02-25","en":"2022-02-25"},"counts":{"official":30,"total":30}},
-    {"id":"intl:swsh4","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Farbenschock","en":"Vivid Voltage"},"code":"VIV","languages":["de","en"],"releaseDates":{"de":"2020-11-13","en":"2020-11-13"},"counts":{"official":185,"total":203},"cover":{"cardId":"intl:swsh4:188","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh4/188","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh4/188","lang":"en"}}}},
-    {"id":"intl:swsh2","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Clash der Rebellen","en":"Rebel Clash"},"code":"RCL","languages":["de","en"],"releaseDates":{"de":"2020-05-01","en":"2020-05-01"},"counts":{"official":192,"total":209},"cover":{"cardId":"intl:swsh2:197","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh2/197","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh2/197","lang":"en"}}}},
-    {"id":"intl:swshp","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Schwert & Schild Promos","en":"SWSH Black Star Promos"},"code":"SWSH","languages":["de","en"],"releaseDates":{"de":"2019-11-15","en":"2019-11-15"},"counts":{"official":307,"total":307},"cover":{"cardId":"intl:swshp:SWSH001","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swshp/SWSH001","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swshp/SWSH001","lang":"en"}}}},
-    {"id":"intl:sm3","print":"intl","series":{"id":"sun-moon","name":{"de":"Sonne & Mond","en":"Sun & Moon"}},"kind":"main","name":{"de":"Nacht in Flammen","en":"Burning Shadows"},"code":"BUS","languages":["de","en"],"releaseDates":{"de":"2017-08-04","en":"2017-08-04"},"counts":{"official":147,"total":169},"cover":{"cardId":"intl:sm3:150","images":{"de":{"url":"https://assets.tcgdex.net/de/sm/sm3/150","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/sm3/150","lang":"en"}}}},
-    {"id":"intl:base1","print":"intl","series":{"id":"base","name":{"de":"Grundset-Serie","en":"Base"}},"kind":"main","name":{"de":"Grundset","en":"Base Set"},"code":"BS","languages":["de","en"],"releaseDates":{"de":"1999-01-09","en":"1999-01-09"},"counts":{"official":102,"total":102},"cover":{"cardId":"intl:base1:4","images":{"de":{"url":"https://assets.tcgdex.net/de/base/base1/4","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/base/base1/4","lang":"en"}}}},
+    {"id":"intl:swsh4","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Farbenschock","en":"Vivid Voltage"},"code":"VIV","languages":["de","en"],"releaseDates":{"de":"2020-11-13","en":"2020-11-13"},"counts":{"official":185,"total":203},"cover":{"cardId":"intl:swsh4:188","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh4/188","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh4/188","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh4/logo","en":"https://assets.tcgdex.net/en/swsh/swsh4/logo"}},
+    {"id":"intl:swsh2","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Clash der Rebellen","en":"Rebel Clash"},"code":"RCL","languages":["de","en"],"releaseDates":{"de":"2020-05-01","en":"2020-05-01"},"counts":{"official":192,"total":209},"cover":{"cardId":"intl:swsh2:197","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh2/197","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh2/197","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh2/logo","en":"https://assets.tcgdex.net/en/swsh/swsh2/logo"}},
+    {"id":"intl:swshp","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Schwert & Schild Promos","en":"SWSH Black Star Promos"},"code":"SWSH","languages":["de","en"],"releaseDates":{"de":"2019-11-15","en":"2019-11-15"},"counts":{"official":307,"total":307},"cover":{"cardId":"intl:swshp:SWSH001","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swshp/SWSH001","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swshp/SWSH001","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swshp/logo","en":"https://assets.tcgdex.net/en/swsh/swshp/logo"}},
+    {"id":"intl:sm3","print":"intl","series":{"id":"sun-moon","name":{"de":"Sonne & Mond","en":"Sun & Moon"}},"kind":"main","name":{"de":"Nacht in Flammen","en":"Burning Shadows"},"code":"BUS","languages":["de","en"],"releaseDates":{"de":"2017-08-04","en":"2017-08-04"},"counts":{"official":147,"total":169},"cover":{"cardId":"intl:sm3:150","images":{"de":{"url":"https://assets.tcgdex.net/de/sm/sm3/150","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/sm3/150","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/sm/sm3/logo"}},
+    {"id":"intl:base1","print":"intl","series":{"id":"base","name":{"de":"Grundset-Serie","en":"Base"}},"kind":"main","name":{"de":"Grundset","en":"Base Set"},"code":"BS","languages":["de","en"],"releaseDates":{"de":"1999-01-09","en":"1999-01-09"},"counts":{"official":102,"total":102},"cover":{"cardId":"intl:base1:4","images":{"de":{"url":"https://assets.tcgdex.net/en/base/base1/4","lang":"en"},"en":{"url":"https://assets.tcgdex.net/en/base/base1/4","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/base/base1/logo"}},
     {"id":"asia:M1L","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガブレイブ","de":"Mega Brave","en":"Mega Brave"},"code":"M1L","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-08-01"},"counts":{"official":63,"total":92},"otherPrint":"intl:me01","cover":{"cardId":"asia:M1L:088","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me01/179","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me01/179","lang":"en","counterpart":true}}}},
     {"id":"asia:M1S","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガシンフォニア","de":"Mega Symphonia","en":"Mega Symphonia"},"code":"M1S","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-08-01"},"counts":{"official":63,"total":92},"otherPrint":"intl:me01","cover":{"cardId":"asia:M1S:087","images":{"ja":{"url":"https://assets.tcgdex.net/ja/M/M1S/087","lang":"ja"},"zh-tw":{"url":"https://assets.tcgdex.net/ja/M/M1S/087","lang":"ja"}}}},
     {"id":"asia:M2","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"インフェルノX","de":"Inferno X","en":"Inferno X"},"code":"M2","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-09-26"},"counts":{"official":80,"total":116},"otherPrint":"intl:me02","cover":{"cardId":"asia:M2:110","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me02/125","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me02/125","lang":"en","counterpart":true}}}},
@@ -98,93 +98,93 @@
       },
       "intl:sv10.5b": {
         "path": "sets/intl_sv10.5b.json",
-        "sha256": "989cc628ab40b21e0c5d0fb3dbc25f148257af719bdee6ff965ae5e9f7e00aed",
-        "bytes": 126051
+        "sha256": "b235550a00542f4d6000cb3737d0d13989d38db163df9d1074a08bb4d39af7ea",
+        "bytes": 126131
       },
       "intl:sv10.5w": {
         "path": "sets/intl_sv10.5w.json",
-        "sha256": "f2a500bf000f1389b47d8ddbaf692768c1cfd48a5c9b64927655c50ab5dc2be0",
-        "bytes": 123605
+        "sha256": "589128bc99c4a9372a5d4d441bbd9d963dd20ff70c1546d8a0f2f82eebf7a794",
+        "bytes": 123685
       },
       "intl:sv10": {
         "path": "sets/intl_sv10.json",
-        "sha256": "35440853fef0e1ce06a359c50859314e20a59761bc7a988a21adeda5aefbca3c",
-        "bytes": 159026
+        "sha256": "b9b679e97c991083bf1cebd0a99d9af9fa9ee7642600bccabf18596f76c12cbe",
+        "bytes": 159160
       },
       "intl:sv08.5": {
         "path": "sets/intl_sv08.5.json",
-        "sha256": "67ad1479891cd842d4e5cd4053b5e9236c684018edee539454345dd77736da67",
-        "bytes": 131573
+        "sha256": "7e8d0317988d52b66f2cfe7f2cd853bb3c3c1fbabd33854162a178d2f6d547ea",
+        "bytes": 131711
       },
       "intl:sv08": {
         "path": "sets/intl_sv08.json",
-        "sha256": "c917233a6f1d18e91a4740395d744cfc6eb7ad07f524ef3ad6c20ef8f8815f33",
-        "bytes": 161363
+        "sha256": "f226c5ba032f2b4e35bb3018f5ec73078d241ae07d51eaa219d89fe015184e7e",
+        "bytes": 161497
       },
       "intl:sv04.5": {
         "path": "sets/intl_sv04.5.json",
-        "sha256": "b11b37e5e87aa62c3339b8a6190362daec7b4b5aa05d2de019f227f1efa9068e",
-        "bytes": 151084
+        "sha256": "53d2d5d8762a2638c32daeeafff82b89c0b3111791b2833d042b0160ec35d53b",
+        "bytes": 151222
       },
       "intl:sv03.5": {
         "path": "sets/intl_sv03.5.json",
-        "sha256": "065d70a7025d8b8556acf9c647471b38d0720ef86e07667bc93be56cbac58a95",
-        "bytes": 136338
+        "sha256": "1d568bf68140419fe806f25a9ead38db562724e32cacc73d25e042b050bbe074",
+        "bytes": 136476
       },
       "intl:sv01": {
         "path": "sets/intl_sv01.json",
-        "sha256": "ec0f115afd77d9e5f278a99e776c9a6015b31d392d6a1c4c413e3cd1ff263c81",
-        "bytes": 144109
+        "sha256": "2ac851415901af4fedd604898d819c5bf0574bff8ba0da07427fee49b598f258",
+        "bytes": 158144
       },
       "intl:svp": {
         "path": "sets/intl_svp.json",
-        "sha256": "3f095bd953a9cb36e113b2e05f079ed781ac60c22abeac3651b299c267db07ba",
-        "bytes": 142914
+        "sha256": "6798b9f27d1ae85558d68e1d073fa2545429cdcdbfb7be105b4513e2efdb9557",
+        "bytes": 141355
       },
       "intl:swsh12.5": {
         "path": "sets/intl_swsh12.5.json",
-        "sha256": "526ad35d7304259bef5328f6c37789c6bf9b304e1fb76b0c7cd8a9144235aaf7",
-        "bytes": 148160
+        "sha256": "79843f74d44f3d8df396c3d2526b9665252477e9d2a5bf2f82027f818d2a5164",
+        "bytes": 137596
       },
       "intl:swsh11": {
         "path": "sets/intl_swsh11.json",
-        "sha256": "f32122a77f8cf61b013012dbd3c4e8512d8cf859a8a605ea76593fff35aaf293",
-        "bytes": 159533
+        "sha256": "35eb02e2a09591582d265f137dc2638b14354dc029f6682c2a839ad2af079e59",
+        "bytes": 155205
       },
       "intl:swsh10tg": {
         "path": "sets/intl_swsh10tg.json",
-        "sha256": "dadf18c22d21e927321571064883578cb0b553bd2aacd9eaf487a54d313932f9",
-        "bytes": 19336
+        "sha256": "d9bbcf7785fc4ab3f52dbba4195671764abf1dd08900e4fe98c23f5e1150b565",
+        "bytes": 14624
       },
       "intl:swsh9": {
         "path": "sets/intl_swsh9.json",
-        "sha256": "e451274ccfdf1cc1e9c11df5c2a99c91326e15698a4b8a6bc59b7da886f53782",
-        "bytes": 138611
+        "sha256": "345282b589fcb99140a0990c0e0834a191275851f96b927dcddba465d43dc93b",
+        "bytes": 134341
       },
       "intl:swsh4": {
         "path": "sets/intl_swsh4.json",
-        "sha256": "8ab3504dee93982f375434ed674e2a8441011e47fc41aab21fa7b5558045dda3",
-        "bytes": 130678
+        "sha256": "4079335313b5f163fab5d0b12b33e0ae69eeefb8471526432364ce1cf4b20634",
+        "bytes": 130818
       },
       "intl:swsh2": {
         "path": "sets/intl_swsh2.json",
-        "sha256": "841933099bcba7fe39ac7e7e21622f80d2aa266ba721a3b8883cac591cb41487",
-        "bytes": 135942
+        "sha256": "7dc2e9042564eb638afa89b0e5df3f22ab38feb2dcc64bd112fd05fa759913a2",
+        "bytes": 136082
       },
       "intl:swshp": {
         "path": "sets/intl_swshp.json",
-        "sha256": "17df13397620c85aa923bd70e52a3930314596f650bf9ff77b3bbc573ebd4c38",
-        "bytes": 196616
+        "sha256": "e6936db80c14b638e0ca0befae9ab38ca6de4ae3d9af54ee39bd40b588b58e7f",
+        "bytes": 193703
       },
       "intl:sm3": {
         "path": "sets/intl_sm3.json",
-        "sha256": "f480add17355d12a2438a792b56dccfe12efffac663996af91233e23ea12ea5b",
-        "bytes": 87916
+        "sha256": "c6d55bf5c5ca40ff883b49def5e1d8f155e40f0c6a4a89ea4dbfb3ecc40dd217",
+        "bytes": 97545
       },
       "intl:base1": {
         "path": "sets/intl_base1.json",
-        "sha256": "b0b3086bd79547f9efd3540821cddc533629adae3a76d072ab22257186d495a5",
-        "bytes": 59093
+        "sha256": "e30ad87d1c6912c2c5d2cea34f94a2b5092248335003b09fcd27d0b435ec4db8",
+        "bytes": 59173
       },
       "asia:M1L": {
         "path": "sets/asia_M1L.json",
@@ -234,8 +234,8 @@
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "09b30625d5a0ab28822a74b4f080cb0a900763e6877b5559a354349ab973cf61",
-      "bytes": 2416151
+      "sha256": "d032f1a7845f4e3eae41fcfabd2e0e7e8d7806087bf5b1b51bffafa2644d10ee",
+      "bytes": 2400236
     }
   }
 }
