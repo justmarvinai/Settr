@@ -698,7 +698,7 @@
   - The card's own products go to its regular variants (normal, holo, reverse holo); stamped, deck and promo prints never inherit them.
   - A Sun & Moon card TCGdex calls "Rare" that TCGplayer prints only as a holo is a *Holo Rare*.
   - The build report counts, per set, where the finishes came from.
-- **Consequences:** Sun & Moon cards offer their real variants (a Rare as *Normal* and *Reverse-Holo*, a GX as *Holo*). A later TCGdex release with variants replaces the fallback without changing ids.
+- **Consequences:** Sun & Moon cards offer their real variants (a Rare as *Normal* and *Reverse-Holo*, a GX as *Holo*). The sync of 2026-09-24 took the printings of 2,391 cards from TCGplayer; ten cards it doesn't list took the rule, and 246 Rares became Holo Rares (DATA_SOURCES.md §2.3). A later TCGdex release with variants replaces the fallback without changing ids.
 - **Alternatives:**
   - pokemon-tcg-data (GitHub): no license, and its README advises against new use.
   - The rarity rule alone: wrong for Holo Rares, which TCGdex doesn't tell apart from Rares in these sets.
@@ -721,7 +721,7 @@
   - **Names of Japanese cards:**
     - MC and MF reprint Karmesin & Purpur and Mega-Entwicklung cards. Where several international cards share the illustrator, the curated dictionary points to the card with the same name, checked against TCGdex: the same illustrator drew both (`data/curated/names/reprints.yaml`).
     - M6's eleven new trainers have no international print yet, so no official German or English names exist. They carry Settr's own translations, marked *übersetzt* like every name of a Japanese card (`data/curated/names/m6-provisional.yaml`); ME06's names replace them.
-- **Consequences:** see the report of the sync (DATA_SOURCES.md §2.3). The catalog holds 85 sets with 13,817 cards; the search index about 710 KB gzip (ADR-060).
+- **Consequences:** The catalog holds 85 sets with 13,817 cards; the search index about 705 KB gzip (ADR-060). 6,719 of the 6,722 new international cards and all 936 Japanese ones link to their Cardmarket product; the results of the sync are in DATA_SOURCES.md §2.3.
 - **Alternatives:**
   - Japanese names for M6's new trainers (no translation): unreadable in a German list and unsearchable by German names.
   - Waiting for ME06 with M6 (R9.3's default): Marvin asked for it now.

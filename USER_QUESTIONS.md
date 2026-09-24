@@ -51,7 +51,7 @@ You asked for every missing set of the eras you already have a set from, except 
 - [x] ⭐ Like that.
 - [ ] Show the Japanese names until then.
 
-**R11.7 · Search.** The search index for all 85 sets is about 710 KB (gzip). It loads on the first search and builds in about half a second on a desktop, then stays cached.
+**R11.7 · Search.** The search index for all 85 sets is about 705 KB (gzip). It loads on the first search and builds in about half a second on a desktop, then stays cached.
 - [x] ⭐ One index for all sets; I split it per series if search feels slow on your iPhone.
 
 **R11.8 · Cards outside the sets.** TCGdex files the McDonald's collections (2017–2024) and the Sun & Moon trainer kits (Alolan Raichu, Lycanroc) as series of their own, so this round leaves them out.

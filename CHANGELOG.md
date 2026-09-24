@@ -18,6 +18,8 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - **Rarities** Shiny Rare V and Shiny Rare VMAX (the Glitzer-Tresor); **variants** with Pokémon GO's Ditto sticker, My First Battle's deck symbols and blue border, and more stamps (Master Ball League, prerelease, International Championships, judge).
   - **Names:** the Klassische Kollektion's German names from the original cards; the Japanese reprints in MC and MF named after their international cards, checked against the illustrator; M6's new trainers translated until the English set brings official names (R11.6).
   - **Moved cards:** your copies of the basic Energy SVE 001–008, recorded under Karmesin & Purpur, follow the cards into Karmesin & Purpur Energie, also after an import (ADR-061).
+  - **Cardmarket:** 6,719 of the 6,722 international cards and all 936 Japanese cards link to their exact product; the other three open Cardmarket's search.
+  - **Pictures** for 6,493 of the 6,722 international cards, 6,199 of them German; the Japanese cards show the international card's picture where TCGdex has none of their own (672 of 936).
 - **Your older sets (2026-09-24, ROADMAP v1.x · Your sets):** 21 sets you have cards from, international (DE/EN), cards only (R10). 3,678 cards in four new series:
   - **Karmesin & Purpur:** Schwarze Blitze, Weiße Flammen, Ewige Rivalen, Prismatische Entwicklungen, Stürmische Funken, Paldeas Schicksale, 151, Karmesin & Purpur (with the basic Energy SVE 001–008) and Karmesin & Purpur Promos.
   - **Schwert & Schild:** Zenit der Könige with its Galar-Galerie, Verlorener Ursprung and Strahlende Sterne with their Trainer-Galerien, the Astralglanz Trainer-Galerie (a set of its own), Farbenschock, Clash der Rebellen and Schwert & Schild Promos.

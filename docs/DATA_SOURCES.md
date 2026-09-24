@@ -166,6 +166,11 @@ Every other set of the eras Marvin collects from, except the Base Set's (R11.1):
 - **M6:** TCGdex lists every card above 076 as Mega Hyper Rare (ADR-058). Its eleven new trainers have no international print, so their German and English names are Settr's translations until ME06 (`data/curated/names/m6-provisional.yaml`).
 - **MC and MF:** reprints of Karmesin & Purpur and Mega-Entwicklung cards. Trainers whose illustrator drew several international cards get their names from the dictionary (`data/curated/names/reprints.yaml`), each checked against the international card's illustrator.
 
+**The sync (2026-09-24, catalog 2026.09.24.18)**
+- **Cardmarket:** 6,719 of the 6,722 international cards link to their product: TCGdex's ids, 149 matched by name where TCGdex has none (ADR-056), and a few curated (`data/curated/cards/`). The three left open (Guzzlord-GX 63a, Professor's Research SSH 201, Steven's Resolve CES 145) open Cardmarket's search rather than a guess. All 936 Japanese cards have their product.
+- **Pictures:** of the 6,676 cards printed in German, 6,199 show the German picture, 282 the English one and 195 none. TCGdex has no pictures for Majestät der Drachen (78), the later Sonne & Mond promos (67), the Klassische Kollektion (25), Karmesin & Purpur Energie (24) and one Celebrations card; of the 46 English-only cards, My First Battle's 34 have none. Of the 936 Japanese cards, 672 show the international card's picture (labeled) and 264 none yet (MC 129, M6 111, MF 24).
+- **Finishes (ADR-057):** TCGplayer's printings for 2,391 cards of the 15 Sun & Moon sets with a group; the ten it doesn't list take the rarity rule (Sonne & Mond's basic Energy 164–172, Guzzlord-GX 63a). The Glitzer-Tresor of Verborgenes Schicksal has no group of its own: all 94 cards are holos. 246 cards TCGdex calls Rare print only as a holo and are Holo Rares.
+
 ---
 
 ## 3. TCGdex (primary source)
