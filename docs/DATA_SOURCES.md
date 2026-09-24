@@ -43,6 +43,30 @@
 - The **Classic Collection's printed numbers** are the originals (4/102, 58/102, …) in TCGdex's order 001–030; they're curated in `data/curated/cards/intl-30th-c.yaml` with a sort key that follows the reprint order.
 - **Cardmarket (found by the first CI sync, M2):** TCGdex's M6a ids point at the Simplified Chinese products; the Japanese ids come from the shared metacard (171 of 176). Open: Sylveon ex 059/130 (two SC products share a metacard with one JP product) and the RGB Mews, whose ids are curated with an inferred R, G, B order (to verify).
 
+### 2.1 The Mega Evolution series (added 2026-09-24, ADR-051–053)
+
+| International (DE/EN) | Cards (official) | Cardmarket | Japanese print(s) | Cardmarket (JP) |
+|---|---|---|---|---|
+| `me01` Mega-Entwicklung (MEG) + basic Energy `mee` 001–008 | 188 + 8 (132) | 6209; deck prints 6290 | `M1L` Mega Brave 92 (63), `M1S` Mega Symphonia 92 (63) | 6189, 6190 |
+| `me02` Fatale Flammen (PFL) | 130 (94) | 6299; deck prints 6300 | `M2` Inferno X 116 (80) | 6291 |
+| `me02.5` Erhabene Helden (ASC) | 295 (217) | 6395; pattern reverses 6455 | `M2a` MEGA Dream ex 250 (193) | 6380; reverse holos 6409 |
+| `me03` Optimale Ordnung (POR) | 124 (88) | 6443; deck prints 6516 | `M3` Nihil Zero 117 (80) | 6427 |
+| `me04` Wachsendes Chaos (CRI) | 122 (86) | 6517; deck prints 6518 | `M4` Ninja Spinner 120 (83) | 6494 |
+| `me05` Dunkelnacht (PBL) | 120 (84) | 6569; deck prints 6640 | `M5` Abyss Eye 118 (81) | 6556 |
+| `mep` Mega-Entwicklung Promos | 90 | 6232 | `M-P` MEGA promo cards 132 | 6230 |
+
+- **Languages:** DE/EN internationally; the Japanese sets with Traditional Chinese (`data_tc` of PTCG-database per set), the MEGA promos Japanese only. No Simplified Chinese: Cardmarket's Chinese and Indonesian/Thai editions combine the Japanese sets differently (ADR-053).
+- **Not yet:** M6 (Storm Emerald, Japanese-only; TCGdex's rarities look unreliable), MC and MF (deck products).
+- **Variants** come from TCGdex (ADR-052): normal, holo and reverse holo per card, reverse patterns in Erhabene Helden and MEGA Dream ex, and the promotional prints (stamps, Cosmos and league holos, jumbo, deck prints).
+
+**Data quirks (found by the syncs of 2026-09-24)**
+- **Cardmarket side expansions:** Cardmarket files Erhabene Helden's pattern reverses and the non-holo Rares of the Build & Battle Boxes (TCGplayer's "Deck Exclusives") in expansions of their own. MEGA Dream ex's reverse holos are separate Japanese products (6409). The set config lists these as `otherExpansions`.
+- **Japanese Cardmarket ids:** TCGdex has none for M1L, M2 and M3, and splits M2a over two expansions, so the expansions are pinned in the config. The ids come from the international counterparts' metacards. Where a card and its Illustration Rare share a metacard, or a card has no counterpart, curated ids place them between their neighbours' products, which Cardmarket numbers in card order (`data/curated/cards/asia-*.yaml`).
+- **Names:** Japanese reprints of cards the catalog doesn't carry take their names from a donor card with the same artwork, or from `data/curated/names/japanese.yaml` (ADR-051). Each network sync compares curated and PokéAPI names with Cardmarket's product names.
+- **Traditional Chinese:** PTCG-database marks a trainer's name in angle brackets (`<阿響的>凱羅斯`); the pipeline drops them. Its `M-P` folder is Taiwan's own promo series, so it isn't used.
+- **TCGCSV** groups match by name prefix (`m1L: Mega Brave`); a substring match found *SM1S: Collection Sun*.
+- **Pictures:** TCGdex has no Japanese pictures for the M sets. Japanese cards show their international counterpart's or donor's picture (labeled), else a placeholder (155 of 1,213 Japanese cards after the 2026-09-24 sync).
+
 ---
 
 ## 3. TCGdex (primary source)
@@ -192,7 +216,7 @@ Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow colle
 
 ### 6.5 Adding sets after v1 (R2.5, ADR-028)
 
-v1 ships *30 Jahre* only. Marvin's other sets follow **one by one, era by era, once the core site is fully functional** (suggested order, to confirm when v1 is done: Mega Evolution → Scarlet & Violet → Sword & Shield → Sun & Moon → Base Set). Adding a set means:
+v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1). Marvin's other sets follow **one by one, era by era, once the core site is fully functional** (suggested order, to confirm when v1 is done: Mega Evolution → Scarlet & Violet → Sword & Shield → Sun & Moon → Base Set). Adding a set means:
 
 1. A `catalog.config.ts` entry (TCGdex set IDs per print, plus subsets and energies where they exist).
 2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections).
@@ -253,6 +277,20 @@ Released or announced as of 2026-09-23. **Scope (Q4.3):** DE, EN, JP, Traditiona
   - **Charizard figure gift box** ¥780 (China-exclusive).
   - Coin set ¥68.
   - First Partner special-illustration card sets Vol. 1–3.
+
+### 7.4 Mega Evolution series (added 2026-09-24)
+
+139 products in `data/curated/sealed/mega-intl.yaml` and `mega-asia.yaml`. The Cardmarket and TCGplayer ids come from the sync reports: Cardmarket's sealed products per expansion and TCGCSV's per group.
+- **International (DE/EN):**
+  - per main set: booster, Sleeved Booster, displays of 36 and 18 boosters, booster bundle, Top-Trainer-Box (Mega-Entwicklung: Mega-Lucario and Mega-Guardevoir), Pokémon Center Top-Trainer-Box (EN), Build & Battle Box, and the blisters (1-, 2- and 3-pack, Premium-Checklane);
+  - the Mega-Helden mini tins;
+  - Erhabene Helden, sold only in products: Top-Trainer-Box, bundle, mini tins, Tech-Sticker and Premium-Poster collections, ex boxes, tins, the pin collection.
+- German names follow the 30 Jahre pattern and are marked in the file where unconfirmed.
+- US exclusives (Target blisters, Sam's Club) are `[en]` with `exclusive: retailer`.
+- Left out: cases, code cards, art bundles, coins and Cardmarket's single-card sets.
+- **Japanese:** booster and box per set; the Pokémon Center sets of Mega Brave and Mega Symphonia; the Premium Trainer Box; the special sets of MEGA Dream ex and Mega Gallade ex.
+- **Traditional Chinese:** the boosters (names from asia.pokemon-card.com via PTCG-database) and the Ninja Spinner sets Cardmarket lists.
+- **Not included:** the gym and event promo packs of the MEGA promos.
 
 ---
 

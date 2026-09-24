@@ -13,6 +13,49 @@
 
 ---
 
+## Round 9: the Mega Evolution series (open)
+
+**The app already works like the ⭐ options**, so nothing here blocks anything. Anything you leave open stays as it is.
+
+**To try:**
+- **Sets page:** the *Mega-Entwicklung* series lists the seven international sets and the eight Japanese ones.
+- **Mega-Entwicklung:** switch between *International · Asien M1L · Asien M1S* at the top.
+- **Adding a card with several variants:** add Bisasam (Mega-Entwicklung 001) as *Reverse-Holo*. The sheet asks for the variant, and the Sammlung shows it next to the copy.
+- **Cardmarket button** of that reverse holo: it opens the card's product filtered to reverse holos (`isReverseHolo`). Please check that Cardmarket shows only reverse-holo offers there.
+- **A Japanese card:** open MEGA Dream ex 146 (Ns AP-Plus). The German name is marked *übersetzt*, and *Gleiches Motiv* links to the Erhabene Helden card.
+
+**R9.1 · What counts toward Master.** Master counts every card in its regular variants: normal or holo, the reverse holo, and Erhabene Helden's and MEGA Dream ex's reverse patterns. Promotional prints don't count: stamps (set logo, staff, Play! Pokémon, shops), Cosmos and league holos, jumbo cards, and the non-holo Rares from the Build & Battle Boxes (*Nicht-Holo (Deck)*). A promo that only exists as a promotional print (most MEP cards) counts with it (ADR-052).
+- [x] ⭐ Like that: Master = what booster packs hold.
+- [ ] Count the deck prints too.
+- [ ] Count every variant, stamps included.
+
+**R9.2 · Simplified Chinese for the Mega sets.** The Simplified Chinese (and Indonesian/Thai) editions of Mega Brave to Abyss Eye are cut differently from the Japanese sets: other lists, other numbers. So they can't be a language of the Japanese set the way 30th CELEBRATION is (ADR-053). Traditional Chinese matches the Japanese sets and is in.
+- [x] ⭐ Simplified Chinese only for 30th CELEBRATION for now; the Chinese sets come later as sets of their own if you need them.
+- [ ] I need Simplified Chinese Mega cards soon (tell me which sets).
+
+**R9.3 · Sets left out for now.**
+- M6 *Storm Emerald*: Japanese only, and TCGdex's rarities for it look wrong.
+- MC and MF: deck products.
+- [x] ⭐ Add M6 once its international counterpart is out and TCGdex's data has settled.
+- [ ] Add M6 now anyway.
+
+**R9.4 · Names to check (they're marked *übersetzt* in the app).**
+- Two MEGA promos show characters from *Pokémon-Legenden: Z-A* without an international card: グリ as *Gris* (EN *Grisham*) and デウロ as *Duro* (EN *Lida*), the games' German names.
+- Ten MEP promos without German data at TCGdex use the German Pokémon names (e.g. *Driftlon*, *Festliche Fanfare*).
+- [x] ⭐ Keep them; official names replace them when TCGdex has them.
+- [ ] Different names (tell me which).
+
+**R9.5 · Sealed products.** 139 new products, with Cardmarket and TCGplayer ids and pictures:
+- International: displays (36 and 18 boosters), boosters, Top-Trainer-Boxen, bundles, Build & Battle Boxes, blisters, tins and collections.
+- Japanese: boosters, boxes and special sets.
+- Traditional Chinese: the boosters.
+
+The German names follow the 30 Jahre pattern (*Top-Trainer-Box Dunkelnacht*, *3er-Pack-Blister Mega-Entwicklung: Enton*). Names I couldn't confirm are marked in `data/curated/sealed/mega-*.yaml`.
+- [x] ⭐ Fine as they are; tell me a product's name on the box when it differs.
+- [ ] Also add the display cases and the Japanese gym promo packs.
+
+---
+
 ## Round 8: polish and launch (M6, open)
 
 **The app already works like the ⭐ options**, so nothing here blocks v1.0.0. Anything you leave open stays as it is.

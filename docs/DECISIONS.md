@@ -56,6 +56,9 @@
 | 048 | Phone gestures: long press on set tiles, swipe on the card picture | Accepted (M6) |
 | 049 | Quality gates as built: visual baselines made in CI, Lighthouse on the local build, a nightly browser matrix | Accepted (M6) |
 | 050 | Third-party notices generated at build time (`licenses.txt`) | Accepted (M6) |
+| 051 | Asian card names: artwork pairing per set, name donors, a Japanese-name dictionary | Accepted (Mega Evolution) |
+| 052 | Card variants from TCGdex's detailed model; promotional prints outside Master | Accepted (Mega Evolution) |
+| 053 | Asian prints of the Mega Evolution series: Traditional Chinese mirrors, no Simplified Chinese ones, Japanese-only promos | Accepted (Mega Evolution; extends ADR-021, ADR-026) |
 
 ---
 
@@ -542,4 +545,79 @@
 - **Alternatives:**
   - A hand-written list: goes stale.
   - A license plugin that scans the bundle: misses what the workers and the service worker ship.
+
+### ADR-051 · Asian card names: artwork pairing per set, name donors, a Japanese-name dictionary (Accepted, Mega Evolution)
+- **Context:**
+  - TCGdex's Asian data has only Japanese names. For 30 Jahre, German and English names came from the international card with the same artwork (ADR-021).
+  - The Mega Evolution series has eight Japanese sets for seven international ones: Mega-Entwicklung combines Mega Brave and Mega Symphonia.
+  - MEGA Dream ex and the MEGA promos reprint Scarlet & Violet, XY and Sun & Moon trainers the catalog doesn't carry.
+- **Decision:**
+  - **Pairing** (`scripts/catalog/crossprint.ts`) looks only in a Japanese set's configured `counterpartSets`:
+    - Pokémon pair by Pokédex numbers and first illustrator; ties pair in number order.
+    - Trainers and special Energy pair by trainer type (or energy kind), illustrator and tier (numbered or secret), and only when that group is unique on both sides.
+    - Curated counterparts win, also across sets: the Phantasmal Flames blister Pokémon are MEP promos internationally.
+  - **Name donors:** without a counterpart, an international Scarlet & Violet or Mega Evolution card outside the catalog lends its names (and its picture) when its artwork key matches: Pokémon by Pokédex numbers, HP and artist; trainers by type and artist; Energy by artist. All donors must agree. The names must also fit the Japanese one: the species name PokéAPI derives, and an owner's Pokémon ("Erika's Oddish") only for an owner's Japanese name (エリカの…).
+  - **Then**, in this order:
+    1. the same Japanese name elsewhere in the catalog;
+    2. a curated dictionary, `data/curated/names/japanese.yaml` (an international card to take the names from, or the names of the card's last international print);
+    3. PokéAPI's species names, Mega forms included.
+  - Every name that isn't official shows as *übersetzt* (`nameSource`). Each network sync lists curated and PokéAPI names next to Cardmarket's product name.
+- **Consequences:**
+  - Of the Asian names, 1,181 German and English come from counterparts and donors, 36 German and 26 English are curated, and 6 come from PokéAPI.
+  - The 2026-09-24 sync matched every one against Cardmarket's product. It also corrected three provisional MEGA promo names: VS Seeker, Grisham and Lida.
+  - Traditional Chinese names come from PTCG-database per set and number (ADR-026), without its angle-bracket markup (`<阿響的>凱羅斯` prints as 阿響的凱羅斯).
+- **Alternatives:**
+  - Pairing across all sets: one artist often draws a Pokémon several times, which gives false pairs.
+  - Curating every name by hand: about 1,200 cards.
+  - Japanese names only: German-first UI (ADR-019).
+
+### ADR-052 · Card variants from TCGdex's detailed model; promotional prints outside Master (Accepted, Mega Evolution)
+- **Context:** 30 Jahre has one variant per card (`std`). Mega Evolution cards come as normal, holo and reverse holo, with more on top:
+  - reverse-holo patterns (Erhabene Helden, MEGA Dream ex);
+  - Cosmos and league holos;
+  - stamps (set logo, staff, Play! Pokémon, retailers);
+  - jumbo cards;
+  - non-holo Rares from the Build & Battle Boxes (TCGplayer's "Deck Exclusives").
+- **Decision** (`scripts/catalog/variants.ts`):
+  - **Ids read like the card** (DATA_MODEL.md §2):
+    - the type: `normal`, `holo`, `reverse` or `lenticular`;
+    - a reverse pattern (`reverse-pokeball`) or a special finish (`holo-cosmos`, `reverse-league`, `holo-gold`);
+    - stamps and size appended with `+` (`holo+set-logo+staff`, `lenticular+jumbo`);
+    - deck exclusives are `normal+deck`, *Nicht-Holo (Deck)*: a plain non-holo next to a plain holo in a numbered set.
+  - Unknown TCGdex values stop the build until they're added. A variant TCGdex lists only for some languages exists only in those.
+  - **Kinds decide Master:** `finish` and `pattern` count. `stamp` covers every promotional print (stamps, Cosmos and league holos, jumbo, deck exclusives) and doesn't count. A card that only exists in promotional variants (an MEP promo) counts with its first.
+  - 30 Jahre and M6a stay `std` (`variants: 'single'`), so existing holdings keep their variant.
+  - **Cardmarket per variant:**
+    - Ids come from TCGdex, checked against Cardmarket's product file.
+    - A plain reverse holo shares the normal card's product. The link filters for reverse holos and the price guide's `-holo` fields price it, but only when the product really is shared (`isSharedReverse`).
+    - Pattern reverses and MEGA Dream ex's reverse holos are products of their own, in expansions the set config lists (`otherExpansions`).
+  - Lists, lot lines and toasts name a copy's variant only when its card has several.
+- **Consequences:**
+  - Master counts, for example, 326 (card, variant) pairs for Mega-Entwicklung and 613 for Erhabene Helden.
+  - Variant ids are permanent like card ids: a new stamp adds a variant, it never renames one.
+- **Alternatives:**
+  - One `std` per card: loses the reverse holos, which collectors track.
+  - Counting promotional prints in Master: master sets are what booster packs hold.
+
+### ADR-053 · Asian prints of the Mega Evolution series: Traditional Chinese mirrors, no Simplified Chinese ones, Japanese-only promos (Accepted, Mega Evolution; extends ADR-021, ADR-026)
+- **Context:**
+  - A mirrored edition is a language of the Japanese set (DATA_MODEL.md §2).
+  - The 2026-09-24 sync checked Cardmarket's expansions against the Japanese sets' cards. Traditional Chinese keeps the Japanese lists and numbers (PTCG-database, names checked against PokéAPI).
+  - Simplified Chinese and Indonesian/Thai editions cut the sets differently. "Mega Evolution ID/TH" holds half of Mega Brave and half of Mega Symphonia; "Shadow Threat" holds half of Ninja Spinner and half of Abyss Eye. Chinese sets such as CSV10C mix several.
+  - Taiwan numbers its promo cards in a series of its own.
+- **Decision:**
+  - Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Nihil Zero, Ninja Spinner and Abyss Eye carry `ja` and `zh-tw`.
+  - `zh-cn` stays with M6a, the only 1:1 Simplified Chinese mirror.
+  - The MEGA promo cards (M-P) are Japanese only. Their Traditional Chinese names by number were other cards.
+  - The Japanese Cardmarket expansions are pinned per set. The Japanese sealed products include the Traditional Chinese boosters.
+  - A set lists every other print of its expansion (`otherPrints`: Mega-Entwicklung ↔ M1L and M1S). A counterpart names its set (`counterpartSets`).
+  - Left out for now:
+    - M6 (Storm Emerald): Japanese-only, and TCGdex's rarities look unreliable;
+    - MC and MF: deck products.
+- **Consequences:**
+  - Simplified Chinese Mega cards other than 30th CELEBRATION can't be recorded yet. They'd be sets of their own, like TCGdex's `CSV…C` sets, and no open source lists them (R2.8).
+  - TC copies are priced on the Japanese product, as before (R2.3).
+- **Alternatives:**
+  - Simplified Chinese as a language with Japanese numbers: the numbers would be wrong.
+  - Separate Simplified Chinese sets now: no open card lists.
 
