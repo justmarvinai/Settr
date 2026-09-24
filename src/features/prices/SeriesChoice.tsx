@@ -106,6 +106,7 @@ export function SeriesSelectors({ choice }: { choice: SeriesChoice }) {
       {item.variants.length > 1 ? (
         <SegmentedControl
           label={m.prices_variant()}
+          variant="chips"
           value={choice.variant}
           onValueChange={choice.setVariant}
           options={item.variants.map((v) => ({ value: v.id, label: v.label }))}

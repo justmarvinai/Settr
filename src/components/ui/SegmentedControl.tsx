@@ -44,8 +44,10 @@ export function SegmentedControl<T extends string>({
           value={o.value}
           className={cn(
             item,
+            // In a track the pills keep their width and the track scrolls: a shrunken pill's
+            // label would spill over its neighbour and take its taps.
             variant === 'track'
-              ? 'text-ink-muted hover:text-ink'
+              ? 'shrink-0 text-ink-muted hover:text-ink'
               : 'text-ink-muted shadow-[inset_0_0_0_1.5px_var(--border-strong)] hover:text-ink data-checked:shadow-none',
           )}
         >
