@@ -511,7 +511,8 @@
   - **Visual regression** (`visual.yml`, `tests/visual`):
     - six screens in light and dark, with a fixed clock, stubbed pictures and no service worker;
     - the baselines are made and compared only on GitHub's Ubuntu runner, since other machines render text slightly differently;
-    - it runs nightly, not on every PR; a manual run with `update` regenerates the baselines and commits them to the branch.
+    - it runs nightly, not on every PR; a manual run with `update` regenerates every baseline and commits them to the branch;
+    - a screen may differ by at most 100 pixels (each beyond Playwright's color threshold): stray antialiasing passes, a missing line of text doesn't. Each screen waits until the collection has loaded, not just the catalog.
   - **Lighthouse CI** (`lighthouse.yml`) on every PR, against `vite preview` with the production headers instead of the Vercel preview:
     - Vercel's deployment protection would block it, and the deployment URL stays out of the repository (ADR-029);
     - **desktop is the gate** (Brave on Windows, the primary platform, R2.9): LCP ≤ 2 s, CLS ≤ 0.05, blocking time ≤ 200 ms, performance ≥ 90, accessibility ≥ 95 and best practices ≥ 90 fail the job (measured in M6: LCP about 1.1 s, performance 96–98);

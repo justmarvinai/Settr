@@ -37,7 +37,7 @@ The first complete release: everything planned for v1 (M1–M6) for the *30 Jahr
   - **Quality gates (QUALITY.md §2, §4):**
     - e2e journeys 5 (a sealed product's P/L), 9 (offline with the service worker, including a reload without network) and 10 (keyboard only, from adding a card to the price session);
     - every journey nightly in Firefox and on an Android phone (Pixel 7);
-    - visual regression for six screens in light and dark (`visual.yml`), with the baselines made on CI's Ubuntu runner;
+    - visual regression for six screens in light and dark (`visual.yml`), with the baselines made on CI's Ubuntu runner; a screen may differ by at most 100 pixels;
     - Lighthouse CI on every PR (`lighthouse.yml`), on the production build: desktop is the gate (LCP, CLS, blocking time, scores), and the phone profile is a report (R8.3).
   - **Glass and high contrast:** under an open sheet or dialog the chrome stops blurring, so at most three blur layers run at once (one while a sheet is open). With forced colors, big numbers no longer cover their labels.
 - **M5 · Data Safety (v0.5.0 candidate, 2026-09-24).**

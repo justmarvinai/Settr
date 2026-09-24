@@ -43,7 +43,7 @@ jobs:
         run: pnpm e2e --project=visual
       - name: Regenerate the baselines
         if: ${{ inputs.update }}
-        run: pnpm e2e --project=visual --update-snapshots
+        run: pnpm e2e --project=visual --update-snapshots=all
       - name: Commit the baselines
         if: ${{ inputs.update }}
         run: |

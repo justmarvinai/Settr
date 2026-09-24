@@ -14,7 +14,9 @@ export default defineConfig({
       animations: 'disabled',
       caret: 'hide',
       scale: 'css',
-      maxDiffPixelRatio: 0.002,
+      // Baselines and comparisons run on the same runner, so stray antialiasing stays far below
+      // this; a missing line of text (a few hundred pixels) doesn't (ADR-049).
+      maxDiffPixels: 100,
     },
   },
   fullyParallel: true,
