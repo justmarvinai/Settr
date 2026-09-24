@@ -140,7 +140,9 @@ for (const card of sets.flatMap((s) => s.cards)) {
   vocab(STAGES, card.stage, 'stage', card.id);
   vocab(TRAINER_TYPES, card.trainerType, 'trainer type', card.id);
   for (const type of card.types ?? []) vocab(ENERGY_TYPES, type, 'type', card.id);
-  for (const lang of [...card.languages, 'de' as const]) {
+  // The German UI needs a German name, except for a card that only came out in English.
+  const englishOnly = card.languages.includes('en') && !card.languages.includes('de');
+  for (const lang of [...card.languages, ...(englishOnly ? [] : ['de' as const])]) {
     if (!card.name[lang]) problems.errors.push(`${card.id}: no ${lang} name`);
   }
   for (const lang of Object.keys(card.name)) vocab(CARD_LANGUAGES, lang, 'language', card.id);

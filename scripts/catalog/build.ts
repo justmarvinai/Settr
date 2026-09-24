@@ -17,7 +17,7 @@ import {
 } from './config';
 import type { CardOverlay, JapaneseName } from './curated';
 import { matchCounterparts } from './crossprint';
-import { deriveFromSpecies, simplify, type SpeciesNames } from './names';
+import { deriveFromSpecies, germanFromEnglish, simplify, type SpeciesNames } from './names';
 import {
   loadTcgdexSet,
   type RawCard,
@@ -78,6 +78,11 @@ export interface BuildProblems {
 }
 
 const numeric = (localId: string) => (/^\d+$/.test(localId) ? Number(localId) : null);
+/** The number in a prefixed local id: `TG05` → 5, `SWSH001` → 1 (Trainer Gallery, promos). */
+const prefixedNumber = (localId: string) => {
+  const match = /^[A-Z]+(\d+)$/.exec(localId);
+  return match ? Number(match[1]) : null;
+};
 
 function energyTypeOf(localId: string, raw: RawCard): string | undefined {
   if (JAPANESE_ENERGY_CODES[localId]) return JAPANESE_ENERGY_CODES[localId];
@@ -107,6 +112,13 @@ const rawVariants = (raw: RawCard): RawVariant[] =>
         .filter(([, present]) => present)
         .map(([type]) => ({ type }));
 
+/**
+ * Whether booster packs carry a card of this rarity as a holo: everything above Uncommon, Rares
+ * only since Scarlet & Violet (`SetConfig.rareIsHolo`).
+ */
+const isPackHolo = (rarity: RarityId, rareIsHolo: boolean) =>
+  rarity === 'rare' ? rareIsHolo : rarity !== 'common' && rarity !== 'uncommon';
+
 interface CardVariants {
   variants: CardVariant[];
   source: BuiltCard['source']['variants'];
@@ -121,11 +133,19 @@ interface CardVariants {
 function cardVariants(
   config: SetConfig,
   raw: RawCard,
-  languages: readonly CardLanguage[],
+  context: { languages: readonly CardLanguage[]; rarity: RarityId | undefined; extra: boolean },
   where: string,
   problems: BuildProblems,
 ): CardVariants {
-  const list = rawVariants(raw);
+  const { languages, rarity, extra } = context;
+  // The Base Set's print runs (1st Edition, Shadowless, Unlimited): the set holds one of them.
+  const all = rawVariants(raw);
+  const runs = [...new Set(all.flatMap((v) => (v.subtype ? [v.subtype] : [])))];
+  if (runs.length && !config.printRun)
+    problems.errors.push(
+      `${where}: variants of several print runs (${runs.join(', ')}); set printRun`,
+    );
+  const list = all.filter((v) => !v.subtype || v.subtype === config.printRun);
   if (config.variants === 'single' || list.length === 0) {
     const cardmarketIds = new Set<number>();
     const tcgplayerIds = new Set<number>();
@@ -155,13 +175,16 @@ function cardVariants(
     string,
     { def: ReturnType<typeof deriveVariant>; raw: RawVariant; langs?: CardLanguage[] }
   >();
-  // In a numbered set, a plain non-holo next to a plain holo is a deck exclusive (variants.ts).
-  const deckPrint =
+  // In a numbered set, a card with a plain holo and a plain non-holo has one of them from another
+  // product: the non-holo (a deck exclusive) when packs carry the card as a holo, else the holo.
+  const both =
     config.printedTotal !== undefined &&
     list.some((v) => v.type === 'holo' && isPlainVariant(v)) &&
     list.some((v) => (v.type ?? 'normal') === 'normal' && isPlainVariant(v));
+  const packHolo = rarity !== undefined && isPackHolo(rarity, config.rareIsHolo ?? true);
+  const options = { deckPrint: both && packHolo, promoHolo: both && !packHolo, extra };
   for (const variant of list) {
-    const def = deriveVariant(variant, where, { deckPrint });
+    const def = deriveVariant(variant, where, options);
     const langs = variantLanguages(variant, languages);
     if (langs && langs.length === 0) continue; // only in languages Settr doesn't carry
     const seen = byId.get(def.id);
@@ -224,6 +247,7 @@ function toCard(
 
   const printedNumber =
     overlay?.printedNumber ??
+    (extra ? undefined : config.printedNumber?.(localId)) ??
     (n !== null && config.printedTotal && !extra
       ? `${localId}/${config.printedTotal}`
       : JAPANESE_ENERGY_CODES[localId]
@@ -233,7 +257,7 @@ function toCard(
     overlay?.sort ??
     (section === 'energy' && energyType
       ? 2000 + ENERGY_ORDER.indexOf(energyType as never)
-      : (n ?? 1000 + ['R', 'G', 'B'].indexOf(localId)));
+      : (n ?? prefixedNumber(localId) ?? 1000 + ['R', 'G', 'B'].indexOf(localId)));
 
   const rarity =
     config.forceRarity ??
@@ -241,7 +265,13 @@ function toCard(
     mapRarity(raw.rarity, where) ??
     undefined;
   const languages = overlay?.languages ?? config.languages;
-  const variants = cardVariants(config, raw, languages, where, problems);
+  const variants = cardVariants(
+    config,
+    raw,
+    { languages, rarity, extra: extra !== undefined },
+    where,
+    problems,
+  );
   for (const def of variants.defs) if (!legend.has(def.id)) legend.set(def.id, def);
 
   const name: LocalizedText = { ...pickNames(raw, config.languages), ...overlay?.name };
@@ -353,7 +383,25 @@ export async function buildSets(inputs: BuildInputs, problems: BuildProblems): P
     sets.push({ config, summary, raw, cards, legend });
   }
   applyAsianNames(sets, inputs, problems);
+  applyInternationalNames(sets, inputs.species);
   return sets;
+}
+
+/**
+ * German names TCGdex lacks for international cards (promos above all): the species name when the
+ * English name is [region] + species + [suffix] (`Paldean Wooper` → `Paldea-Felino`), shown as
+ * "übersetzt". Anything else needs a curated name, or `languages` when the card never came out in
+ * German (the English name is then the one shown).
+ */
+function applyInternationalNames(sets: BuiltSet[], species: Map<number, SpeciesNames>) {
+  for (const set of sets.filter((s) => s.config.print === 'intl'))
+    for (const card of set.cards) {
+      if (card.name.de || !card.languages.includes('de') || !card.name.en) continue;
+      const de = germanFromEnglish(card.name.en, card.dexIds, species);
+      if (!de) continue;
+      card.name.de = de;
+      setSource(card, 'de', 'derived-pokeapi');
+    }
 }
 
 function setSource(card: BuiltCard, lang: CardLanguage, source: NameSource) {

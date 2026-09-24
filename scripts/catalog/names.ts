@@ -94,6 +94,27 @@ export function deriveFromSpecies(
   };
 }
 
+/**
+ * The German name of an international card TCGdex has no German data for, when the English name is
+ * exactly [region] + species + [suffix] (`Paldean Wooper` → `Paldea-Felino`, `Toxtricity ex` →
+ * `Riffex-ex`). Anything else (`Pikachu with Grey Felt Hat`) must be curated.
+ */
+export function germanFromEnglish(
+  enName: string,
+  dexIds: number[] | undefined,
+  species: Map<number, SpeciesNames>,
+): string | null {
+  if (dexIds?.length !== 1) return null;
+  const names = species.get(dexIds[0] as number);
+  if (!names?.de || !names.en) return null;
+  let rest = enName.trim();
+  const region = REGIONS.find((r) => rest.startsWith(r.en));
+  if (region) rest = rest.slice(region.en.length);
+  const suffix = SUFFIXES.find((s) => rest.endsWith(s.en) && rest.length > s.en.length);
+  if (suffix) rest = rest.slice(0, -suffix.en.length);
+  return rest === names.en ? `${region?.de ?? ''}${names.de}${suffix?.de ?? ''}` : null;
+}
+
 const toSimplified = OpenCC.Converter({ from: 'tw', to: 'cn' });
 
 /** Simplified Chinese from Traditional (Taiwan) text; used for SC card names (ADR-021). */

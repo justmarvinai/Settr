@@ -26,6 +26,9 @@ export interface RawCard {
   trainerType?: string;
   energyType?: string;
   variants?: RawVariant[] | Record<string, boolean>;
+  /** Names only: Cardmarket names Pokémon products after them ("Magikarp [Vigorous Leap]"). */
+  abilities?: { name: Record<string, string | undefined> }[];
+  attacks?: { name: Record<string, string | undefined> }[];
   set: RawSet;
 }
 export interface RawSet {
@@ -35,6 +38,8 @@ export interface RawSet {
   cardCount: { official: number };
   releaseDate: string | Record<string, string | undefined>;
   abbreviations?: { official?: string };
+  /** The set's Cardmarket expansion and TCGplayer group. */
+  thirdParty?: { cardmarket?: number; tcgplayer?: number };
 }
 
 export interface SourceSet {

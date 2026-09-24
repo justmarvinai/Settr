@@ -1,9 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import type { CatalogCard } from '../../src/domain/catalog';
+import type { BuiltCard, BuiltSet } from './build';
+import {
+  applyCardmarket,
+  carryOverCardmarket,
+  type CardmarketIndex,
+  type CardmarketProduct,
+} from './cardmarket';
+import type { SetConfig } from './config';
 import { matchCounterparts } from './crossprint';
 import { fileNameFor, stableJson } from './emit';
-import { deriveFromSpecies, parseJapaneseName, simplify, type SpeciesNames } from './names';
+import {
+  deriveFromSpecies,
+  germanFromEnglish,
+  parseJapaneseName,
+  simplify,
+  type SpeciesNames,
+} from './names';
 import { answers } from './images';
+import type { RawSet } from './tcgdex';
 import { deriveVariant } from './variants';
 
 const species = new Map<number, SpeciesNames>([
@@ -73,6 +88,8 @@ const species = new Map<number, SpeciesNames>([
       'zh-Hans': '班基拉斯',
     },
   ],
+  [194, { de: 'Felino', en: 'Wooper' }],
+  [849, { de: 'Riffex', en: 'Toxtricity' }],
 ]);
 
 describe('Japanese card names', () => {
@@ -116,6 +133,15 @@ describe('Japanese card names', () => {
     });
     expect(deriveFromSpecies('メガニウム', [154], species)?.en).toBe('Meganium');
     expect(deriveFromSpecies('メガメガニウムex', [154], species)?.de).toBe('Mega-Meganie-ex');
+  });
+
+  it('derives German names of international promos TCGdex has none for', () => {
+    expect(germanFromEnglish('Paldean Wooper', [194], species)).toBe('Paldea-Felino');
+    expect(germanFromEnglish('Toxtricity ex', [849], species)).toBe('Riffex-ex');
+    expect(germanFromEnglish('Pikachu', [25], species)).toBe('Pikachu');
+    // Anything but [region] + species + [suffix] needs a curated name.
+    expect(germanFromEnglish('Pikachu with Grey Felt Hat', [25], species)).toBeNull();
+    expect(germanFromEnglish('Special Delivery Charizard', [6], species)).toBeNull();
   });
 
   it('converts Traditional to Simplified Chinese', () => {
@@ -210,6 +236,9 @@ describe('cross-print matching of trainers', () => {
 const deck = (raw: Parameters<typeof deriveVariant>[0]) =>
   deriveVariant(raw, 'test', { deckPrint: true });
 
+const promo = (raw: Parameters<typeof deriveVariant>[0]) =>
+  deriveVariant(raw, 'test', { promoHolo: true });
+
 const variant = (raw: Parameters<typeof deriveVariant>[0]) => {
   const { id, kind, label } = deriveVariant(raw, 'test');
   return { id, kind, de: label.de };
@@ -266,10 +295,169 @@ describe('variants', () => {
     expect(deck({ type: 'normal', stamp: ['set-logo'] }).id).toBe('normal+set-logo');
   });
 
+  it('reads the special foils, stamps and cards of older sets', () => {
+    // Rainbow Rares are the set's own; Cracked Ice holos and metal cards come in other products.
+    expect(variant({ type: 'holo', foil: 'rainbow' })).toEqual({
+      id: 'holo-rainbow',
+      kind: 'finish',
+      de: 'Rainbow-Holo',
+    });
+    expect(variant({ type: 'holo', foil: 'cracked-ice' })).toMatchObject({
+      id: 'holo-cracked-ice',
+      kind: 'stamp',
+    });
+    expect(variant({ type: 'metal', foil: 'gold' })).toEqual({
+      id: 'metal-gold',
+      kind: 'stamp',
+      de: 'Gold-Metallkarte',
+    });
+    expect(variant({ type: 'normal', stamp: ['worlds-2023', 'top-eight'] })).toEqual({
+      id: 'normal+worlds-2023+top-eight',
+      kind: 'stamp',
+      de: 'Normal · WM 2023 · Top 8',
+    });
+  });
+
+  it('keeps the holo print of a card packs carry as a non-holo apart', () => {
+    expect(promo({ type: 'holo' })).toMatchObject({
+      id: 'holo+promo',
+      kind: 'stamp',
+      label: { de: 'Holo (Promo)' },
+    });
+    expect(promo({ type: 'normal' }).id).toBe('normal');
+    expect(promo({ type: 'holo', foil: 'cosmos' }).id).toBe('holo-cosmos');
+  });
+
+  it('counts the pattern prints of a card from another set as promotional', () => {
+    // The basic Energy of Karmesin & Purpur got Poké Ball patterns in later products.
+    expect(
+      deriveVariant({ type: 'reverse', foil: 'pokeball' }, 'test', { extra: true }),
+    ).toMatchObject({ id: 'reverse-pokeball', kind: 'stamp' });
+    expect(deriveVariant({ type: 'reverse', foil: 'pokeball' }, 'test').kind).toBe('pattern');
+  });
+
   it('stops on values it does not know', () => {
-    expect(() => deriveVariant({ type: 'holo', foil: 'galaxy' }, 'x:1')).toThrow(
+    expect(() => deriveVariant({ type: 'holo', foil: 'moonlight' }, 'x:1')).toThrow(
       /unknown variant foil/,
     );
+  });
+});
+
+const rawSet: RawSet = {
+  id: 'sv01',
+  name: { en: 'Scarlet & Violet' },
+  serie: { id: 'sv', name: { en: 'Scarlet & Violet' } },
+  cardCount: { official: 198 },
+  releaseDate: '2023-03-31',
+  thirdParty: { cardmarket: 5223 },
+};
+
+/** A card of Karmesin & Purpur without Cardmarket ids, as TCGdex has them. */
+function unlinked(
+  localId: string,
+  en: string,
+  attacks: string[],
+  variants = ['normal', 'reverse'],
+) {
+  const base = card(`intl:sv01:${localId}`, {
+    sort: Number(localId),
+    name: { en },
+    variants: variants.map((id) => ({ id })),
+  });
+  const built: BuiltCard = {
+    ...base,
+    source: {
+      set: rawSet,
+      localId,
+      raw: {
+        name: { en },
+        category: attacks.length ? 'Pokemon' : 'Trainer',
+        attacks: attacks.map((a) => ({ name: { en: a } })),
+        set: rawSet,
+      },
+      variants: [],
+    },
+  };
+  return built;
+}
+
+const product = (idProduct: number, name: string, idExpansion = 5223): CardmarketProduct => ({
+  idProduct,
+  name,
+  idExpansion,
+});
+
+const svSet = (cards: BuiltCard[]): BuiltSet => ({
+  config: { id: 'intl:sv01', print: 'intl', languages: ['de', 'en'] } as SetConfig,
+  summary: {} as BuiltSet['summary'],
+  raw: rawSet,
+  cards,
+  legend: new Map(),
+});
+
+const productOf = (set: BuiltSet, localId: string, variantId: string) =>
+  set.cards.find((c) => c.localId === localId)?.variants.find((v) => v.id === variantId)?.refs
+    ?.cardmarket?.default;
+
+describe('Cardmarket products by name', () => {
+  it("matches name, attacks and number order in the set's expansion", () => {
+    const set = svSet([
+      unlinked('050', 'Pikachu', ['Quick Attack', 'Thunder']),
+      unlinked('063', 'Pikachu', ['Thunder Shock']),
+      unlinked('166', 'Arven', []),
+      unlinked('235', 'Arven', [], ['holo']),
+      unlinked('081', 'Miraidon ex', ['Photon Blaster'], ['holo']),
+      unlinked('244', 'Miraidon ex', ['Photon Blaster'], ['holo']),
+    ]);
+    const products = [
+      product(700_001, 'Pikachu [Thunder Shock]'),
+      product(700_002, 'Pikachu [Quick Attack | Thunder]'),
+      product(700_010, 'Arven'),
+      product(700_011, 'Arven'),
+      product(700_020, 'Miraidon ex [Photon Blaster]'),
+      product(700_030, 'Pikachu [Thunder Shock]', 9999),
+    ];
+    const cm: CardmarketIndex = {
+      singles: new Map(products.map((p) => [p.idProduct, p])),
+      nonsingles: new Map(),
+    };
+    const problems = { errors: [], warnings: [] };
+    const report = applyCardmarket([set], cm, [], new Map(), problems);
+
+    expect(productOf(set, '050', 'normal')).toBe(700_002);
+    expect(productOf(set, '063', 'normal')).toBe(700_001);
+    // The reverse holo is sold on the card's own product.
+    expect(productOf(set, '063', 'reverse')).toBe(700_001);
+    expect(productOf(set, '166', 'normal')).toBe(700_010);
+    expect(productOf(set, '235', 'holo')).toBe(700_011);
+    // Two prints, one product: left for curation.
+    expect(productOf(set, '081', 'holo')).toBeUndefined();
+    const [finding] = report.international;
+    expect(finding).toMatchObject({ setId: 'intl:sv01', expansion: 5223, byName: 4 });
+    expect(finding?.unresolved).toHaveLength(1);
+    expect(finding?.unmatched.map((p) => p.idProduct)).toEqual([700_020]);
+    expect(problems.warnings).toEqual([]);
+  });
+
+  it('keeps the products it found in offline builds', () => {
+    const set = svSet([unlinked('063', 'Pikachu', ['Thunder Shock'])]);
+    const before = card('intl:sv01:063', {
+      variants: [
+        { id: 'normal', refs: { cardmarket: { default: 700_001 } } },
+        { id: 'reverse', refs: { cardmarket: { default: 700_001 } } },
+      ],
+    });
+    carryOverCardmarket(
+      [set],
+      {
+        manifest: null,
+        cards: new Map([[before.id, before]]),
+        sets: new Map(),
+        products: new Map(),
+      },
+      new Map(),
+    );
+    expect(productOf(set, '063', 'reverse')).toBe(700_001);
   });
 });
 
