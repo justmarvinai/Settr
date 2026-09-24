@@ -205,7 +205,7 @@
   "catalog_language_label": "Kartensprache",
   "catalog_filters_label": "Karten filtern",
   "catalog_set_search_label": "In diesem Set suchen",
-  "catalog_set_search_placeholder": "Name oder Nummer",
+  "catalog_set_search_placeholder": "Name oder Nr.",
   "catalog_filter_section": "Bereich",
   "catalog_filter_section_all": "Alle Bereiche",
   "catalog_filter_rarity": "Seltenheit",

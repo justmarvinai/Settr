@@ -105,7 +105,7 @@ The first complete release: everything planned for v1 (M1–M6) for the *30 Jahr
   - Every count has a singular form (*1 Karte*, *1 Produkt*, *Nur 1 freier Platz*, *Kosten auf 1 Pull verteilt*), and a full binder says *Kein freier Platz mehr*.
   - One term per concept: *Kaufpreis* (not *Einkaufspreis*), *gegradet*, *Reverse-Holo*, *Plätze* in binders, *aktueller Preis* (not *Marktpreis*), *Illustrator*, *Im Besitz*, *Secret Rares*, *Klassische Sammlung*, *Display (Asien)*, *Poor*, *Zertifikatsnummer*, *Auf Cardmarket öffnen*, *… anzeigen* on buttons and links, *Speichern & weiter* / *Anlegen & weiter*.
   - CSV headers: *Wert/Stk.*, *Preisreihe*, *Note* and *Einkauf* (for a sale's cost).
-  - Clearer hints: the Daten page (backup, import, snapshots, delete on exit), splitting a product's cost over its pulls, *Eigener Wert*, binder pages, the Cardmarket filters and *Seit dem Kauf*; the sidebar pill reads *Zuletzt vor 3 Tagen*; Schnellerfassung errors say what's wrong.
+  - Clearer hints: the Daten page (backup, import, snapshots, delete on exit), splitting a product's cost over its pulls, *Eigener Wert*, binder pages, the Cardmarket filters and *Seit dem Kauf*; the sidebar pill reads *Zuletzt vor 3 Tagen*; Schnellerfassung errors say what's wrong. A set page's search hint is *Name oder Nr.*, so it fits next to the *Im Besitz* filter at 1440 px.
   - 18 messages nothing used are gone.
 - M5:
   - `SCHEMA_VERSION` lives in `domain/schemas/version.ts`.
