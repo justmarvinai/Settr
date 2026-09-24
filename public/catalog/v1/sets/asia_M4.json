@@ -39,6 +39,9 @@
           "lang": "ja"
         }
       }
+    },
+    "logo": {
+      "ja": "https://assets.tcgdex.net/ja/M/M4/logo"
     }
   },
   "subsets": [],

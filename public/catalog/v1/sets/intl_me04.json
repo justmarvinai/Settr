@@ -39,6 +39,10 @@
           "lang": "en"
         }
       }
+    },
+    "logo": {
+      "de": "https://assets.tcgdex.net/de/me/me04/logo",
+      "en": "https://assets.tcgdex.net/en/me/me04/logo"
     }
   },
   "subsets": [],
