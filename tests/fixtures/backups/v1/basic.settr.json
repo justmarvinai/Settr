@@ -1,0 +1,424 @@
+{
+  "format": "settr-backup",
+  "formatVersion": 1,
+  "schemaVersion": 1,
+  "app": {
+    "name": "Settr",
+    "version": "0.5.0",
+    "catalogVersion": "2026.09.23.5"
+  },
+  "exportedAt": "2026-09-24T08:00:00.000Z",
+  "installId": "01a0d1f2-fee0-73b0-8b39-0b43c354272a",
+  "options": {
+    "includesMedia": true
+  },
+  "counts": {
+    "holdings": 4,
+    "prices": 4,
+    "wishlist": 1,
+    "tags": 2,
+    "locations": 2,
+    "customItems": 1,
+    "media": 1,
+    "tombstones": 1
+  },
+  "checksum": {
+    "algorithm": "SHA-256",
+    "value": "d62920792da2cade200eb82f8a1ccf85e0274e9619af7862aa72b1083c329b10"
+  },
+  "data": {
+    "holdings": [
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2e02901dc927",
+        "createdAt": "2026-09-20T09:30:00.000Z",
+        "updatedAt": "2026-09-22T09:30:00.000Z",
+        "item": {
+          "kind": "card",
+          "id": "intl:30th:150"
+        },
+        "setId": "intl:30th",
+        "print": "intl",
+        "snapshot": {
+          "name": "Pikachu-ex",
+          "setName": "30 Jahre",
+          "localId": "150"
+        },
+        "language": "de",
+        "variant": "normal",
+        "condition": "NM",
+        "quantity": 3,
+        "acquisition": {
+          "type": "purchase",
+          "date": "2026-09-20",
+          "priceTotal": {
+            "minor": 7800,
+            "currency": "EUR"
+          },
+          "feesTotal": {
+            "minor": 120,
+            "currency": "EUR"
+          },
+          "source": "Cardmarket"
+        },
+        "disposals": [
+          {
+            "id": "01a0d1f2-fedf-7209-98a0-2e010b231d7e",
+            "type": "sale",
+            "date": "2026-09-22",
+            "quantity": 1,
+            "proceedsTotal": {
+              "minor": 3900,
+              "currency": "EUR"
+            },
+            "feesTotal": {
+              "minor": 195,
+              "currency": "EUR"
+            },
+            "note": "Cardmarket"
+          }
+        ],
+        "tags": ["01a0d1f2-fede-75ad-8bee-ae898eb5d2af", "01a0d1f2-fedf-7209-98a0-2dfc199ff988"],
+        "location": {
+          "id": "01a0d1f2-fedf-7209-98a0-2dfd6ce9d71f",
+          "page": 1,
+          "slot": 4
+        },
+        "mediaIds": ["01a0d1f2-fedf-7209-98a0-2e00ce1053d3"],
+        "note": "Zentriert"
+      },
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2e0362f6b2ce",
+        "createdAt": "2026-09-21T09:30:00.000Z",
+        "updatedAt": "2026-09-21T09:30:00.000Z",
+        "item": {
+          "kind": "card",
+          "id": "asia:M6a:017"
+        },
+        "setId": "asia:M6a",
+        "print": "asia",
+        "snapshot": {
+          "name": "Pikachu",
+          "setName": "30th CELEBRATION",
+          "localId": "017"
+        },
+        "language": "ja",
+        "variant": "normal",
+        "grading": {
+          "company": "PSA",
+          "grade": "10",
+          "cert": "12345678"
+        },
+        "quantity": 1,
+        "acquisition": {
+          "type": "trade",
+          "date": "2026-09-21"
+        },
+        "disposals": [],
+        "tags": [],
+        "mediaIds": [],
+        "valueOverride": {
+          "price": {
+            "minor": 12000,
+            "currency": "EUR"
+          },
+          "date": "2026-09-21",
+          "note": "Vergleichsverkauf"
+        }
+      },
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b3b1aed9238",
+        "createdAt": "2026-09-19T09:30:00.000Z",
+        "updatedAt": "2026-09-19T09:30:00.000Z",
+        "item": {
+          "kind": "sealed",
+          "id": "sealed:30th:ttb-de"
+        },
+        "setId": "intl:30th",
+        "print": "intl",
+        "snapshot": {
+          "name": "Top-Trainer-Box"
+        },
+        "language": "de",
+        "sealedState": "sealed",
+        "quantity": 1,
+        "acquisition": {
+          "type": "purchase",
+          "date": "2026-09-19",
+          "priceTotal": {
+            "minor": 5499,
+            "currency": "EUR"
+          }
+        },
+        "disposals": [],
+        "tags": [],
+        "location": {
+          "id": "01a0d1f2-fedf-7209-98a0-2dfefc8be31e"
+        },
+        "mediaIds": []
+      },
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b3c3d47b228",
+        "createdAt": "2026-09-21T09:30:00.000Z",
+        "updatedAt": "2026-09-21T09:30:00.000Z",
+        "item": {
+          "kind": "card",
+          "id": "custom:01a0d1f2-fedf-7209-98a0-2dff7ef6562e"
+        },
+        "snapshot": {
+          "name": "Pikachu (Messe-Promo)",
+          "setName": "Promos",
+          "localId": "P-7"
+        },
+        "language": "de",
+        "condition": "EX",
+        "quantity": 1,
+        "acquisition": {
+          "type": "gift"
+        },
+        "disposals": [],
+        "tags": [],
+        "mediaIds": []
+      }
+    ],
+    "prices": [
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b3e5e19cab1",
+        "createdAt": "2026-09-20T09:30:00.000Z",
+        "updatedAt": "2026-09-20T09:30:00.000Z",
+        "seriesKey": "card|intl:30th:150|de|normal|raw",
+        "item": {
+          "kind": "card",
+          "id": "intl:30th:150"
+        },
+        "language": "de",
+        "variant": "normal",
+        "grade": "raw",
+        "snapshot": {
+          "name": "Pikachu-ex",
+          "setName": "30 Jahre",
+          "localId": "150"
+        },
+        "date": "2026-09-20",
+        "price": {
+          "minor": 2990,
+          "currency": "EUR"
+        },
+        "priceType": "from",
+        "source": "cardmarket",
+        "context": {
+          "sellerCountry": "DE",
+          "language": "de",
+          "minCondition": "NM"
+        },
+        "origin": "manual"
+      },
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b3f67816c1e",
+        "createdAt": "2026-09-23T09:30:00.000Z",
+        "updatedAt": "2026-09-23T09:30:00.000Z",
+        "seriesKey": "card|intl:30th:150|de|normal|raw",
+        "item": {
+          "kind": "card",
+          "id": "intl:30th:150"
+        },
+        "language": "de",
+        "variant": "normal",
+        "grade": "raw",
+        "snapshot": {
+          "name": "Pikachu-ex",
+          "setName": "30 Jahre",
+          "localId": "150"
+        },
+        "date": "2026-09-23",
+        "price": {
+          "minor": 3490,
+          "currency": "EUR"
+        },
+        "priceType": "from",
+        "source": "cardmarket",
+        "context": {
+          "sellerCountry": "DE",
+          "language": "de",
+          "minCondition": "NM"
+        },
+        "origin": "manual",
+        "note": "Nach Release"
+      },
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b40eeb29a36",
+        "createdAt": "2026-09-23T09:30:00.000Z",
+        "updatedAt": "2026-09-23T09:30:00.000Z",
+        "seriesKey": "card|intl:30th:150|de|normal|raw",
+        "item": {
+          "kind": "card",
+          "id": "intl:30th:150"
+        },
+        "language": "de",
+        "variant": "normal",
+        "grade": "raw",
+        "snapshot": {
+          "name": "Pikachu-ex",
+          "setName": "30 Jahre",
+          "localId": "150"
+        },
+        "date": "2026-09-23",
+        "price": {
+          "minor": 3120,
+          "currency": "EUR"
+        },
+        "priceType": "trend",
+        "source": "cardmarket",
+        "origin": "guide"
+      },
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b4174abebb7",
+        "createdAt": "2026-09-22T09:30:00.000Z",
+        "updatedAt": "2026-09-22T09:30:00.000Z",
+        "seriesKey": "sealed|sealed:30th:ttb-de|de",
+        "item": {
+          "kind": "sealed",
+          "id": "sealed:30th:ttb-de"
+        },
+        "language": "de",
+        "grade": "raw",
+        "snapshot": {
+          "name": "Top-Trainer-Box"
+        },
+        "date": "2026-09-22",
+        "price": {
+          "minor": 6490,
+          "currency": "EUR"
+        },
+        "priceType": "from",
+        "source": "cardmarket",
+        "origin": "manual"
+      }
+    ],
+    "wishlist": [
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b420e94a378",
+        "createdAt": "2026-09-22T09:30:00.000Z",
+        "updatedAt": "2026-09-22T09:30:00.000Z",
+        "item": {
+          "kind": "card",
+          "id": "intl:30th:161"
+        },
+        "snapshot": {
+          "name": "Glurak"
+        },
+        "language": "de",
+        "targetPrice": {
+          "minor": 15000,
+          "currency": "EUR"
+        },
+        "priority": 1,
+        "note": "Master Set"
+      }
+    ],
+    "tags": [
+      {
+        "id": "01a0d1f2-fede-75ad-8bee-ae898eb5d2af",
+        "createdAt": "2026-09-20T09:30:00.000Z",
+        "updatedAt": "2026-09-20T09:30:00.000Z",
+        "name": "Favoriten",
+        "color": "indigo"
+      },
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2dfc199ff988",
+        "createdAt": "2026-09-20T09:30:00.000Z",
+        "updatedAt": "2026-09-21T09:30:00.000Z",
+        "name": "Zum Verkauf"
+      }
+    ],
+    "locations": [
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2dfd6ce9d71f",
+        "createdAt": "2026-09-19T09:30:00.000Z",
+        "updatedAt": "2026-09-19T09:30:00.000Z",
+        "name": "VaultX 9er",
+        "kind": "binder",
+        "layout": {
+          "columns": 3,
+          "rows": 3
+        },
+        "pages": 20,
+        "sort": 0
+      },
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2dfefc8be31e",
+        "createdAt": "2026-09-19T09:30:00.000Z",
+        "updatedAt": "2026-09-19T09:30:00.000Z",
+        "name": "Displaykarton",
+        "kind": "box",
+        "sort": 1
+      }
+    ],
+    "customItems": [
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2dff7ef6562e",
+        "createdAt": "2026-09-21T09:30:00.000Z",
+        "updatedAt": "2026-09-21T09:30:00.000Z",
+        "kind": "card",
+        "name": {
+          "de": "Pikachu (Messe-Promo)",
+          "en": "Pikachu (Event promo)"
+        },
+        "setName": "Promos",
+        "localId": "P-7",
+        "languages": ["de"],
+        "rarity": "promo",
+        "note": "Vom Stand"
+      }
+    ],
+    "media": [
+      {
+        "id": "01a0d1f2-fedf-7209-98a0-2e00ce1053d3",
+        "createdAt": "2026-09-21T09:30:00.000Z",
+        "updatedAt": "2026-09-21T09:30:00.000Z",
+        "mime": "image/webp",
+        "width": 1,
+        "height": 1,
+        "bytes": 4,
+        "base64": "AQID+g=="
+      }
+    ],
+    "settings": {
+      "cardLanguages": ["de", "en", "ja", "zh-cn", "zh-tw"],
+      "defaultCardLanguage": "ja",
+      "defaultCondition": "NM",
+      "nameDisplay": "german",
+      "price": {
+        "defaultType": "from",
+        "cardmarket": {
+          "sellerCountry": "DE",
+          "matchLanguage": true,
+          "minCondition": "NM"
+        },
+        "guideSuggestions": true,
+        "staleAfterDays": 30,
+        "unpriced": "cost"
+      },
+      "display": {
+        "theme": "dark",
+        "reduceTransparency": false,
+        "motion": "full",
+        "colorblindPL": false
+      },
+      "backup": {
+        "remindAfterDays": 14
+      }
+    },
+    "overrides": {
+      "cardmarket": {
+        "card|intl:30th:150|de|normal": 907757
+      }
+    },
+    "tombstones": [
+      {
+        "id": "01a0d1f2-fee0-73b0-8b39-0b3de1862317",
+        "table": "holdings",
+        "deletedAt": "2026-09-22T09:30:00.000Z"
+      }
+    ]
+  }
+}

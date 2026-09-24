@@ -62,12 +62,13 @@ export function toMediaRow({ base64, ...rest }: BackupMedia): MediaRow {
 
 /**
  * Every user table, the settings and the overrides, read in one read-only transaction so they're a
- * consistent snapshot. Without media the photos table reads as empty.
+ * consistent snapshot, with the change counter they were read at. Without media the photos table
+ * reads as empty.
  */
-export async function readUserData(
+export async function readUserState(
   db: SettrDB,
   { includesMedia = true }: { includesMedia?: boolean } = {},
-): Promise<BackupData> {
+): Promise<{ data: BackupData; dataVersion: number }> {
   const read = await db.transaction('r', [...userTables(db), db.kv], async () => ({
     holdings: await db.holdings.toArray(),
     prices: await db.prices.toArray(),
@@ -79,22 +80,34 @@ export async function readUserData(
     tombstones: await db.tombstones.toArray(),
     settings: (await db.kv.get('settings'))?.value,
     cardmarket: (await db.kv.get(OVERRIDES_KEY))?.value,
+    dataVersion: await getDataVersion(db),
   }));
+  // Outside the transaction: reading a blob isn't an IndexedDB request and would end it.
   const media: BackupMedia[] = [];
   for (const row of read.media) media.push(await toBackupMedia(row));
   const overrides = cardmarketOverridesSchema.safeParse(read.cardmarket ?? {});
   return {
-    holdings: read.holdings,
-    prices: read.prices,
-    wishlist: read.wishlist,
-    tags: read.tags,
-    locations: read.locations,
-    customItems: read.customItems,
-    media,
-    settings: resolveSettings(read.settings),
-    overrides: { cardmarket: overrides.success ? overrides.data : {} },
-    tombstones: read.tombstones,
+    data: {
+      holdings: read.holdings,
+      prices: read.prices,
+      wishlist: read.wishlist,
+      tags: read.tags,
+      locations: read.locations,
+      customItems: read.customItems,
+      media,
+      settings: resolveSettings(read.settings),
+      overrides: { cardmarket: overrides.success ? overrides.data : {} },
+      tombstones: read.tombstones,
+    },
+    dataVersion: read.dataVersion,
   };
+}
+
+export async function readUserData(
+  db: SettrDB,
+  options: { includesMedia?: boolean } = {},
+): Promise<BackupData> {
+  return (await readUserState(db, options)).data;
 }
 
 export interface BackupOptions {
