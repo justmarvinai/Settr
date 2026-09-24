@@ -4,13 +4,55 @@
 > **Rounds 1–7: decided ✓.** Rounds 1–3 were answered one by one (spec v0.3). For rounds 4–7 you chose my recommendation (⭐) everywhere on 2026-09-24 (spec v0.4).
 > **Round 8 (M6) and round 9 (Mega Evolution): open, nothing blocking.** The app already works like the ⭐ options; answer when you check them.
 > **Round 10 (your older sets): decided 2026-09-24 with the ⭐ options**, as you asked ("go with your recommended defaults"). Tell me if you want any of them changed.
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M6 and the Mega Evolution series are merged (PRs #1–#5); your older sets are in PR #6.
+> **Round 11 (the rest of the eras): decided 2026-09-24**, by your answer and, where you didn't say, with the ⭐ options.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M6, the Mega Evolution series and your older sets are merged (PRs #1–#6); the rest of the eras is on `claude/great-edison-uri1z0`.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 11: the rest of the eras (decided 2026-09-24)
+
+You asked for every missing set of the eras you already have a set from, except the Base Set's ("I don't own any other WOTC/Vintage-Era Cards anymore"), and for everything I listed, M6, MC and MF included. The rest is decided with my ⭐ defaults, as before. Tell me if you want one changed.
+
+**To try:**
+- **Sets page:** *Karmesin & Purpur* now has 19 sets (with *My First Battle* and *Karmesin & Purpur Energie*), *Schwert & Schild* 19 (their galleries and vaults inside), *Sonne & Mond* 17. *Mega-Entwicklung* adds Asien M6, MC and MF.
+- **A Sun & Moon card:** a Rare from *Sonne & Mond* offers *Normal* and *Reverse-Holo*, a GX only *Holo*. TCGdex has no variants for these sets; TCGplayer's printings stand in (ADR-057).
+- **Verborgenes Schicksal** and **Glänzendes Schicksal:** the *Glitzer-Tresor* is a section of each set (SV1/SV94, SV001/SV122).
+- **Celebrations:** the *Klassische Kollektion* with the original numbers and German names (Glurak 4/102). Search `#4/102` finds three cards now.
+- **Search "pikachu":** the Pikachu cards come first, Meisterdetektiv Pikachu after, the Detective Pikachu set's other cards last (ADR-060).
+- **Numbers:** sets under 100 cards now read like the card: `001/086` in Schwarze Blitze, `001/063` in Mega Brave.
+
+**R11.1 · Which sets.** Every other set of *Karmesin & Purpur*, *Schwert & Schild* and *Sonne & Mond*, without the Base Set's era, plus M6 *Storm Emerald*, MC (*Start Deck 100 Battle Collection*) and MF (the premium deck set of 30th CELEBRATION).
+- [x] Your answer (2026-09-24).
+
+**R11.2 · Prints and sealed products.** Like your older sets (R10.1, R10.2): the international print only, cards only.
+- [x] ⭐ Like that; sealed products or Japanese prints of a set when you ask.
+- [ ] Add sealed products now (tell me which sets).
+
+**R11.3 · Energy and galleries.**
+- *Karmesin & Purpur Energie* (SVE 001–024) becomes a set of its own. The basic Energy 001–008 moves there from *Karmesin & Purpur*; the ids stay, and your copies follow the cards on their own, also after an import (ADR-061).
+- The *Astralglanz Trainer-Galerie* becomes a section of *Astralglanz* (R10.5); your copies stay too.
+- [x] ⭐ Like that.
+
+**R11.4 · Sun & Moon variants.** TCGdex has no variants for most Sun & Moon sets. Settr takes TCGplayer's printings per card (Normal, Holo, Reverse-Holo), keeps them between syncs and falls back to the rarity (ADR-057). A Rare that only exists as a holo shows as *Holo Rare*.
+- [x] ⭐ Like that.
+- [ ] One variant per card, no reverse holos.
+
+**R11.5 · English-only cards.** *My First Battle*, *Pokémon Futsal 2020* and the seven Ash's Pikachu movie promos (SM108–SM114) never came out in German: they only offer English copies and show their English names.
+- [x] ⭐ Like that.
+- [ ] Offer German copies anyway.
+
+**R11.6 · Names of M6's new trainers.** *Storm Emerald* has no English print yet, so its eleven new trainers have no official German or English names. They carry my translations, marked *übersetzt* like every name of a Japanese card (*Mega-Rayquaza-Kappe*, *Legendärer Gipfel*, *Amalias Vertrauen*); the official names replace them with the English set (ME06).
+- [x] ⭐ Like that.
+- [ ] Show the Japanese names until then.
+
+**R11.7 · Search.** The search index for all 85 sets is about 710 KB (gzip). It loads on the first search and builds in about half a second on a desktop, then stays cached.
+- [x] ⭐ One index for all sets; I split it per series if search feels slow on your iPhone.
 
 ---
 
@@ -75,8 +117,8 @@ You asked for 21 sets you have cards from, "only these for now", and for my reco
 **R9.3 · Sets left out for now.**
 - M6 *Storm Emerald*: Japanese only, and TCGdex's rarities for it look wrong.
 - MC and MF: deck products.
-- [x] ⭐ Add M6 once its international counterpart is out and TCGdex's data has settled.
-- [ ] Add M6 now anyway.
+- [ ] ⭐ Add M6 once its international counterpart is out and TCGdex's data has settled.
+- [x] Add M6 now anyway: your answer in round 11 (2026-09-24), with MC and MF. TCGdex's rarities are corrected by number (ADR-058).
 
 **R9.4 · Names to check (they're marked *übersetzt* in the app).**
 - Two MEGA promos show characters from *Pokémon-Legenden: Z-A* without an international card: グリ as *Gris* (EN *Grisham*) and デウロ as *Duro* (EN *Lida*), the games' German names.

@@ -4,9 +4,9 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: v1.x · YOUR SETS — 21 older sets ✅ built, waiting for Marvin's check** (2026-09-24: "add the following sets … only these for now"). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1–M6 and the Mega Evolution series are merged into `main` (PRs #1–#5). The older sets are in PR #6 on `claude/great-edison-uri1z0` (restarted from `main` after PR #5; opened 2026-09-24, squash merge recommended). The tag `v1.0.0` goes on `main` once Marvin says go (R8.4). Vercel is connected. Open on Marvin's side: say go for the tag, add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, run the Brave smoke test (`docs/QUALITY.md` §3.1) and the iPhone check (`USER_QUESTIONS.md` rounds 8–10, "To try"), answer rounds 8–9 when convenient (round 10 is decided with his ⭐ defaults), then merge PR #6.
+**Current phase: v1.x · YOUR SETS — the rest of the eras ✅ built, waiting for Marvin's check** (2026-09-24: "add all missing sets from all Eras we currently at least have one Set from … except for the Era where Base Set is in"). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1–M6, the Mega Evolution series and the 21 older sets are merged into `main` (PRs #1–#6). The rest of the eras is on `claude/great-edison-uri1z0` (continued from `main` after PR #6); a PR opens when Marvin asks. The tag `v1.0.0` goes on `main` once Marvin says go (R8.4). Vercel is connected. Open on Marvin's side: say go for the tag, add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, run the Brave smoke test (`docs/QUALITY.md` §3.1) and the iPhone check (`USER_QUESTIONS.md` rounds 8–11, "To try"), answer rounds 8–9 when convenient (rounds 10–11 are decided).
 
-- Question rounds 1–7 are decided and incorporated (spec v0.4; for rounds 4–7 Marvin chose every recommendation). Round 10 (older sets) is decided with the ⭐ options, as Marvin asked. Rounds 8 (M6) and 9 (Mega Evolution) are open without blockers: the app works like their ⭐ options. Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
+- Question rounds 1–7 are decided and incorporated (spec v0.4; for rounds 4–7 Marvin chose every recommendation). Round 10 (older sets) is decided with the ⭐ options, as Marvin asked; round 11 (the rest of the eras) by his answer and the ⭐ options. Rounds 8 (M6) and 9 (Mega Evolution) are open without blockers: the app works like their ⭐ options. Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
 - The repository stays **public** for now (R3.2): never commit price-guide snapshots or the deployment URL (ADR-029).
 
@@ -32,12 +32,12 @@ Settr is a **local-first Pokémon TCG collection tracker** for **singles and sea
     - No Simplified Chinese.
     - Real variants: normal, holo, reverse, patterns, and promotional prints outside Master.
     - Sealed: DE/EN/JP/TC.
-  - Not yet: M6 (Storm Emerald), MC, MF.
-  - **Older sets (2026-09-24, ADR-054–056, R10):** only the sets Marvin listed, international (DE/EN), cards only.
-    - Scarlet & Violet: `sv10.5b`, `sv10.5w`, `sv10`, `sv08.5`, `sv08`, `sv04.5`, `sv03.5`, `sv01` (+ energies `sve` 001–008), `svp`.
-    - Sword & Shield: `swsh12.5` (+ `swsh12.5gg`), `swsh11` (+ `swsh11tg`), `swsh10tg` (standalone), `swsh9` (+ `swsh9tg`), `swsh4`, `swsh2`, `swshp`.
-    - Sun & Moon: `sm3`. Base: `base1`, Unlimited print only (`printRun`).
-    - Galleries are subsets; `holo+promo` = the holo of a card packs carry as a non-holo; Cardmarket products by name where TCGdex has no ids (`sv01`, `sm3`).
+    - Since R11 also `M6` (rarities by number, ADR-058; provisional names for its new trainers), `MC` and `MF`.
+  - **Older eras (2026-09-24, ADR-054–059, R10–R11):** international (DE/EN), cards only. **Every set** of Scarlet & Violet, Sword & Shield and Sun & Moon, and from the Base era only `base1` (Unlimited print, `printRun`).
+    - Scarlet & Violet: `sv01`–`sv10.5w`, `svp`, `mfb` (EN only), `sve` 001–024 (its own set; ids kept).
+    - Sword & Shield: `swsh1`–`swsh12.5`, `cel25`, `swsh10.5`, `fut2020` (EN only), `swshp`; subsets `swsh4.5sv`, `cel25cc`, `swsh9tg`, `swsh10tg`, `swsh11tg`, `swsh12tg`, `swsh12.5gg`.
+    - Sun & Moon: `sm1`–`sm12`, `sm3.5`, `sm7.5`, `det1`, `sm115` (+ `sma`), `smp`.
+    - Galleries and vaults are subsets; `holo+promo` = the holo of a card packs carry as a non-holo; Cardmarket products by name where TCGdex has no ids (`sv01`, `sm3`); finishes from TCGplayer's printings where TCGdex has no variants (most Sun & Moon sets, ADR-057).
 - **Design:** direction **D · Bold Studio** (`DESIGN_SYSTEM.md` §1.2): heavy wide type, floating glass sidebar, neutral surfaces with one accent, light + dark. **Usability and UX always come first** (Marvin).
 
 ## Where things are

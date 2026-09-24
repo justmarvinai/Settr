@@ -62,6 +62,11 @@
 | 054 | Marvin's older sets: international cards only, galleries as subsets, the Base Set's Unlimited print | Accepted (Your sets, R10) |
 | 055 | Variants before Scarlet & Violet: promotional holos, print runs, extra cards | Accepted (Your sets; extends ADR-052) |
 | 056 | Cardmarket for international sets: the expansion from TCGdex, products by name where TCGdex has no id | Accepted (Your sets) |
+| 057 | Finishes TCGdex lacks: TCGplayer's printings, kept offline, a rarity rule last | Accepted (Your sets) |
+| 058 | Rarities by number where TCGdex's are wrong | Accepted (Your sets) |
+| 059 | The remaining sets of every era Marvin collects from, except the Base era | Accepted (Your sets, R11; updates ADR-054) |
+| 060 | Search ranking in tiers; species names apart | Accepted (Your sets; extends ADR-012) |
+| 061 | Cards that move to another set: the catalog lists them, lots follow | Accepted (Your sets) |
 
 ---
 
@@ -630,8 +635,8 @@
   - **International print only (DE/EN), cards only.** No Japanese prints of these sets and no sealed products for now (R10.1, R10.2).
   - **Four series** on the Sets page, newest first: *Karmesin & Purpur*, *Schwert & Schild*, *Sonne & Mond* and *Grundset-Serie*.
   - **Galleries are subsets** of their main set, like the Classic Collection: Crown Zenith's Galarian Gallery, and Lost Origin's and Brilliant Stars' Trainer Galleries. They form the set page's *Galar-Galerie* / *Trainer-Galerie* section. Master counts them; Basis and Komplett don't.
-    - Astral Radiance's Trainer Gallery stands alone until Astral Radiance comes (R10.5). Its set id and card ids stay; it then becomes a subset.
-  - **Karmesin & Purpur** (SV Base) carries the first basic Energy (SVE 001–008), the way Mega-Entwicklung carries MEE 001–008.
+    - Astral Radiance's Trainer Gallery stands alone until Astral Radiance comes (R10.5). Its set id and card ids stay; it then becomes a subset. *(Done: ADR-059.)*
+  - **Karmesin & Purpur** (SV Base) carries the first basic Energy (SVE 001–008), the way Mega-Entwicklung carries MEE 001–008. *(Since ADR-059, Karmesin & Purpur Energie is a set of its own; the ids stayed.)*
   - **Base Set:** the Unlimited print (R10.4). TCGdex lists the print runs as variant subtypes; `printRun: 'unlimited'` keeps one. 1st Edition, Shadowless and the 1999–2000 copyright print stay out; the jumbo cards and the PokéTour stamp are promotional variants.
   - **Numbers as printed:** Sword & Shield prints three digits (`001/185`) where TCGdex's ids have none; Sun & Moon and the Base Set don't (`4/102`); galleries print `TG05/TG30` and `GG05/GG70`; promos `SWSH001` and `001`. Card ids keep TCGdex's local id (`intl:swsh4:1`), never the printed number.
   - **Promos:**
@@ -679,3 +684,65 @@
   - Curating about 430 ids by hand.
   - Search links only: no exact product, no price-guide suggestions (PRC-09).
 
+
+### ADR-057 · Finishes TCGdex lacks: TCGplayer's printings, kept offline, a rarity rule last (Accepted, Your sets)
+- **Context:**
+  - TCGdex has no variants for most Sun & Moon sets (Sonne & Mond to Welten im Wandel): the card files have no `variants`, so every card would get the single variant `std`.
+  - Schwert & Schild and Weg des Champs list variants as flags (`normal`, `reverse`, `holo`) and keep the card's Cardmarket and TCGplayer products on the card, not on the variant; so do the Sun & Moon sets.
+  - TCGplayer lists a card's printings (Normal, Holofoil, Reverse Holofoil) per product, and TCGCSV mirrors them as static JSON (DATA_SOURCES.md §4), a source the pipeline already uses.
+- **Decision** (`scripts/catalog/finishes.ts`, `build.ts`):
+  - A set whose cards come without variants names its TCGplayer group (`tcgplayerGroup`). Network builds read the group's printings per card number; a plain product wins over promotional ones with the same number ("Caterpie (Prerelease)").
+  - Offline builds keep the finishes of the last build; a card neither knows gets a rarity rule: Commons, Uncommons and Rares normal and reverse holo, everything rarer holo.
+  - The variants are normal, holo and reverse like TCGdex's, so ids and the deck/promo rules (ADR-055) are the same as elsewhere.
+  - The card's own products go to its regular variants (normal, holo, reverse holo); stamped, deck and promo prints never inherit them.
+  - A Sun & Moon card TCGdex calls "Rare" that TCGplayer prints only as a holo is a *Holo Rare*.
+  - The build report counts, per set, where the finishes came from.
+- **Consequences:** Sun & Moon cards offer their real variants (a Rare as *Normal* and *Reverse-Holo*, a GX as *Holo*). A later TCGdex release with variants replaces the fallback without changing ids.
+- **Alternatives:**
+  - pokemon-tcg-data (GitHub): no license, and its README advises against new use.
+  - The rarity rule alone: wrong for Holo Rares, which TCGdex doesn't tell apart from Rares in these sets.
+  - One `std` variant per card: no reverse holos, which collectors track.
+
+### ADR-058 · Rarities by number where TCGdex's are wrong (Accepted, Your sets)
+- **Context:** TCGdex lists every card of Storm Emerald (M6) above 076 as Mega Hyper Rare. Every M set so far shares one layout above its printed total: 12 AR, 18 SR (17 in M2), 6 SAR and one MUR.
+- **Decision:** `rarityRanges` in the set config: rarities by card number that win over TCGdex's. M6: 077–088 AR, 089–106 SR, 107–112 SAR, 113 MUR.
+- **Consequences:** M6's secret cards get their printed marks (AR/SR/SAR/MUR), holo-viewer foils and rarity filters. The ranges go once TCGdex fixes the data; the report shows the difference.
+- **Alternatives:** a curated rarity per card: 37 entries for what a rule states.
+
+### ADR-059 · The remaining sets of every era Marvin collects from, except the Base era (Accepted, Your sets, R11)
+- **Context:** Marvin (2026-09-24): "add all missing sets from all Eras we currently at least have one Set from", then "except for the Era where Base Set is in … besides these Sets add all you listed above".
+- **Decision** (`scripts/catalog/config.ts`, `data/curated/`):
+  - **All other sets** of Karmesin & Purpur, Schwert & Schild and Sonne & Mond, and the Japanese M6, MC and MF; international prints only, cards only (like R10.1, R10.2).
+  - **Subsets:** Silberne Sturmwinde's Trainer-Galerie, the two Glitzer-Tresore (Shiny Vaults), Celebrations' Klassische Kollektion. The Astralglanz Trainer-Galerie becomes Astralglanz's subset (R10.5); its ids stay.
+  - **Karmesin & Purpur Energie** (SVE 001–024) becomes a set of its own; SVE 001–008 keep their ids and leave Karmesin & Purpur.
+  - **English only:** My First Battle, the Pokémon Futsal promos and the seven Ash's Pikachu movie promos: no German print, so no German name is due.
+  - **Numbers as printed:** three-digit numbers print a three-digit total (`001/086`, `001/063`, also in the sets already there); the Shiny Vaults `SV001/SV122` and `SV1/SV94`; the Klassische Kollektion its original numbers (curated, like 30 Jahre's).
+  - **Names of Japanese cards:**
+    - MC and MF reprint Karmesin & Purpur and Mega-Entwicklung cards. Where several international cards share the illustrator, the curated dictionary points to the card with the same name, checked against TCGdex: the same illustrator drew both (`data/curated/names/reprints.yaml`).
+    - M6's eleven new trainers have no international print yet, so no official German or English names exist. They carry Settr's own translations, marked *übersetzt* like every name of a Japanese card (`data/curated/names/m6-provisional.yaml`); ME06's names replace them.
+- **Consequences:** see the report of the sync (DATA_SOURCES.md §2.3). The catalog holds 85 sets with 13,817 cards; the search index about 710 KB gzip (ADR-060).
+- **Alternatives:**
+  - Japanese names for M6's new trainers (no translation): unreadable in a German list and unsearchable by German names.
+  - Waiting for ME06 with M6 (R9.3's default): Marvin asked for it now.
+
+### ADR-060 · Search ranking in tiers; species names apart (Accepted, Your sets; extends ADR-012)
+- **Context:** With 14,000 documents, "pikachu" put *Meisterdetektiv Pikachu* first: its set name matches too, and every card of that set turned up. The index mixed a card's names with the PokéAPI species names used as aliases, so "exact name" couldn't be told.
+- **Decision** (`src/catalog/search/engine.ts`, `scripts/catalog/emit.ts`):
+  - Search documents keep `names` (the card's names in every language) apart from `aliases` (species names it isn't named after). Both are searched.
+  - Results rank in tiers before relevance: an exact card number or name first, then other name matches, then documents found only through their set or illustrator.
+- **Consequences:** "pikachu" lists the Pikachu cards first, Meisterdetektiv Pikachu and the other named Pikachus next, and the set's other cards last. Building the index takes about 0.5 s in the worker on a desktop; queries stay under 10 ms.
+- **Alternatives:** dropping set names from the index: `glurak 151` needs them. FlexSearch (ADR-012's fallback): not needed at this size.
+
+### ADR-061 · Cards that move to another set: the catalog lists them, lots follow (Accepted, Your sets)
+- **Context:**
+  - A lot stores the set it was added from (`setId`); set pages, completion and the Sammlung load that set's file to find the card.
+  - ADR-059 moved the first basic Energy (SVE 001–008) from Karmesin & Purpur into Karmesin & Purpur Energie. The card ids stayed (ADR-054), but lots recorded under `intl:sv01` would no longer find their card and would fall back to their snapshot. The same will happen when MEE 001–016 get a set of their own.
+- **Decision:**
+  - `data/curated/moved-cards.yaml` lists each moved card with the set it was in. The pipeline checks the list (the card exists and did move) and stops when a card changes set without an entry. The manifest carries `movedCards`: card id → its set now.
+  - The app points lots of listed cards at the card's set now (`repairMovedCards`, `src/app/shell/CatalogRepairs.tsx`): once the collection has lots, and again whenever a lot turns up under the old set (an import, an undo), through a live query.
+  - The set is a reference to the catalog, not an edit: `updatedAt` stays, so a merge sees the lot as it was, and the repair runs again after it.
+- **Consequences:** Lots of the SVE Energy show up on Karmesin & Purpur Energie's page and in its completion. Card ids stay permanent (DATA_MODEL.md §3); only the set they're filed under changes, and the list keeps that visible in review.
+- **Alternatives:**
+  - Keeping SVE 001–008 in Karmesin & Purpur's file: the Energy set would miss its first eight cards.
+  - Looking a card up in every set file: loads the whole catalog for one lot.
+  - A Dexie migration: the move comes from a catalog update, which a schema version doesn't track, and imported backups would bring the old set back.
