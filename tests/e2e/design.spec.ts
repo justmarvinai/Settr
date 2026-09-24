@@ -1,6 +1,10 @@
 import type { CDPSession, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
+// The service worker would fetch card pictures itself once it controls the page, past the
+// fixtures' picture stubs; the PWA spec covers it.
+test.use({ serviceWorkers: 'block' });
+
 /** Records how each view transition ends (DSN-02). */
 async function watchTransitions(page: Page): Promise<() => Promise<string[]>> {
   await page.evaluate(() => {
