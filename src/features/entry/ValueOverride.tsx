@@ -39,6 +39,7 @@ function ValueForm({ info, holding }: { info: ItemInfo; holding: Holding }) {
     language: holding.language,
     condition: holding.condition,
     quantity: remaining(holding),
+    variant: holding.variant,
   });
 
   const parsed = parseMoneyInput(amount);

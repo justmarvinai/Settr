@@ -156,6 +156,7 @@ export function QuickEntry({
         language: defaults.language,
         condition: defaults.condition,
         quantity: command.quantity,
+        variant,
       });
       setEntries((list) => [{ id: holding.id, label, undone: false }, ...list].slice(0, 50));
       setText('');
@@ -212,6 +213,7 @@ export function QuickEntry({
                 language: defaults.language,
                 condition: defaults.condition,
                 quantity: preview.command.quantity,
+                variant: preview.variant,
               }),
             })
           ) : (

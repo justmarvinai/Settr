@@ -38,5 +38,6 @@ export function describeRow(row: LibraryRow): string {
     language: h.language,
     condition: h.grading ? gradingText(h.grading) : h.condition,
     quantity: Math.max(remaining(h), 1),
+    variant: h.variant,
   });
 }

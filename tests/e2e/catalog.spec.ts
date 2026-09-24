@@ -1,4 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { expect, pageTitle, test } from './fixtures';
+
+/** The catalog the build ships; counts come from it, so a new set doesn't break these tests. */
+const sealed = JSON.parse(readFileSync('public/catalog/v1/sealed.json', 'utf8')) as {
+  products: { type: string }[];
+};
+const count = (type: string) => sealed.products.filter((p) => p.type === type).length;
 
 test('sets overview lists both prints and filters by print', async ({ page }) => {
   await page.goto('/catalog');
@@ -87,7 +94,9 @@ test('sealed list filters and product page details', async ({ page }) => {
   await page
     .getByRole('combobox', { name: 'Produkttyp', exact: true })
     .selectOption({ label: 'Mini-Tin' });
-  await expect(page.getByText('10 von 52 Produkten')).toBeVisible();
+  await expect(
+    page.getByText(`${count('mini-tin')} von ${sealed.products.length} Produkten`),
+  ).toBeVisible();
   await page.getByRole('link', { name: /Psiana & Mauzi/ }).click();
   await expect(page.getByRole('heading', { name: /Psiana & Mauzi/, level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Weitere Motive' })).toBeVisible();
@@ -124,8 +133,13 @@ test('card search: numbers, power-user filters and the URL', async ({ page }) =>
   await page.goto('/catalog/cards');
   await page.getByRole('button', { name: '#150' }).click();
   await expect(page).toHaveURL(/q=%23150/);
-  await expect(page.getByText('2 Karten', { exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: /^150\/128, Pikachu-ex/ })).toBeVisible();
+  // Every set's number 150, and nothing else.
+  const results = page.getByRole('main').getByRole('link', { name: /^\d+\/\d+, / });
+  for (const label of await results.evaluateAll((links) =>
+    links.map((link) => link.getAttribute('aria-label')),
+  ))
+    expect(label).toMatch(/^150\//);
 
   await page.getByRole('searchbox', { name: 'Karten suchen' }).fill('rarity:sir set:30c');
   await expect(page.getByText('10 Karten', { exact: true })).toBeVisible();

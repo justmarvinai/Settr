@@ -90,3 +90,27 @@ export function groupBySeries(sets: readonly CatalogSetSummary[]): SeriesGroup[]
     .map((group) => ({ ...group, sets: group.sets.toSorted(byRelease) }))
     .toSorted((a, b) => newest(b).localeCompare(newest(a)));
 }
+
+/**
+ * Every print of a set's expansion, the set included, for the print switch (UX_SPEC.md §4.3): its
+ * other prints and theirs, so a Japanese half of Mega-Entwicklung also offers the other half.
+ * International first, then in catalog order.
+ */
+export function printsOf(
+  set: CatalogSetSummary,
+  sets: readonly CatalogSetSummary[],
+): CatalogSetSummary[] {
+  const ids = new Set(otherPrintIds(set));
+  for (const id of otherPrintIds(set)) {
+    const other = sets.find((s) => s.id === id);
+    for (const sibling of other ? otherPrintIds(other) : []) ids.add(sibling);
+  }
+  ids.delete(set.id);
+  const order = (s: CatalogSetSummary) => sets.findIndex((x) => x.id === s.id);
+  return [set, ...sets.filter((s) => ids.has(s.id))].toSorted((a, b) =>
+    a.print === b.print ? order(a) - order(b) : a.print === 'intl' ? -1 : 1,
+  );
+}
+
+const otherPrintIds = (s: CatalogSetSummary) =>
+  s.otherPrints ?? (s.otherPrint ? [s.otherPrint] : []);

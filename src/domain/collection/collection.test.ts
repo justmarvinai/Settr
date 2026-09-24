@@ -217,6 +217,23 @@ describe('set completion (DATA_MODEL §6.6)', () => {
     expect(result.master).toEqual({ owned: 1, total: 2 });
   });
 
+  it('counts a promo that only exists in promotional variants with its first one', () => {
+    const promos = [
+      card('p:018', 'main', { variants: [{ id: 'holo-cosmos' }, { id: 'holo-cosmos+staff' }] }),
+      card('p:019', 'main', { variants: [{ id: 'holo' }, { id: 'holo+set-logo' }] }),
+    ];
+    const legend = [
+      { id: 'holo', kind: 'finish' as const },
+      { id: 'holo-cosmos', kind: 'stamp' as const },
+      { id: 'holo-cosmos+staff', kind: 'stamp' as const },
+      { id: 'holo+set-logo', kind: 'stamp' as const },
+    ];
+    const held = lot({ item: { kind: 'card', id: 'p:018' }, variant: 'holo-cosmos' });
+    const result = setCompletion(promos, [held], { variantsLegend: legend });
+    expect(result.master).toEqual({ owned: 1, total: 2 });
+    expect(result.komplett.total).toBe(2);
+  });
+
   it('sums copies per card for the grid badges', () => {
     const owned = ownedByCard([
       lot({

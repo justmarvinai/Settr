@@ -260,7 +260,13 @@ export function CardPage() {
               language: h.language,
               condition: h.condition,
               quantity: remaining(h),
+              variant: h.variant,
             })
+          }
+          variantOf={(h) =>
+            info.variants.length > 1
+              ? info.variants.find((v) => v.id === h.variant)?.label
+              : undefined
           }
           onAdd={() => openAdd({ kind: 'card', id: card.id }, setId, lang)}
         />

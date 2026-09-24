@@ -166,12 +166,21 @@ export function offeredLanguages(
 /** `150/128 Pikachu-ex · DE · NM` for toasts. */
 export function lotLabel(
   info: ItemInfo,
-  lot: { language: CardLanguage; condition?: string | undefined; quantity: number },
+  lot: {
+    language: CardLanguage;
+    condition?: string | undefined;
+    quantity: number;
+    variant?: string | undefined;
+  },
 ): string {
   const name = info.name(lot.language).text;
   const head = [info.ref.kind === 'card' ? info.number : undefined, name].filter(Boolean).join(' ');
+  // The variant only where the card has several (`Reverse-Holo`), as in the lists.
+  const variant =
+    info.variants.length > 1 ? info.variants.find((v) => v.id === lot.variant)?.label : undefined;
   return [
     lot.quantity > 1 ? `${lot.quantity} × ${head}` : head,
+    variant,
     languageCode(lot.language),
     info.ref.kind === 'card' ? lot.condition : undefined,
   ]

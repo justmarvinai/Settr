@@ -33,6 +33,7 @@ import {
   type CatalogCard,
   type CatalogSetSummary,
   pickLanguage,
+  printsOf,
   visibleLanguages,
   cardName,
   type NameMode,
@@ -174,13 +175,8 @@ export function SetPage() {
         : filtered;
   const grouped = sort === 'number' && !search.section;
   const isFiltered = filtered.length !== loaded.cards.length;
-  // The same expansion in the other print; Mega-Entwicklung has two Japanese sets.
-  const others = (set.otherPrints ?? (set.otherPrint ? [set.otherPrint] : [])).flatMap((id) =>
-    manifest.sets.filter((s) => s.id === id),
-  );
-  const prints = [set, ...others].toSorted((a, b) =>
-    a.print === b.print ? 0 : a.print === 'intl' ? -1 : 1,
-  );
+  // The same expansion in every print; Mega-Entwicklung has two Japanese sets.
+  const prints = printsOf(set, manifest.sets);
   const printName = (s: CatalogSetSummary) =>
     prints.filter((p) => p.print === s.print).length > 1 && s.code
       ? `${printLabel(s.print)} ${s.code}`
@@ -273,7 +269,7 @@ export function SetPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          {others.length ? (
+          {prints.length > 1 ? (
             <nav aria-label={m.catalog_print_label()}>
               <ul className="m-0 flex list-none gap-0.5 rounded-pill bg-hover p-1">
                 {prints.map((s) => (
