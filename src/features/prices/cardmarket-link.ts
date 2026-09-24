@@ -11,6 +11,8 @@ export interface CardmarketLink {
   hint: string;
   /** The exact product, when known: its price-guide values become suggestions (PRC-09). */
   productId?: number | undefined;
+  /** The copy is the product's reverse holo: filtered for, priced by the guide's `-holo` fields. */
+  reverse?: boolean | undefined;
 }
 
 /**
@@ -18,7 +20,10 @@ export interface CardmarketLink {
  * reads it (R2.2, Einstellungen › Preise), else Cardmarket's search for the name and number.
  */
 export function cardmarketLinkOf(
-  info: Pick<ItemInfo, 'ref' | 'name' | 'number' | 'languages' | 'cardmarketId'>,
+  info: Pick<
+    ItemInfo,
+    'ref' | 'name' | 'number' | 'languages' | 'cardmarketId' | 'cardmarketReverse'
+  >,
   language: CardLanguage,
   variant: string | undefined,
   settings: Settings,
@@ -26,10 +31,15 @@ export function cardmarketLinkOf(
   const productId = info.cardmarketId?.(language, variant);
   if (productId) {
     const hint = { language: languageLabel(language) };
+    const reverse = info.cardmarketReverse?.(language, variant) ?? false;
     return {
-      href: cardmarketUrl(productId, cardmarketFilters(settings, language)),
+      href: cardmarketUrl(productId, {
+        ...cardmarketFilters(settings, language),
+        reverseHolo: reverse,
+      }),
       exact: true,
       productId,
+      reverse,
       hint:
         info.ref.kind === 'card'
           ? m.catalog_cardmarket_filters(hint)

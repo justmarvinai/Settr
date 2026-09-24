@@ -15,10 +15,14 @@ export function quantityText(h: Holding): string {
     : m.lot_remaining({ remaining: formatCount(left), quantity: formatCount(h.quantity) });
 }
 
-/** The variant's name, unless it's the standard print (which most cards only have). */
+/**
+ * The variant's name, when the card comes in more than one (`Reverse-Holo`); a card with a
+ * single print (every 30 Jahre card, a holo-only ex) needs none.
+ */
 export function variantText(row: LibraryRow): string | undefined {
   const variant = row.holding.variant;
-  return variant && variant !== STANDARD_VARIANT ? row.variantLabel : undefined;
+  if (!variant || variant === STANDARD_VARIANT || row.info.variants.length < 2) return undefined;
+  return row.variantLabel;
 }
 
 /** `NM`, `PSA 10` or `Versiegelt`. */

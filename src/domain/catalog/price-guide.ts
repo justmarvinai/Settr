@@ -46,15 +46,9 @@ const toMinor = (euros: number | undefined) =>
   euros === undefined || euros <= 0 ? undefined : Math.round(euros * 100);
 
 /**
- * Cardmarket's `-holo` fields are its reverse-holo prices for Pokémon (DATA_SOURCES.md §8.3); a
- * variant counts as reverse when its id says so. 30 Jahre has none.
- */
-export const isReverseVariant = (variant: string | undefined) =>
-  variant?.startsWith('reverse') ?? false;
-
-/**
  * The guide's *ab* and *Trend* for a product, or nothing when the snapshot is missing, older than
- * three days or doesn't list the product. `reverse` reads the `-holo` fields.
+ * three days or doesn't list the product. `reverse` reads the `-holo` fields: Cardmarket's
+ * reverse-holo prices for Pokémon, listed on the normal card's product (DATA_SOURCES.md §8.3).
  */
 export function guideSuggestion(
   snapshot: PriceGuideSnapshot | null | undefined,

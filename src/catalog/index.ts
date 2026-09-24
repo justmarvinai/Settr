@@ -5,6 +5,7 @@ export {
   cardmarketProductId,
   cardmarketSearchUrl,
   cardmarketUrl,
+  isSharedReverse,
   productCardmarketUrl,
   type CardmarketFilters,
 } from './cardmarket';

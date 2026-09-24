@@ -1,4 +1,4 @@
-import { cardmarketProductId, type LoadedSet } from '@/catalog';
+import { cardmarketProductId, isSharedReverse, type LoadedSet } from '@/catalog';
 import {
   lotName,
   pickText,
@@ -40,6 +40,8 @@ export interface ItemInfo {
   image: (lang: CardLanguage) => CatalogImage | undefined;
   /** Cardmarket's product for a copy in `lang` (a card's variant), when the catalog knows it. */
   cardmarketId?: ((lang: CardLanguage, variant?: string) => number | undefined) | undefined;
+  /** Whether that product sells the copy as its reverse holo (`isSharedReverse`). */
+  cardmarketReverse?: ((lang: CardLanguage, variant?: string) => boolean) | undefined;
 }
 
 export const CUSTOM_PREFIX = 'custom:';
@@ -67,6 +69,8 @@ export function cardInfo(card: CatalogCard, loaded: LoadedSet): ItemInfo {
     image: (lang) => card.images[lang],
     cardmarketId: (lang, variant = card.variants[0]?.id ?? STANDARD_VARIANT) =>
       cardmarketProductId(card, variant, lang),
+    cardmarketReverse: (lang, variant = card.variants[0]?.id ?? STANDARD_VARIANT) =>
+      isSharedReverse(card, variant, lang),
   };
 }
 

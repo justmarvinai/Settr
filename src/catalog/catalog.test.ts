@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { CatalogCard } from '@/domain/catalog';
-import { cardmarketProductId, cardmarketSearchUrl, cardmarketUrl } from './cardmarket';
+import {
+  cardmarketProductId,
+  cardmarketSearchUrl,
+  cardmarketUrl,
+  isSharedReverse,
+} from './cardmarket';
 import { imageCrossOrigin, imageSrc, setArtSrc } from './images';
 
 const intl: Pick<CatalogCard, 'variants'> = {
@@ -31,6 +36,34 @@ describe('Cardmarket links (PRC-06)', () => {
     expect(tc.searchParams.get('language')).toBe('11');
     expect(tc.searchParams.get('minCondition')).toBe('3');
     expect(new URL(cardmarketUrl(1)).searchParams.has('language')).toBe(false);
+  });
+
+  it("filters for reverse holos only where they share the normal card's product", () => {
+    // Serperior (Perfect Order 006): holo and reverse on one product, the deck print on its own.
+    const rare: Pick<CatalogCard, 'variants'> = {
+      variants: [
+        { id: 'holo', refs: { cardmarket: { default: 877418 } } },
+        { id: 'reverse', refs: { cardmarket: { default: 877418 } } },
+        { id: 'normal+deck', refs: { cardmarket: { default: 881886 } } },
+      ],
+    };
+    expect(isSharedReverse(rare, 'reverse', 'de')).toBe(true);
+    expect(isSharedReverse(rare, 'holo', 'de')).toBe(false);
+    expect(isSharedReverse(rare, 'normal+deck', 'de')).toBe(false);
+    // MEGA Dream ex sells its reverse holos as products of their own; patterns never share.
+    const japanese: Pick<CatalogCard, 'variants'> = {
+      variants: [
+        { id: 'normal', refs: { cardmarket: { byLanguage: { ja: 861245 } } } },
+        { id: 'reverse', refs: { cardmarket: { byLanguage: { ja: 861527 } } } },
+        { id: 'reverse-energy', refs: { cardmarket: { byLanguage: { ja: 861526 } } } },
+      ],
+    };
+    expect(isSharedReverse(japanese, 'reverse', 'ja')).toBe(false);
+    expect(isSharedReverse(japanese, 'reverse-energy', 'ja')).toBe(false);
+    expect(
+      new URL(cardmarketUrl(877418, { reverseHolo: true })).searchParams.get('isReverseHolo'),
+    ).toBe('Y');
+    expect(new URL(cardmarketUrl(877418)).searchParams.has('isReverseHolo')).toBe(false);
   });
 
   it('falls back to a search', () => {

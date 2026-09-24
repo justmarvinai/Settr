@@ -123,9 +123,13 @@ export function CardPage() {
   const image = card.images[lang];
   const number = card.printedNumber || card.localId;
   const mark = card.printedRarity?.[lang];
-  // Counterparts live in the other print's chunk (ids are never parsed, DATA_MODEL.md §3).
-  const otherPrint = manifest.sets.find((s) => s.id === loaded.set.otherPrint);
-  const counterparts = otherPrint ? (card.counterparts ?? []) : [];
+  // Counterparts live in the other print's chunks; the catalog names each one's set (card ids
+  // are never parsed, DATA_MODEL.md §3). Older catalogs only knew the set's `otherPrint`.
+  const counterparts = (card.counterparts ?? []).flatMap((id, i) => {
+    const homeId = card.counterpartSets?.[i] ?? loaded.set.otherPrint;
+    const home = manifest.sets.find((s) => s.id === homeId);
+    return home ? [{ id, set: home }] : [];
+  });
 
   const imageNote =
     image && image.lang !== lang
@@ -294,18 +298,18 @@ export function CardPage() {
           </dl>
         </Panel>
 
-        {otherPrint && counterparts.length ? (
+        {counterparts.length ? (
           <Panel className="flex flex-col gap-2 p-5">
             <h3 className="type-h3 m-0">{m.catalog_counterparts_title()}</h3>
             <ul className="m-0 flex list-none flex-col gap-1 p-0">
-              {counterparts.map((id) => (
+              {counterparts.map(({ id, set: home }) => (
                 <li key={id}>
                   <Link
                     to="/catalog/sets/$setId/cards/$cardId"
-                    params={{ setId: otherPrint.id, cardId: id }}
+                    params={{ setId: home.id, cardId: id }}
                     className="type-ui text-accent-text underline-offset-4 hover:underline"
                   >
-                    {m.catalog_counterpart_link({ set: pickText(otherPrint.name) })}
+                    {m.catalog_counterpart_link({ set: pickText(home.name) })}
                   </Link>
                 </li>
               ))}

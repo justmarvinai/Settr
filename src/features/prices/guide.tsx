@@ -2,11 +2,7 @@ import type { KeyboardEvent, ReactNode } from 'react';
 import { usePriceGuide } from '@/catalog/price-guide';
 import { Kbd } from '@/components/ui/Kbd';
 import { useSettings } from '@/db';
-import {
-  guideSuggestion,
-  isReverseVariant,
-  type GuideSuggestion,
-} from '@/domain/catalog/price-guide';
+import { guideSuggestion, type GuideSuggestion } from '@/domain/catalog/price-guide';
 import type { CardLanguage, ItemRef } from '@/domain/catalog-types';
 import { todayIso } from '@/domain/ids';
 import { money } from '@/domain/money';
@@ -43,13 +39,14 @@ function scopeOf(item: { ref: ItemRef; languages: readonly CardLanguage[] }, lan
 
 /**
  * The guide's suggestion for a series (PRC-09): only raw copies (the guide knows no grades), only
- * with Einstellungen › Preise › Vorschläge on, only for a known product and a fresh snapshot.
+ * with Einstellungen › Preise › Vorschläge on, only for a known product and a fresh snapshot. A
+ * reverse holo sold on the normal card's product reads the `-holo` fields.
  */
 export function useGuide(
   item: { ref: ItemRef; languages: readonly CardLanguage[] },
   language: CardLanguage,
-  series: { variant: string; grade: string },
-  productId: number | undefined,
+  series: { grade: string },
+  { productId, reverse = false }: { productId?: number | undefined; reverse?: boolean | undefined },
 ): Guide | undefined {
   const settings = useSettings();
   const on = settings.price.guideSuggestions && series.grade === 'raw' && productId !== undefined;
@@ -57,7 +54,7 @@ export function useGuide(
   if (!on) return undefined;
   const suggestion = guideSuggestion(snapshot, productId, {
     today: todayIso(),
-    reverse: isReverseVariant(series.variant),
+    reverse,
   });
   if (!suggestion) return undefined;
   const preferred: GuidePick | undefined =

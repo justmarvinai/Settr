@@ -39,7 +39,7 @@ import { formatCount, formatMoney, formatRelative } from '@/i18n/format';
 import { formatAmountInput, parseMoneyInput } from '@/i18n/money-input';
 import { entryTypeLabel, priceTypeLabel } from '@/i18n/price-labels';
 import { useMediaQuery } from '@/lib/useMediaQuery';
-import { cardmarketLinkOf } from './cardmarket-link';
+import { cardmarketLinkOf, type CardmarketLink } from './cardmarket-link';
 import { GuideChips, GuideKey, isGuideKey, useGuide, type GuidePick } from './guide';
 import { SCOPE_LABELS } from './PricesPage';
 import { contextOf, priceTypeOf, sourceOf } from './series';
@@ -77,7 +77,10 @@ function openCardmarket(href: string) {
 function seriesLine(lot: Holding, row: LibraryRow | undefined): string {
   return [
     languageLabel(lot.language),
-    row?.variantLabel && lot.variant !== STANDARD_VARIANT ? row.variantLabel : undefined,
+    // The variant only when the card has several (as in the Sammlung lists)
+    row && row.info.variants.length > 1 && lot.variant !== STANDARD_VARIANT
+      ? row.variantLabel
+      : undefined,
     lot.grading ? gradingText(lot.grading) : lot.condition,
   ]
     .filter(Boolean)
@@ -93,8 +96,12 @@ function StepView({
   latestEntry,
   actions,
   position,
-  productId,
-}: StepProps & { href: string; exact: boolean; productId: number | undefined }) {
+  cardmarket,
+}: StepProps & {
+  href: string;
+  exact: boolean;
+  cardmarket: Pick<CardmarketLink, 'productId' | 'reverse'>;
+}) {
   const id = useId();
   const settings = useSettings();
   const desktop = useMediaQuery('(min-width: 1024px)');
@@ -108,8 +115,8 @@ function StepView({
   const guide = useGuide(
     row?.info ?? { ref: { kind: 'card', id: '' }, languages: [] },
     lot?.language ?? 'de',
-    { variant: lot?.variant ?? STANDARD_VARIANT, grade: gradeKey(lot?.grading) },
-    productId,
+    { grade: gradeKey(lot?.grading) },
+    cardmarket,
   );
   const parsed = parseMoneyInput(amount);
   const latest = state.latest;
@@ -348,17 +355,10 @@ function Step(props: StepProps) {
   const settings = useSettings();
   const lot = props.state.lots[0];
   if (!lot) return null;
-  const link = props.row
+  const link: CardmarketLink = props.row
     ? cardmarketLinkOf(props.row.info, lot.language, lot.variant, settings)
-    : { href: cardmarketSearchUrl(lot.snapshot.name), exact: false };
-  return (
-    <StepView
-      {...props}
-      href={link.href}
-      exact={link.exact}
-      productId={'productId' in link ? link.productId : undefined}
-    />
-  );
+    : { href: cardmarketSearchUrl(lot.snapshot.name), exact: false, hint: '' };
+  return <StepView {...props} href={link.href} exact={link.exact} cardmarket={link} />;
 }
 
 function Summary({ session, data }: { session: PriceSessionState; data: SessionData }) {
