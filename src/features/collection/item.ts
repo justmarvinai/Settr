@@ -1,4 +1,4 @@
-import { cardmarketProductId, type LoadedSet } from '@/catalog';
+import { cardmarketProductId, isSharedReverse, type LoadedSet } from '@/catalog';
 import {
   lotName,
   pickText,
@@ -40,6 +40,8 @@ export interface ItemInfo {
   image: (lang: CardLanguage) => CatalogImage | undefined;
   /** Cardmarket's product for a copy in `lang` (a card's variant), when the catalog knows it. */
   cardmarketId?: ((lang: CardLanguage, variant?: string) => number | undefined) | undefined;
+  /** Whether that product sells the copy as its reverse holo (`isSharedReverse`). */
+  cardmarketReverse?: ((lang: CardLanguage, variant?: string) => boolean) | undefined;
 }
 
 export const CUSTOM_PREFIX = 'custom:';
@@ -67,6 +69,8 @@ export function cardInfo(card: CatalogCard, loaded: LoadedSet): ItemInfo {
     image: (lang) => card.images[lang],
     cardmarketId: (lang, variant = card.variants[0]?.id ?? STANDARD_VARIANT) =>
       cardmarketProductId(card, variant, lang),
+    cardmarketReverse: (lang, variant = card.variants[0]?.id ?? STANDARD_VARIANT) =>
+      isSharedReverse(card, variant, lang),
   };
 }
 
@@ -162,12 +166,21 @@ export function offeredLanguages(
 /** `150/128 Pikachu-ex · DE · NM` for toasts. */
 export function lotLabel(
   info: ItemInfo,
-  lot: { language: CardLanguage; condition?: string | undefined; quantity: number },
+  lot: {
+    language: CardLanguage;
+    condition?: string | undefined;
+    quantity: number;
+    variant?: string | undefined;
+  },
 ): string {
   const name = info.name(lot.language).text;
   const head = [info.ref.kind === 'card' ? info.number : undefined, name].filter(Boolean).join(' ');
+  // The variant only where the card has several (`Reverse-Holo`), as in the lists.
+  const variant =
+    info.variants.length > 1 ? info.variants.find((v) => v.id === lot.variant)?.label : undefined;
   return [
     lot.quantity > 1 ? `${lot.quantity} × ${head}` : head,
+    variant,
     languageCode(lot.language),
     info.ref.kind === 'card' ? lot.condition : undefined,
   ]

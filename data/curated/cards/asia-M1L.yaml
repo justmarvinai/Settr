@@ -1,0 +1,16 @@
+# Mega Brave (Japanese M1L). Trainers one artist drew several of pair here by hand
+# (crossprint.ts leaves them for curation): the numbered ones with the numbered, secrets with secrets.
+setId: asia:M1L
+cards:
+  '057': { counterpart: 'intl:me01:118', note: Iron Defender · Studio Bora Inc. }
+  '058': { counterpart: 'intl:me01:124', note: Premium Power Pro · Toyste Beach }
+  '059': { counterpart: 'intl:me01:116', note: Fighting Gong · Toyste Beach }
+  '060': { counterpart: 'intl:me01:126', note: Repel · Studio Bora Inc. }
+  '081': { counterpart: 'intl:me01:174', note: Premium Power Pro · Toyste Beach }
+  '082': { counterpart: 'intl:me01:168', note: Fighting Gong · Toyste Beach }
+  '083': { counterpart: 'intl:me01:173', note: Night Stretcher · Toyste Beach }
+  # Cardmarket products the metacard match finds twice (a card and its Illustration Rare) or not
+  # at all (no international counterpart): placed between the neighbouring cards' products, which
+  # Cardmarket numbers in card order (report of the 2026-09-24 sync).
+  '028': { cardmarket: { ja: 840319 }, note: 'Riolu' }
+  '068': { cardmarket: { ja: 840363 }, note: 'Riolu, Illustration Rare' }

@@ -104,6 +104,7 @@ function DisposeForm({ info, holding }: { info: ItemInfo; holding: Holding }) {
         language: holding.language,
         condition: holding.condition,
         quantity: input.quantity,
+        variant: holding.variant,
       });
       toastWithUndo(m.toast_disposed({ what }), () => removeDisposal(db, holding.id, disposal.id));
       closeSheet();

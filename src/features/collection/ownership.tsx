@@ -94,7 +94,12 @@ export async function quickAdd(
     const holding = await createHolding(db, quickAddInput(card, loaded, language, condition));
     toastWithUndo(
       m.toast_added({
-        what: lotLabel(cardInfo(card, loaded), { language, condition, quantity: 1 }),
+        what: lotLabel(cardInfo(card, loaded), {
+          language,
+          condition,
+          quantity: 1,
+          variant: holding.variant,
+        }),
       }),
       () => deleteHolding(db, holding.id),
     );

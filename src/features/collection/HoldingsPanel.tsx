@@ -88,12 +88,15 @@ function LotRow({
   locations,
   tagNames,
   value,
+  variant,
 }: {
   holding: Holding;
   label: string;
   locations: readonly Location[];
   tagNames: ReadonlyMap<string, string>;
   value: LotValue | undefined;
+  /** The lot's variant, when its card comes in several (`Reverse-Holo`). */
+  variant: string | undefined;
 }) {
   const left = remaining(holding);
   const cost = remainingCost(holding);
@@ -111,7 +114,9 @@ function LotRow({
     <li className="flex items-start gap-3 border-t border-line py-3 first:border-t-0 first:pt-0">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="type-ui flex flex-wrap items-baseline gap-x-2 text-ink">
-          <span>{[languageCode(holding.language), state].filter(Boolean).join(' · ')}</span>
+          <span>
+            {[variant, languageCode(holding.language), state].filter(Boolean).join(' · ')}
+          </span>
           <span className="font-mono">
             {left === holding.quantity
               ? m.count_times({ count: formatCount(left) })
@@ -179,11 +184,14 @@ function LotRow({
 export function HoldingsPanel({
   itemId,
   describe,
+  variantOf,
   onAdd,
 }: {
   itemId: string;
   /** Short label of a lot for toasts and menus, e.g. "150/128 Pikachu-ex · DE". */
   describe: (holding: Holding) => string;
+  /** A lot's variant name, when the card comes in several; nothing otherwise. */
+  variantOf?: (holding: Holding) => string | undefined;
   onAdd: () => void;
 }) {
   const holdings = useHoldingsOfItem(itemId);
@@ -245,6 +253,7 @@ export function HoldingsPanel({
               locations={locations}
               tagNames={tagNames}
               value={latest ? valueLot(h, latest.get(seriesKeyOf(h)), options) : undefined}
+              variant={variantOf?.(h)}
             />
           ))}
         </ul>

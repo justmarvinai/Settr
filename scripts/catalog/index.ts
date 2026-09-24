@@ -14,14 +14,15 @@ import {
   TRAINER_TYPES,
   type CatalogProduct,
 } from '../../src/domain/catalog';
-import { buildSets, type BuildProblems } from './build';
+import { buildSets, loadDonors, type BuildProblems } from './build';
 import {
   applyCardmarket,
   carryOverCardmarket,
   loadCardmarket,
   type CardmarketReport,
 } from './cardmarket';
-import { loadCardOverlays, loadIdAliases, loadSealed } from './curated';
+import { CATALOG_SETS, NAME_DONORS } from './config';
+import { loadCardOverlays, loadIdAliases, loadJapaneseNames, loadSealed } from './curated';
 import { emitCatalog } from './emit';
 import { fetchSources, updateLock } from './fetch';
 import { createChecker, resolveImages } from './images';
@@ -30,6 +31,7 @@ import { CACHE, REPORT } from './paths';
 import { loadPrevious } from './previous';
 import { loadTraditionalChineseNames } from './ptcg';
 import { renderReport } from './report';
+import { loadTcgdexSerie } from './tcgdex';
 import { loadTcgcsv, resolveProductImages, type TcgplayerReport } from './tcgcsv';
 
 const args = new Set(process.argv.slice(2));
@@ -46,11 +48,20 @@ await fetchSources({ network });
 const previous = loadPrevious();
 const species = loadSpeciesNames();
 const overlays = loadCardOverlays();
+const donors = await loadDonors(NAME_DONORS, loadTcgdexSerie);
 const sets = await buildSets(
   {
     species,
     overlays,
-    traditionalChinese: new Map([['M6a', loadTraditionalChineseNames('M6a')]]),
+    donors,
+    japaneseNames: loadJapaneseNames(),
+    traditionalChinese: new Map(
+      CATALOG_SETS.flatMap((c) =>
+        c.traditionalChinese
+          ? [[c.traditionalChinese, loadTraditionalChineseNames(c.traditionalChinese)] as const]
+          : [],
+      ),
+    ),
   },
   problems,
 );
@@ -83,8 +94,13 @@ for (const set of sets.filter((s) => s.config.kind === 'main')) {
       const main = mainOf.get(partner);
       if (main && main !== set.config.id) votes.set(main, (votes.get(main) ?? 0) + 1);
     }
-  const best = [...votes].toSorted((a, b) => b[1] - a[1])[0];
-  if (best) set.summary.otherPrint = best[0];
+  // A handful of shared cards (a reprint, a promo) doesn't make the same expansion.
+  const ranked = [...votes]
+    .toSorted((a, b) => b[1] - a[1])
+    .filter(([, n], i) => i === 0 || n >= 5)
+    .map(([id]) => id);
+  if (ranked[0]) set.summary.otherPrint = ranked[0];
+  if (ranked.length > 1) set.summary.otherPrints = ranked;
 }
 
 const images = await resolveImages(sets, previous, { verify: network });

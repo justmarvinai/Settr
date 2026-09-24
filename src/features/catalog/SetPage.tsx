@@ -31,7 +31,9 @@ import {
   RARITY_IDS,
   type CardSection,
   type CatalogCard,
+  type CatalogSetSummary,
   pickLanguage,
+  printsOf,
   visibleLanguages,
   cardName,
   type NameMode,
@@ -173,7 +175,12 @@ export function SetPage() {
         : filtered;
   const grouped = sort === 'number' && !search.section;
   const isFiltered = filtered.length !== loaded.cards.length;
-  const other = set.otherPrint ? manifest.sets.find((s) => s.id === set.otherPrint) : undefined;
+  // The same expansion in every print; Mega-Entwicklung has two Japanese sets.
+  const prints = printsOf(set, manifest.sets);
+  const printName = (s: CatalogSetSummary) =>
+    prints.filter((p) => p.print === s.print).length > 1 && s.code
+      ? `${printLabel(s.print)} ${s.code}`
+      : printLabel(s.print);
 
   // Q opens Schnellerfassung for this set in the language shown (UX_SPEC.md §7).
   useEffect(() => {
@@ -262,23 +269,22 @@ export function SetPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          {other ? (
+          {prints.length > 1 ? (
             <nav aria-label={m.catalog_print_label()}>
               <ul className="m-0 flex list-none gap-0.5 rounded-pill bg-hover p-1">
-                {[set, other]
-                  .toSorted((a, b) => (a.print === 'intl' ? -1 : b.print === 'intl' ? 1 : 0))
-                  .map((s) => (
-                    <li key={s.id}>
-                      <Link
-                        to="/catalog/sets/$setId"
-                        params={{ setId: s.id }}
-                        aria-current={s.id === set.id ? 'page' : undefined}
-                        className="flex h-10 items-center rounded-pill px-4 type-ui text-ink-muted hover:text-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
-                      >
-                        {printLabel(s.print)}
-                      </Link>
-                    </li>
-                  ))}
+                {prints.map((s) => (
+                  <li key={s.id}>
+                    <Link
+                      to="/catalog/sets/$setId"
+                      params={{ setId: s.id }}
+                      aria-current={s.id === set.id ? 'page' : undefined}
+                      title={pickText(s.name)}
+                      className="flex h-10 items-center rounded-pill px-4 type-ui whitespace-nowrap text-ink-muted hover:text-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
+                    >
+                      {printName(s)}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </nav>
           ) : null}

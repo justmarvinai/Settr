@@ -1,0 +1,14 @@
+# MEP Black Star Promos: TCGdex has no German data for these ten, so their German names are
+# translations (Pokémon from PokéAPI's species names), shown as "übersetzt".
+setId: intl:mep
+cards:
+  '005': { curatedName: { de: Driftlon } }
+  '006': { curatedName: { de: Drifzepeli } }
+  '018': { curatedName: { de: Waumboll } }
+  '019': { curatedName: { de: Elfun } }
+  '028': { curatedName: { de: Festliche Fanfare } }
+  '068': { curatedName: { de: Makuhita } }
+  '078': { curatedName: { de: Toxel } }
+  '086': { curatedName: { de: Flegmon } }
+  '120': { curatedName: { de: Festliche Fanfare } }
+  Museum: { curatedName: { de: Pikachu im Museum } }

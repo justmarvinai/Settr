@@ -4,9 +4,9 @@
 
 ## 🚦 Phase gate (read first)
 
-**Current phase: M6 · POLISH & LAUNCH ✅ built — v1.0.0 release candidate, waiting for Marvin's check** (M6 started 2026-09-24: "start M6 now"). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1–M5 are merged into `main`: PR #1 (M1 + M2), PR #2 (M3), PR #3 (M4 + M5, 2026-09-24). M6 is in PR #4 on `claude/great-edison-uri1z0` (restarted from `main` after PR #3; opened 2026-09-24, squash merge recommended). After his merge the tag `v1.0.0` goes on `main` (R8.4) and Vercel deploys it. Vercel is connected. Open on Marvin's side: add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, run the Brave smoke test (`docs/QUALITY.md` §3.1) and the iPhone check (`USER_QUESTIONS.md` round 8, "To try"), answer round 8 when convenient, then merge PR #4 and say go for the tag.
+**Current phase: v1.x · YOUR SETS — the Mega Evolution series ✅ built, waiting for Marvin's check** (2026-09-24: "add the whole Mega Evolution Series"). Coding was approved on 2026-09-23 (Marvin: "You can start"). M1–M6 are merged into `main`: PR #1 (M1 + M2), PR #2 (M3), PR #3 (M4 + M5), PR #4 (M6, merged 2026-09-24). The Mega work is in PR #5 on `claude/great-edison-uri1z0` (restarted from `main` after PR #4; opened 2026-09-24, squash merge recommended). The tag `v1.0.0` goes on `main` once Marvin says go (R8.4). Vercel is connected. Open on Marvin's side: say go for the tag, add the `VERCEL_DEPLOY_HOOK` secret for the daily price guide, make `main` the default branch, run the Brave smoke test (`docs/QUALITY.md` §3.1) and the iPhone check (`USER_QUESTIONS.md` rounds 8–9, "To try"), answer rounds 8–9 when convenient, then merge PR #5.
 
-- Question rounds 1–7 are decided and incorporated (spec v0.4; for rounds 4–7 Marvin chose every recommendation). Round 8 (M6) is open without blockers: the app works like its ⭐ options. Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
+- Question rounds 1–7 are decided and incorporated (spec v0.4; for rounds 4–7 Marvin chose every recommendation). Rounds 8 (M6) and 9 (Mega Evolution) are open without blockers: the app works like their ⭐ options. Design direction **D · Bold Studio** is confirmed with the *Indigo* accent (R3.1). Its artboards live on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private, owner-only) and are the visual reference.
 - Work milestone by milestone. Keep `ROADMAP.md` ticked and `CHANGELOG.md` current in every step, and report to Marvin at the end of each milestone.
 - The repository stays **public** for now (R3.2): never commit price-guide snapshots or the deployment URL (ADR-029).
 
@@ -26,6 +26,13 @@ Settr is a **local-first Pokémon TCG collection tracker** for **singles and sea
   - JP + Simplified/Traditional Chinese: `M6a`.
   - Sealed: DE/EN/JP/TC/SC.
 - **After v1:** Marvin's own sets are added one by one, era by era (ADR-028). Build everything **multi-set** from day one.
+  - **Mega Evolution series (2026-09-24, ADR-051–053):**
+    - EN/DE: `me01` (+ energies `mee` 001–008), `me02`, `me02.5`, `me03`, `me04`, `me05`, `mep`.
+    - JP + Traditional Chinese: `M1L`, `M1S`, `M2`, `M2a`, `M3`, `M4`, `M5`; the promos `M-P` are JP only.
+    - No Simplified Chinese.
+    - Real variants: normal, holo, reverse, patterns, and promotional prints outside Master.
+    - Sealed: DE/EN/JP/TC.
+  - Not yet: M6 (Storm Emerald), MC, MF. Next era: Scarlet & Violet.
 - **Design:** direction **D · Bold Studio** (`DESIGN_SYSTEM.md` §1.2): heavy wide type, floating glass sidebar, neutral surfaces with one accent, light + dark. **Usability and UX always come first** (Marvin).
 
 ## Where things are

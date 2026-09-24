@@ -1,0 +1,20 @@
+# Nihil Zero (Japanese M3).
+setId: asia:M3
+cards:
+  '067': { counterpart: 'intl:me03:073', note: Energy Swatter · Toyste Beach }
+  '068': { counterpart: 'intl:me03:068', note: Antique Jaw Fossil · AYUMI ODASHIMA }
+  '069': { counterpart: 'intl:me03:069', note: Antique Sail Fossil · AYUMI ODASHIMA }
+  '078': { counterpart: 'intl:me03:086', note: Growing Grass Energy }
+  '079': { counterpart: 'intl:me03:088', note: Telepathic Psychic Energy }
+  '080': { counterpart: 'intl:me03:087', note: Rocky Fighting Energy }
+  '104': { counterpart: 'intl:me03:117', note: Wondrous Patch · Studio Bora Inc. }
+  # Cardmarket products the metacard match finds twice (a card and its Illustration Rare) or not
+  # at all (no international counterpart): placed between the neighbouring cards' products, which
+  # Cardmarket numbers in card order (report of the 2026-09-24 sync).
+  '043': { cardmarket: { ja: 867965 }, note: 'Tyrunt' }
+  '053': { cardmarket: { ja: 867975 }, note: 'Chien-Pao' }
+  '070': { cardmarket: { ja: 868066 }, note: 'Poké Pad' }
+  '089': { cardmarket: { ja: 868099 }, note: 'Tyrunt, Illustration Rare' }
+  '101': { cardmarket: { ja: 868111 }, note: 'Energy Recycler' }
+  '102': { cardmarket: { ja: 868112 }, note: 'Sacred Ash' }
+  '103': { cardmarket: { ja: 868113 }, note: 'Poké Pad, Ultra Rare' }

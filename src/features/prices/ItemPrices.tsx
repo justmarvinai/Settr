@@ -137,7 +137,7 @@ function CurrentPrice({
   const [picked, setPicked] = useState<GuidePick>();
   const amountRef = useRef<HTMLInputElement>(null);
   const { language } = target;
-  const guide = useGuide(target.item, language, target, cardmarket.productId);
+  const guide = useGuide(target.item, language, target, cardmarket);
 
   const errors = { amount: amountError(amount), date: dateError(date, today) };
   const parsed = parseMoneyInput(amount);

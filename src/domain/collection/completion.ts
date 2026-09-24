@@ -9,7 +9,8 @@ import { isOpen } from '../schemas/holding';
  * - Basis: distinct cards of the numbered main set (section `main`).
  * - Komplett: distinct cards of the main set incl. secret rares (`main` + `secret`).
  * - Master: (card, variant) pairs of everything in the chunk (+ subsets and energies), without
- *   promos and stamped variants.
+ *   promotional variants (kind `stamp`). A card that only exists in promotional variants (an MEP
+ *   promo in Cosmos-Holo) counts with its first one, so Master never counts fewer cards.
  * With a language, only copies in that language count, and only cards that exist in it are due.
  */
 
@@ -98,8 +99,9 @@ export function setCompletion(
       if (has) result.komplett.owned += 1;
     }
     if (MASTER.has(card.section)) {
-      for (const variant of card.variants) {
-        if (stamped.has(variant.id) || !availableIn(variant, language)) continue;
+      const regular = card.variants.filter((v) => !stamped.has(v.id));
+      for (const variant of regular.length ? regular : card.variants.slice(0, 1)) {
+        if (!availableIn(variant, language)) continue;
         result.master.total += 1;
         const held =
           owned.pairs.has(pairKey(card.id, variant.id)) ||

@@ -8,6 +8,33 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 
 ## [Unreleased]
 
+### Added
+- **The Mega Evolution series (2026-09-24, ROADMAP v1.x · Your sets).**
+  - **International (DE/EN), 1,077 cards:** Mega-Entwicklung (with the basic Energy MEE 001–008), Fatale Flammen, Erhabene Helden, Optimale Ordnung, Wachsendes Chaos, Dunkelnacht and Mega-Entwicklung Promos.
+  - **Japanese with Traditional Chinese, 1,037 cards:** Mega Brave and Mega Symphonia (together Mega-Entwicklung), Inferno X, MEGA Dream ex, Nihil Zero, Ninja Spinner, Abyss Eye and the MEGA promo cards (Japanese only). Simplified Chinese stays with 30th CELEBRATION: its Mega editions cut the Japanese sets differently (ADR-053).
+  - **Variants (ADR-052):**
+    - normal, holo and reverse holo per card, plus the reverse patterns of Erhabene Helden and MEGA Dream ex (Pokéball, Meisterball, Energie, …);
+    - promotional prints: stamps, Cosmos and league holos, jumbo cards, and the non-holo Rares of the Build & Battle Boxes (*Nicht-Holo (Deck)*);
+    - Master completion leaves promotional prints out; a promo that only exists as one counts with it.
+  - **Names:** every Japanese card has German and English names, from the international card with the same artwork, a donor card outside the catalog, or a curated dictionary. The names are labeled *übersetzt* and checked against Cardmarket's product names (ADR-051).
+  - **Cardmarket** ids per variant and language, checked by the network sync; the Japanese expansions are pinned.
+  - **139 sealed products:** displays, boosters, Top-Trainer-Boxen, bundles, Build & Battle Boxes, blisters, tins and collections (DE/EN); the Japanese boosters, boxes and special sets; the Traditional Chinese boosters.
+- **Set pages** switch between every print of an expansion: *International · Asien M1L · Asien M1S*, also from either Japanese half. **Card pages** link each counterpart to its own set.
+
+### Changed
+- A copy's variant shows where its card comes in several: Sammlung lists, the lots on card pages, toasts (*Hinzugefügt: 001/132 Bisasam · Reverse-Holo · DE · NM*) and the price session.
+- Cardmarket links filter for reverse holos (and price suggestions read the reverse-holo prices) only where the reverse holo shares the card's product; pattern reverses and Japanese reverse holos are products of their own.
+
+### Fixed
+- Catalog pipeline:
+  - a throttled image server no longer reads as missing pictures;
+  - the MEGA promos no longer take Traditional Chinese names by number (Taiwan numbers its promos differently);
+  - Traditional Chinese trainer names lose PTCG-database's angle brackets;
+  - TCGCSV groups match by name prefix.
+
+### Docs
+- ADR-051 to ADR-053; DATA_SOURCES.md §2.1 and §7.4; DATA_MODEL.md (variants, `otherPrints`, `counterpartSets`, Master counts); round 9 in USER_QUESTIONS.md.
+
 ## [1.0.0] - 2026-09-24
 
 The first complete release: everything planned for v1 (M1–M6) for the *30 Jahre / 30th CELEBRATION* catalog. The tag `v1.0.0` goes on `main` once Marvin has checked M6 in Brave and on the iPhone and merged it (ROADMAP.md, USER_QUESTIONS.md R8.4).

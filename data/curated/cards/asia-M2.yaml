@@ -1,0 +1,30 @@
+# Inferno X (Japanese M2). TCGdex lists the Mega-era special Energy without an illustrator.
+setId: asia:M2
+cards:
+  '109': { counterpart: 'intl:me02:124', note: Ignition Energy }
+  # Cardmarket products the metacard match finds twice (a card and its Illustration Rare) or not
+  # at all (no international counterpart): placed between the neighbouring cards' products, which
+  # Cardmarket numbers in card order (report of the 2026-09-24 sync).
+  '018': { cardmarket: { ja: 850525 }, note: 'Oricorio ex' }
+  '019': { cardmarket: { ja: 850526 }, note: 'Charcadet' }
+  '037':
+    counterpart: 'intl:mep:018'
+    cardmarket: { ja: 850544 }
+    note: Cottonee · Kariya; internationally a Phantasmal Flames blister promo.
+  '038':
+    counterpart: 'intl:mep:019'
+    cardmarket: { ja: 850545 }
+    note: Whimsicott · Yuka Tanaka; internationally a Phantasmal Flames blister promo.
+  '048':
+    counterpart: 'intl:mep:020'
+    cardmarket: { ja: 850555 }
+    note: Sneasel · Souichirou Gunjima; internationally a Phantasmal Flames blister promo.
+  '049':
+    counterpart: 'intl:mep:021'
+    cardmarket: { ja: 850556 }
+    note: Weavile · matazo; internationally a Phantasmal Flames blister promo.
+  '065': { cardmarket: { ja: 850573 }, note: 'Wigglytuff' }
+  '083': { cardmarket: { ja: 850591 }, note: 'Charcadet, Illustration Rare' }
+  '091': { cardmarket: { ja: 850599 }, note: 'Wigglytuff, Illustration Rare' }
+  '095': { cardmarket: { ja: 850603 }, note: 'Oricorio ex, Ultra Rare' }
+  '111': { cardmarket: { ja: 850619 }, note: 'Oricorio ex, Special Illustration Rare' }

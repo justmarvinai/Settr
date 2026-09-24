@@ -193,7 +193,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Header (R2.1):** a big set title in display type under an eyebrow line (series · print · release date · card count), the **print switch** (*International / Asien*), the card-language switch, and completion: *Basis* as a big percentage, plus *Komplett* and *Master*.
+- **Header (R2.1):** a big set title in display type under an eyebrow line (series · print · release date · card count), the **print switch** (*International / Asien*; with several Asian sets, each by its code: *International · Asien M1L · Asien M1S*, the full name as tooltip), the card-language switch, and completion: *Basis* as a big percentage, plus *Komplett* and *Master*.
 - **Sticky glass filter bar (R2.1):** *Alle / Im Besitz / Fehlt* with counts, *Bereich* (section), *Seltenheit*, *Typ*, *Variante* (only for sets with variants), *Sortierung* (number, value, name, recently added), in-set search, and a grid/table toggle (*Rasteransicht / Tabellenansicht*). It stays under the toolbar while the grid scrolls beneath it.
 - **Card tile:** image with lazy loading and a card-back shimmer placeholder, then number, localized name and a rarity glyph.
   - *Owned:* full color, a quantity badge ("×3"), and **variant dots** (normal, reverse, special patterns) that are filled when owned.

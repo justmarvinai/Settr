@@ -1,0 +1,10 @@
+# Ninja Spinner (Japanese M4).
+setId: asia:M4
+cards:
+  '073': { counterpart: 'intl:me04:078', note: Great Haul Net · Toyste Beach }
+  '074': { counterpart: 'intl:me04:083', note: Transformation Tome · Toyste Beach }
+  '079': { counterpart: 'intl:me04:075', note: Ange Floette · MARINA Chikazawa }
+  '081': { counterpart: 'intl:me04:086', note: Nitro Fire Energy }
+  '082': { counterpart: 'intl:me04:084', note: Bubbly Water Energy }
+  '083': { counterpart: 'intl:me04:085', note: Magnetic Metal Energy }
+  '104': { counterpart: 'intl:me04:108', note: Energy Retrieval · Studio Bora Inc. }

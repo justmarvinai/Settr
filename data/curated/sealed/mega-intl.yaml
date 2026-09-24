@@ -1,0 +1,1404 @@
+# Sealed products of the Mega Evolution series, international print (DE/EN), DATA_SOURCES.md §7.1.
+# Cardmarket and TCGplayer ids come from the catalog-sync reports (Cardmarket's sealed products per
+# expansion, TCGCSV's per group); one Cardmarket product covers every language of a product. German
+# names follow the pattern of the 30 Jahre products and aren't verified against pokemon.de yet.
+# Contents only where the product type fixes them; cases, code cards and art bundles are left out.
+source: Cardmarket product list, TCGCSV (TCGplayer), catalog-sync reports of 2026-09-24
+products:
+  # Mega-Entwicklung / Mega Evolution (ME01), 26 Sep 2025
+  - id: intl:me01-booster
+    print: intl
+    setIds: [intl:me01]
+    type: booster-pack
+    name: { de: Mega-Entwicklung Booster, en: Mega Evolution Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 834829, tcgplayer: 644352 }
+
+  - id: intl:me01-sleeved-booster
+    print: intl
+    setIds: [intl:me01]
+    type: sleeved-booster
+    name: { de: Mega-Entwicklung Sleeved Booster, en: Mega Evolution Sleeved Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 834828, tcgplayer: 644354 }
+
+  - id: intl:me01-display
+    print: intl
+    setIds: [intl:me01]
+    type: booster-display
+    name: { de: Mega-Entwicklung Display (36 Booster), en: Mega Evolution Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { packs: 36, cardsPerPack: 10 }
+    refs: { cardmarket: 834832, tcgplayer: 644298 }
+
+  - id: intl:me01-half-display
+    print: intl
+    setIds: [intl:me01]
+    type: half-display
+    name: { de: Mega-Entwicklung Display (18 Booster), en: Mega Evolution Half Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { packs: 18, cardsPerPack: 10 }
+    refs: { cardmarket: 834825, tcgplayer: 644351 }
+
+  - id: intl:me01-booster-bundle
+    print: intl
+    setIds: [intl:me01]
+    type: booster-bundle
+    name: { de: Booster-Bundle Mega-Entwicklung, en: Mega Evolution Booster Bundle }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { packs: 6, cardsPerPack: 10 }
+    refs: { cardmarket: 834826, tcgplayer: 644362 }
+
+  - id: intl:me01-build-and-battle
+    print: intl
+    setIds: [intl:me01]
+    type: build-and-battle
+    name: { de: 'Build & Battle Box Mega-Entwicklung', en: 'Mega Evolution Build & Battle Box' }
+    languages: [de, en]
+    contents:
+      {
+        packs: 4,
+        cardsPerPack: 10,
+        description:
+          {
+            de: '4 Booster, ein Deck mit 40 Karten und eine Promokarte.',
+            en: '4 booster packs, a 40-card deck and a promo card.',
+          },
+      }
+    refs: { cardmarket: 834822, tcgplayer: 644363 }
+
+  - id: intl:me01-enhanced-display
+    print: intl
+    setIds: [intl:me01]
+    type: booster-display
+    name: { de: Mega-Entwicklung Enhanced Display, en: Mega Evolution Enhanced Booster Box }
+    languages: [en]
+    contents: { packs: 36, cardsPerPack: 10 }
+    refs: { cardmarket: 834827, tcgplayer: 644300 }
+    note: North American display with a promo card.
+
+  - id: intl:me01-etb-mega-lucario
+    print: intl
+    setIds: [intl:me01]
+    type: etb
+    family: intl:me01-etb
+    name:
+      {
+        de: 'Top-Trainer-Box Mega-Entwicklung: Mega-Lucario',
+        en: 'Mega Evolution Elite Trainer Box: Mega Lucario',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 834830, tcgplayer: 648394 }
+
+  - id: intl:me01-etb-mega-gardevoir
+    print: intl
+    setIds: [intl:me01]
+    type: etb
+    family: intl:me01-etb
+    name:
+      {
+        de: 'Top-Trainer-Box Mega-Entwicklung: Mega-Guardevoir',
+        en: 'Mega Evolution Elite Trainer Box: Mega Gardevoir',
+      }
+    languages: [de, en]
+    releaseDates: { de: 2025-09-26, en: 2025-09-26 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 834831, tcgplayer: 644279 }
+
+  - id: intl:me01-pc-etb-mega-lucario
+    print: intl
+    setIds: [intl:me01]
+    type: pc-etb
+    family: intl:me01-pc-etb
+    name:
+      {
+        de: 'Pokémon Center Top-Trainer-Box Mega-Entwicklung: Mega-Lucario',
+        en: 'Pokémon Center Elite Trainer Box Mega Evolution: Mega Lucario',
+      }
+    languages: [en]
+    releaseDates: { en: 2025-09-26 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 834823, tcgplayer: 644282 }
+
+  - id: intl:me01-pc-etb-mega-gardevoir
+    print: intl
+    setIds: [intl:me01]
+    type: pc-etb
+    family: intl:me01-pc-etb
+    name:
+      {
+        de: 'Pokémon Center Top-Trainer-Box Mega-Entwicklung: Mega-Guardevoir',
+        en: 'Pokémon Center Elite Trainer Box Mega Evolution: Mega Gardevoir',
+      }
+    languages: [en]
+    releaseDates: { en: 2025-09-26 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 834824, tcgplayer: 648415 }
+
+  - id: intl:me01-3-pack-blister-psyduck
+    print: intl
+    setIds: [intl:me01]
+    type: blister-3
+    family: intl:me01-3-pack-blister
+    name:
+      {
+        de: '3er-Pack-Blister Mega-Entwicklung: Enton',
+        en: 'Mega Evolution 3-Pack Blister: Psyduck',
+      }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Enton] }
+    refs: { cardmarket: 834819, tcgplayer: 644357 }
+
+  - id: intl:me01-3-pack-blister-golduck
+    print: intl
+    setIds: [intl:me01]
+    type: blister-3
+    family: intl:me01-3-pack-blister
+    name:
+      {
+        de: '3er-Pack-Blister Mega-Entwicklung: Entoron',
+        en: 'Mega Evolution 3-Pack Blister: Golduck',
+      }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Entoron] }
+    refs: { cardmarket: 834820, tcgplayer: 644356 }
+
+  - id: intl:me01-1-pack-blister-drifloon
+    print: intl
+    setIds: [intl:me01]
+    type: blister-1
+    family: intl:me01-1-pack-blister
+    name:
+      {
+        de: '1er-Blister Mega-Entwicklung: Driftlon',
+        en: 'Mega Evolution 1-Pack Blister: Drifloon',
+      }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Driftlon] }
+    refs: { cardmarket: 834817, tcgplayer: 644358 }
+
+  - id: intl:me01-1-pack-blister-drifblim
+    print: intl
+    setIds: [intl:me01]
+    type: blister-1
+    family: intl:me01-1-pack-blister
+    name:
+      {
+        de: '1er-Blister Mega-Entwicklung: Drifzepeli',
+        en: 'Mega Evolution 1-Pack Blister: Drifblim',
+      }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Drifzepeli] }
+    refs: { cardmarket: 834818, tcgplayer: 644359 }
+
+  - id: intl:me01-1-pack-blister-lycanroc
+    print: intl
+    setIds: [intl:me01]
+    type: blister-1
+    family: intl:me01-1-pack-blister
+    name:
+      {
+        de: '1er-Blister Mega-Entwicklung: Wolwerock',
+        en: 'Mega Evolution 1-Pack Blister: Lycanroc',
+      }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Wolwerock] }
+    refs: { cardmarket: 834814, tcgplayer: 657490 }
+
+  - id: intl:me01-1-pack-blister-wailord
+    print: intl
+    setIds: [intl:me01]
+    type: blister-1
+    family: intl:me01-1-pack-blister
+    name:
+      { de: '1er-Blister Mega-Entwicklung: Wailord', en: 'Mega Evolution 1-Pack Blister: Wailord' }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Wailord] }
+    refs: { cardmarket: 834813, tcgplayer: 657489 }
+    note: Cardmarket calls it a Stage 1 Blister.
+
+  - id: intl:me01-checklane-blister-tyranitar
+    print: intl
+    setIds: [intl:me01]
+    type: checklane-blister
+    family: intl:me01-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Mega-Entwicklung: Despotar',
+        en: 'Mega Evolution Premium Checklane Blister: Tyranitar',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 834816, tcgplayer: 644360 }
+
+  - id: intl:me01-checklane-blister-meowscarada
+    print: intl
+    setIds: [intl:me01]
+    type: checklane-blister
+    family: intl:me01-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Mega-Entwicklung: Maskagato',
+        en: 'Mega Evolution Premium Checklane Blister: Meowscarada',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 834815, tcgplayer: 644361 }
+
+  - id: intl:me01-mini-tin-mega-venusaur
+    print: intl
+    setIds: [intl:me01]
+    type: mini-tin
+    family: intl:me01-mini-tin
+    name: { de: 'Mini-Tin Mega-Helden: Mega-Bisaflor', en: 'Mega Heroes Mini Tin: Mega Venusaur' }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 834804, tcgplayer: 649401 }
+
+  - id: intl:me01-mini-tin-mega-kangaskhan
+    print: intl
+    setIds: [intl:me01]
+    type: mini-tin
+    family: intl:me01-mini-tin
+    name: { de: 'Mini-Tin Mega-Helden: Mega-Kangama', en: 'Mega Heroes Mini Tin: Mega Kangaskhan' }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 834805, tcgplayer: 649395 }
+
+  - id: intl:me01-mini-tin-mega-gardevoir
+    print: intl
+    setIds: [intl:me01]
+    type: mini-tin
+    family: intl:me01-mini-tin
+    name:
+      { de: 'Mini-Tin Mega-Helden: Mega-Guardevoir', en: 'Mega Heroes Mini Tin: Mega Gardevoir' }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 834806, tcgplayer: 649394 }
+
+  - id: intl:me01-mini-tin-mega-latias
+    print: intl
+    setIds: [intl:me01]
+    type: mini-tin
+    family: intl:me01-mini-tin
+    name: { de: 'Mini-Tin Mega-Helden: Mega-Latias', en: 'Mega Heroes Mini Tin: Mega Latias' }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 834807, tcgplayer: 649397 }
+    note: 'Cardmarket names it Mega Latios, TCGplayer Mega Latias; to confirm.'
+
+  - id: intl:me01-mini-tin-mega-lucario
+    print: intl
+    setIds: [intl:me01]
+    type: mini-tin
+    family: intl:me01-mini-tin
+    name: { de: 'Mini-Tin Mega-Helden: Mega-Lucario', en: 'Mega Heroes Mini Tin: Mega Lucario' }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 834808, tcgplayer: 649400 }
+
+  - id: intl:me01-mini-tin-display
+    print: intl
+    setIds: [intl:me01]
+    type: other
+    name: { de: Mini-Tin-Display Mega-Helden, en: Mega Heroes Mini Tin Display }
+    languages: [de, en]
+    refs: { cardmarket: 834809, tcgplayer: 649392 }
+    note: Retail display of the mini tins; German product name to confirm.
+
+  # Fatale Flammen / Phantasmal Flames (ME02), 14 Nov 2025
+  - id: intl:me02-booster
+    print: intl
+    setIds: [intl:me02]
+    type: booster-pack
+    name: { de: Fatale Flammen Booster, en: Phantasmal Flames Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2025-11-14, en: 2025-11-14 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 846729, tcgplayer: 654144 }
+
+  - id: intl:me02-sleeved-booster
+    print: intl
+    setIds: [intl:me02]
+    type: sleeved-booster
+    name: { de: Fatale Flammen Sleeved Booster, en: Phantasmal Flames Sleeved Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2025-11-14, en: 2025-11-14 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 846730, tcgplayer: 654145 }
+
+  - id: intl:me02-display
+    print: intl
+    setIds: [intl:me02]
+    type: booster-display
+    name: { de: Fatale Flammen Display (36 Booster), en: Phantasmal Flames Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2025-11-14, en: 2025-11-14 }
+    contents: { packs: 36, cardsPerPack: 10 }
+    refs: { cardmarket: 846746, tcgplayer: 654137 }
+
+  - id: intl:me02-half-display
+    print: intl
+    setIds: [intl:me02]
+    type: half-display
+    name: { de: Fatale Flammen Display (18 Booster), en: Phantasmal Flames Half Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2025-11-14, en: 2025-11-14 }
+    contents: { packs: 18, cardsPerPack: 10 }
+    refs: { cardmarket: 846745 }
+
+  - id: intl:me02-booster-bundle
+    print: intl
+    setIds: [intl:me02]
+    type: booster-bundle
+    name: { de: Booster-Bundle Fatale Flammen, en: Phantasmal Flames Booster Bundle }
+    languages: [de, en]
+    releaseDates: { de: 2025-11-14, en: 2025-11-14 }
+    contents: { packs: 6, cardsPerPack: 10 }
+    refs: { cardmarket: 846734, tcgplayer: 654160 }
+
+  - id: intl:me02-etb
+    print: intl
+    setIds: [intl:me02]
+    type: etb
+    name: { de: Top-Trainer-Box Fatale Flammen, en: Phantasmal Flames Elite Trainer Box }
+    languages: [de, en]
+    releaseDates: { de: 2025-11-14, en: 2025-11-14 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 846744, tcgplayer: 654136 }
+
+  - id: intl:me02-pc-etb
+    print: intl
+    setIds: [intl:me02]
+    type: pc-etb
+    name:
+      {
+        de: Pokémon Center Top-Trainer-Box Fatale Flammen,
+        en: Pokémon Center Elite Trainer Box Phantasmal Flames,
+      }
+    languages: [en]
+    releaseDates: { en: 2025-11-14 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 846743, tcgplayer: 654135 }
+
+  - id: intl:me02-build-and-battle
+    print: intl
+    setIds: [intl:me02]
+    type: build-and-battle
+    name: { de: 'Build & Battle Box Fatale Flammen', en: 'Phantasmal Flames Build & Battle Box' }
+    languages: [de, en]
+    contents:
+      {
+        packs: 4,
+        cardsPerPack: 10,
+        description:
+          {
+            de: '4 Booster, ein Deck mit 40 Karten und eine Promokarte.',
+            en: '4 booster packs, a 40-card deck and a promo card.',
+          },
+      }
+    refs: { cardmarket: 846742, tcgplayer: 662725 }
+
+  - id: intl:me02-3-pack-blister-sneasel
+    print: intl
+    setIds: [intl:me02]
+    type: blister-3
+    family: intl:me02-3-pack-blister
+    name:
+      {
+        de: '3er-Pack-Blister Fatale Flammen: Sniebel',
+        en: 'Phantasmal Flames 3-Pack Blister: Sneasel',
+      }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Sniebel] }
+    refs: { cardmarket: 846739, tcgplayer: 654154 }
+
+  - id: intl:me02-3-pack-blister-weavile
+    print: intl
+    setIds: [intl:me02]
+    type: blister-3
+    family: intl:me02-3-pack-blister
+    name:
+      {
+        de: '3er-Pack-Blister Fatale Flammen: Snibunna',
+        en: 'Phantasmal Flames 3-Pack Blister: Weavile',
+      }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Snibunna] }
+    refs: { cardmarket: 846740, tcgplayer: 654156 }
+
+  - id: intl:me02-1-pack-blister-cottonee
+    print: intl
+    setIds: [intl:me02]
+    type: blister-1
+    family: intl:me02-1-pack-blister
+    name:
+      {
+        de: '1er-Blister Fatale Flammen: Waumboll',
+        en: 'Phantasmal Flames 1-Pack Blister: Cottonee',
+      }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Waumboll] }
+    refs: { cardmarket: 846737, tcgplayer: 654151 }
+
+  - id: intl:me02-1-pack-blister-whimsicott
+    print: intl
+    setIds: [intl:me02]
+    type: blister-1
+    family: intl:me02-1-pack-blister
+    name:
+      {
+        de: '1er-Blister Fatale Flammen: Elfun',
+        en: 'Phantasmal Flames 1-Pack Blister: Whimsicott',
+      }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Elfun] }
+    refs: { cardmarket: 846738, tcgplayer: 654150 }
+
+  - id: intl:me02-checklane-blister-blaziken
+    print: intl
+    setIds: [intl:me02]
+    type: checklane-blister
+    family: intl:me02-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Fatale Flammen: Lohgock',
+        en: 'Phantasmal Flames Premium Checklane Blister: Blaziken',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 846735, tcgplayer: 654147 }
+
+  - id: intl:me02-checklane-blister-hydrapple
+    print: intl
+    setIds: [intl:me02]
+    type: checklane-blister
+    family: intl:me02-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Fatale Flammen: Hydrapfel',
+        en: 'Phantasmal Flames Premium Checklane Blister: Hydrapple',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 846736, tcgplayer: 654146 }
+
+  - id: intl:me02-checklane-blister-arvens-greedent
+    print: intl
+    setIds: [intl:me02]
+    type: checklane-blister
+    family: intl:me02-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Fatale Flammen: Peppers Schlaraffel',
+        en: "Phantasmal Flames Premium Checklane Blister: Arven's Greedent",
+      }
+    languages: [en]
+    refs: { tcgplayer: 668931 }
+    note: Later US release; not on Cardmarket yet.
+
+  - id: intl:me02-checklane-blister-ethans-magcargo
+    print: intl
+    setIds: [intl:me02]
+    type: checklane-blister
+    family: intl:me02-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Fatale Flammen: Klarins Magcargo',
+        en: "Phantasmal Flames Premium Checklane Blister: Ethan's Magcargo",
+      }
+    languages: [en]
+    refs: { tcgplayer: 672588 }
+    note: Later US release; not on Cardmarket yet.
+
+  # Erhabene Helden / Ascended Heroes (ME02.5), 30 Jan 2026: no displays, only products
+  - id: intl:me02.5-booster
+    print: intl
+    setIds: [intl:me02.5]
+    type: booster-pack
+    name: { de: Erhabene Helden Booster, en: Ascended Heroes Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-01-30, en: 2026-01-30 }
+    contents:
+      {
+        cardsPerPack: 10,
+        description: { de: Nur in Produkten erhältlich., en: Only sold inside products. },
+      }
+    refs: { cardmarket: 860562, tcgplayer: 672434 }
+
+  - id: intl:me02.5-etb
+    print: intl
+    setIds: [intl:me02.5]
+    type: etb
+    name: { de: Top-Trainer-Box Erhabene Helden, en: Ascended Heroes Elite Trainer Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-01-30, en: 2026-01-30 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 860574, tcgplayer: 668496 }
+
+  - id: intl:me02.5-pc-etb
+    print: intl
+    setIds: [intl:me02.5]
+    type: pc-etb
+    name:
+      {
+        de: Pokémon Center Top-Trainer-Box Erhabene Helden,
+        en: Pokémon Center Elite Trainer Box Ascended Heroes,
+      }
+    languages: [en]
+    releaseDates: { en: 2026-01-30 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 860575, tcgplayer: 668497 }
+
+  - id: intl:me02.5-booster-bundle
+    print: intl
+    setIds: [intl:me02.5]
+    type: booster-bundle
+    name: { de: Booster-Bundle Erhabene Helden, en: Ascended Heroes Booster Bundle }
+    languages: [de, en]
+    contents: { packs: 6, cardsPerPack: 10 }
+    refs: { cardmarket: 860578, tcgplayer: 668541 }
+
+  - id: intl:me02.5-mini-tin-pikachu-tepig
+    print: intl
+    setIds: [intl:me02.5]
+    type: mini-tin
+    family: intl:me02.5-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Erhabene Helden: Pikachu & Floink',
+        en: 'Ascended Heroes Mini Tin: Pikachu & Tepig',
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 860568, tcgplayer: 668531 }
+
+  - id: intl:me02.5-mini-tin-riolu-darumaka
+    print: intl
+    setIds: [intl:me02.5]
+    type: mini-tin
+    family: intl:me02.5-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Erhabene Helden: Riolu & Flampion',
+        en: 'Ascended Heroes Mini Tin: Riolu & Darumaka',
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 860569, tcgplayer: 668532 }
+
+  - id: intl:me02.5-mini-tin-clefairy-chikorita
+    print: intl
+    setIds: [intl:me02.5]
+    type: mini-tin
+    family: intl:me02.5-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Erhabene Helden: Piepi & Endivie',
+        en: 'Ascended Heroes Mini Tin: Clefairy & Chikorita',
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 860570, tcgplayer: 668535 }
+
+  - id: intl:me02.5-mini-tin-zorua-cramorant
+    print: intl
+    setIds: [intl:me02.5]
+    type: mini-tin
+    family: intl:me02.5-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Erhabene Helden: Zorua & Urgl',
+        en: 'Ascended Heroes Mini Tin: Zorua & Cramorant',
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 860571, tcgplayer: 668533 }
+
+  - id: intl:me02.5-mini-tin-togepi-totodile
+    print: intl
+    setIds: [intl:me02.5]
+    type: mini-tin
+    family: intl:me02.5-mini-tin
+    name:
+      {
+        de: 'Mini-Tin Erhabene Helden: Togepi & Karnimani',
+        en: 'Ascended Heroes Mini Tin: Togepi & Totodile',
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10 }
+    refs: { cardmarket: 860572, tcgplayer: 668534 }
+
+  - id: intl:me02.5-mini-tin-display
+    print: intl
+    setIds: [intl:me02.5]
+    type: other
+    name: { de: Mini-Tin-Display Erhabene Helden, en: Ascended Heroes Mini Tin Display }
+    languages: [de, en]
+    refs: { cardmarket: 860567, tcgplayer: 679556 }
+    note: Retail display of the mini tins; German product name to confirm.
+
+  - id: intl:me02.5-tech-sticker-charmander
+    print: intl
+    setIds: [intl:me02.5]
+    type: sticker-collection
+    family: intl:me02.5-tech-sticker
+    name:
+      {
+        de: 'Tech-Sticker-Kollektion Erhabene Helden: Glumanda',
+        en: 'Ascended Heroes Tech Sticker Collection: Charmander',
+      }
+    languages: [de, en]
+    contents: { promos: [Glumanda] }
+    refs: { cardmarket: 860565, tcgplayer: 666908 }
+
+  - id: intl:me02.5-tech-sticker-gastly
+    print: intl
+    setIds: [intl:me02.5]
+    type: sticker-collection
+    family: intl:me02.5-tech-sticker
+    name:
+      {
+        de: 'Tech-Sticker-Kollektion Erhabene Helden: Nebulak',
+        en: 'Ascended Heroes Tech Sticker Collection: Gastly',
+      }
+    languages: [de, en]
+    contents: { promos: [Nebulak] }
+    refs: { cardmarket: 860566, tcgplayer: 666909 }
+
+  - id: intl:me02.5-2-pack-blister-larrys-komala
+    print: intl
+    setIds: [intl:me02.5]
+    type: blister-2
+    family: intl:me02.5-2-pack-blister
+    name:
+      {
+        de: '2er-Pack-Blister Erhabene Helden: Aokis Koalelu',
+        en: "Ascended Heroes 2-Pack Blister: Larry's Komala",
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10, promos: [Aokis Koalelu] }
+    refs: { cardmarket: 860563 }
+
+  - id: intl:me02.5-2-pack-blister-erikas-tangela
+    print: intl
+    setIds: [intl:me02.5]
+    type: blister-2
+    family: intl:me02.5-2-pack-blister
+    name:
+      {
+        de: '2er-Pack-Blister Erhabene Helden: Erikas Tangela',
+        en: "Ascended Heroes 2-Pack Blister: Erika's Tangela",
+      }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10, promos: [Erikas Tangela] }
+    refs: { cardmarket: 864105 }
+
+  - id: intl:me02.5-premium-poster-mega-lucario
+    print: intl
+    setIds: [intl:me02.5]
+    type: poster-collection
+    family: intl:me02.5-premium-poster
+    name:
+      {
+        de: 'Premium-Poster-Kollektion Erhabene Helden: Mega-Lucario',
+        en: 'Ascended Heroes Premium Poster Collection: Mega Lucario',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 860576, tcgplayer: 668536 }
+
+  - id: intl:me02.5-premium-poster-mega-gardevoir
+    print: intl
+    setIds: [intl:me02.5]
+    type: poster-collection
+    family: intl:me02.5-premium-poster
+    name:
+      {
+        de: 'Premium-Poster-Kollektion Erhabene Helden: Mega-Guardevoir',
+        en: 'Ascended Heroes Premium Poster Collection: Mega Gardevoir',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 860577, tcgplayer: 668537 }
+
+  - id: intl:me02.5-first-partners-pin-collection
+    print: intl
+    setIds: [intl:me02.5]
+    type: collection
+    name:
+      {
+        de: 'Deluxe-Pin-Kollektion Erhabene Helden: Starter-Pokémon',
+        en: Ascended Heroes First Partners Deluxe Pin Collection,
+      }
+    languages: [de, en]
+    refs: { cardmarket: 864106, tcgplayer: 672391 }
+    note: German product name to confirm.
+
+  - id: intl:me02.5-ex-box-mega-meganium
+    print: intl
+    setIds: [intl:me02.5]
+    type: ex-box
+    family: intl:me02.5-ex-box
+    name:
+      { de: 'ex-Box Erhabene Helden: Mega-Meganie-ex', en: Ascended Heroes Mega Meganium ex Box }
+    languages: [de, en]
+    contents: { promos: [Mega-Meganie-ex] }
+    refs: { cardmarket: 864107, tcgplayer: 672733 }
+
+  - id: intl:me02.5-ex-box-mega-emboar
+    print: intl
+    setIds: [intl:me02.5]
+    type: ex-box
+    family: intl:me02.5-ex-box
+    name:
+      { de: 'ex-Box Erhabene Helden: Mega-Flambirex-ex', en: Ascended Heroes Mega Emboar ex Box }
+    languages: [de, en]
+    contents: { promos: [Mega-Flambirex-ex] }
+    refs: { cardmarket: 864108, tcgplayer: 672734 }
+
+  - id: intl:me02.5-ex-box-mega-feraligatr
+    print: intl
+    setIds: [intl:me02.5]
+    type: ex-box
+    family: intl:me02.5-ex-box
+    name:
+      {
+        de: 'ex-Box Erhabene Helden: Mega-Impergator-ex',
+        en: Ascended Heroes Mega Feraligatr ex Box,
+      }
+    languages: [de, en]
+    contents: { promos: [Mega-Impergator-ex] }
+    refs: { cardmarket: 864109, tcgplayer: 672735 }
+
+  - id: intl:me02.5-tin-mega-meganium
+    print: intl
+    setIds: [intl:me02.5]
+    type: tin
+    family: intl:me02.5-tin
+    name:
+      {
+        de: 'Tin-Box Erhabene Helden: Mega-Meganie-ex',
+        en: 'Ascended Heroes Tin: Mega Meganium ex',
+      }
+    languages: [de, en]
+    contents: { promos: [Mega-Meganie-ex] }
+    refs: { cardmarket: 894469, tcgplayer: 702498 }
+
+  - id: intl:me02.5-tin-mega-emboar
+    print: intl
+    setIds: [intl:me02.5]
+    type: tin
+    family: intl:me02.5-tin
+    name:
+      {
+        de: 'Tin-Box Erhabene Helden: Mega-Flambirex-ex',
+        en: 'Ascended Heroes Tin: Mega Emboar ex',
+      }
+    languages: [de, en]
+    contents: { promos: [Mega-Flambirex-ex] }
+    refs: { cardmarket: 894470, tcgplayer: 702496 }
+
+  - id: intl:me02.5-tin-mega-feraligatr
+    print: intl
+    setIds: [intl:me02.5]
+    type: tin
+    family: intl:me02.5-tin
+    name:
+      {
+        de: 'Tin-Box Erhabene Helden: Mega-Impergator-ex',
+        en: 'Ascended Heroes Tin: Mega Feraligatr ex',
+      }
+    languages: [de, en]
+    contents: { promos: [Mega-Impergator-ex] }
+    refs: { cardmarket: 894472, tcgplayer: 702497 }
+
+  - id: intl:me02.5-focused-fighters
+    print: intl
+    setIds: [intl:me02.5]
+    type: premium-collection
+    name:
+      {
+        de: 'Premium-Kollektion Erhabene Helden: Focused Fighters',
+        en: Ascended Heroes Focused Fighters Premium Collection,
+      }
+    languages: [en]
+    exclusive: retailer
+    refs: { cardmarket: 895747, tcgplayer: 706959 }
+    note: "Sam's Club (US) exclusive, as TCGplayer lists it."
+
+  # Optimale Ordnung / Perfect Order (ME03), 27 Mar 2026
+  - id: intl:me03-booster
+    print: intl
+    setIds: [intl:me03]
+    type: booster-pack
+    name: { de: Optimale Ordnung Booster, en: Perfect Order Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-03-27, en: 2026-03-27 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 865410, tcgplayer: 672398 }
+
+  - id: intl:me03-sleeved-booster
+    print: intl
+    setIds: [intl:me03]
+    type: sleeved-booster
+    name: { de: Optimale Ordnung Sleeved Booster, en: Perfect Order Sleeved Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-03-27, en: 2026-03-27 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 865409, tcgplayer: 672412 }
+
+  - id: intl:me03-display
+    print: intl
+    setIds: [intl:me03]
+    type: booster-display
+    name: { de: Optimale Ordnung Display (36 Booster), en: Perfect Order Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-03-27, en: 2026-03-27 }
+    contents: { packs: 36, cardsPerPack: 10 }
+    refs: { cardmarket: 865408, tcgplayer: 672394 }
+
+  - id: intl:me03-half-display
+    print: intl
+    setIds: [intl:me03]
+    type: half-display
+    name: { de: Optimale Ordnung Display (18 Booster), en: Perfect Order Half Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-03-27, en: 2026-03-27 }
+    contents: { packs: 18, cardsPerPack: 10 }
+    refs: { cardmarket: 865407, tcgplayer: 672403 }
+
+  - id: intl:me03-booster-bundle
+    print: intl
+    setIds: [intl:me03]
+    type: booster-bundle
+    name: { de: Booster-Bundle Optimale Ordnung, en: Perfect Order Booster Bundle }
+    languages: [de, en]
+    releaseDates: { de: 2026-03-27, en: 2026-03-27 }
+    contents: { packs: 6, cardsPerPack: 10 }
+    refs: { cardmarket: 865404, tcgplayer: 672396 }
+
+  - id: intl:me03-etb
+    print: intl
+    setIds: [intl:me03]
+    type: etb
+    name: { de: Top-Trainer-Box Optimale Ordnung, en: Perfect Order Elite Trainer Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-03-27, en: 2026-03-27 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 865406, tcgplayer: 672401 }
+
+  - id: intl:me03-pc-etb
+    print: intl
+    setIds: [intl:me03]
+    type: pc-etb
+    name:
+      {
+        de: Pokémon Center Top-Trainer-Box Optimale Ordnung,
+        en: Pokémon Center Elite Trainer Box Perfect Order,
+      }
+    languages: [en]
+    releaseDates: { en: 2026-03-27 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 865405, tcgplayer: 672404 }
+
+  - id: intl:me03-build-and-battle
+    print: intl
+    setIds: [intl:me03]
+    type: build-and-battle
+    name: { de: 'Build & Battle Box Optimale Ordnung', en: 'Perfect Order Build & Battle Box' }
+    languages: [de, en]
+    contents:
+      {
+        packs: 4,
+        cardsPerPack: 10,
+        description:
+          {
+            de: '4 Booster, ein Deck mit 40 Karten und eine Promokarte.',
+            en: '4 booster packs, a 40-card deck and a promo card.',
+          },
+      }
+    refs: { cardmarket: 865397, tcgplayer: 672400 }
+
+  - id: intl:me03-3-pack-blister-chikorita
+    print: intl
+    setIds: [intl:me03]
+    type: blister-3
+    family: intl:me03-3-pack-blister
+    name:
+      {
+        de: '3er-Pack-Blister Optimale Ordnung: Endivie',
+        en: 'Perfect Order 3-Pack Blister: Chikorita',
+      }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Endivie] }
+    refs: { cardmarket: 865398, tcgplayer: 672393 }
+
+  - id: intl:me03-1-pack-blister-makuhita
+    print: intl
+    setIds: [intl:me03]
+    type: blister-1
+    family: intl:me03-1-pack-blister
+    name:
+      { de: '1er-Blister Optimale Ordnung: Makuhita', en: 'Perfect Order 1-Pack Blister: Makuhita' }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Makuhita] }
+    refs: { cardmarket: 865399, tcgplayer: 672410 }
+
+  - id: intl:me03-checklane-blister-cinderace
+    print: intl
+    setIds: [intl:me03]
+    type: checklane-blister
+    family: intl:me03-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Optimale Ordnung: Liberlo',
+        en: 'Perfect Order Premium Checklane Blister: Cinderace',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 865400, tcgplayer: 672407 }
+
+  - id: intl:me03-checklane-blister-meganium
+    print: intl
+    setIds: [intl:me03]
+    type: checklane-blister
+    family: intl:me03-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Optimale Ordnung: Meganie',
+        en: 'Perfect Order Premium Checklane Blister: Meganium',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 865401, tcgplayer: 672406 }
+
+  - id: intl:me03-checklane-blister-steelix
+    print: intl
+    setIds: [intl:me03]
+    type: checklane-blister
+    family: intl:me03-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Optimale Ordnung: Stahlos',
+        en: 'Perfect Order Premium Checklane Blister: Steelix',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 865402, tcgplayer: 672408 }
+    note: Cardmarket calls it a Stage 1 Blister.
+
+  - id: intl:me03-checklane-blister-clawitzer
+    print: intl
+    setIds: [intl:me03]
+    type: checklane-blister
+    family: intl:me03-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Optimale Ordnung: Wummer',
+        en: 'Perfect Order Premium Checklane Blister: Clawitzer',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 865403, tcgplayer: 672409 }
+    note: Cardmarket calls it a Stage 1 Blister.
+
+  # Wachsendes Chaos / Chaos Rising (ME04), 22 May 2026
+  - id: intl:me04-booster
+    print: intl
+    setIds: [intl:me04]
+    type: booster-pack
+    name: { de: Wachsendes Chaos Booster, en: Chaos Rising Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-05-22, en: 2026-05-22 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 877296, tcgplayer: 684446 }
+
+  - id: intl:me04-sleeved-booster
+    print: intl
+    setIds: [intl:me04]
+    type: sleeved-booster
+    name: { de: Wachsendes Chaos Sleeved Booster, en: Chaos Rising Sleeved Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-05-22, en: 2026-05-22 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 877292, tcgplayer: 684448 }
+
+  - id: intl:me04-display
+    print: intl
+    setIds: [intl:me04]
+    type: booster-display
+    name: { de: Wachsendes Chaos Display (36 Booster), en: Chaos Rising Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-05-22, en: 2026-05-22 }
+    contents: { packs: 36, cardsPerPack: 10 }
+    refs: { cardmarket: 877295, tcgplayer: 684444 }
+
+  - id: intl:me04-half-display
+    print: intl
+    setIds: [intl:me04]
+    type: half-display
+    name: { de: Wachsendes Chaos Display (18 Booster), en: Chaos Rising Half Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-05-22, en: 2026-05-22 }
+    contents: { packs: 18, cardsPerPack: 10 }
+    refs: { cardmarket: 877291, tcgplayer: 695395 }
+
+  - id: intl:me04-booster-bundle
+    print: intl
+    setIds: [intl:me04]
+    type: booster-bundle
+    name: { de: Booster-Bundle Wachsendes Chaos, en: Chaos Rising Booster Bundle }
+    languages: [de, en]
+    releaseDates: { de: 2026-05-22, en: 2026-05-22 }
+    contents: { packs: 6, cardsPerPack: 10 }
+    refs: { cardmarket: 877284, tcgplayer: 684456 }
+
+  - id: intl:me04-etb
+    print: intl
+    setIds: [intl:me04]
+    type: etb
+    name: { de: Top-Trainer-Box Wachsendes Chaos, en: Chaos Rising Elite Trainer Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-05-22, en: 2026-05-22 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 877294, tcgplayer: 684450 }
+
+  - id: intl:me04-pc-etb
+    print: intl
+    setIds: [intl:me04]
+    type: pc-etb
+    name:
+      {
+        de: Pokémon Center Top-Trainer-Box Wachsendes Chaos,
+        en: Pokémon Center Elite Trainer Box Chaos Rising,
+      }
+    languages: [en]
+    releaseDates: { en: 2026-05-22 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 877293, tcgplayer: 684452 }
+
+  - id: intl:me04-build-and-battle
+    print: intl
+    setIds: [intl:me04]
+    type: build-and-battle
+    name: { de: 'Build & Battle Box Wachsendes Chaos', en: 'Chaos Rising Build & Battle Box' }
+    languages: [de, en]
+    contents:
+      {
+        packs: 4,
+        cardsPerPack: 10,
+        description:
+          {
+            de: '4 Booster, ein Deck mit 40 Karten und eine Promokarte.',
+            en: '4 booster packs, a 40-card deck and a promo card.',
+          },
+      }
+    refs: { cardmarket: 877282, tcgplayer: 684454 }
+
+  - id: intl:me04-3-pack-blister-charmeleon
+    print: intl
+    setIds: [intl:me04]
+    type: blister-3
+    family: intl:me04-3-pack-blister
+    name:
+      {
+        de: '3er-Pack-Blister Wachsendes Chaos: Glutexo',
+        en: 'Chaos Rising 3-Pack Blister: Charmeleon',
+      }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Glutexo] }
+    refs: { cardmarket: 877290, tcgplayer: 684458 }
+
+  - id: intl:me04-1-pack-blister-toxel
+    print: intl
+    setIds: [intl:me04]
+    type: blister-1
+    family: intl:me04-1-pack-blister
+    name: { de: '1er-Blister Wachsendes Chaos: Toxel', en: 'Chaos Rising 1-Pack Blister: Toxel' }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Toxel] }
+    refs: { cardmarket: 877285, tcgplayer: 684457 }
+
+  - id: intl:me04-checklane-blister-pawmot
+    print: intl
+    setIds: [intl:me04]
+    type: checklane-blister
+    family: intl:me04-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Wachsendes Chaos: Pamomamo',
+        en: 'Chaos Rising Premium Checklane Blister: Pawmot',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 877288, tcgplayer: 684459 }
+
+  - id: intl:me04-checklane-blister-flygon
+    print: intl
+    setIds: [intl:me04]
+    type: checklane-blister
+    family: intl:me04-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Wachsendes Chaos: Libelldra',
+        en: 'Chaos Rising Premium Checklane Blister: Flygon',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 877289, tcgplayer: 684460 }
+
+  - id: intl:me04-checklane-blister-reshiram
+    print: intl
+    setIds: [intl:me04]
+    type: checklane-blister
+    family: intl:me04-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Wachsendes Chaos: Reshiram',
+        en: 'Chaos Rising Premium Checklane Blister: Reshiram',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 877286, tcgplayer: 696150 }
+    note: TCGplayer lists it as a single pack blister (Reshiram/Moltres).
+
+  - id: intl:me04-checklane-blister-zacian
+    print: intl
+    setIds: [intl:me04]
+    type: checklane-blister
+    family: intl:me04-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Wachsendes Chaos: Zacian',
+        en: 'Chaos Rising Premium Checklane Blister: Zacian',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 877287, tcgplayer: 696144 }
+    note: TCGplayer lists it as a single pack blister (Zacian/Mimikyu).
+
+  # Dunkelnacht / Pitch Black (ME05), 17 Jul 2026
+  - id: intl:me05-booster
+    print: intl
+    setIds: [intl:me05]
+    type: booster-pack
+    name: { de: Dunkelnacht Booster, en: Pitch Black Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-07-17, en: 2026-07-17 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 885547, tcgplayer: 692944 }
+
+  - id: intl:me05-sleeved-booster
+    print: intl
+    setIds: [intl:me05]
+    type: sleeved-booster
+    name: { de: Dunkelnacht Sleeved Booster, en: Pitch Black Sleeved Booster Pack }
+    languages: [de, en]
+    releaseDates: { de: 2026-07-17, en: 2026-07-17 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 885546, tcgplayer: 692957 }
+
+  - id: intl:me05-display
+    print: intl
+    setIds: [intl:me05]
+    type: booster-display
+    name: { de: Dunkelnacht Display (36 Booster), en: Pitch Black Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-07-17, en: 2026-07-17 }
+    contents: { packs: 36, cardsPerPack: 10 }
+    refs: { cardmarket: 885545, tcgplayer: 692939 }
+
+  - id: intl:me05-half-display
+    print: intl
+    setIds: [intl:me05]
+    type: half-display
+    name: { de: Dunkelnacht Display (18 Booster), en: Pitch Black Half Booster Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-07-17, en: 2026-07-17 }
+    contents: { packs: 18, cardsPerPack: 10 }
+    refs: { cardmarket: 885544, tcgplayer: 692940 }
+
+  - id: intl:me05-booster-bundle
+    print: intl
+    setIds: [intl:me05]
+    type: booster-bundle
+    name: { de: Booster-Bundle Dunkelnacht, en: Pitch Black Booster Bundle }
+    languages: [de, en]
+    releaseDates: { de: 2026-07-17, en: 2026-07-17 }
+    contents: { packs: 6, cardsPerPack: 10 }
+    refs: { cardmarket: 885539, tcgplayer: 692942 }
+
+  - id: intl:me05-etb
+    print: intl
+    setIds: [intl:me05]
+    type: etb
+    name: { de: Top-Trainer-Box Dunkelnacht, en: Pitch Black Elite Trainer Box }
+    languages: [de, en]
+    releaseDates: { de: 2026-07-17, en: 2026-07-17 }
+    contents: { packs: 9, cardsPerPack: 10 }
+    refs: { cardmarket: 885542, tcgplayer: 692947 }
+
+  - id: intl:me05-pc-etb
+    print: intl
+    setIds: [intl:me05]
+    type: pc-etb
+    name:
+      {
+        de: Pokémon Center Top-Trainer-Box Dunkelnacht,
+        en: Pokémon Center Elite Trainer Box Pitch Black,
+      }
+    languages: [en]
+    releaseDates: { en: 2026-07-17 }
+    exclusive: pokemon-center
+    contents: { packs: 11, cardsPerPack: 10 }
+    refs: { cardmarket: 885543, tcgplayer: 692949 }
+
+  - id: intl:me05-build-and-battle
+    print: intl
+    setIds: [intl:me05]
+    type: build-and-battle
+    name: { de: 'Build & Battle Box Dunkelnacht', en: 'Pitch Black Build & Battle Box' }
+    languages: [de, en]
+    contents:
+      {
+        packs: 4,
+        cardsPerPack: 10,
+        description:
+          {
+            de: '4 Booster, ein Deck mit 40 Karten und eine Promokarte.',
+            en: '4 booster packs, a 40-card deck and a promo card.',
+          },
+      }
+    refs: { cardmarket: 885540, tcgplayer: 692946 }
+
+  - id: intl:me05-3-pack-blister-binacle
+    print: intl
+    setIds: [intl:me05]
+    type: blister-3
+    family: intl:me05-3-pack-blister
+    name: { de: '3er-Pack-Blister Dunkelnacht: Bithora', en: 'Pitch Black 3-Pack Blister: Binacle' }
+    languages: [de, en]
+    contents: { packs: 3, cardsPerPack: 10, promos: [Bithora] }
+    refs: { cardmarket: 885533, tcgplayer: 692938 }
+
+  - id: intl:me05-1-pack-blister-slowpoke
+    print: intl
+    setIds: [intl:me05]
+    type: blister-1
+    family: intl:me05-1-pack-blister
+    name: { de: '1er-Blister Dunkelnacht: Flegmon', en: 'Pitch Black 1-Pack Blister: Slowpoke' }
+    languages: [de, en]
+    contents: { packs: 1, cardsPerPack: 10, promos: [Flegmon] }
+    refs: { cardmarket: 885534, tcgplayer: 692955 }
+
+  - id: intl:me05-2-pack-blister-gengar
+    print: intl
+    setIds: [intl:me05]
+    type: blister-2
+    family: intl:me05-2-pack-blister
+    name: { de: '2er-Pack-Blister Dunkelnacht: Gengar', en: 'Pitch Black 2-Pack Blister: Gengar' }
+    languages: [de, en]
+    contents: { packs: 2, cardsPerPack: 10, promos: [Gengar] }
+    refs: { cardmarket: 903835 }
+    note: 'Cardmarket: Enhanced 2-Pack Blister.'
+
+  - id: intl:me05-checklane-blister-gengar
+    print: intl
+    setIds: [intl:me05]
+    type: checklane-blister
+    family: intl:me05-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Dunkelnacht: Gengar',
+        en: 'Pitch Black Premium Checklane Blister: Gengar',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 885535, tcgplayer: 692951 }
+
+  - id: intl:me05-checklane-blister-luxray
+    print: intl
+    setIds: [intl:me05]
+    type: checklane-blister
+    family: intl:me05-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Dunkelnacht: Luxtra',
+        en: 'Pitch Black Premium Checklane Blister: Luxray',
+      }
+    languages: [de, en]
+    refs: { cardmarket: 885536, tcgplayer: 692952 }
+
+  - id: intl:me05-checklane-blister-tyrantrum
+    print: intl
+    setIds: [intl:me05]
+    type: checklane-blister
+    family: intl:me05-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Dunkelnacht: Monargoras',
+        en: 'Pitch Black Premium Checklane Blister: Tyrantrum',
+      }
+    languages: [en]
+    exclusive: retailer
+    refs: { cardmarket: 885537, tcgplayer: 692953 }
+    note: 'Target (US) exclusive, as TCGplayer lists it.'
+
+  - id: intl:me05-checklane-blister-aurorus
+    print: intl
+    setIds: [intl:me05]
+    type: checklane-blister
+    family: intl:me05-checklane-blister
+    name:
+      {
+        de: 'Premium-Checklane-Blister Dunkelnacht: Amagarga',
+        en: 'Pitch Black Premium Checklane Blister: Aurorus',
+      }
+    languages: [en]
+    exclusive: retailer
+    refs: { cardmarket: 885538, tcgplayer: 692954 }
+    note: 'Target (US) exclusive, as TCGplayer lists it.'
+
+  # Mega-Entwicklung Promos (MEP): packs of the First Partner Illustration promos
+  - id: intl:mep-first-partner-booster-1
+    print: intl
+    setIds: [intl:mep]
+    type: booster-pack
+    family: intl:mep-first-partner-booster
+    name:
+      {
+        de: First Partner Illustration Booster Serie 1,
+        en: First Partner Illustration Booster Series 1,
+      }
+    languages: [de, en]
+    refs: { cardmarket: 875198 }
+    note: Contents and German product name to confirm.
+
+  - id: intl:mep-first-partner-booster-2
+    print: intl
+    setIds: [intl:mep]
+    type: booster-pack
+    family: intl:mep-first-partner-booster
+    name:
+      {
+        de: First Partner Illustration Booster Serie 2,
+        en: First Partner Illustration Booster Series 2,
+      }
+    languages: [de, en]
+    refs: { cardmarket: 882853 }
+    note: Contents and German product name to confirm.
+
+  - id: intl:mep-first-partner-booster-3
+    print: intl
+    setIds: [intl:mep]
+    type: booster-pack
+    family: intl:mep-first-partner-booster
+    name:
+      {
+        de: First Partner Illustration Booster Serie 3,
+        en: First Partner Illustration Booster Series 3,
+      }
+    languages: [de, en]
+    refs: { cardmarket: 895778 }
+    note: Contents and German product name to confirm.

@@ -29,10 +29,12 @@ const FOIL_BY_RARITY: Record<RarityId, FoilStyle> = {
   'ace-spec-rare': 'rainbow',
   'shiny-rare': 'rainbow',
   'illustration-rare': 'etched',
+  'mega-attack-rare': 'etched',
   'special-illustration-rare': 'etched',
   'pikachu-rare': 'fireworks',
   'futuristic-rare': 'metallic',
   'hyper-rare': 'gold',
+  'mega-hyper-rare': 'gold',
   'rgb-rare': 'spectral',
   'classic-collection': 'classic',
 };

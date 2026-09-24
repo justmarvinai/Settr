@@ -31,6 +31,7 @@ Pokémon cards are **not** the same card list translated into every language. Th
 - **Decision (Q3.2, R2.3): Settr's Chinese card languages are Simplified Chinese (`zh-cn`, the focus) and Traditional Chinese (`zh-tw`).** Both Chinese editions of *30th CELEBRATION* mirror `M6a`, so `asia:M6a` carries the languages `['ja', 'zh-cn', 'zh-tw']` (ADR-021, ADR-026):
   - The Simplified Chinese *30周年庆典* has the same 176 cards (Cardmarket expansion 6603). Its one difference is that SC prints C/R rarity marks that JP doesn't, which is handled by `printedRarity` per language (§4.1).
   - Traditional Chinese is active for cards and sealed products (R2.3). TC copies use the M6a numbering.
+- **Mega Evolution series (ADR-053):** each international set is built from one or two Japanese sets (Mega-Entwicklung = Mega Brave `M1L` + Mega Symphonia `M1S`). Traditional Chinese mirrors the Japanese sets, so they carry `['ja', 'zh-tw']`. The Simplified Chinese editions cut them differently, so `zh-cn` stays with M6a. The MEGA promo cards (`M-P`) are Japanese only, since Taiwan numbers its promos in a series of its own.
 
 Therefore:
 
@@ -39,8 +40,15 @@ Therefore:
 - A **Card** belongs to one set, has a **section** (`main`, `secret`, `subset`, `energy`, `promo`) and exists in one or more **languages**: `intl` cards in `de`, `en`, …; `asia` cards in `ja` and, when mirrored, `zh-tw`/`zh-cn`/`ko`.
 - A **Variant** is a physical version of a card within one print: *normal (non-holo)*, *holo*, *reverse holo*, special reverse **foil patterns** (e.g. *Poké Ball*, *Master Ball*), **stamps** (e.g. Pokémon Center, pre-release), special sizes, and **editions** of older sets (e.g. Base Set *1st Edition* vs *Unlimited*; ADR-028). The catalog declares which variants exist per card, derived from TCGdex's detailed variant model (`type` + `foil` + `stamp[]` + `subtype` + `size`, with per-variant Cardmarket/TCGplayer IDs) plus curated overrides.
   - *30th Celebration note:* every card in this set is foil and has **exactly one** standard variant. TCGdex marks some as `normal`, so the pipeline overrides this.
+  - *As built for the Mega Evolution series (ADR-052):* ids read like the card:
+    - the type: `normal`, `holo`, `reverse`;
+    - a reverse pattern (`reverse-pokeball`) or special finish (`holo-cosmos`, `reverse-league`);
+    - stamps and sizes after `+` (`holo+set-logo+staff`, `lenticular+jumbo`);
+    - `normal+deck`: the non-holo print of a Rare from the Build & Battle Boxes.
+
+    Kinds: `finish` and `pattern` count toward Master. `stamp` covers every promotional print (stamps, Cosmos and league holos, jumbo, deck prints).
 - An owned copy is identified by **card × language × variant (× condition/grade)**.
-- **Multi-set and multi-era from day one (R2.5, ADR-028):** v1 ships one expansion, but nothing in the IDs, the schema or the completion rules assumes a single set or era. Adding a set after v1 means pipeline config, a curated overlay and a review, not a model change.
+- **Multi-set and multi-era from day one (R2.5, ADR-028):** v1 shipped one expansion, and the Mega Evolution series followed on 2026-09-24 without a model change; nothing in the IDs, the schema or the completion rules assumes a single set or era. Adding a set after v1 means pipeline config, a curated overlay and a review, not a model change.
 
 ```
 Print 1─* Set 1─* Card 1─* Variant
@@ -122,6 +130,7 @@ interface CatalogSetSummary {
   counts: { official: number; total: number };
   sectionNames?: Partial<Record<CardSection, LocalizedText>>; // sections that aren't a set of their own (M6a 136–165: "Klassische Sammlung")
   otherPrint?: string;           // the same expansion in the other print (intl:30th ↔ asia:M6a), from the cards' counterparts
+  otherPrints?: string[];        // every other print when there are several (intl:me01 ↔ asia:M1L, asia:M1S), most shared cards first
   cover?: { cardId: string; images: Partial<Record<CardLanguage, CatalogImage>> }; // signature card for set tiles
   logo?: Partial<Record<CardLanguage, string>>; symbol?: string; // TCGdex base URLs (+ '.webp'), only when verified
 }
@@ -155,6 +164,7 @@ interface CatalogCard {
   languages: CardLanguage[];     // usually = set.languages
   images: Partial<Record<CardLanguage, CatalogImage>>; // best verified picture per card language (CAT-07 chain)
   counterparts?: string[];       // card ids with the same artwork in the other print
+  counterpartSets?: string[];    // the set of each counterpart, same order (a pair may cross sets: an M2 card ↔ an MEP promo)
   refs?: { tcgdex?: string };    // upstream card ID
 }
 
@@ -162,8 +172,10 @@ interface CardVariant {
   id: VariantId;
   languages?: CardLanguage[];    // restrict when a variant exists only in some languages
   refs?: {
-    // intl: `default` (one product for every language). asia: JP (exp. 6602) and SC (exp. 6603) are
-    // separate products, sorted by expansion and linked through idMetacard; TC copies use the JP product (R2.3).
+    // intl: `default` (one product for every language). asia: Japanese (the set's expansion, e.g. 6602 for
+    // M6a, 6189 for M1L) and Simplified Chinese (6603) are separate products, sorted by expansion and linked
+    // through idMetacard; TC copies use the JP product (R2.3). A plain reverse holo usually shares the normal
+    // card's product (Cardmarket filters it with isReverseHolo); pattern reverses have their own (ADR-052).
     cardmarket?: { default?: number; byLanguage?: Partial<Record<CardLanguage, number>> };
     tcgplayer?: number;
   };
@@ -213,7 +225,7 @@ interface PriceGuideSnapshot {
 }
 ```
 
-**As built (M4):** `scripts/price-guide` writes the file after `vite build`, only on Vercel (ADR-029); every other build, and a failed download, gets `{ source, fetchedAt, prices: {} }` without `guideCreatedAt`, so the app finds the file and shows no suggestions. The app validates the file with `priceGuideSnapshotSchema` (`src/domain/catalog/price-guide.ts`), shows values only for raw series of a known product and hides snapshots older than three days. A variant counts as reverse (the `-holo` fields) when its id starts with `reverse`.
+**As built (M4):** `scripts/price-guide` writes the file after `vite build`, only on Vercel (ADR-029); every other build, and a failed download, gets `{ source, fetchedAt, prices: {} }` without `guideCreatedAt`, so the app finds the file and shows no suggestions. The app validates the file with `priceGuideSnapshotSchema` (`src/domain/catalog/price-guide.ts`), shows values only for raw series of a known product and hides snapshots older than three days. A copy reads the `-holo` fields when it's the plain reverse holo and its product is shared with another variant of the card (`isSharedReverse`, ADR-052); pattern reverses and MEGA Dream ex's reverse holos are products of their own.
 
 **Semantics of guide values (shown to the user):** for international products, one Cardmarket product covers **all languages and seller countries**, so `low` is the global cheapest offer, not "cheapest German seller in German". Japanese and Simplified Chinese products are separate Cardmarket products, so their values don't mix in international offers. Traditional Chinese copies are listed under the JP product (R2.3), so JP values may include TC offers (to verify). The UI labels suggestions accordingly (`UX_SPEC.md` §4.4): every price belongs to its card language (R2.6), and a guide value is never presented as if it applied to a language it doesn't cover.
 
@@ -514,6 +526,8 @@ For a set *S*, a language filter *L* (a specific language or "any") and "owned" 
 | **Master** (*Master-Set*) | owned (card, variant) pairs | all (card, variant) pairs of the set **and its subsets and energies**, excluding stamp/promo variants unless enabled |
 
 For 30th Celebration (EN/DE) that means: **Basis = 128**, **Komplett = 161**, **Master = 199** (161 + 30 Classic Collection + 8 Energies; exactly one variant per card). For JP M6a: Basis = 103, Komplett = 138 (incl. 20 AR, 10 SAR, 2 FUR and 3 RGB), Master = 176 (+ Classic Collection 136–165 + 8 Energies, which are sections inside M6a).
+
+For Mega-Entwicklung (EN/DE): Basis = 132, Komplett = 188, Master = 326 (188 cards + 8 basic Energy, each in its regular variants: normal or holo, plus reverse holo). Erhabene Helden's reverse patterns make its Master 613. Promotional variants don't count; a card that only exists in promotional variants (an MEP promo) counts with its first one (ADR-052).
 
 Graded copies count as owned (setting). Decision (Q5.5): all three metrics are shown, per language with an "any language" toggle.
 

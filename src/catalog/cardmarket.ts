@@ -31,6 +31,8 @@ export interface CardmarketFilters {
   /** Cardmarket country id; Germany (7) is the default of Marvin's price rule. */
   sellerCountry?: number;
   minCondition?: Condition;
+  /** Only the product's reverse-holo offers (see `isSharedReverse`). */
+  reverseHolo?: boolean;
 }
 
 /**
@@ -47,15 +49,35 @@ export function cardmarketProductId(
   return refs.byLanguage?.[lang === 'zh-tw' ? 'ja' : lang] ?? refs.default;
 }
 
+/**
+ * Whether a copy of this variant is sold as the reverse holo of another variant's product
+ * (DATA_SOURCES.md §8.1): an international reverse holo shares the normal (or holo) card's product,
+ * so its link filters for reverse holos and the price guide's `-holo` fields price it. Pattern
+ * reverses and the Japanese reverse holos of MEGA Dream ex are products of their own.
+ */
+export function isSharedReverse(
+  card: Pick<CatalogCard, 'variants'>,
+  variantId: string,
+  lang: CardLanguage,
+): boolean {
+  if (variantId !== 'reverse') return false;
+  const id = cardmarketProductId(card, variantId, lang);
+  return (
+    id !== undefined &&
+    card.variants.some((v) => v.id !== variantId && cardmarketProductId(card, v.id, lang) === id)
+  );
+}
+
 export function cardmarketUrl(
   productId: number,
-  { language, sellerCountry = GERMANY, minCondition = 'NM' }: CardmarketFilters = {},
+  { language, sellerCountry = GERMANY, minCondition = 'NM', reverseHolo }: CardmarketFilters = {},
 ): string {
   const params = new URLSearchParams({ idProduct: String(productId) });
   const languageId = language ? LANGUAGE_IDS[language] : undefined;
   if (languageId) params.set('language', String(languageId));
   params.set('sellerCountry', String(sellerCountry));
   params.set('minCondition', String(CONDITIONS.indexOf(minCondition) + 1));
+  if (reverseHolo) params.set('isReverseHolo', 'Y');
   return `${BASE}?${params.toString()}`;
 }
 

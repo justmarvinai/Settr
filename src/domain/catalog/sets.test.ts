@@ -6,6 +6,7 @@ import {
   groupBySeries,
   isTranslatedName,
   pickText,
+  printsOf,
   textIn,
 } from './sets';
 
@@ -64,5 +65,19 @@ describe('catalog helpers', () => {
     const groups = groupBySeries(sets);
     expect(groups).toHaveLength(1);
     expect(groups[0]?.sets.map((s) => s.id)).toEqual(['intl:30th', 'intl:me01']);
+  });
+});
+
+describe('printsOf', () => {
+  const me01 = set('intl:me01', { otherPrint: 'asia:M1L', otherPrints: ['asia:M1L', 'asia:M1S'] });
+  const m1l = set('asia:M1L', { print: 'asia', otherPrint: 'intl:me01' });
+  const m1s = set('asia:M1S', { print: 'asia', otherPrint: 'intl:me01' });
+  const sets = [m1s, me01, m1l, set('intl:30th', { otherPrint: 'asia:M6a' })];
+  const ids = (s: CatalogSetSummary) => printsOf(s, sets).map((p) => p.id);
+
+  it('lists every print of the expansion, the other Japanese half included', () => {
+    expect(ids(me01)).toEqual(['intl:me01', 'asia:M1S', 'asia:M1L']);
+    expect(ids(m1l)).toEqual(['intl:me01', 'asia:M1S', 'asia:M1L']);
+    expect(ids(set('intl:solo'))).toEqual(['intl:solo']);
   });
 });

@@ -1,0 +1,387 @@
+# Sealed products of the Japanese Mega Evolution sets and their Traditional Chinese editions,
+# DATA_SOURCES.md §7.2. German names are descriptive; Japanese and Traditional Chinese product
+# names follow the set names. Cardmarket ids from the catalog-sync report (the Japanese
+# expansions 6189, 6190, 6291, 6380, 6427, 6494, 6556), TCGplayer ids from TCGCSV. Simplified
+# Chinese editions cut the sets differently (no 1:1 mirror), so they aren't here.
+source: Cardmarket product list, TCGCSV (TCGplayer), PTCG-database set names, catalog-sync reports of 2026-09-24
+products:
+  # Japanese
+  - id: asia:m1l-booster
+    print: asia
+    setIds: [asia:M1L]
+    type: booster-pack
+    name:
+      {
+        ja: 拡張パック「メガブレイブ」,
+        de: Booster Mega Brave (Japan),
+        en: Mega Brave Booster (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-08-01 }
+    contents: { cardsPerPack: 5 }
+    refs: { cardmarket: 831331, tcgplayer: 647498 }
+
+  - id: asia:m1l-box
+    print: asia
+    setIds: [asia:M1L]
+    type: jp-box
+    name:
+      {
+        ja: 拡張パック「メガブレイブ」BOX,
+        de: Japanisches Display Mega Brave (30 Booster),
+        en: Mega Brave Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-08-01 }
+    contents: { packs: 30, cardsPerPack: 5 }
+    refs: { cardmarket: 831326, tcgplayer: 647500 }
+
+  - id: asia:m1s-booster
+    print: asia
+    setIds: [asia:M1S]
+    type: booster-pack
+    name:
+      {
+        ja: 拡張パック「メガシンフォニア」,
+        de: Booster Mega Symphonia (Japan),
+        en: Mega Symphonia Booster (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-08-01 }
+    contents: { cardsPerPack: 5 }
+    refs: { cardmarket: 831333, tcgplayer: 647499 }
+
+  - id: asia:m1s-box
+    print: asia
+    setIds: [asia:M1S]
+    type: jp-box
+    name:
+      {
+        ja: 拡張パック「メガシンフォニア」BOX,
+        de: Japanisches Display Mega Symphonia (30 Booster),
+        en: Mega Symphonia Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-08-01 }
+    contents: { packs: 30, cardsPerPack: 5 }
+    refs: { cardmarket: 831328, tcgplayer: 647501 }
+
+  - id: asia:m2-booster
+    print: asia
+    setIds: [asia:M2]
+    type: booster-pack
+    name:
+      {
+        ja: 拡張パック「インフェルノX」,
+        de: Booster Inferno X (Japan),
+        en: Inferno X Booster (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-09-26 }
+    contents: { cardsPerPack: 5 }
+    refs: { cardmarket: 845911, tcgplayer: 655970 }
+
+  - id: asia:m2-box
+    print: asia
+    setIds: [asia:M2]
+    type: jp-box
+    name:
+      {
+        ja: 拡張パック「インフェルノX」BOX,
+        de: Japanisches Display Inferno X (30 Booster),
+        en: Inferno X Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-09-26 }
+    contents: { packs: 30, cardsPerPack: 5 }
+    refs: { cardmarket: 845910, tcgplayer: 655968 }
+
+  - id: asia:m2a-booster
+    print: asia
+    setIds: [asia:M2a]
+    type: booster-pack
+    name:
+      {
+        ja: ハイクラスパック「MEGAドリームex」,
+        de: Booster MEGA Dream ex (Japan),
+        en: MEGA Dream ex Booster (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-11-28 }
+    contents: { cardsPerPack: 10 }
+    refs: { cardmarket: 858381, tcgplayer: 666255 }
+
+  - id: asia:m2a-box
+    print: asia
+    setIds: [asia:M2a]
+    type: jp-box
+    name:
+      {
+        ja: ハイクラスパック「MEGAドリームex」BOX,
+        de: Japanisches Display MEGA Dream ex (10 Booster),
+        en: MEGA Dream ex Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2025-11-28 }
+    contents: { packs: 10, cardsPerPack: 10 }
+    refs: { cardmarket: 858380, tcgplayer: 666254 }
+
+  - id: asia:m3-booster
+    print: asia
+    setIds: [asia:M3]
+    type: booster-pack
+    name:
+      {
+        ja: 拡張パック「ムニキスゼロ」,
+        de: Booster Nihil Zero (Japan),
+        en: Nihil Zero Booster (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2026-01-23 }
+    contents: { cardsPerPack: 5 }
+    refs: { cardmarket: 864284, tcgplayer: 674454 }
+
+  - id: asia:m3-box
+    print: asia
+    setIds: [asia:M3]
+    type: jp-box
+    name:
+      {
+        ja: 拡張パック「ムニキスゼロ」BOX,
+        de: Japanisches Display Nihil Zero (30 Booster),
+        en: Nihil Zero Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2026-01-23 }
+    contents: { packs: 30, cardsPerPack: 5 }
+    refs: { cardmarket: 864283, tcgplayer: 674449 }
+
+  - id: asia:m4-booster
+    print: asia
+    setIds: [asia:M4]
+    type: booster-pack
+    name:
+      {
+        ja: 拡張パック「ニンジャスピナー」,
+        de: Booster Ninja Spinner (Japan),
+        en: Ninja Spinner Booster (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2026-03-13 }
+    contents: { cardsPerPack: 5 }
+    refs: { cardmarket: 873179, tcgplayer: 683776 }
+
+  - id: asia:m4-box
+    print: asia
+    setIds: [asia:M4]
+    type: jp-box
+    name:
+      {
+        ja: 拡張パック「ニンジャスピナー」BOX,
+        de: Japanisches Display Ninja Spinner (30 Booster),
+        en: Ninja Spinner Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2026-03-13 }
+    contents: { packs: 30, cardsPerPack: 5 }
+    refs: { cardmarket: 873182, tcgplayer: 683774 }
+
+  - id: asia:m5-booster
+    print: asia
+    setIds: [asia:M5]
+    type: booster-pack
+    name:
+      { ja: 拡張パック「アビスアイ」, de: Booster Abyss Eye (Japan), en: Abyss Eye Booster (Japan) }
+    languages: [ja]
+    releaseDates: { ja: 2026-05-22 }
+    contents: { cardsPerPack: 5 }
+    refs: { cardmarket: 883956, tcgplayer: 695111 }
+
+  - id: asia:m5-box
+    print: asia
+    setIds: [asia:M5]
+    type: jp-box
+    name:
+      {
+        ja: 拡張パック「アビスアイ」BOX,
+        de: Japanisches Display Abyss Eye (30 Booster),
+        en: Abyss Eye Booster Box (Japan),
+      }
+    languages: [ja]
+    releaseDates: { ja: 2026-05-22 }
+    contents: { packs: 30, cardsPerPack: 5 }
+    refs: { cardmarket: 883955, tcgplayer: 695112 }
+
+  - id: asia:m1l-pokemon-center-set
+    print: asia
+    setIds: [asia:M1L]
+    type: jp-special-set
+    name: { de: Pokémon Center Set Mega Brave (Japan), en: Mega Brave Pokémon Center Set (Japan) }
+    languages: [ja]
+    exclusive: pokemon-center
+    refs: { cardmarket: 831312 }
+    note: Japanese product name and contents to confirm.
+
+  - id: asia:m1s-pokemon-center-set
+    print: asia
+    setIds: [asia:M1S]
+    type: jp-special-set
+    name:
+      {
+        de: Pokémon Center Set Mega Symphonia (Japan),
+        en: Mega Symphonia Pokémon Center Set (Japan),
+      }
+    languages: [ja]
+    exclusive: pokemon-center
+    refs: { cardmarket: 831314 }
+    note: Japanese product name and contents to confirm.
+
+  - id: asia:m1-premium-trainer-box
+    print: asia
+    setIds: [asia:M1L, asia:M1S]
+    type: jp-special-set
+    name:
+      {
+        de: 'Premium-Trainer-Box MEGA Brave & Symphonia (Japan)',
+        en: 'Premium Trainer Box MEGA Brave & Symphonia (Japan)',
+      }
+    languages: [ja]
+    refs: { tcgplayer: 648589 }
+    note: Japanese product name and contents to confirm.
+
+  - id: asia:m2a-special-set
+    print: asia
+    setIds: [asia:M2a]
+    type: jp-special-set
+    name: { de: Special Set MEGA Dream ex (Japan), en: MEGA Dream ex Special Set (Japan) }
+    languages: [ja]
+    refs: { cardmarket: 874555 }
+    note: Japanese product name and contents to confirm.
+
+  - id: asia:m3-mega-gallade-special-set
+    print: asia
+    setIds: [asia:M3]
+    type: jp-special-set
+    name: { de: Mega-Galagladi-ex Special Set (Japan), en: Mega Gallade ex Special Set (Japan) }
+    languages: [ja]
+    refs: { cardmarket: 864281, tcgplayer: 674457 }
+    note: Japanese product name and contents to confirm.
+
+  # Traditional Chinese (Taiwan / Hong Kong): the same boosters, names from asia.pokemon-card.com
+  - id: asia:m1l-tc-booster
+    print: asia
+    setIds: [asia:M1L]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 擴充包「超級勇氣」,
+        de: Booster Mega Brave (Taiwan/Hongkong),
+        en: Mega Brave Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 5 }
+
+  - id: asia:m1s-tc-booster
+    print: asia
+    setIds: [asia:M1S]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 擴充包「超級交響樂」,
+        de: Booster Mega Symphonia (Taiwan/Hongkong),
+        en: Mega Symphonia Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 5 }
+
+  - id: asia:m2-tc-booster
+    print: asia
+    setIds: [asia:M2]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 擴充包「烈獄狂火X」,
+        de: Booster Inferno X (Taiwan/Hongkong),
+        en: Inferno X Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 5 }
+
+  - id: asia:m2a-tc-booster
+    print: asia
+    setIds: [asia:M2a]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 高級擴充包「超級進化夢想ex」,
+        de: Booster MEGA Dream ex (Taiwan/Hongkong),
+        en: MEGA Dream ex Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 10 }
+
+  - id: asia:m3-tc-booster
+    print: asia
+    setIds: [asia:M3]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 擴充包「虛無歸零」,
+        de: Booster Nihil Zero (Taiwan/Hongkong),
+        en: Nihil Zero Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 5 }
+
+  - id: asia:m4-tc-booster
+    print: asia
+    setIds: [asia:M4]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 擴充包「忍者飛旋」,
+        de: Booster Ninja Spinner (Taiwan/Hongkong),
+        en: Ninja Spinner Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 5 }
+
+  - id: asia:m5-tc-booster
+    print: asia
+    setIds: [asia:M5]
+    type: booster-pack
+    name:
+      {
+        zh-tw: 擴充包「深淵之瞳」,
+        de: Booster Abyss Eye (Taiwan/Hongkong),
+        en: Abyss Eye Booster (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { cardsPerPack: 5 }
+
+  - id: asia:m4-tc-value-set
+    print: asia
+    setIds: [asia:M4]
+    type: jp-special-set
+    name:
+      {
+        de: Value Set Ninja Spinner (Taiwan/Hongkong),
+        en: Ninja Spinner Value Set (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    refs: { cardmarket: 888699 }
+    note: Chinese product name and contents to confirm.
+
+  - id: asia:m4-tc-10-pack-set-plus
+    print: asia
+    setIds: [asia:M4]
+    type: jp-special-set
+    name:
+      {
+        de: 10-Pack Set Plus Ninja Spinner (Taiwan/Hongkong),
+        en: Ninja Spinner 10-Pack Set Plus (Traditional Chinese),
+      }
+    languages: [zh-tw]
+    contents: { packs: 10, cardsPerPack: 5 }
+    refs: { cardmarket: 888700 }
+    note: Chinese product name to confirm.

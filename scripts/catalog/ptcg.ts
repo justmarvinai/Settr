@@ -4,7 +4,8 @@ import { dirs } from './paths';
 
 /**
  * Official Traditional Chinese card names from type-null/PTCG-database (MIT; scraped from
- * asia.pokemon-card.com/tw), keyed by card number (ADR-026). Missing folder = no TC names.
+ * asia.pokemon-card.com/tw), keyed by card number (ADR-026). Missing folder = no TC names. The
+ * database marks a trainer's name in angle brackets (`<阿響的>凱羅斯`); the card prints it plain.
  */
 export function loadTraditionalChineseNames(setCode: string): Map<string, string> {
   const dir = join(dirs.ptcgDatabase, 'data_tc', setCode);
@@ -15,7 +16,7 @@ export function loadTraditionalChineseNames(setCode: string): Map<string, string
       number?: string;
       name?: string;
     };
-    if (card.number && card.name) names.set(card.number, card.name.trim());
+    if (card.number && card.name) names.set(card.number, card.name.replace(/[<>＜＞]/g, '').trim());
   }
   return names;
 }

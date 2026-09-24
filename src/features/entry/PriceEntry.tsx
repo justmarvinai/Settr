@@ -102,7 +102,7 @@ function PriceForm({
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<GuidePick>();
   const amountRef = useRef<HTMLInputElement>(null);
-  const guide = useGuide(item, language, choice, cardmarket.productId);
+  const guide = useGuide(item, language, choice, cardmarket);
 
   const errors = { amount: amountError(amount), date: dateError(date, today) };
   const parsed = parseMoneyInput(amount);

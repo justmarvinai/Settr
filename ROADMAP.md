@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M6 · Polish & Launch** ✅ built, v1.0.0 release candidate in PR #4: waiting for your check in Brave and on the iPhone (M1–M5 are merged) · question rounds 1–7 decided, round 8 open without blockers
+> Last updated: 2026-09-24 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ built, in PR #5 (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7 decided, rounds 8–9 open without blockers
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -16,9 +16,9 @@
 | **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
 | **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
-| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ built, PR #4 · 🔒 your check, then the merge and the `v1.0.0` tag |
+| **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ merged (PR #4) · 🔒 your go for the `v1.0.0` tag |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
-| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | 🔒 |
+| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ built, PR #5 · Scarlet & Violet next |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
 
 > **Why data safety (M5) comes before polish:** real data will be entered from M3 onward, so backups must exist before v1 at the latest. A **minimal JSON export** already ships in M3 (DAT-01 "lite") so nothing entered during development can be lost.
@@ -204,11 +204,23 @@ Sets are added **one by one, era by era, once the core site is fully functional*
 
 | Order (to confirm when v1 is done) | Why |
 |---|---|
-| 1. **Mega Evolution** era (EN/DE + JP/Chinese mirrors) | Most of your cards |
+| 1. **Mega Evolution** era (EN/DE + JP/Chinese mirrors) ✅ built 2026-09-24 | Most of your cards |
 | 2. **Scarlet & Violet** (*Karmesin & Purpur*) | Some of your cards |
 | 3. **Sword & Shield** (*Schwert & Schild*) | Some of your cards |
 | 4. **Sun & Moon** (GX era) | A few cards |
 | 5. **Base Set** (*Grundset*) | Your German Charizard (*Glurak*); 1st edition vs. unlimited are variants |
+
+### Mega Evolution series ✅ (built 2026-09-24, ADR-051–053)
+
+- [x] International (DE/EN), 1,077 cards: Mega-Entwicklung (+ basic Energy MEE 001–008), Fatale Flammen, Erhabene Helden, Optimale Ordnung, Wachsendes Chaos, Dunkelnacht, Mega-Entwicklung Promos
+- [x] Japanese with Traditional Chinese, 1,037 cards: Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Nihil Zero, Ninja Spinner, Abyss Eye; the MEGA promo cards (Japanese only). Simplified Chinese stays with 30th CELEBRATION (ADR-053).
+- [x] Variants from TCGdex: normal, holo, reverse holo, reverse patterns, promotional prints outside Master (ADR-052)
+- [x] German and English names for every Japanese card: counterparts, name donors, a curated dictionary, checked against Cardmarket (ADR-051)
+- [x] Cardmarket ids per variant and language, checked by the network sync; the Japanese expansions pinned
+- [x] 139 sealed products (DE/EN, JP, TC) with Cardmarket and TCGplayer ids and pictures
+- [x] App: print switch with several Asian prints, counterpart links per set, variants named only where a card has several, reverse holos filtered on Cardmarket only where they share the card's product
+- [ ] Your check: round 9 in `USER_QUESTIONS.md` (names, deck prints, sealed names), then the merge of PR #5
+- [ ] Later: M6 Storm Emerald (Japanese-only), MC and MF (deck products)
 
 ## Post-v1 backlog (ordered by expected value)
 
