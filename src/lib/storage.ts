@@ -29,3 +29,17 @@ export async function requestPersistence(): Promise<boolean> {
     return false;
   }
 }
+
+let requested = false;
+
+/**
+ * Asks once per session, once there's data worth keeping (IMPORT_EXPORT.md §8): Chromium grants it
+ * silently to installed apps and often-used sites, so a later session may succeed where this failed.
+ */
+export async function requestPersistenceOnce(): Promise<void> {
+  if (requested) return;
+  requested = true;
+  const storage = typeof navigator !== 'undefined' ? navigator.storage : undefined;
+  if (!storage?.persisted || (await storage.persisted().catch(() => true))) return;
+  await requestPersistence();
+}

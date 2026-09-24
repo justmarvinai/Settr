@@ -6,4 +6,3 @@ export { InstallSection } from './InstallSection';
 export { SnapshotsSection } from './SnapshotsSection';
 export { StorageSection } from './StorageSection';
 export { WipeSection } from './WipeSection';
-export { getStorageStatus, requestPersistence, type StorageStatus } from './storage';

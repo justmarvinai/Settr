@@ -60,3 +60,15 @@ export async function getDataVersion(db: SettrDB): Promise<number> {
   const row = await db.kv.get(DATA_VERSION);
   return typeof row?.value === 'number' ? row.value : 0;
 }
+
+const REMINDED_ON = 'ui:backup.remindedOn';
+
+/** The day (YYYY-MM-DD) the backup reminder last showed on this device (DAT-04: once a day). */
+export async function getRemindedOn(db: SettrDB): Promise<string | undefined> {
+  const row = await db.kv.get(REMINDED_ON);
+  return typeof row?.value === 'string' ? row.value : undefined;
+}
+
+export async function setRemindedOn(db: SettrDB, day: string): Promise<void> {
+  await db.kv.put({ key: REMINDED_ON, value: day });
+}

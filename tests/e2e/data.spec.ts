@@ -223,6 +223,84 @@ test('CSV for spreadsheets: Excel (Deutschland) from Daten, International for a 
   expect(intl).toContain(',26.00,');
 });
 
+/** Whether the backup status reads "Backup fällig": the sidebar, or the Mehr sheet on phones. */
+async function expectBackupDue(page: Page, isMobile: boolean, due: boolean) {
+  if (isMobile) await page.getByRole('button', { name: 'Mehr' }).click();
+  await expect(page.getByRole('link', { name: /^Backup fällig/ })).toHaveCount(due ? 1 : 0);
+  await expect(page.getByRole('link', { name: /^Backup/ }).first()).toBeVisible();
+  if (isMobile) await page.keyboard.press('Escape');
+}
+
+test('the backup reminder: amber at once, a toast from the next day, Jetzt sichern', async ({
+  page,
+  isMobile,
+}) => {
+  await quickAdd(page, ['25']);
+  await page.goto('/collection/cards');
+  await expectBackupDue(page, isMobile, true);
+  // No toast on the first day …
+  await page.waitForTimeout(5000);
+  await expect(page.getByText('Noch kein Backup. Jetzt sichern?')).toBeHidden();
+
+  // … but once the install is a day old.
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        const open = indexedDB.open('settr');
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const idb = open.result;
+          const tx = idb.transaction('kv', 'readwrite');
+          const kv = tx.objectStore('kv');
+          const read = kv.get('meta');
+          read.onsuccess = () => {
+            const row = read.result as { key: string; value: { createdAt: string } };
+            const createdAt = new Date(Date.now() - 2 * 86_400_000).toISOString();
+            kv.put({ ...row, value: { ...row.value, createdAt } });
+          };
+          tx.oncomplete = () => {
+            idb.close();
+            resolve();
+          };
+        };
+      }),
+  );
+  await page.reload();
+  const toast = page.locator('.ui-toast').filter({ hasText: 'Noch kein Backup. Jetzt sichern?' });
+  await expect(toast).toBeVisible({ timeout: 10_000 });
+  const downloading = page.waitForEvent('download');
+  await toast.getByRole('button', { name: 'Jetzt sichern' }).click();
+  expect((await downloading).suggestedFilename()).toMatch(/\.settr\.json$/);
+  await expectBackupDue(page, isMobile, false);
+
+  // Once a day only.
+  await page.reload();
+  await page.waitForTimeout(5000);
+  await expect(page.getByText(/Jetzt sichern\?$/)).toBeHidden();
+});
+
+test('⌘K exports a backup and finds the import', async ({ page, isMobile }) => {
+  await quickAdd(page, ['25']);
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Übersicht'); // interactive
+  const openPalette = () =>
+    isMobile
+      ? page.getByRole('button', { name: 'Suchen' }).click()
+      : page.keyboard.press('Control+k');
+  await openPalette();
+  const palette = page.getByRole('dialog', { name: 'Suche' });
+  await palette.getByRole('combobox').fill('backup');
+  const downloading = page.waitForEvent('download');
+  await palette.getByRole('option', { name: 'Backup exportieren' }).click();
+  expect((await downloading).suggestedFilename()).toMatch(/^settr-backup-/);
+
+  await openPalette();
+  await palette.getByRole('combobox').fill('einspielen');
+  await palette.getByRole('option', { name: 'Backup einspielen …' }).click();
+  await expect(page).toHaveURL(/\/settings\/data#settings-import$/);
+  await expect(page.getByRole('button', { name: 'Datei auswählen' })).toBeVisible();
+});
+
 test.describe('accessibility of the Daten page', () => {
   test.beforeEach(({ browserName }) => {
     test.slow(browserName === 'webkit', 'axe takes several seconds per page in WebKit');

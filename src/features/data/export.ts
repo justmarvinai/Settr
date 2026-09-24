@@ -3,6 +3,7 @@ import { manifestQuery } from '@/catalog';
 import { toastManager } from '@/components/ui/Toasts';
 import { backupFileName, createBackup, db, recordBackup } from '@/db';
 import { m } from '@/i18n';
+import { toastError } from '@/features/collection';
 import { download, saveFile } from './save-file';
 
 /** The app and catalog versions a backup or snapshot records. */
@@ -15,11 +16,9 @@ export async function appInfo(queryClient: QueryClient) {
   return { appVersion: import.meta.env.VITE_APP_VERSION, catalogVersion };
 }
 
+/** An error as a toast; a full disk gets its own (features/collection). */
 export function toastFailure(error: unknown): void {
-  toastManager.add({
-    title: m.toast_failed({ reason: error instanceof Error ? error.message : String(error) }),
-    type: 'error',
-  });
+  toastError(error);
 }
 
 /**

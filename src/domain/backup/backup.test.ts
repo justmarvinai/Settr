@@ -4,6 +4,7 @@ import { holding, price, tag, tombstone } from '../../../tests/factories';
 import { DEFAULT_SETTINGS, SCHEMA_VERSION } from '../schemas';
 import {
   BACKUP_FORMAT,
+  backupState,
   canonicalJson,
   countsOf,
   emptyTables,
@@ -12,6 +13,7 @@ import {
   migrateData,
   MigrationError,
   readBackup,
+  REMIND_AFTER_CHANGES,
   validateBackupData,
   type BackupData,
 } from './index';
@@ -251,5 +253,59 @@ describe('validateBackupData', () => {
     });
     expect(result.data.tombstones).toHaveLength(1);
     expect(result.issues.map((i) => i.table)).toEqual(['media', 'tombstones']);
+  });
+});
+
+describe('backupState', () => {
+  const NOW = Date.parse('2026-09-24T12:00:00.000Z');
+  const DAY = 86_400_000;
+  const base = { hasData: true, dataVersion: 10, remindAfterDays: 7, now: NOW };
+  const ago = (days: number) => new Date(NOW - days * DAY).toISOString();
+
+  it('is due at once without any backup, but only with data; the toast waits a day', () => {
+    expect(backupState({ ...base, installedAt: ago(0.1) })).toEqual({
+      due: true,
+      remind: false,
+      changes: 10,
+    });
+    expect(backupState({ ...base, installedAt: ago(2) }).remind).toBe(true);
+    expect(
+      backupState({ ...base, installedAt: ago(0.1), dataVersion: REMIND_AFTER_CHANGES }).remind,
+    ).toBe(true);
+    expect(backupState({ ...base, hasData: false })).toEqual({
+      due: false,
+      remind: false,
+      changes: undefined,
+    });
+  });
+
+  it('is due when the backup is older than the interval and something changed since', () => {
+    const last = { lastBackupAt: ago(8), backupDataVersion: 7 };
+    expect(backupState({ ...base, ...last })).toEqual({ due: true, remind: true, changes: 3 });
+    expect(backupState({ ...base, ...last, remindAfterDays: 14 })).toEqual({
+      due: false,
+      remind: false,
+      changes: 3,
+    });
+    expect(backupState({ ...base, ...last, backupDataVersion: 10 })).toEqual({
+      due: false,
+      remind: false,
+      changes: 0,
+    });
+  });
+
+  it('is due after 50 changes, however recent the backup', () => {
+    const fresh = { lastBackupAt: ago(1), backupDataVersion: 0 };
+    expect(backupState({ ...base, ...fresh, dataVersion: 49 }).due).toBe(false);
+    expect(backupState({ ...base, ...fresh, dataVersion: REMIND_AFTER_CHANGES }).due).toBe(true);
+  });
+
+  it('assumes changes for a backup made before the counter was kept', () => {
+    expect(backupState({ ...base, lastBackupAt: ago(8) })).toEqual({
+      due: true,
+      remind: true,
+      changes: undefined,
+    });
+    expect(backupState({ ...base, lastBackupAt: ago(2) }).due).toBe(false);
   });
 });

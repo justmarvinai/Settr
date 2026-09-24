@@ -4,6 +4,12 @@
  */
 export { db } from './instance';
 export { SCHEMA_VERSION } from './db';
-export { ensureMeta, getMeta, markBackupDone } from './repositories/meta';
+export {
+  ensureMeta,
+  getMeta,
+  getRemindedOn,
+  markBackupDone,
+  setRemindedOn,
+} from './repositories/meta';
 export { getSettings, updateSettings, type SettingsPatch } from './repositories/settings';
 export { useDataVersion, useHoldingCount, useMeta, useSettings, useStoredDisplay } from './hooks';

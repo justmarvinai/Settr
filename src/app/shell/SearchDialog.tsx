@@ -1,6 +1,14 @@
 import { Autocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import { ArrowRightIcon, MagnifyingGlassIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
+import {
+  ArrowRightIcon,
+  DownloadSimpleIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  UploadSimpleIcon,
+  XIcon,
+} from '@phosphor-icons/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, type NavigateOptions } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useManifest } from '@/catalog';
@@ -8,6 +16,7 @@ import { useCatalogSearch } from '@/catalog/useCatalogSearch';
 import { CardImage } from '@/components/domain/CardImage';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { useCustomItems, useOwnedItemIds } from '@/db';
+import { exportBackup } from '@/features/data';
 import { pickText } from '@/domain/catalog';
 import { languageCode, m, printLabel, productTypeLabel, rarityLabel } from '@/i18n';
 import { openSheet } from '@/lib/sheets';
@@ -21,7 +30,7 @@ interface PaletteGroup {
 
 interface PaletteItem {
   id: string;
-  group: 'cards' | 'sealed' | 'custom' | 'sets' | 'pages';
+  group: 'cards' | 'sealed' | 'custom' | 'sets' | 'actions' | 'pages';
   title: string;
   meta?: string;
   visual?: 'card' | 'product';
@@ -30,6 +39,9 @@ interface PaletteItem {
   /** Where the item lives (a card's set chunk), for the add sheet. */
   setId?: string;
   target: NavigateOptions;
+  /** An action instead of a place (Backup exportieren). */
+  run?: () => void;
+  icon?: 'export' | 'import';
 }
 
 const PAGES: { label: () => string; target: NavigateOptions }[] = [
@@ -43,6 +55,20 @@ const PAGES: { label: () => string; target: NavigateOptions }[] = [
   { label: m.nav_settings, target: { to: '/settings' } },
   { label: m.search_page_appearance, target: { to: '/settings/appearance' } },
   { label: m.search_page_data, target: { to: '/settings/data' } },
+];
+
+/** Commands (UX_SPEC.md §7), found by their name or these words. */
+const ACTIONS: {
+  id: 'export' | 'import';
+  label: () => string;
+  words: string[];
+}[] = [
+  { id: 'export', label: m.palette_backup_export, words: ['backup', 'sichern', 'export', 'daten'] },
+  {
+    id: 'import',
+    label: m.palette_backup_import,
+    words: ['backup', 'import', 'einspielen', 'wiederherstellen', 'daten'],
+  },
 ];
 
 const fold = (text: string) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().trim();
@@ -64,6 +90,7 @@ export default function SearchDialog({
   mode?: SearchMode;
 }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const manifest = useManifest();
   const customItems = useCustomItems();
   const [query, setQuery] = useState('');
@@ -146,6 +173,17 @@ export default function SearchDialog({
       });
   }
   if (!adding)
+    for (const action of ACTIONS)
+      if (!text || fold(action.label()).includes(q) || action.words.some((w) => w.startsWith(q)))
+        items.push({
+          id: `action:${action.id}`,
+          group: 'actions',
+          title: action.label(),
+          icon: action.id,
+          target: { to: '/settings/data', hash: 'settings-import' },
+          ...(action.id === 'export' ? { run: () => void exportBackup(queryClient) } : {}),
+        });
+  if (!adding)
     for (const page of PAGES)
       if (!text || fold(page.label()).includes(q))
         items.push({
@@ -161,6 +199,10 @@ export default function SearchDialog({
   };
   const go = (item: PaletteItem) => {
     close();
+    if (item.run) {
+      item.run();
+      return;
+    }
     if (adding && (item.group === 'cards' || item.group === 'sealed' || item.group === 'custom')) {
       const kind = item.group === 'cards' || item.visual === 'card' ? 'card' : 'sealed';
       openSheet({ type: 'add', item: { kind, id: item.id }, setId: item.setId });
@@ -177,16 +219,19 @@ export default function SearchDialog({
     sealed: m.search_group_sealed(),
     custom: m.search_group_custom(),
     sets: m.search_group_sets(),
+    actions: m.search_group_actions(),
     pages: m.search_group_pages(),
   };
-  const groups: PaletteGroup[] = (['cards', 'sealed', 'custom', 'sets', 'pages'] as const)
+  const groups: PaletteGroup[] = (
+    ['cards', 'sealed', 'custom', 'sets', 'actions', 'pages'] as const
+  )
     .map((group) => ({
       value: group,
       label: groupLabel[group],
       items: items.filter((i) => i.group === group),
     }))
     .filter((g) => g.items.length);
-  const found = items.some((i) => i.group !== 'pages');
+  const found = items.some((i) => i.group !== 'pages' && i.group !== 'actions');
 
   return (
     <BaseDialog.Root
@@ -257,6 +302,18 @@ export default function SearchDialog({
                               size="small"
                               alt=""
                               className="w-10 shrink-0 rounded-[10px]"
+                            />
+                          ) : item.icon === 'export' ? (
+                            <DownloadSimpleIcon
+                              size={18}
+                              aria-hidden
+                              className="shrink-0 text-ink-muted"
+                            />
+                          ) : item.icon === 'import' ? (
+                            <UploadSimpleIcon
+                              size={18}
+                              aria-hidden
+                              className="shrink-0 text-ink-muted"
                             />
                           ) : (
                             <ArrowRightIcon

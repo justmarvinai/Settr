@@ -5,7 +5,7 @@ import { useSnapshots, useUserCounts } from '@/db';
 import { m } from '@/i18n';
 import { formatBytes } from '@/i18n/format';
 import { counted, countsSummary } from './labels';
-import { getStorageStatus, requestPersistence, type StorageStatus } from './storage';
+import { getStorageStatus, requestPersistence, type StorageStatus } from '@/lib/storage';
 
 /** What this device holds: "Gespeichert: 312 Positionen · 1.840 Preise · 2 Sicherungen vor Importen". */
 function Contents() {
