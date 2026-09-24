@@ -138,8 +138,10 @@ describe('search engine: names', () => {
   });
 
   it('finds sealed products by German and English names', () => {
-    expect(ids('top-trainer', { kind: 'sealed' })[0]).toBe('intl:30th-etb');
+    expect(ids('top-trainer', { kind: 'sealed' })[0]).toMatch(/-etb/);
+    expect(ids('top-trainer-box 30 jahre', { kind: 'sealed' })[0]).toBe('intl:30th-etb');
     expect(ids('elite trainer', { kind: 'sealed' })).toContain('intl:30th-etb');
+    expect(ids('dunkelnacht display', { kind: 'sealed' })).toContain('intl:me05-display');
     for (const result of search('trainer', { kind: 'sealed' })) expect(result.kind).toBe('sealed');
   });
 

@@ -14,3 +14,10 @@ cards:
   '189': { counterpart: 'intl:me02.5:210', note: Team Rocket's Watchtower · AYUMI ODASHIMA }
   '192': { counterpart: 'intl:me02.5:216', note: Prism Energy }
   '193': { counterpart: 'intl:me02.5:217', note: Team Rocket's Energy }
+  # Reprints whose artwork the international prints carry elsewhere, or twice.
+  '086': { counterpart: 'intl:mep:004', note: Lunatone · Ounishi (a Mega Evolution promo) }
+  '092':
+    {
+      counterpart: 'intl:me02.5:113',
+      note: Mega Lucario ex · 5ban Graphics (228 is its Ultra Rare),
+    }

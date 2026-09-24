@@ -82,10 +82,11 @@ export interface SetConfig {
   /** Local id of the card shown on the set's tile. */
   coverCard?: string;
   /**
-   * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group id or group-name fragment, to
-   * find the set's sealed products on TCGCSV for their pictures (DATA_SOURCES.md §4).
+   * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group id or the beginnings of group
+   * names (any case: "m1L: Mega Brave"), to find the set's sealed products on TCGCSV for their
+   * pictures (DATA_SOURCES.md §4).
    */
-  tcgplayer?: { category: number; groupId?: number; groupName?: string };
+  tcgplayer?: { category: number; groupId?: number; groupNames?: string[] };
 }
 
 const numeric = (localId: string) => (/^\d+$/.test(localId) ? Number(localId) : null);
@@ -158,7 +159,7 @@ function japanese(
     ...(printedTotal ? { printedTotal } : {}),
     ...(mirrored ? { traditionalChinese: set } : {}),
     ...rest,
-    ...(tcgplayer ? { tcgplayer: { category: 85, groupName: tcgplayer } } : {}),
+    ...(tcgplayer ? { tcgplayer: { category: 85, groupNames: [tcgplayer] } } : {}),
   };
 }
 
@@ -193,7 +194,8 @@ export const CATALOG_SETS: SetConfig[] = [
     ],
     coverCard: '150', // Pikachu-ex, Special Illustration Rare
     cardmarket: { expansion: 6601 },
-    tcgplayer: { category: 3, groupName: '30th Celebration' },
+    // Also finds "ME: 30th Celebration Classic Collection".
+    tcgplayer: { category: 3, groupNames: ['ME: 30th Celebration'] },
   },
   {
     id: 'intl:30th-c',
@@ -242,7 +244,8 @@ export const CATALOG_SETS: SetConfig[] = [
     sectionNames: { subset: { de: 'Klassische Sammlung', en: 'Classic Collection' } },
     coverCard: '127', // ピカチュウex SAR, the same artwork as intl:30th:150
     cardmarket: { expansion: 6602, simplifiedChineseExpansion: 6603, sealedExpansions: [6628] },
-    tcgplayer: { category: 85, groupName: '30th Celebration' },
+    // MF: the premium deck set (asia:m6a-premium-deck-set).
+    tcgplayer: { category: 85, groupNames: ['M6a:', 'MF:'] },
     rarityMarks: 'special',
   },
 
@@ -310,7 +313,7 @@ export const CATALOG_SETS: SetConfig[] = [
       cardmarket: 6232,
     }),
     name: { de: 'Mega-Entwicklung Promos', en: 'MEP Black Star Promos' },
-    tcgplayer: { category: 3, groupName: 'ME: Mega Evolution Promo' },
+    tcgplayer: { category: 3, groupNames: ['ME: Mega Evolution Promo'] },
   },
 
   // The same series in Japan; each international set is built from one or two of these.
@@ -393,7 +396,7 @@ export const CATALOG_SETS: SetConfig[] = [
     mirrored: false,
     coverCard: '002', // ラプラスex
     cardmarket: { expansion: 6230 },
-    tcgplayer: 'M-P',
+    tcgplayer: 'M-P ',
   }),
 ];
 

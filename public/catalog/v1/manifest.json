@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.24.6",
-  "generatedAt": "2026-09-24T15:42:37.328Z",
+  "catalogVersion": "2026.09.24.7",
+  "generatedAt": "2026-09-24T15:48:54.343Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
@@ -52,8 +52,8 @@
       },
       "intl:me02.5": {
         "path": "sets/intl_me02.5.json",
-        "sha256": "a93a1475f8f29719abe2f35f61ec534e6d1d7faa2db97a5b9f19fefcc9c68915",
-        "bytes": 215299
+        "sha256": "93f33f964d922b4a60d673c95baf6939dfdbbd5b9110d83e92c985f7d96a4417",
+        "bytes": 215362
       },
       "intl:me03": {
         "path": "sets/intl_me03.json",
@@ -72,13 +72,13 @@
       },
       "intl:mep": {
         "path": "sets/intl_mep.json",
-        "sha256": "556b7b44bb263b4a447c13f18ba51e43fc7d601c6803ded5b443740dd7f5f009",
-        "bytes": 55062
+        "sha256": "c672ca4f8afab09f02a74c8fa92f7b186ca529eb01994eb95a48634c3492bbe7",
+        "bytes": 55369
       },
       "asia:M1L": {
         "path": "sets/asia_M1L.json",
-        "sha256": "78fdbf757bea9452ed628c438aa2df072709a01a3e45e1be90cb461128cf25c1",
-        "bytes": 75634
+        "sha256": "12f10d7ab0f034da563737995613e9a25c42f43a5f6d71e61b5aac0816f0f5de",
+        "bytes": 75736
       },
       "asia:M1S": {
         "path": "sets/asia_M1S.json",
@@ -87,18 +87,18 @@
       },
       "asia:M2": {
         "path": "sets/asia_M2.json",
-        "sha256": "de582280b0ac2d8b62b9775413ae6f870b5994b6c127aa010f30e3c8fb6427ed",
-        "bytes": 93151
+        "sha256": "84dd0da854b056f86b3c4ed247eb67aaa4cb373f841ddcd418aa18aba1715038",
+        "bytes": 93976
       },
       "asia:M2a": {
         "path": "sets/asia_M2a.json",
-        "sha256": "0463ba87ac68767f085c1194e1ec87c1d8836151ef11cd54c979ac993dc34ede",
-        "bytes": 213013
+        "sha256": "72998746c2fbf2408073a2b9d2b0d38b262922549ae65492a687f70bdfde3fff",
+        "bytes": 213145
       },
       "asia:M3": {
         "path": "sets/asia_M3.json",
-        "sha256": "73a52b197e2d917d5bf537404458f5a28f9f3f2ae05b77394d225462b9876ec1",
-        "bytes": 93758
+        "sha256": "ef727d0f482ba6113e4add667d1838ee6b77953e58a742c3f7123fd65b6adedc",
+        "bytes": 94115
       },
       "asia:M4": {
         "path": "sets/asia_M4.json",
@@ -118,13 +118,13 @@
     },
     "sealed": {
       "path": "sealed.json",
-      "sha256": "e7db7a15f044c7177604658a8e1a4f6d51609c87b3e4258b0a8a672dbb2ca549",
-      "bytes": 29770
+      "sha256": "3f064678794de8dd9ce7747425cd44d9abe03fe31b21de2710fbd804a3cb4177",
+      "bytes": 78613
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "755e2ae09a303792aa9cdc2eaa706caf69bd7eca42c9a6675580a1b5378db35c",
-      "bytes": 970579
+      "sha256": "1731180fcc9a3112a52e1fa49e2ec7098510cf2cf4fe123ecc09ed91bade303c",
+      "bytes": 1010863
     }
   }
 }
