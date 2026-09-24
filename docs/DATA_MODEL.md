@@ -478,7 +478,7 @@ unitValue(h, d)      = h.valueOverride (if set and date ≤ d)                ("
 value(h, d)          = remaining(h, d) × unitValue(h, d)
 ```
 
-- **Unpriced** holdings (no entry ≤ d) are **excluded** from value **and** from P/L cost (so they don't fake a loss). They're counted and surfaced separately. Setting: *"Einkaufspreis für unbepreiste Positionen verwenden"* (value = remaining cost ⇒ P/L 0).
+- **Unpriced** holdings (no entry ≤ d) are **excluded** from value **and** from P/L cost (so they don't fake a loss). They're counted and surfaced separately. Setting: *Positionen ohne Preis im Gesamtwert* → *Mit Kaufpreis* (value = remaining cost ⇒ P/L 0).
 - **Stale:** latest entry older than `settings.staleAfterDays` (default 14). A lot's *Eigener Wert* goes stale the same way, by its own `date` (R2.2).
 
 ### 6.4 Profit and loss

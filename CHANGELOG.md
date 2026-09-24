@@ -97,6 +97,12 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - **Quality:** Oxlint (type-aware, layer boundaries) + oxfmt, Vitest unit/integration tests and Browser Mode component tests, Playwright e2e on Chromium (desktop, phone) and WebKit (iPhone) with axe in light and dark plus a console/CSP guard, size-limit budgets, lefthook hooks, and GitHub Actions CI.
 
 ### Changed
+- **M6 · German copy pass (UX §8, I18N.md §5–§6):**
+  - Every count has a singular form (*1 Karte*, *1 Produkt*, *Nur 1 freier Platz*, *Kosten auf 1 Pull verteilt*), and a full binder says *Kein freier Platz mehr*.
+  - One term per concept: *Kaufpreis* (not *Einkaufspreis*), *gegradet*, *Reverse-Holo*, *Plätze* in binders, *aktueller Preis* (not *Marktpreis*), *Illustrator*, *Im Besitz*, *Secret Rares*, *Klassische Sammlung*, *Display (Asien)*, *Poor*, *Zertifikatsnummer*, *Auf Cardmarket öffnen*, *… anzeigen* on buttons and links, *Speichern & weiter* / *Anlegen & weiter*.
+  - CSV headers: *Wert/Stk.*, *Preisreihe*, *Note* and *Einkauf* (for a sale's cost).
+  - Clearer hints: the Daten page (backup, import, snapshots, delete on exit), splitting a product's cost over its pulls, *Eigener Wert*, binder pages, the Cardmarket filters and *Seit dem Kauf*; the sidebar pill reads *Zuletzt vor 3 Tagen*; Schnellerfassung errors say what's wrong.
+  - 18 messages nothing used are gone.
 - M5:
   - `SCHEMA_VERSION` lives in `domain/schemas/version.ts`.
   - `meta` records the change counter at the last backup (`backupDataVersion`, optional, not exported: no schema change).
@@ -121,6 +127,7 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - A picture's loading placeholder pulses three times instead of forever.
 
 ### Docs
+- **M6 copy pass:** `I18N.md` records the conventions (§2 plurals, §5 tone, §6 glossary); `UX_SPEC.md`, `PRODUCT_SPEC.md`, `IMPORT_EXPORT.md` (the CSV headers), `DATA_MODEL.md` and `QUALITY.md` quote the new copy.
 - **Spec v0.4: question rounds 4–7 decided, 2026-09-24.** Marvin chose every recommendation (⭐): the catalog check (R4.1–R4.5), collection details (R5.1–R5.5), prices and portfolio (R6.1–R6.3) and data safety (R7.1–R7.4). The app already works this way, so nothing changes. The decisions are recorded in `USER_QUESTIONS.md`, `ROADMAP.md`, `DATA_MODEL.md` (R5.3: unpriced pulls get 0 €) and `UX_SPEC.md` (R5.1: the condition starts at NM), and the spec status lines move to v0.4.
 - **M5 notes:**
   - ADR-041 (import in a worker, snapshots in their own database, one guarded transaction), ADR-042 (merge rules as built), ADR-043 (backup reminders).

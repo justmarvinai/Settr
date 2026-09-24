@@ -251,7 +251,7 @@ function MoveForm({
         hint={
           layout
             ? room !== undefined && room < moving.length
-              ? m.bulk_move_short({ free: formatCount(room) })
+              ? m.bulk_move_short(counted(room))
               : m.bulk_move_binder_hint()
             : undefined
         }

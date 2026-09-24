@@ -126,8 +126,9 @@ export function SealedPage() {
       </div>
       <output className="type-small m-0 block px-1 text-ink-muted">
         {shown.length === products.length
-          ? m.catalog_sealed_count({ count: formatCount(products.length) })
+          ? m.catalog_sealed_count({ n: products.length, count: formatCount(products.length) })
           : m.catalog_sealed_count_filtered({
+              n: products.length,
               count: formatCount(shown.length),
               total: formatCount(products.length),
             })}

@@ -79,7 +79,7 @@ test('export → delete all data → import gives back exactly the same data', a
   const wipe = page.getByRole('dialog', { name: 'Wirklich alle Daten löschen?' });
   const submit = wipe.getByRole('button', { name: 'Endgültig löschen' });
   await expect(submit).toBeDisabled();
-  await wipe.getByLabel('Tippe LÖSCHEN zur Bestätigung').fill('löschen');
+  await wipe.getByLabel('Gib LÖSCHEN ein, um zu bestätigen').fill('löschen');
   await submit.click();
   // A fresh start: the page reloads on Übersicht (let it finish before navigating on).
   await expect(page).toHaveURL(/\/$/);

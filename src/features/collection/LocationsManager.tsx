@@ -43,7 +43,10 @@ const LAYOUT_LABEL: Record<string, () => string> = {
   '3x4': m.location_layout_3x4,
 };
 
-/** "3 × 3 · 9 Taschen · 20 Seiten" */
+/** A count for the plural messages: the number picks the form, the text is formatted. */
+const counted = (n: number) => ({ n, count: formatCount(n) });
+
+/** "3 × 3 · 9 Plätze · 20 Seiten" */
 function describe(location: Location): string {
   const parts = [KIND_LABEL[location.kind]()];
   if (location.kind === 'binder' && location.layout) {
@@ -51,10 +54,10 @@ function describe(location: Location): string {
       m.location_grid({
         columns: location.layout.columns,
         rows: location.layout.rows,
-        pockets: pocketsPerPage(location.layout),
+        ...counted(pocketsPerPage(location.layout)),
       }),
     );
-    if (location.pages) parts.push(m.location_pages_count({ count: location.pages }));
+    if (location.pages) parts.push(m.location_pages_count(counted(location.pages)));
   }
   return parts.join(' · ');
 }
@@ -355,7 +358,7 @@ export function LocationsManager() {
                       <span className="type-small text-ink-muted">
                         {[
                           describe(location),
-                          m.location_lots({ count: formatCount(lotsAt.get(location.id) ?? 0) }),
+                          m.location_lots(counted(lotsAt.get(location.id) ?? 0)),
                         ].join(' · ')}
                       </span>
                     </div>
@@ -459,7 +462,7 @@ export function LocationsManager() {
                       {tag.name}
                     </span>
                     <span className="type-small flex-1 text-ink-muted">
-                      {m.location_lots({ count: formatCount(lotsTagged.get(tag.id) ?? 0) })}
+                      {m.location_lots(counted(lotsTagged.get(tag.id) ?? 0))}
                     </span>
                     <ActionMenu
                       label={m.tag_actions({ name: tag.name })}

@@ -105,7 +105,7 @@ Route slugs are English and language-neutral. Labels are localized.
 - **Liquid Glass chrome (DSN-05, *Balanced*, R2.1):** the sidebar is a **floating glass panel** (236 px, inset 12 px from the window edges, radius 24), and the top bar is a floating glass toolbar (radius 20). List pages add a **sticky glass filter bar** (§4.3). Content scrolls **beneath** them, so card art tints the glass. It's solid when *Transparenz reduzieren* is on. Details in `DESIGN_SYSTEM.md` §3.5.
 - **Top bar:** page title/breadcrumb · global search (opens the command palette; shortcut labels are platform-aware, e.g. **Strg K** on Windows and ⌘K on Mac/iPad) · theme toggle (◐, a quick light/dark switch; the setting lives in Einstellungen › Darstellung) · **privacy toggle (👁)**, which blurs every money value (PRT-05) · primary **＋ Hinzufügen**.
 - **Sidebar:** the wordmark with the short tagline *"Jede Karte zählt."* underneath (R2.7) · navigation (Übersicht, Sammlung, Katalog, Preise, Portfolio) · a **Sets** quick-access section with pinned and recently opened sets, each with its progress ring, so it stays useful as sets are added after v1 (R2.5) · footer with the backup status and Einstellungen.
-- **Backup status (DAT-04):** a pill in the sidebar footer, e.g. *"Backup vor 3 Tagen"*. Once a backup is due (after N days, default 7, Q7.1) it turns amber and reads *"Backup fällig · Letztes vor 12 Tagen"*. It links to `/settings/data`. **As built (M5, ADR-043):** due means the data changed since the last backup and that backup is older than the interval, or 50 changes piled up; without any backup it's due as soon as there's data. A toast (*"Letztes Backup vor 12 Tagen. Jetzt sichern?"*, *Jetzt sichern*) follows at most once a day, never on the Daten page, and on a new install only from its second day (or after 50 changes).
+- **Backup status (DAT-04):** a pill in the sidebar footer, e.g. *"Backup vor 3 Tagen"*. Once a backup is due (after N days, default 7, Q7.1) it turns amber and reads *"Backup fällig · Zuletzt vor 12 Tagen"*. It links to `/settings/data`. **As built (M5, ADR-043):** due means the data changed since the last backup and that backup is older than the interval, or 50 changes piled up; without any backup it's due as soon as there's data. A toast (*"Letztes Backup vor 12 Tagen. Jetzt sichern?"*, *Jetzt sichern*) follows at most once a day, never on the Daten page, and on a new install only from its second day (or after 50 changes).
 - The badge on **Preise** shows the number of stale prices.
 
 ### 3.3 Mobile shell
@@ -181,7 +181,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 │             Basis 64 % · 000/000        Komplett 51 %   Master 38 %      │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ [Karten] [Sealed] [Statistik]                                              │
-│ (Alle 00|Besitzt 00|Fehlt 00)  Bereich ▾  Seltenheit ▾  Typ ▾  Sortierung ▾  ⌕ In Set suchen  ▦|☰ │
+│ (Alle 00|Im Besitz 00|Fehlt 00)  Bereich ▾  Seltenheit ▾  Typ ▾  Sortierung ▾  ⌕ In Set suchen  ▦|☰ │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐                      │
 │ │img │ │img+│ │░░░░│ │img │ │img │ │░░░░│ │img │ │img │   ░ = missing (ghost) │
@@ -191,7 +191,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 ```
 
 - **Header (R2.1):** a big set title in display type under an eyebrow line (series · print · release date · card count), the **print switch** (*International / Asien*), the card-language switch, and completion: *Basis* as a big percentage, plus *Komplett* and *Master*.
-- **Sticky glass filter bar (R2.1):** *Alle / Besitzt / Fehlt* with counts, *Bereich* (section), *Seltenheit*, *Typ*, *Variante* (only for sets with variants), *Sortierung* (number, value, name, recently added), in-set search, and a grid/list toggle. It stays under the toolbar while the grid scrolls beneath it.
+- **Sticky glass filter bar (R2.1):** *Alle / Im Besitz / Fehlt* with counts, *Bereich* (section), *Seltenheit*, *Typ*, *Variante* (only for sets with variants), *Sortierung* (number, value, name, recently added), in-set search, and a grid/table toggle (*Rasteransicht / Tabellenansicht*). It stays under the toolbar while the grid scrolls beneath it.
 - **Card tile:** image with lazy loading and a card-back shimmer placeholder, then number, localized name and a rarity glyph.
   - *Owned:* full color, a quantity badge ("×3"), and **variant dots** (normal, reverse, special patterns) that are filled when owned.
   - *Missing:* a desaturated 35 % "ghost" with a dashed outline. It can be toggled to fully hidden.
@@ -210,7 +210,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 │                               │ Pikachu ex                    ← 024 · 026 → │
 │      ┌───────────────┐        │ ピカチュウex · 皮卡丘ex                     │
 │      │               │        │ <Set> · Nr. 025/xxx · Special Illustration Rare │
-│      │   HOLO CARD   │        │ Elektro · 200 KP · Illus. <Name>            │
+│      │   HOLO CARD   │        │ Elektro · 200 KP · Illustrator <Name>       │
 │      │  (tilt+foil)  │        ├──────────────────────────────────────────┤
 │      │               │        │ Sprache [DE][EN]   Variante [Holo][Reverse]  │
 │      └───────────────┘        │ Aktueller Preis  34,90 €  · Deutsch · 12.09. │
@@ -259,7 +259,7 @@ This screen uses the same structure as card detail, but:
   - *Raster* (grid): tiles as in set detail, plus value and P/L chips.
   - *Tabelle* (table): virtualized. Default columns are Karte (thumb + name), Set, Nr., Sprache, Variante, Zustand, Menge, Einkauf/Stk., Wert/Stk., Wert, G/V, G/V %, and Preis vom. Columns are configurable and sortable.
   - *Binder* (COL-08, v1.1 right after v1, R2.4; v1 already stores binder, page and slot): your real binders page by page (3×3 VaultX, 3×4/4×3 Withyu), or set order with missing-pocket placeholders.
-- **Filters** (chips + popover, in the sticky glass filter bar, R2.1): Set, Sprache, Seltenheit, Variante, Zustand, Gradiert, Tags, Lagerort, Bepreist/Unbepreist, Preis veraltet, G/V positiv/negativ, and Kaufdatum range.
+- **Filters** (chips + popover, in the sticky glass filter bar, R2.1): Set, Sprache, Seltenheit, Variante, Zustand, Gegradet, Tags, Lagerort, Bepreist/Unbepreist, Preis veraltet, G/V positiv/negativ, and Kaufdatum range.
 - ***Eigener Wert*:** lots with a per-copy value (PRC-07, R2.2) show it with the *"eigener Wert"* tag in tiles and table cells.
 - **Group by:** none · Set · Sprache · Seltenheit · Lagerort.
 - **Multi-select:** tag, move location, start a price session for the selection, export the selection as CSV, or delete (with undo).
@@ -281,7 +281,7 @@ This screen uses the same structure as card detail, but:
 │ [thumb] Pikachu ex · <Set> · 025/xxx       ändern │
 │                                                     │
 │ Sprache    [DE] [EN]                                 │  ← only languages of this print
-│ Variante   (Holo) (Reverse Holo) (…)                 │  ← only variants that exist
+│ Variante   (Holo) (Reverse-Holo) (…)                 │  ← only variants that exist
 │ Zustand    MT [NM] EX GD LP PL PO                     │  ← Cardmarket scale; tooltips ("PO ≈ Damaged")
 │ Menge      [ − 1 + ]                                  │
 │ Kaufpreis  [ 4,50 € ]  ( pro Stück | gesamt )         │
@@ -302,7 +302,7 @@ This screen uses the same structure as card detail, but:
 - **As built (M3):**
   - Opens from *＋ Hinzufügen* (the palette in add mode lists cards, products and your custom items, plus *Eigenen Eintrag anlegen* for what the catalog lacks), `N` on a focused tile, and *Hinzufügen* on card and product pages. A side sheet on desktop, a bottom sheet on phones; the price field has focus.
   - Defaults: the language of the view you came from (else the last used), the first variant that exists, the condition from Einstellungen (NM), today's date, and the last-used source and Lagerort (per device, not in backups). The condition always starts at the default, not the last-used one (R5.1, decided 2026-09-24).
-  - Fees, grading, tags and note sit under *Mehr Details*. `Enter` saves, `⇧ Enter` is *Hinzufügen & nächste*; on phones the button reads *& nächste*.
+  - Fees, grading, tags and note sit under *Mehr Details*. `Enter` adds (*⏎ fügt hinzu*; *⏎ speichert* when editing), `⇧ Enter` is *Hinzufügen & nächste*; on phones the button reads *& nächste*.
   - Editing uses the same form. Every save, edit, duplicate and delete toasts with *Rückgängig*. The "far above the latest price" warning waits for prices (M4).
   - **Verkaufen oder abgeben …** (lot menu): what happened (verkauft, getauscht, verschenkt, verloren), how many, the proceeds for all (the value received, for trades), fees and date; the lot keeps its history and shows "1 von 3".
   - **Öffnen …** (sealed lots): how many and when, then optional *Pulls erfassen* with Schnellerfassung bound to the product's set; *Abschließen* splits the product's cost over the pulls (`DATA_MODEL.md` §6.2), *Ohne Kostenaufteilung schließen* leaves the pulls at zero cost.
@@ -371,7 +371,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 |---|---|
 | **Allgemein** | Card-name display (*Sprache meiner Karte* / *immer Deutsch* / *Originalsprache*) · default card language · active card languages (DE, EN, JA, ZH-CN, ZH-TW; R2.3). The UI language is German (a selector appears once English exists) |
 | **Darstellung** | Theme (*Hell / Dunkel / System*, default *System*; light and dark are equals, R2.1; the top bar keeps a quick toggle) · card-tile density · holo/animation level (*voll / reduziert / aus*) · **Transparenz reduzieren** (solid instead of glass) · colorblind-safe P/L colors |
-| **Preise** | Default price type (**ab (DE)**) · Cardmarket link filters (**seller country: Deutschland**, **language: like the copy**, **min. condition: Near Mint or better**, R2.2) · price-guide suggestions (on/off) · stale threshold (14 days) · valuation of unpriced items (*ausschließen* / *Einkaufspreis verwenden*) |
+| **Preise** | Default price type (**ab (DE)**) · Cardmarket link filters (**seller country: Deutschland**, **language: like the copy**, **min. condition: Near Mint or better**, R2.2) · price-guide suggestions (on/off) · stale threshold (14 days) · valuation of unpriced items (*Nicht mitzählen* / *Mit Kaufpreis*) |
 | **Lagerorte** | Binders and boxes: name, layout (3×3 / 3×4 / 4×3 / custom), page count, sort order |
 | **Daten** | Export backup (a download; Brave asks where to save it) · import backup · CSV export · backup reminder interval · **storage status**: persistent yes/no (`persist()`) and used space; the reported quota isn't relied on, since Brave always reports 2 GiB (ADR-027) · request persistence · **install hint**: an installed app gets `persist()` (Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*; English menu names, the German ones are to verify) · **delete-on-exit warning**: Brave's Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data* and a per-site *"clear cookies on exit"* erase the whole collection (all off by default; ADR-027, R3.4) · delete all data |
 | **Über** | App version and the long tagline (*"Jede Karte. Jedes Set. Jeder Cent."*) · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
@@ -385,7 +385,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
   - **Als App installieren.**
   - **Achtung bei „Daten beim Beenden löschen“.**
   - **Alle Daten löschen:** a dialog that asks you to type *LÖSCHEN*, with *Backup exportieren* inside, then a fresh start.
-- **As built (M4), Preise:** default price type (a select), the Cardmarket filters (sellers from Germany, fixed while it's the only verified country; *Nur Angebote in der Sprache der Karte*; the minimum condition MT…PO), *Vorschläge aus dem Cardmarket-Preisführer* on/off, *Preis veraltet nach* 7/14/30/60/90 days and *Karten ohne Preis im Gesamtwert* (*nicht mitzählen* / *mit Einkaufspreis*). Changes apply at once.
+- **As built (M4), Preise:** default price type (a select), the Cardmarket filters (sellers from Germany, fixed while it's the only verified country; *Nur Angebote in der Sprache der Karte*; the minimum condition MT…PO), *Vorschläge aus dem Cardmarket-Preisführer* on/off, *Preis veraltet* (*Nach 7/14/30/60/90 Tagen*) and *Positionen ohne Preis im Gesamtwert* (*Nicht mitzählen* / *Mit Kaufpreis*). Changes apply at once.
 
 ### 4.14 Onboarding · APP-06
 
@@ -455,14 +455,14 @@ Shortcuts are suppressed while typing in inputs, and every action is also reacha
 
 ## 8. Microcopy and tone
 
-- **German only** (Q3.1), informal **"du"** (Q2.4), and concise. Collector jargon is used naturally: *Display*, *Top-Trainer-Box*, *Reverse Holo*, *Pull*, *Master Set*.
+- **German only** (Q3.1), informal **"du"** (Q2.4), and concise. Collector jargon is used naturally: *Display*, *Top-Trainer-Box*, *Reverse-Holo*, *Secret Rares*, *Pull*, *Master Set*.
 - Numbers use German formatting: `1.234,56 €`, `+14,6 %`, `23.09.2026`. See `I18N.md`.
 - No exclamation-mark spam and no emoji in UI chrome. Celebrations (set complete) are visual, not verbal.
 - Examples:
   - Empty collection: *"Noch keine Karten. Öffne ein Set und tippe auf ＋."*
   - Stale price: *"Preis von vor 21 Tagen"*
   - Backup reminder: *"Letztes Backup vor 12 Tagen. Jetzt sichern?"*
-  - Backup status pill (due): *"Backup fällig · Letztes vor 12 Tagen"*
+  - Backup status pill (due): *"Backup fällig · Zuletzt vor 12 Tagen"*
   - Price context: *"ab (DE) · NM oder besser"* · per-copy value tag: *"eigener Wert"*
   - Short tagline (sidebar, PWA description): *"Jede Karte zählt."* (R2.7)
 

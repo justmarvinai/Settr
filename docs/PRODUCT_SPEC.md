@@ -154,7 +154,7 @@ Priority uses **MoSCoW** for v1: **M**ust, **S**hould, **C**ould, **W**on't (v1,
 | DAT-01 | **Full export** (versioned JSON backup, checksum) as a **download** | M | "Import and export all data" from the brief. Brave asks where to save each download (ADR-027) |
 | DAT-02 | **Full import** with preview, *replace* or *merge*, safety snapshot and undo | M | |
 | DAT-03 | **CSV export** (Excel-DE friendly) | S | |
-| DAT-04 | **Backup reminders** and a status pill | S | Sidebar footer, amber when a backup is due: *"Backup fällig · Letztes vor 12 Tagen"* (Q7.1, R2.1) |
+| DAT-04 | **Backup reminders** and a status pill | S | Sidebar footer, amber when a backup is due: *"Backup fällig · Zuletzt vor 12 Tagen"* (Q7.1, R2.1) |
 | DAT-05 | **Persistent storage** request and storage usage display | M | Protects against browser eviction. Never relies on the reported quota (Brave always reports 2 GiB), and warns about Brave's delete-on-exit settings (ADR-027, R3.4) |
 | DAT-06 | **Auto-backup to a folder** (browsers with the File System Access API; in Brave only after enabling `brave://flags/#file-system-access-api`) | W | Later (I-15, Q7.2, ADR-027) |
 | DAT-07 | **Generic CSV import** from other apps (mapping wizard), **no Collectr preset** | W | Later (I-16). The Collectr importer is dropped: without Collectr Pro there's no export (R2.5, ADR-028) |

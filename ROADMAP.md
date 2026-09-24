@@ -175,7 +175,7 @@
 
 - [x] Holo card viewer (DSN-01), shared-element transitions (DSN-02), foil progress rings (DSN-03), with the rings also in the sidebar's sets
 - [x] Onboarding (APP-06, no demo data) and empty states
-- [ ] Microcopy pass (German review)
+- [x] Microcopy pass (German review): plurals, one term per concept, clearer hints, unused messages removed (I18N.md §5–§6)
 - [x] Palette commands (Schnellerfassung, Backup exportieren) and arrow-key navigation in grids (UX_SPEC.md §7)
 - [x] PWA polish: install prompts (iOS guidance), offline indicator, update flow
 - [ ] Accessibility audit (axe + manual keyboard/screen-reader pass), performance audit (Lighthouse CI budgets)

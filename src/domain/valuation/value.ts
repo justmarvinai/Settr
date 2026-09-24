@@ -45,7 +45,7 @@ export interface LotValue {
   plRatio?: number | undefined;
   /** The unit value is older than the stale threshold. */
   stale: boolean;
-  /** No price: the value stands in at cost (setting *Einkaufspreis verwenden*). */
+  /** No price: the value stands in at cost (setting *Mit Kaufpreis*). */
   atCost: boolean;
 }
 

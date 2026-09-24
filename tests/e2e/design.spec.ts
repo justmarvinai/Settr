@@ -75,7 +75,7 @@ test('a tile morphs into the card page and back, and the card leans (DSN-01, DSN
   await expect.poll(transitions).toEqual(['finished']);
 
   // The picture leans towards the pointer and opens fullscreen
-  const open = page.getByRole('button', { name: 'Pikachu-ex im Vollbild zeigen' });
+  const open = page.getByRole('button', { name: 'Pikachu-ex im Vollbild anzeigen' });
   const box = await open.boundingBox();
   if (!box) throw new Error('no card picture');
   await page.mouse.move(box.x + box.width * 0.8, box.y + box.height * 0.2, { steps: 6 });

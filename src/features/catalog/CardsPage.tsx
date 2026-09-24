@@ -149,7 +149,7 @@ export function CardsPage() {
           >
             {pending && results.length === 0
               ? m.catalog_searching()
-              : m.catalog_cards_count({ count: formatCount(results.length) })}
+              : m.catalog_cards_count({ n: results.length, count: formatCount(results.length) })}
           </output>
           {!pending && results.length === 0 ? (
             <p className="type-body m-0 px-1 text-ink-muted">{m.catalog_cards_empty()}</p>

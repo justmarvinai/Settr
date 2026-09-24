@@ -356,8 +356,9 @@ function PullLogForSet({
     try {
       if (pulls) {
         const before = await allocatePullCosts(db, holding.id);
-        toastWithUndo(m.toast_pull_costs({ count: formatCount(before.length) }), () =>
-          restoreHoldings(db, before),
+        toastWithUndo(
+          m.toast_pull_costs({ n: before.length, count: formatCount(before.length) }),
+          () => restoreHoldings(db, before),
         );
       }
       closeSheet();

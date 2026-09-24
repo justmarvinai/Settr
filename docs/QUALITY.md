@@ -140,7 +140,7 @@ Marvin's rule (R2.1): *"Usability and user experience is always #1."* When looks
 - Contrast is ≥ 4.5:1 for text and ≥ 3:1 for UI components and chart strokes, in **both themes of direction D** (light and dark are equals, *System* is the default; `DESIGN_SYSTEM.md` §3.1). It's checked with automated token tests (OKLCH contrast in `tokens.test.ts`) for every token pair, in light and in dark.
 - P/L is never color-only: a sign, an arrow and text are always shown. An optional colorblind-safe palette (blue/orange) is available.
 - Keyboard: everything is operable, with a visible focus ring (`--focus`: 3 px with a 2 px offset, `DESIGN_SYSTEM.md` §3.1). Grids use a roving tabindex. Sheets/dialogs trap focus and restore it on close. Skip-link to the main content.
-- Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
+- Screen readers: landmarks, `aria-live="polite"` for toasts and price-session progress, and descriptive image alt text ("Pikachu ex, Nr. 025, Deutsch, Reverse-Holo"). Charts ship with a data-table alternative ("Als Tabelle anzeigen").
 - Motion: `prefers-reduced-motion` disables tilt, foil animation, morph transitions and number tickers. There's also an in-app motion setting.
 - **Glass legibility:** text on Liquid Glass meets AA against the worst-case backdrop (bright card art beneath). `prefers-reduced-transparency` and the in-app toggle make glass solid. Windows `forced-colors` mode is supported.
 - Touch targets are ≥ 44 × 44 px. No hover-only functionality: every hover action has a tap/long-press or menu equivalent.
