@@ -3,10 +3,17 @@ import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import {
   ArrowRightIcon,
   DownloadSimpleIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  KeyboardIcon,
+  LightningIcon,
   MagnifyingGlassIcon,
+  MoonIcon,
   PlusIcon,
+  SunIcon,
   UploadSimpleIcon,
   XIcon,
+  type Icon,
 } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, type NavigateOptions } from '@tanstack/react-router';
@@ -15,11 +22,13 @@ import { useManifest } from '@/catalog';
 import { useCatalogSearch } from '@/catalog/useCatalogSearch';
 import { CardImage } from '@/components/domain/CardImage';
 import { ProductImage } from '@/components/domain/ProductImage';
-import { useCustomItems, useOwnedItemIds } from '@/db';
+import { useCustomItems, useOwnedItemIds, useSettings } from '@/db';
+import { changeDisplay, resolvedTheme } from '@/features/appearance';
 import { exportBackup } from '@/features/data';
 import { pickText } from '@/domain/catalog';
 import { languageCode, m, printLabel, productTypeLabel, rarityLabel } from '@/i18n';
 import { openSheet } from '@/lib/sheets';
+import { usePrivacy } from '../privacy';
 import type { SearchMode } from './AppShell';
 
 interface PaletteGroup {
@@ -41,7 +50,7 @@ interface PaletteItem {
   target: NavigateOptions;
   /** An action instead of a place (Backup exportieren). */
   run?: () => void;
-  icon?: 'export' | 'import';
+  icon?: Icon;
 }
 
 const PAGES: { label: () => string; target: NavigateOptions }[] = [
@@ -57,19 +66,20 @@ const PAGES: { label: () => string; target: NavigateOptions }[] = [
   { label: m.search_page_data, target: { to: '/settings/data' } },
 ];
 
-/** Commands (UX_SPEC.md §7), found by their name or these words. */
-const ACTIONS: {
-  id: 'export' | 'import';
-  label: () => string;
+/** A command (UX_SPEC.md §7), found by its name or these words. */
+interface Action {
+  id: string;
+  label: string;
+  meta?: string;
   words: string[];
-}[] = [
-  { id: 'export', label: m.palette_backup_export, words: ['backup', 'sichern', 'export', 'daten'] },
-  {
-    id: 'import',
-    label: m.palette_backup_import,
-    words: ['backup', 'import', 'einspielen', 'wiederherstellen', 'daten'],
-  },
-];
+  icon: Icon;
+  /** Shown only when the query asks for it (one per set would crowd the empty palette). */
+  onQueryOnly?: boolean;
+  run?: () => void;
+  target?: NavigateOptions;
+}
+
+const QUICK_WORDS = ['schnellerfassung', 'schnell', 'erfassung', 'quick', 'nummer'];
 
 const fold = (text: string) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().trim();
 
@@ -83,11 +93,14 @@ export default function SearchDialog({
   open,
   onOpenChange,
   mode = 'go',
+  onShowShortcuts,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** `add`: picking a card or product opens its add sheet (＋ Hinzufügen, UX_SPEC.md §3.3). */
   mode?: SearchMode;
+  /** Opens the shortcut cheat sheet (the palette's *Tastenkürzel*). */
+  onShowShortcuts: () => void;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -95,6 +108,9 @@ export default function SearchDialog({
   const customItems = useCustomItems();
   const [query, setQuery] = useState('');
   const adding = mode === 'add';
+  const settings = useSettings();
+  const privacy = usePrivacy();
+  const dark = resolvedTheme(settings.display.theme) === 'dark';
   const text = query.trim();
   const owned = useOwnedItemIds();
   const { results, pending } = useCatalogSearch(
@@ -172,16 +188,69 @@ export default function SearchDialog({
         target: { to: '/catalog/sets/$setId', params: { setId: set.id } },
       });
   }
+  const actions: Action[] = [
+    {
+      id: 'export',
+      label: m.palette_backup_export(),
+      words: ['backup', 'sichern', 'export', 'daten'],
+      icon: DownloadSimpleIcon,
+      run: () => void exportBackup(queryClient),
+    },
+    {
+      id: 'import',
+      label: m.palette_backup_import(),
+      words: ['backup', 'import', 'einspielen', 'wiederherstellen', 'daten'],
+      icon: UploadSimpleIcon,
+      target: { to: '/settings/data', hash: 'settings-import' },
+    },
+    ...manifest.sets
+      .filter((set) => set.kind === 'main')
+      .map<Action>((set) => ({
+        id: `quick:${set.id}`,
+        label: m.palette_quick_entry({ set: pickText(set.name) }),
+        meta: [printLabel(set.print), set.code].filter(Boolean).join(' · '),
+        words: [...QUICK_WORDS, ...Object.values(set.name).map(fold), fold(set.code ?? '')],
+        icon: LightningIcon,
+        onQueryOnly: true,
+        run: () => openSheet({ type: 'quick', setId: set.id }),
+      })),
+    {
+      id: 'shortcuts',
+      label: m.palette_shortcuts(),
+      words: ['tastenkürzel', 'tastatur', 'kürzel', 'shortcuts', 'hilfe'],
+      icon: KeyboardIcon,
+      run: onShowShortcuts,
+    },
+    {
+      id: 'privacy',
+      label: privacy.on ? m.toolbar_privacy_show() : m.toolbar_privacy_hide(),
+      words: ['beträge', 'verbergen', 'anzeigen', 'privat', 'privatsphäre'],
+      icon: privacy.on ? EyeIcon : EyeSlashIcon,
+      run: privacy.toggle,
+    },
+    {
+      id: 'theme',
+      label: dark ? m.toolbar_theme_to_light() : m.toolbar_theme_to_dark(),
+      words: ['design', 'dunkel', 'hell', 'theme', 'darstellung'],
+      icon: dark ? SunIcon : MoonIcon,
+      run: () => void changeDisplay(settings.display, { theme: dark ? 'light' : 'dark' }),
+    },
+  ];
   if (!adding)
-    for (const action of ACTIONS)
-      if (!text || fold(action.label()).includes(q) || action.words.some((w) => w.startsWith(q)))
+    for (const action of actions)
+      if (
+        text
+          ? fold(action.label).includes(q) || action.words.some((w) => w && w.startsWith(q))
+          : !action.onQueryOnly
+      )
         items.push({
           id: `action:${action.id}`,
           group: 'actions',
-          title: action.label(),
-          icon: action.id,
-          target: { to: '/settings/data', hash: 'settings-import' },
-          ...(action.id === 'export' ? { run: () => void exportBackup(queryClient) } : {}),
+          title: action.label,
+          ...(action.meta ? { meta: action.meta } : {}),
+          icon: action.icon,
+          target: action.target ?? { to: '/' },
+          ...(action.run ? { run: action.run } : {}),
         });
   if (!adding)
     for (const page of PAGES)
@@ -303,18 +372,8 @@ export default function SearchDialog({
                               alt=""
                               className="w-10 shrink-0 rounded-[10px]"
                             />
-                          ) : item.icon === 'export' ? (
-                            <DownloadSimpleIcon
-                              size={18}
-                              aria-hidden
-                              className="shrink-0 text-ink-muted"
-                            />
-                          ) : item.icon === 'import' ? (
-                            <UploadSimpleIcon
-                              size={18}
-                              aria-hidden
-                              className="shrink-0 text-ink-muted"
-                            />
+                          ) : item.icon ? (
+                            <item.icon size={18} aria-hidden className="shrink-0 text-ink-muted" />
                           ) : (
                             <ArrowRightIcon
                               size={18}

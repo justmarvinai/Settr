@@ -8,6 +8,7 @@ import { firstRelease, PRODUCT_TYPES, type CatalogProduct } from '@/domain/catal
 import { ACTIVE_CARD_LANGUAGES, type CardLanguage } from '@/domain/catalog-types';
 import { languageLabel, m, printLabel, productTypeLabel } from '@/i18n';
 import { formatCount } from '@/i18n/format';
+import { rovingFocusRef } from '@/lib/useRovingFocus';
 import { ProductTile } from './ProductTile';
 import type { PrintFilter } from './SetsPage';
 
@@ -143,9 +144,12 @@ export function SealedPage() {
           <h2 id={`sealed-${group.print}`} className="type-h2 m-0 px-1">
             {printLabel(group.print)}
           </h2>
-          <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-x-4 gap-y-6 p-0">
+          <ul
+            ref={rovingFocusRef}
+            className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-x-4 gap-y-6 p-0"
+          >
             {group.products.map((product) => (
-              <li key={product.id}>
+              <li key={product.id} data-roving-tile>
                 <ProductTile product={product} lang={search.lang} />
               </li>
             ))}

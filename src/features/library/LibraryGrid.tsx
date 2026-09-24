@@ -13,6 +13,7 @@ import { remaining } from '@/domain/schemas';
 import { htmlLang, languageCode, m, productTypeLabel } from '@/i18n';
 import { formatCount, formatMoney } from '@/i18n/format';
 import { useElementBox } from '@/lib/useElementBox';
+import { useRovingFocus } from '@/lib/useRovingFocus';
 import { lotMenuActions, openEdit } from '@/features/collection';
 import { lotKeys } from './lot-keys';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
@@ -170,6 +171,8 @@ function LotTile({
         params={{ setId: row.pageSetId, cardId: h.item.id }}
         search={{ lang: h.language }}
         aria-label={ariaLabel}
+        aria-keyshortcuts="N P Space"
+        data-roving
         className={linkClass}
         onKeyDown={onKeyDown}
       >
@@ -183,6 +186,8 @@ function LotTile({
         params={{ productId: h.item.id }}
         search={{ lang: h.language }}
         aria-label={ariaLabel}
+        aria-keyshortcuts="N P Space"
+        data-roving
         className={linkClass}
         onKeyDown={onKeyDown}
       >
@@ -195,6 +200,8 @@ function LotTile({
       <button
         type="button"
         aria-label={ariaLabel}
+        aria-keyshortcuts="N P Space"
+        data-roving
         className={cn(linkClass, 'w-full')}
         onClick={() => openEdit(h.id)}
         onKeyDown={onKeyDown}
@@ -205,6 +212,7 @@ function LotTile({
   }
   return (
     <div
+      data-roving-tile
       className={cn(
         'group/tile relative rounded-[16px]',
         closed && 'opacity-60',
@@ -256,6 +264,7 @@ export function LibraryGrid({
   'use no memo'; // TanStack Virtual keeps one mutable instance; compiled memoization would go stale.
   const ref = useRef<HTMLDivElement>(null);
   const box = useElementBox(ref);
+  useRovingFocus(ref);
   const min = TILE_MIN[kind];
   const width = box.width || 960;
   const columns = Math.max(2, Math.floor((width + GAP_X) / (min + GAP_X)));

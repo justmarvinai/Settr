@@ -279,3 +279,10 @@
     var(--foil-1)
   );
 }
+
+/* Arrow keys in tile grids scroll the focused tile clear of the sticky toolbar and filter bar
+   (and of the phone's tab bar). */
+[data-roving] {
+  scroll-margin-top: 168px;
+  scroll-margin-bottom: 112px;
+}

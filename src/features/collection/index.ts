@@ -12,6 +12,7 @@ export {
 export {
   CompletionSummary,
   QuickAddButton,
+  quickAdd,
   quickAddInput,
   QuickPriceButton,
   useSetOwnership,

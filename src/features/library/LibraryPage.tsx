@@ -29,6 +29,7 @@ import {
 } from '@/domain/collection';
 import { m } from '@/i18n';
 import { formatCount, formatMoney, formatPercent } from '@/i18n/format';
+import { useKeySequence } from '@/lib/useKeySequence';
 import { BulkBar } from './BulkBar';
 import { FilterSheet } from './FilterSheet';
 import { LibraryGrid } from './LibraryGrid';
@@ -127,6 +128,11 @@ export function LibraryPage({
     if ('q' in patch) setQuery(patch.q ?? '');
     onSearchChange(patch);
   };
+  // V then G or T switches between grid and table (UX_SPEC.md §7).
+  useKeySequence('v', {
+    g: () => update({ view: undefined }),
+    t: () => update({ view: 'table' }),
+  });
   const sorts = LIBRARY_SORTS[kind];
   const groupsOffered = LIBRARY_GROUPS[kind];
   const sort: LotSort = search.sort && sorts.includes(search.sort) ? search.sort : 'added';

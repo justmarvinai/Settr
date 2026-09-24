@@ -7,7 +7,7 @@ import {
   SquaresFourIcon,
 } from '@phosphor-icons/react';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   useCatalogSet,
   useManifest,
@@ -53,6 +53,7 @@ import {
   openAdd,
   openPrice,
   openQuickAdd,
+  quickAdd,
   QuickAddButton,
   QuickPriceButton,
   useSetOwnership,
@@ -61,6 +62,8 @@ import {
 import { useCjkFonts } from '@/components/domain/cjk';
 import { isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
+import { useKeySequence } from '@/lib/useKeySequence';
+import { useRovingFocus } from '@/lib/useRovingFocus';
 import { setReleaseText } from './dates';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/');
@@ -114,6 +117,8 @@ export function SetPage() {
   const settings = useSettings();
   const [density, setDensity] = useState<Density>(readDensity);
   const [query, setQuery] = useState(search.q ?? '');
+  const gridRef = useRef<HTMLDivElement>(null);
+  useRovingFocus(gridRef);
 
   const { set } = loaded;
   const languages = visibleLanguages(set.languages, settings);
@@ -127,6 +132,11 @@ export function SetPage() {
   const ownedCards = loaded.cards.filter((card) => ownedCount(card) > 0).length;
   const update = (patch: Partial<SetSearch>) =>
     void navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+  // V then G or T switches between grid and list (UX_SPEC.md §7).
+  useKeySequence('v', {
+    g: () => update({ view: undefined }),
+    t: () => update({ view: 'list' }),
+  });
 
   const sections = CARD_SECTIONS.filter((s) => loaded.cards.some((c) => c.section === s));
   const rarities = RARITY_IDS.filter((r) => loaded.cards.some((c) => c.rarity === r));
@@ -190,8 +200,15 @@ export function SetPage() {
         style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${TILE_MIN[density]}, 1fr))` }}
       >
         {cards.map((card) => (
-          <li key={card.id} className="group/tile relative">
-            <CardLink card={card} setId={set.id} lang={lang} names={names} ownership={ownership} />
+          <li key={card.id} className="group/tile relative" data-roving-tile>
+            <CardLink
+              card={card}
+              setId={set.id}
+              lang={lang}
+              names={names}
+              ownership={ownership}
+              onQuickAdd={() => void quickAdd(card, loaded, lang, settings.defaultCondition)}
+            />
             <QuickAddButton
               card={card}
               loaded={loaded}
@@ -441,40 +458,45 @@ export function SetPage() {
           : m.catalog_set_cards({ count: loaded.cards.length })}
       </output>
 
-      {filtered.length === 0 ? (
-        <div className="tile flex flex-col items-start gap-3 p-6">
-          <p className="type-body m-0 text-ink-muted">{m.catalog_empty_filtered()}</p>
-          <Link
-            to="/catalog/sets/$setId"
-            params={{ setId: set.id }}
-            search={{ lang: search.lang, all: search.all }}
-            onClick={() => setQuery('')}
-            className="type-ui text-accent-text underline-offset-4 hover:underline"
-          >
-            {m.catalog_reset_filters()}
-          </Link>
-        </div>
-      ) : grouped ? (
-        sections.map((section) => {
-          const cards = sorted.filter((c) => c.section === section);
-          if (!cards.length) return null;
-          return (
-            <section
-              key={section}
-              aria-labelledby={`section-${section}`}
-              className="flex flex-col gap-3"
+      <div ref={gridRef} className="flex flex-col gap-5">
+        {filtered.length === 0 ? (
+          <div className="tile flex flex-col items-start gap-3 p-6">
+            <p className="type-body m-0 text-ink-muted">{m.catalog_empty_filtered()}</p>
+            <Link
+              to="/catalog/sets/$setId"
+              params={{ setId: set.id }}
+              search={{ lang: search.lang, all: search.all }}
+              onClick={() => setQuery('')}
+              className="type-ui text-accent-text underline-offset-4 hover:underline"
             >
-              <h3 id={`section-${section}`} className="type-h3 m-0 flex items-baseline gap-2 px-1">
-                {sectionTitle(section, loaded)}
-                <span className="type-small text-ink-muted">{formatCount(cards.length)}</span>
-              </h3>
-              {renderCards(cards)}
-            </section>
-          );
-        })
-      ) : (
-        renderCards(sorted)
-      )}
+              {m.catalog_reset_filters()}
+            </Link>
+          </div>
+        ) : grouped ? (
+          sections.map((section) => {
+            const cards = sorted.filter((c) => c.section === section);
+            if (!cards.length) return null;
+            return (
+              <section
+                key={section}
+                aria-labelledby={`section-${section}`}
+                className="flex flex-col gap-3"
+              >
+                <h3
+                  id={`section-${section}`}
+                  className="type-h3 m-0 flex items-baseline gap-2 px-1"
+                >
+                  {sectionTitle(section, loaded)}
+                  <span className="type-small text-ink-muted">{formatCount(cards.length)}</span>
+                </h3>
+                {renderCards(cards)}
+              </section>
+            );
+          })
+        ) : (
+          renderCards(sorted)
+        )}
+      </div>
     </div>
   );
 }
@@ -490,12 +512,15 @@ function CardLink({
   lang,
   names,
   ownership,
+  onQuickAdd,
 }: {
   card: CatalogCard;
   setId: string;
   lang: CardLanguage;
   names: NameMode;
   ownership: SetOwnership;
+  /** + on the focused tile: one copy with defaults, as ＋ does. */
+  onQuickAdd: () => void;
 }) {
   const name = cardName(card, lang, names);
   const number = card.printedNumber || card.localId;
@@ -508,12 +533,17 @@ function CardLink({
       params={{ setId, cardId: card.id }}
       search={{ lang }}
       aria-label={[number, name.text, rarity, ownedText].filter(Boolean).join(', ')}
+      aria-keyshortcuts="N P Plus"
+      data-roving
       className="group block rounded-[14px] outline-offset-4"
       onKeyDown={(event) => {
-        // N opens the full add sheet for the focused card, P its price (UX_SPEC.md §7).
+        // N opens the full add sheet for the focused card, P its price, + adds one copy (§7).
         if (event.ctrlKey || event.metaKey || event.altKey) return;
         const key = event.key.toLowerCase();
-        if (key === 'n') {
+        if (key === '+') {
+          event.preventDefault();
+          onQuickAdd();
+        } else if (key === 'n') {
           event.preventDefault();
           openAdd({ kind: 'card', id: card.id }, setId, lang);
         } else if (key === 'p') {

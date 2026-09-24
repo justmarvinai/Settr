@@ -1,8 +1,11 @@
+import { useNavigate } from '@tanstack/react-router';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { ToastViewport } from '@/components/ui/Toasts';
 import { m } from '@/i18n';
-import { isTyping } from '@/lib/keys';
+import { inDialog, isPlain, isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
+import { useKeySequence } from '@/lib/useKeySequence';
+import { usePrivacy } from '../privacy';
 import { BackupReminder } from './BackupReminder';
 import { Sidebar } from './Sidebar';
 import { TabBar } from './TabBar';
@@ -11,6 +14,7 @@ import { Toolbar } from './Toolbar';
 // Loaded on first use: the palette grows with the catalog search (M2) and isn't needed for first paint.
 const SearchDialog = lazy(() => import('./SearchDialog'));
 const MoreSheet = lazy(() => import('./MoreSheet'));
+const ShortcutsDialog = lazy(() => import('./ShortcutsDialog'));
 // The add/edit sheets and their forms load when a page first asks for one.
 const CollectionSheets = lazy(() => import('./CollectionSheets'));
 
@@ -36,6 +40,23 @@ export function AppShell({ children }: { children: ReactNode }) {
     setMoreLoaded(true);
     setMoreOpen(true);
   };
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [shortcutsLoaded, setShortcutsLoaded] = useState(false);
+  const openShortcuts = () => {
+    setShortcutsLoaded(true);
+    setShortcutsOpen(true);
+  };
+
+  // G then O / S / K / P / F / E goes to a main area (UX_SPEC.md §7).
+  const navigate = useNavigate();
+  useKeySequence('g', {
+    o: () => void navigate({ to: '/' }),
+    s: () => void navigate({ to: '/collection' }),
+    k: () => void navigate({ to: '/catalog' }),
+    p: () => void navigate({ to: '/prices' }),
+    f: () => void navigate({ to: '/portfolio' }),
+    e: () => void navigate({ to: '/settings' }),
+  });
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -46,15 +67,25 @@ export function AppShell({ children }: { children: ReactNode }) {
         setSearchOpen(true);
         return;
       }
-      // N adds (UX_SPEC.md §7): pages handle it for a focused card first, else the add palette.
-      const plain = !event.ctrlKey && !event.metaKey && !event.altKey;
-      if (
-        plain &&
-        event.key.toLowerCase() === 'n' &&
-        !event.defaultPrevented &&
-        !isTyping(event.target)
-      ) {
-        if (useSheets.getState().open) return;
+      // Single keys (UX_SPEC.md §7): quiet while typing, inside dialogs and after a page used them.
+      if (!isPlain(event) || event.defaultPrevented || isTyping(event.target)) return;
+      if (inDialog(event.target) || useSheets.getState().open) return;
+      const key = event.key.toLowerCase();
+      if (key === '/' || key === '?') {
+        event.preventDefault();
+        if (key === '/') {
+          setSearchMode('go');
+          setSearchLoaded(true);
+          setSearchOpen(true);
+        } else {
+          setShortcutsLoaded(true);
+          setShortcutsOpen(true);
+        }
+      } else if (key === 'h') {
+        event.preventDefault();
+        usePrivacy.getState().toggle();
+      } else if (key === 'n') {
+        // N adds: pages handle it for a focused card first, else the add palette.
         event.preventDefault();
         setSearchMode('add');
         setSearchLoaded(true);
@@ -94,10 +125,18 @@ export function AppShell({ children }: { children: ReactNode }) {
       <TabBar onAdd={() => openSearch('add')} />
       <Suspense fallback={null}>
         {searchLoaded ? (
-          <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} mode={searchMode} />
+          <SearchDialog
+            open={searchOpen}
+            onOpenChange={setSearchOpen}
+            mode={searchMode}
+            onShowShortcuts={openShortcuts}
+          />
         ) : null}
         {sheetRequested ? <CollectionSheets /> : null}
         {moreLoaded ? <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} /> : null}
+        {shortcutsLoaded ? (
+          <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
+        ) : null}
       </Suspense>
       <ToastViewport />
       <BackupReminder />

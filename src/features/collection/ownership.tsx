@@ -81,6 +81,26 @@ export function quickAddInput(
   return input;
 }
 
+/** Adds one copy with defaults and offers undo: ＋ on a tile, or + on a focused tile (US-01). */
+export async function quickAdd(
+  card: CatalogCard,
+  loaded: LoadedSet,
+  language: CardLanguage,
+  condition: Holding['condition'],
+): Promise<void> {
+  try {
+    const holding = await createHolding(db, quickAddInput(card, loaded, language, condition));
+    toastWithUndo(
+      m.toast_added({
+        what: lotLabel(cardInfo(card, loaded), { language, condition, quantity: 1 }),
+      }),
+      () => deleteHolding(db, holding.id),
+    );
+  } catch (error) {
+    toastError(error);
+  }
+}
+
 /** ＋ on a set tile: adds one copy right away and offers undo (UX_SPEC.md §4.3, US-01). */
 export function QuickAddButton({
   card,
@@ -97,31 +117,13 @@ export function QuickAddButton({
   className?: string;
 }) {
   const settings = useSettings();
-  const add = async () => {
-    try {
-      const input = quickAddInput(card, loaded, language, settings.defaultCondition);
-      const holding = await createHolding(db, input);
-      toastWithUndo(
-        m.toast_added({
-          what: lotLabel(cardInfo(card, loaded), {
-            language,
-            condition: settings.defaultCondition,
-            quantity: 1,
-          }),
-        }),
-        () => deleteHolding(db, holding.id),
-      );
-    } catch (error) {
-      toastError(error);
-    }
-  };
   const label = m.collection_quick_add({ name });
   return (
     <button
       type="button"
       aria-label={label}
       title={label}
-      onClick={() => void add()}
+      onClick={() => void quickAdd(card, loaded, language, settings.defaultCondition)}
       className={cn(
         'inline-flex size-9 items-center justify-center rounded-pill bg-accent text-accent-contrast shadow-[0_6px_16px_-6px_oklch(0_0_0/0.5)] transition-[opacity,transform] duration-(--dur-fast) hover:scale-105 focus-visible:opacity-100',
         className,
