@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ built, in PR #5 (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7 decided, rounds 8–9 open without blockers
+> Last updated: 2026-09-24 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ merged (PR #5); **your 21 older sets** ✅ built, in PR #6 (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7 and 10 decided, rounds 8–9 open without blockers
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -18,7 +18,7 @@
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ merged (PR #4) · 🔒 your go for the `v1.0.0` tag |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
-| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ built, PR #5 · Scarlet & Violet next |
+| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ merged (PR #5) · your 21 older sets ✅ built, PR #6 |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
 
 > **Why data safety (M5) comes before polish:** real data will be entered from M3 onward, so backups must exist before v1 at the latest. A **minimal JSON export** already ships in M3 (DAT-01 "lite") so nothing entered during development can be lost.
@@ -204,11 +204,11 @@ Sets are added **one by one, era by era, once the core site is fully functional*
 
 | Order (to confirm when v1 is done) | Why |
 |---|---|
-| 1. **Mega Evolution** era (EN/DE + JP/Chinese mirrors) ✅ built 2026-09-24 | Most of your cards |
-| 2. **Scarlet & Violet** (*Karmesin & Purpur*) | Some of your cards |
-| 3. **Sword & Shield** (*Schwert & Schild*) | Some of your cards |
-| 4. **Sun & Moon** (GX era) | A few cards |
-| 5. **Base Set** (*Grundset*) | Your German Charizard (*Glurak*); 1st edition vs. unlimited are variants |
+| 1. **Mega Evolution** era (EN/DE + JP/Chinese mirrors) ✅ merged 2026-09-24 | Most of your cards |
+| 2. **Scarlet & Violet** (*Karmesin & Purpur*) ✅ your 9 sets, built 2026-09-24 | Some of your cards |
+| 3. **Sword & Shield** (*Schwert & Schild*) ✅ your 7 sets with their galleries, built 2026-09-24 | Some of your cards |
+| 4. **Sun & Moon** (GX era) ✅ Nacht in Flammen, built 2026-09-24 | A few cards |
+| 5. **Base Set** (*Grundset*) ✅ Unlimited, built 2026-09-24 | Your German Charizard (*Glurak*); 1st Edition and Shadowless can follow as variants (R10.4) |
 
 ### Mega Evolution series ✅ (built 2026-09-24, ADR-051–053)
 
@@ -219,8 +219,22 @@ Sets are added **one by one, era by era, once the core site is fully functional*
 - [x] Cardmarket ids per variant and language, checked by the network sync; the Japanese expansions pinned
 - [x] 139 sealed products (DE/EN, JP, TC) with Cardmarket and TCGplayer ids and pictures
 - [x] App: print switch with several Asian prints, counterpart links per set, variants named only where a card has several, reverse holos filtered on Cardmarket only where they share the card's product
-- [ ] Your check: round 9 in `USER_QUESTIONS.md` (names, deck prints, sealed names), then the merge of PR #5
+- [x] Merged (PR #5, 2026-09-24)
+- [ ] Your check: round 9 in `USER_QUESTIONS.md` (names, deck prints, sealed names)
 - [ ] Later: M6 Storm Emerald (Japanese-only), MC and MF (deck products)
+
+### Your older sets ✅ (built 2026-09-24, ADR-054–056, R10)
+
+Marvin (2026-09-24): "add the following sets … As these are sets I have cards from." International (DE/EN), cards only.
+- [x] **Karmesin & Purpur:** Schwarze Blitze, Weiße Flammen, Ewige Rivalen, Prismatische Entwicklungen, Stürmische Funken, Paldeas Schicksale, 151, Karmesin & Purpur (+ basic Energy SVE 001–008), Karmesin & Purpur Promos
+- [x] **Schwert & Schild:** Zenit der Könige (+ Galar-Galerie), Verlorener Ursprung (+ Trainer-Galerie), Astralglanz Trainer-Galerie (a set of its own, R10.5), Strahlende Sterne (+ Trainer-Galerie), Farbenschock, Clash der Rebellen, Schwert & Schild Promos
+- [x] **Sonne & Mond:** Nacht in Flammen · **Grundset-Serie:** Grundset (Unlimited, R10.4)
+- [x] Older rarities (Holo Rare V/VMAX/VSTAR, Radiant, Amazing, Secret, Black White, Shiny Ultra Rare) and variants: Rainbow Rares, promo holos of non-holo cards (*Holo (Promo)*), Worlds and league stamps (ADR-055)
+- [x] Printed numbers as on the card (`001/185`, `TG05/TG30`, `4/102`); German names for promos TCGdex lacks; English-only promos
+- [x] Cardmarket: every set's expansion; products by name for Karmesin & Purpur and Nacht in Flammen, where TCGdex has none (ADR-056)
+- [x] App: cards and sealed products searched apart in the palette, so a name many cards share leaves room for products; gallery sections named without their set's name
+- [ ] Your check: round 10 in `USER_QUESTIONS.md` (decided with the ⭐ defaults), then the merge of PR #6
+- [ ] Later, on request: sealed products for these sets, their Japanese prints, 1st Edition and Shadowless Base Set cards, Astral Radiance itself
 
 ## Post-v1 backlog (ordered by expected value)
 

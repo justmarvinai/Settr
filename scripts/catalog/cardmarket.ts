@@ -53,6 +53,20 @@ export interface ExpansionFinding {
   byMetacard: [number, number][];
 }
 
+/** Where an international set's singles are on Cardmarket. */
+export interface InternationalFinding {
+  setId: string;
+  /** The expansion used: configured, TCGdex's for the set, or the parent set's. */
+  expansion?: number;
+  /** Expansions TCGdex's ids point to, with counts. */
+  fromTcgdex: [number, number][];
+  /** Cards that got their product by name (TCGdex has none), and those that didn't. */
+  byName: number;
+  unresolved: string[];
+  /** The expansion's singles no card points to, when cards were matched by name. */
+  unmatched: CardmarketProduct[];
+}
+
 export interface CardmarketReport {
   checked: number;
   /** Singles per configured expansion, to spot an expansion Cardmarket hasn't filled yet. */
@@ -60,6 +74,7 @@ export interface CardmarketReport {
   /** Asian prints: (card, variant) pairs with a product per card language, and those without. */
   asia: { ja: number; 'zh-cn': number; unresolved: string[] };
   expansions: ExpansionFinding[];
+  international: InternationalFinding[];
   /** Asian cards named by curation or PokéAPI, next to Cardmarket's (English) product name. */
   names: { cardId: string; ja: string; en: string; cardmarket: string }[];
   /** Singles of the Asian expansions that no card points to, to curate `cardmarket` overlays. */
@@ -107,6 +122,7 @@ export function applyCardmarket(
     singlesPerExpansion: {},
     asia: { ja: 0, 'zh-cn': 0, unresolved: [] },
     expansions: [],
+    international: [],
     names: [],
     unmatchedSingles: [],
     sealedCandidates: [],
@@ -132,8 +148,25 @@ export function applyCardmarket(
     if (p.idMetacard) byMetacard.set(p.idMetacard, [...(byMetacard.get(p.idMetacard) ?? []), p]);
 
   for (const set of sets.filter((s) => s.config.print === 'intl')) {
-    const expected = set.config.cardmarket?.expansion;
+    const expected = internationalExpansion(set, sets);
+    const finding: InternationalFinding = {
+      setId: set.config.id,
+      ...(expected ? { expansion: expected } : {}),
+      fromTcgdex: tally(
+        set.cards.flatMap((card) =>
+          card.variants.flatMap((variant) => {
+            const product = cm.singles.get(variant.refs?.cardmarket?.default ?? 0);
+            return product ? [product.idExpansion] : [];
+          }),
+        ),
+      ),
+      byName: 0,
+      unresolved: [],
+      unmatched: [],
+    };
+    report.international.push(finding);
     if (!expected) continue;
+    matchByName(set, cm, expected, curatedIds(set, overlays), finding);
     const allowed = new Set([expected, ...(set.config.cardmarket?.otherExpansions ?? [])]);
     for (const card of set.cards)
       for (const variant of card.variants) {
@@ -350,6 +383,152 @@ export function applyCardmarket(
   return report;
 }
 
+/** The variants an international card is sold as on its own product (reverse holos filtered). */
+const PLAIN_VARIANTS = new Set(['normal', 'holo', 'reverse']);
+
+const ownExpansion = (set: BuiltSet) =>
+  set.config.cardmarket?.expansion ?? set.raw.thirdParty?.cardmarket;
+
+/** An international set's expansion: configured, TCGdex's for the set, or its parent set's. */
+function internationalExpansion(set: BuiltSet, sets: readonly BuiltSet[]): number | undefined {
+  const parent = sets.find((s) => s.config.id === set.config.parentSetId);
+  return ownExpansion(set) ?? (parent ? ownExpansion(parent) : undefined);
+}
+
+/** A card's variants sold on its own product. */
+const plainVariants = (card: BuiltCard) => card.variants.filter((v) => PLAIN_VARIANTS.has(v.id));
+
+function groupBy<T>(items: readonly T[], key: (item: T) => string): Map<string, T[]> {
+  const out = new Map<string, T[]>();
+  for (const item of items) out.set(key(item), [...(out.get(key(item)) ?? []), item]);
+  return out;
+}
+
+/** Letters and digits only: "Rotom Dex—Poké Finder Mode" and "Rotom Dex Poké Finder Mode" agree. */
+const normalize = (text: string) =>
+  text
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .replace(/[^\p{L}\p{N}]/gu, '')
+    .toLowerCase();
+
+/**
+ * Cardmarket's product name: the card name, then its abilities and attacks in brackets; a
+ * trainer's character after a dash ("Professor's Research - Professor Sada").
+ */
+function productKey(name: string): { base: string; moves: string } {
+  const bracket = /^(.*?)\s*\[(.*)\]?\s*$/.exec(name);
+  const base = (bracket?.[1] ?? name).replace(/\s+-\s+.*$/, '');
+  const moves = (bracket?.[2] ?? '').replace(/\]$/, '');
+  return {
+    base: normalize(base),
+    moves: moves
+      .split('|')
+      .map((m) => normalize(m))
+      .filter(Boolean)
+      .toSorted()
+      .join('|'),
+  };
+}
+
+function cardKey(card: BuiltCard): { base: string; moves: string } {
+  const { raw } = card.source;
+  return {
+    base: normalize(raw.name.en ?? card.name.en ?? ''),
+    moves: [...(raw.abilities ?? []), ...(raw.attacks ?? [])]
+      .flatMap((m) => (m.name.en ? [normalize(m.name.en)] : []))
+      .toSorted()
+      .join('|'),
+  };
+}
+
+/** Cards and the products that may be theirs: one name, and one set of moves where known. */
+interface NameGroup {
+  cards: BuiltCard[];
+  products: CardmarketProduct[];
+  label: string;
+}
+
+/**
+ * Splits one name's cards and products by abilities and attacks (two different Pikachu of a set
+ * differ there), unless the two sides never agree on them (other spellings): then by name alone.
+ */
+function nameGroups(cards: BuiltCard[], products: CardmarketProduct[]): NameGroup[] {
+  const label = cards[0]?.name.en ?? '';
+  const cardsByMoves = groupBy(cards, (c) => cardKey(c).moves);
+  const productsByMoves = groupBy(products, (p) => productKey(p.name).moves);
+  if (![...cardsByMoves.keys()].some((moves) => productsByMoves.has(moves)))
+    return [{ cards, products, label }];
+  return [...cardsByMoves].map(([moves, list]) => ({
+    cards: list,
+    products: productsByMoves.get(moves) ?? [],
+    label,
+  }));
+}
+
+/**
+ * Products for the cards of an international set TCGdex has no Cardmarket id for (Karmesin &
+ * Purpur, Nacht in Flammen): the expansion's singles that no other card uses, by English name and
+ * by abilities and attacks. Several prints of one card (a full art, a Special Illustration Rare)
+ * pair in number order, and only when both sides have the same count. Cardmarket files stamped and
+ * promotional prints under the same names, so a second pass keeps to the batch it added the set's
+ * regular prints in (card order, between the first and the last product the first pass found).
+ * The product goes to the card's plain variants; its reverse holo is filtered for.
+ */
+function matchByName(
+  set: BuiltSet,
+  cm: CardmarketIndex,
+  expansion: number,
+  curated: Record<string, Partial<Record<CardLanguage, number>>>,
+  finding: InternationalFinding,
+): void {
+  const missing = set.cards.filter(
+    (card) =>
+      !curated[card.id] &&
+      plainVariants(card).length > 0 &&
+      plainVariants(card).every((v) => !v.refs?.cardmarket?.default),
+  );
+  if (!missing.length) return;
+  const used = new Set([
+    ...set.cards.flatMap((c) => c.variants.flatMap((v) => v.refs?.cardmarket?.default ?? [])),
+    ...Object.values(curated).flatMap((ids) => Object.values(ids)),
+  ]);
+  const products = [...cm.singles.values()]
+    .filter((p) => p.idExpansion === expansion && !used.has(p.idProduct))
+    .toSorted((a, b) => a.idProduct - b.idProduct);
+  const found: number[] = [];
+  const assign = ({ cards, products: list }: NameGroup) =>
+    cards
+      .toSorted((a, b) => a.sort - b.sort)
+      .forEach((card, i) => {
+        const id = list[i]?.idProduct;
+        if (!id) return;
+        for (const variant of plainVariants(card))
+          variant.refs = { ...variant.refs, cardmarket: { default: id } };
+        finding.byName++;
+        found.push(id);
+        used.add(id);
+      });
+  const productsByBase = groupBy(products, (p) => productKey(p.name).base);
+  const open: NameGroup[] = [];
+  for (const [base, cards] of groupBy(missing, (c) => cardKey(c).base))
+    for (const group of nameGroups(cards, productsByBase.get(base) ?? []))
+      if (group.products.length === group.cards.length) assign(group);
+      else open.push(group);
+  // The batch of regular prints, as far as the first pass found it.
+  const first = Math.min(...found);
+  const last = Math.max(...found);
+  for (const group of open) {
+    const batch = group.products.filter((p) => p.idProduct >= first && p.idProduct <= last);
+    if (found.length && batch.length === group.cards.length) assign({ ...group, products: batch });
+    else
+      finding.unresolved.push(
+        `${group.cards.map((c) => c.id).join(', ')} (${group.label}): ${group.cards.length} cards vs ${group.products.length} products`,
+      );
+  }
+  finding.unmatched = products.filter((p) => !used.has(p.idProduct));
+}
+
 /** Curated `cardmarket` overlays of a set: card id → product per language (first variant). */
 function curatedIds(set: BuiltSet, overlays: Map<string, Map<string, CardOverlay>>) {
   const ids: Record<string, Partial<Record<CardLanguage, number>>> = {};
@@ -360,29 +539,45 @@ function curatedIds(set: BuiltSet, overlays: Map<string, Map<string, CardOverlay
   return ids;
 }
 
-/** Curated ids win over TCGdex and the metacard match (both builds, so offline edits show up). */
+/**
+ * Curated ids win over TCGdex and the metacard or name match (both builds, so offline edits show
+ * up). Asian cards: the first variant's product per language. International cards: one product
+ * for DE and EN (given as either), for the card's plain variants.
+ */
 function applyCuratedCardmarket(sets: BuiltSet[], overlays: Map<string, Map<string, CardOverlay>>) {
-  for (const set of sets.filter((s) => s.config.print === 'asia')) {
+  for (const set of sets) {
     const curated = curatedIds(set, overlays);
     for (const card of set.cards) {
+      const ids = curated[card.id];
+      if (!ids) continue;
+      if (set.config.print === 'intl') {
+        const id = ids.en ?? ids.de;
+        for (const variant of plainVariants(card))
+          if (id) variant.refs = { ...variant.refs, cardmarket: { default: id } };
+        continue;
+      }
       const variant = card.variants[0];
-      if (!variant || !curated[card.id]) continue;
-      const byLanguage = { ...variant.refs?.cardmarket?.byLanguage, ...curated[card.id] };
+      if (!variant) continue;
+      const byLanguage = { ...variant.refs?.cardmarket?.byLanguage, ...ids };
       variant.refs = { ...variant.refs, cardmarket: { byLanguage } };
     }
   }
 }
 
-/** Offline builds keep the Asian ids the last network build sorted out (see applyCardmarket). */
+/**
+ * Offline builds keep the ids the last network build found where TCGdex has none: the Asian ids
+ * sorted by language, the international ones matched by name (see applyCardmarket).
+ */
 export function carryOverCardmarket(
   sets: BuiltSet[],
   previous: PreviousCatalog,
   overlays: Map<string, Map<string, CardOverlay>>,
 ): void {
-  for (const set of sets.filter((s) => s.config.print === 'asia')) {
+  for (const set of sets) {
     for (const card of set.cards) {
       const before = previous.cards.get(card.id);
       for (const variant of card.variants) {
+        if (variant.refs?.cardmarket) continue;
         const cardmarket = before?.variants.find((v) => v.id === variant.id)?.refs?.cardmarket;
         if (cardmarket) variant.refs = { ...variant.refs, cardmarket };
       }

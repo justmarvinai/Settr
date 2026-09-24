@@ -9,6 +9,16 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 ## [Unreleased]
 
 ### Added
+- **Your older sets (2026-09-24, ROADMAP v1.x · Your sets):** 21 sets you have cards from, international (DE/EN), cards only (R10). 3,678 cards in four new series:
+  - **Karmesin & Purpur:** Schwarze Blitze, Weiße Flammen, Ewige Rivalen, Prismatische Entwicklungen, Stürmische Funken, Paldeas Schicksale, 151, Karmesin & Purpur (with the basic Energy SVE 001–008) and Karmesin & Purpur Promos.
+  - **Schwert & Schild:** Zenit der Könige with its Galar-Galerie, Verlorener Ursprung and Strahlende Sterne with their Trainer-Galerien, the Astralglanz Trainer-Galerie (a set of its own), Farbenschock, Clash der Rebellen and Schwert & Schild Promos.
+  - **Sonne & Mond:** Nacht in Flammen. **Grundset-Serie:** the Grundset in its Unlimited print.
+  - **Rarities** of the older eras: Holo Rare (V, VMAX, VSTAR), Radiant Rare, Amazing Rare, Secret Rare, Black White Rare and Shiny Ultra Rare, with their holo-viewer foils.
+  - **Variants:** Rainbow Rares; Tinsel, Galaxy and Cracked Ice holos; metal cards; World Championship, league and player stamps. A holo print of a card packs carry as a non-holo is *Holo (Promo)*, outside Master (ADR-055).
+  - **Numbers as printed:** `001/185`, `TG05/TG30`, `GG05/GG70`, `4/102`, `SWSH001`.
+  - **Promos:** German names TCGdex lacks come from the Pokémon's German name (*Paldea-Felino*, marked *übersetzt*); the Special Delivery promos and the Van Gogh Museum Pikachu come in English only.
+  - **Cardmarket:** each set's expansion comes from TCGdex or the config; Karmesin & Purpur and Nacht in Flammen, which TCGdex has no ids for, get their products by name (ADR-056). 3,640 of the 3,678 cards link to their exact product; the rest open Cardmarket's search.
+  - **Pictures** for 3,633 cards, 3,512 of them German; the galleries' pictures come from their main set's folder at TCGdex.
 - **The Mega Evolution series (2026-09-24, ROADMAP v1.x · Your sets).**
   - **International (DE/EN), 1,077 cards:** Mega-Entwicklung (with the basic Energy MEE 001–008), Fatale Flammen, Erhabene Helden, Optimale Ordnung, Wachsendes Chaos, Dunkelnacht and Mega-Entwicklung Promos.
   - **Japanese with Traditional Chinese, 1,037 cards:** Mega Brave and Mega Symphonia (together Mega-Entwicklung), Inferno X, MEGA Dream ex, Nihil Zero, Ninja Spinner, Abyss Eye and the MEGA promo cards (Japanese only). Simplified Chinese stays with 30th CELEBRATION: its Mega editions cut the Japanese sets differently (ADR-053).
@@ -22,6 +32,8 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - **Set pages** switch between every print of an expansion: *International · Asien M1L · Asien M1S*, also from either Japanese half. **Card pages** link each counterpart to its own set.
 
 ### Changed
+- The search palette looks up cards and sealed products separately, so a name many cards share (*Glurak*) still shows its products.
+- A gallery's section on its set page is named without the set's name (*Trainer-Galerie*).
 - A copy's variant shows where its card comes in several: Sammlung lists, the lots on card pages, toasts (*Hinzugefügt: 001/132 Bisasam · Reverse-Holo · DE · NM*) and the price session.
 - Cardmarket links filter for reverse holos (and price suggestions read the reverse-holo prices) only where the reverse holo shares the card's product; pattern reverses and Japanese reverse holos are products of their own.
 
@@ -33,6 +45,7 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - TCGCSV groups match by name prefix.
 
 ### Docs
+- ADR-054 to ADR-056; DATA_SOURCES.md §2.2; DATA_MODEL.md (older variants, galleries); the glossary's older rarities; round 10 in USER_QUESTIONS.md, decided with the ⭐ defaults.
 - ADR-051 to ADR-053; DATA_SOURCES.md §2.1 and §7.4; DATA_MODEL.md (variants, `otherPrints`, `counterpartSets`, Master counts); round 9 in USER_QUESTIONS.md.
 
 ## [1.0.0] - 2026-09-24

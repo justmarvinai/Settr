@@ -125,6 +125,12 @@ export async function resolveImages(
   const checker = createChecker(knownGood);
   const exists = (card: BuiltCard, lang: CardLanguage) =>
     checker.check(`${assetBase(lang, card.source.set, card.source.localId)}/low.webp`);
+  // A gallery's pictures may sit in its main set's folder (SetConfig.picturesIn).
+  const elsewhere = new Map(
+    sets.flatMap((s) =>
+      s.config.picturesIn ? [[s.config.id, { ...s.raw, id: s.config.picturesIn }] as const] : [],
+    ),
+  );
   const stats: ImageStats = {
     verified: options.verify,
     checked: 0,
@@ -192,6 +198,15 @@ export async function resolveImages(
               url: assetBase(candidate, card.source.set, card.source.localId),
               lang: candidate,
             };
+            break;
+          }
+        }
+        const folder = picked ? undefined : elsewhere.get(card.setId);
+        for (const candidate of folder ? [lang, ...own.filter((l) => l !== lang)] : []) {
+          if (!folder) break;
+          const url = assetBase(candidate, folder, card.source.localId);
+          if (await checker.check(`${url}/low.webp`)) {
+            picked = { url, lang: candidate };
             break;
           }
         }

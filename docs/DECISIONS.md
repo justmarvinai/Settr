@@ -59,6 +59,9 @@
 | 051 | Asian card names: artwork pairing per set, name donors, a Japanese-name dictionary | Accepted (Mega Evolution) |
 | 052 | Card variants from TCGdex's detailed model; promotional prints outside Master | Accepted (Mega Evolution) |
 | 053 | Asian prints of the Mega Evolution series: Traditional Chinese mirrors, no Simplified Chinese ones, Japanese-only promos | Accepted (Mega Evolution; extends ADR-021, ADR-026) |
+| 054 | Marvin's older sets: international cards only, galleries as subsets, the Base Set's Unlimited print | Accepted (Your sets, R10) |
+| 055 | Variants before Scarlet & Violet: promotional holos, print runs, extra cards | Accepted (Your sets; extends ADR-052) |
+| 056 | Cardmarket for international sets: the expansion from TCGdex, products by name where TCGdex has no id | Accepted (Your sets) |
 
 ---
 
@@ -620,4 +623,59 @@
 - **Alternatives:**
   - Simplified Chinese as a language with Japanese numbers: the numbers would be wrong.
   - Separate Simplified Chinese sets now: no open card lists.
+
+### ADR-054 · Marvin's older sets: international cards only, galleries as subsets, the Base Set's Unlimited print (Accepted, Your sets, R10)
+- **Context:** Marvin (2026-09-24) listed 21 sets he has cards from, across four series: Scarlet & Violet, Sword & Shield, Sun & Moon and the Base Set. He asked for "only these for now", and for the recommended defaults on any question.
+- **Decision** (`scripts/catalog/config.ts`):
+  - **International print only (DE/EN), cards only.** No Japanese prints of these sets and no sealed products for now (R10.1, R10.2).
+  - **Four series** on the Sets page, newest first: *Karmesin & Purpur*, *Schwert & Schild*, *Sonne & Mond* and *Grundset-Serie*.
+  - **Galleries are subsets** of their main set, like the Classic Collection: Crown Zenith's Galarian Gallery, and Lost Origin's and Brilliant Stars' Trainer Galleries. They form the set page's *Galar-Galerie* / *Trainer-Galerie* section. Master counts them; Basis and Komplett don't.
+    - Astral Radiance's Trainer Gallery stands alone until Astral Radiance comes (R10.5). Its set id and card ids stay; it then becomes a subset.
+  - **Karmesin & Purpur** (SV Base) carries the first basic Energy (SVE 001–008), the way Mega-Entwicklung carries MEE 001–008.
+  - **Base Set:** the Unlimited print (R10.4). TCGdex lists the print runs as variant subtypes; `printRun: 'unlimited'` keeps one. 1st Edition, Shadowless and the 1999–2000 copyright print stay out; the jumbo cards and the PokéTour stamp are promotional variants.
+  - **Numbers as printed:** Sword & Shield prints three digits (`001/185`) where TCGdex's ids have none; Sun & Moon and the Base Set don't (`4/102`); galleries print `TG05/TG30` and `GG05/GG70`; promos `SWSH001` and `001`. Card ids keep TCGdex's local id (`intl:swsh4:1`), never the printed number.
+  - **Promos:**
+    - A promo that only came out in English (the Special Delivery cards, the Van Gogh Museum Pikachu) has `languages: [en]` and shows its English name.
+    - German names TCGdex lacks come from PokéAPI when the English name is a species with an optional region or suffix (*Paldean Wooper* → *Paldea-Felino*), else from curation. Both show as *übersetzt*.
+- **Consequences:**
+  - The catalog grows by 3,678 cards to 6,167, in 39 sets. The search index grows to about 330 KB gzip; it still loads on first search.
+  - After the syncs of 2026-09-24: 3,640 of the 3,678 cards have their exact Cardmarket product (ADR-056), 3,633 a picture (3,512 German). TCGdex files the galleries' pictures in their main set's folder (`picturesIn`).
+  - The Classic Collection's `4/102` now also finds the Base Set's Glurak.
+- **Alternatives:**
+  - Japanese prints too: not asked for, and each needs pairing and names (ADR-051).
+  - Sealed products: several hundred for these sets. They follow on request.
+  - The Base Set with 1st Edition and Shadowless as variants: not asked for. Cardmarket sells German 1st Editions on the Unlimited product and English ones on the Shadowless product, so they need their own link rules.
+
+### ADR-055 · Variants before Scarlet & Violet: promotional holos, print runs, extra cards (Accepted, Your sets; extends ADR-052)
+- **Context:**
+  - ADR-052 reads a plain non-holo next to a plain holo as a deck exclusive, since Scarlet & Violet packs carry Rares as holos. Before, packs carry Rares (and Commons) as non-holos, and a holo print of such a card came from a blister or a collection: Burning Shadows' Glumanda, Rebel Clash's Smettbo.
+  - The first basic Energy of Scarlet & Violet (SVE 001–008) got Poké Ball patterns in later products.
+  - The older sets bring new finishes (Rainbow Rares, Tinsel, Galaxy, Cracked Ice holos), metal cards and stamps (World Championships with placements, player names on the World Championship decks, leagues, the Professor Program, *25 Jahre*).
+- **Decision** (`scripts/catalog/variants.ts`, `build.ts`):
+  - In a numbered set, when a card has a plain holo and a plain non-holo:
+    - packs carry the card as a holo (above Uncommon; Rares only since Scarlet & Violet, `rareIsHolo`): the non-holo is the deck print, `normal+deck`;
+    - else the holo is promotional: `holo+promo`, *Holo (Promo)*.
+  - Rainbow (the Sword & Shield Secret Rares) and Gold are finishes of the set. Tinsel, Galaxy and Cracked Ice holos, metal cards and lenticular cards are promotional, like Cosmos and league holos.
+  - The pattern prints of an extra card (SVE with Poké Ball) are promotional in its host set.
+  - A set whose cards come in several print runs needs `printRun`, else the build stops.
+- **Consequences:** Master stays what booster packs hold. Variant ids stay permanent (ADR-052): `holo+promo` and the new stamps are new ids, no existing one changes.
+- **Alternatives:** a per-card list of promotional holos: many cards, and the rule reads it from the rarity.
+
+### ADR-056 · Cardmarket for international sets: the expansion from TCGdex, products by name where TCGdex has no id (Accepted, Your sets)
+- **Context:**
+  - TCGdex has no Cardmarket ids for Karmesin & Purpur (SV Base) and Nacht in Flammen (Burning Shadows).
+  - Cardmarket's product file has no card numbers. A product's name is the English card name, with abilities and attacks in brackets for Pokémon (*Pikachu [Gnaw | Thunder Jolt]*).
+- **Decision** (`scripts/catalog/cardmarket.ts`):
+  - An international set's expansion is the configured one, else TCGdex's for the set, else its parent set's.
+  - Cards without an id take the expansion's singles that no other card uses, by English name. Abilities and attacks tell different cards of one name apart. Several prints of one card (a full art, a Special Illustration Rare) pair in number order, and only when both sides have the same count: Cardmarket adds a set's products in card order.
+  - The product goes to the card's plain variants (normal, holo and the reverse holo, which the link filters for).
+  - The sync report lists unmatched cards and the expansion's singles no card points to. A curated `cardmarket` overlay (`en`, one product for DE and EN) wins.
+  - Offline builds keep the ids the last network build found.
+- **Consequences** (sync of 2026-09-24):
+  - Karmesin & Purpur: 241 of 258 cards have their product; Nacht in Flammen: 155 of 169. Nine promos of Karmesin & Purpur Promos, which TCGdex lacks ids for, too.
+  - The other 31 have more products than cards, even within the batch: the starters and the Miraidon-ex and Koraidon-ex prints Cardmarket listed before the set, and most GX cards. Their button opens Cardmarket's search until they're curated.
+  - A wrong exact link costs more than a search link, so the rule never guesses between products.
+- **Alternatives:**
+  - Curating about 430 ids by hand.
+  - Search links only: no exact product, no price-guide suggestions (PRC-09).
 

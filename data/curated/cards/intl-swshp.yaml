@@ -1,0 +1,7 @@
+# SWSH Black Star Promos: TCGdex has no German data for six of them. Species names come from
+# PokéAPI (build.ts); the Special Delivery cards were Pokémon Center USA promos, English only.
+setId: intl:swshp
+cards:
+  SWSH074: { languages: [en], note: 'Special Delivery Pikachu (Pokémon Center USA, 2020)' }
+  SWSH075: { languages: [en], note: 'Special Delivery Charizard (Pokémon Center USA, 2020)' }
+  SWSH177: { languages: [en], note: 'Special Delivery Bidoof (Pokémon Center USA, 2022)' }

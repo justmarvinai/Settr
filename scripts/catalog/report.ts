@@ -76,6 +76,31 @@ export function renderReport(input: {
       }.`,
       `Asian card variants with a Japanese product: ${cardmarket.asia.ja}; with a Simplified Chinese product: ${cardmarket.asia['zh-cn']}.`,
       '',
+      '### International expansions',
+      '',
+      "Expansion = the one used (configured, TCGdex's for the set, or the parent set's). TCGdex ids = where the cards' ids point. By name = cards matched by name because TCGdex has no id for them.",
+      '',
+      '| Set | Expansion | TCGdex ids | By name | Unresolved |',
+      '|---|---|---|---|---|',
+      ...cardmarket.international.map(
+        (f) =>
+          `| ${f.setId} | ${f.expansion ?? '?'} | ${f.fromTcgdex.map(([id, n]) => `${id} (${n})`).join(', ') || '—'} | ${f.byName} | ${f.unresolved.length} |`,
+      ),
+      ...cardmarket.international
+        .filter((f) => f.unresolved.length || f.unmatched.length)
+        .flatMap((f) => [
+          '',
+          `<details><summary>${f.setId}: cards without a product, and the expansion's singles no card points to (curate \`cardmarket\` in data/curated/cards)</summary>`,
+          '',
+          ...f.unresolved.map((u) => `- ${u}`),
+          '',
+          '| idProduct | Metacard | Name |',
+          '|---|---|---|',
+          ...f.unmatched.map((p) => `| ${p.idProduct} | ${p.idMetacard ?? ''} | ${p.name} |`),
+          '',
+          '</details>',
+        ]),
+      '',
       '### Asian expansions',
       '',
       "Japanese = the expansion used (configured, or where most of TCGdex's ids point). By metacard = expansions selling the same cards as the international counterparts (the Japanese set, Simplified Chinese mirrors, reprints), with the number of this set's cards each covers.",

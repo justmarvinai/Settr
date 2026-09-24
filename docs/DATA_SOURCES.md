@@ -67,6 +67,39 @@
 - **TCGCSV** groups match by name prefix (`m1L: Mega Brave`); a substring match found *SM1S: Collection Sun*.
 - **Pictures:** TCGdex has no Japanese pictures for the M sets. Japanese cards show their international counterpart's or donor's picture (labeled), else a placeholder (155 of 1,213 Japanese cards after the 2026-09-24 sync).
 
+### 2.2 Marvin's older sets (added 2026-09-24, ADR-054–056)
+
+International (DE/EN) only, cards only (R10.1, R10.2). Cardmarket = the singles' expansion (configured, else TCGdex's for the set, else the main set's).
+
+| Set | Cards (official) | Cardmarket |
+|---|---|---|
+| `sv10.5b` Schwarze Blitze (BLK) | 172 (86) | 6134; pattern reverses 6197 |
+| `sv10.5w` Weiße Flammen (WHT) | 173 (86) | 6135; pattern reverses 6198 |
+| `sv10` Ewige Rivalen (DRI) | 244 (182) | 6096; deck exclusives 6140 |
+| `sv08.5` Prismatische Entwicklungen (PRE) | 180 (131) | 5944; pattern reverses 6009 |
+| `sv08` Stürmische Funken (SSP) | 252 (191) | 5879 |
+| `sv04.5` Paldeas Schicksale (PAF) | 245 (91) | 5546 |
+| `sv03.5` 151 (MEW) | 207 (165) | 5402 |
+| `sv01` Karmesin & Purpur (SVI) + basic Energy `sve` 001–008 | 258 + 8 (198) | 5223, by name (Energy 5224) |
+| `svp` Karmesin & Purpur Promos | 226 (001–225 and 500) | 5241 |
+| `swsh12.5` Zenit der Könige (CRZ) + `swsh12.5gg` Galar-Galerie | 160 (159) + 70 | 5201 |
+| `swsh11` Verlorener Ursprung (LOR) + `swsh11tg` Trainer-Galerie | 217 (196) + 30 | 5093 |
+| `swsh10tg` Astralglanz Trainer-Galerie (standalone, R10.5) | 30 | 4979 (Astral Radiance) |
+| `swsh9` Strahlende Sterne (BRS) + `swsh9tg` Trainer-Galerie | 186 (172) + 30 | 4434 |
+| `swsh4` Farbenschock (VIV) | 203 (185) | 3484 |
+| `swsh2` Clash der Rebellen (RCL) | 209 (192) | 3143 |
+| `swshp` Schwert & Schild Promos | 307 (SWSH001–SWSH307) | 2916 |
+| `sm3` Nacht in Flammen (BUS) | 169 (147) | 1824, by name |
+| `base1` Grundset (BS), Unlimited print | 102 (102) | 1523 |
+
+**Data quirks (found by the syncs of 2026-09-24)**
+- **No Cardmarket ids at TCGdex** for Karmesin & Purpur and Nacht in Flammen: the pipeline matches the expansion's singles by name, abilities and attacks (ADR-056): 241 of 258 and 155 of 169 cards. Cardmarket also files stamped and promotional prints under the card's name, so a name with more products than cards keeps to the batch of regular prints, or stays open: its button opens Cardmarket's search (the starters, the Miraidon-ex and Koraidon-ex prints, most GX cards).
+- **Side expansions:** the pattern reverses of Schwarze Blitze, Weiße Flammen and Prismatische Entwicklungen, and Ewige Rivalen's deck exclusives. TCGdex has no expansion for Ewige Rivalen's set; its cards point to 6096. The galleries sell in their main set's expansion.
+- **Unpadded ids:** TCGdex numbers Farbenschock, Clash der Rebellen, Nacht in Flammen and the Grundset `1`, `2` …; Sword & Shield prints `001/185`, the older sets `4/102` (`printedNumber`).
+- **Print runs:** the Grundset's variants carry TCGdex subtypes (unlimited, shadowless, 1999–2000 copyright, red cheeks); the set keeps `unlimited` (`printRun`).
+- **German names:** TCGdex has none for 34 promos; species names come from PokéAPI, the rest is curated or English-only (`data/curated/cards/intl-svp.yaml`, `intl-swshp.yaml`).
+- **Pictures:** TCGdex files the galleries' pictures in their main set's folder (`de/swsh/swsh11/TG01`, not `…/swsh11tg/…`), so the config names it (`picturesIn`); all 160 gallery cards have German pictures. The Grundset's German cards show the English picture (labeled). Of the 3,678 cards, 3,512 have a German picture, 121 the English one and 45 promos none (placeholder).
+
 ---
 
 ## 3. TCGdex (primary source)
@@ -207,6 +240,14 @@ cards:
   "001": { printedNumber: 4/102, sort: 2 }   # Charizard (Base Set)
 ```
 
+```yaml
+# data/curated/cards/intl-swshp.yaml   (a promo that only came out in English; a product by hand)
+setId: intl:swshp
+cards:
+  SWSH074: { languages: [en], note: 'Special Delivery Pikachu (Pokémon Center USA, 2020)' }
+  # SWSH029: { cardmarket: { en: 123456 } }   # international cards: one product for DE and EN
+```
+
 Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow collections split on commas.
 
 ### 6.4 Automation
@@ -216,13 +257,13 @@ Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow colle
 
 ### 6.5 Adding sets after v1 (R2.5, ADR-028)
 
-v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1). Marvin's other sets follow **one by one, era by era, once the core site is fully functional** (suggested order, to confirm when v1 is done: Mega Evolution → Scarlet & Violet → Sword & Shield → Sun & Moon → Base Set). Adding a set means:
+v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1), and the same day **21 sets Marvin listed**, from Scarlet & Violet back to the Base Set (§2.2). Further sets follow **one by one, era by era**, as Marvin asks. Adding a set means:
 
-1. A `catalog.config.ts` entry (TCGdex set IDs per print, plus subsets and energies where they exist).
-2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections).
-3. A reviewed catalog-sync PR (counts, images, Cardmarket IDs).
+1. An entry in `scripts/catalog/config.ts` (TCGdex set per print, plus subsets and energies where they exist). The options for older sets: `printedNumber` (numbers TCGdex stores differently), `printRun` (one print run of several), `rareIsHolo: false` (before Scarlet & Violet), `picturesIn` (pictures filed in another set's folder), `cardmarket` (an expansion TCGdex lacks, and side expansions).
+2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections, English-only cards).
+3. Catalog syncs on the network (`catalog-sync.yml`, `commit: true`) until the report is clean: counts, images, Cardmarket IDs and expansions.
 
-The output is one more set chunk plus its manifest (series) and search-index entries, not a refactor. Old-set specifics use the existing variant model: Base Set *1st Edition* vs *Unlimited*, for example, are variants of kind `edition`.
+The output is one more set chunk plus its manifest (series) and search-index entries, not a refactor. Old-set specifics use the existing variant model: Base Set *1st Edition* vs *Unlimited* would be variants of kind `edition` (for now the Grundset holds the Unlimited print, R10.4).
 
 ---
 

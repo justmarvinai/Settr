@@ -175,7 +175,8 @@ describe('search engine: card numbers', () => {
   });
 
   it('finds Classic Collection cards by their printed number', () => {
-    expect(ids('#4/102')).toEqual(['intl:30th-c:001']);
+    // The Classic Collection reprints Base Set cards under their old numbers.
+    expect(ids('#4/102').toSorted()).toEqual(['intl:30th-c:001', 'intl:base1:4']);
     expect(ids('4')).toContain('intl:30th-c:001');
   });
 

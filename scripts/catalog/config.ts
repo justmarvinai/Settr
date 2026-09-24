@@ -13,6 +13,13 @@ export const SERIES = {
     id: 'mega-evolution',
     name: { de: 'Mega-Entwicklung', en: 'Mega Evolution', ja: 'MEGA' },
   },
+  scarletViolet: {
+    id: 'scarlet-violet',
+    name: { de: 'Karmesin & Purpur', en: 'Scarlet & Violet' },
+  },
+  swordShield: { id: 'sword-shield', name: { de: 'Schwert & Schild', en: 'Sword & Shield' } },
+  sunMoon: { id: 'sun-moon', name: { de: 'Sonne & Mond', en: 'Sun & Moon' } },
+  base: { id: 'base', name: { de: 'Grundset-Serie', en: 'Base' } },
 } as const;
 
 export interface ExtraCards {
@@ -41,6 +48,21 @@ export interface SetConfig {
   section: (localId: string) => CardSection;
   /** Denominator printed on numbered cards (`025/128`). */
   printedTotal?: number;
+  /**
+   * The printed number when it isn't `localId/printedTotal`: Vivid Voltage prints `001/185` where
+   * TCGdex's id is `1`, a Trainer Gallery `TG05/TG30`.
+   */
+  printedNumber?: (localId: string) => string;
+  /**
+   * The print run the set holds when TCGdex lists several as variant subtypes: the Base Set's
+   * Unlimited print (`unlimited`); 1st Edition and Shadowless stay out (R10.4).
+   */
+  printRun?: string;
+  /**
+   * Whether booster packs carry Rares as holos (since Scarlet & Violet; the default). Decides which
+   * of a card's plain holo and non-holo prints is the promotional one (build.ts).
+   */
+  rareIsHolo?: boolean;
   /** Rarity for every card of the set (TCGdex leaves the Classic Collection at "None"). */
   forceRarity?: RarityId;
   /** TCGdex rarity values that mean something else in this set (M1S calls its SRs "Secret Rare"). */
@@ -82,6 +104,11 @@ export interface SetConfig {
   /** Local id of the card shown on the set's tile. */
   coverCard?: string;
   /**
+   * Another TCGdex set folder of the same series to look for pictures in when the set's own has
+   * none: a gallery's main set (Trainer Gallery cards may be filed there).
+   */
+  picturesIn?: string;
+  /**
    * TCGplayer category (3 = Pokémon, 85 = Pokémon Japan) and a group id or the beginnings of group
    * names (any case: "m1L: Mega Brave"), to find the set's sealed products on TCGCSV for their
    * pictures (DATA_SOURCES.md §4).
@@ -96,37 +123,86 @@ const mainAndSecret = (total: number) => (localId: string) =>
   (numeric(localId) ?? 999) <= total ? 'main' : 'secret';
 
 const MEGA = (set: string): SourceSet => ({ pool: 'data', serie: 'Mega Evolution', set });
+const SV = (set: string): SourceSet => ({ pool: 'data', serie: 'Scarlet & Violet', set });
+const SWSH = (set: string): SourceSet => ({ pool: 'data', serie: 'Sword & Shield', set });
+const SM = (set: string): SourceSet => ({ pool: 'data', serie: 'Sun & Moon', set });
+const BASE = (set: string): SourceSet => ({ pool: 'data', serie: 'Base', set });
 const M = (set: string): SourceSet => ({ pool: 'data-asia', serie: 'M', set });
 
-/** An international Mega Evolution expansion (DE/EN share one card list, DATA_MODEL.md §2). */
+/**
+ * An international expansion (DE/EN share one card list, DATA_MODEL.md §2). The Cardmarket
+ * expansion defaults to TCGdex's for the set (cardmarket.ts).
+ */
 function international(
   id: string,
-  set: string,
-  options: Pick<SetConfig, 'code' | 'expectedCards' | 'printedTotal' | 'coverCard' | 'extras'> & {
-    cardmarket: number;
+  source: SourceSet,
+  options: Pick<
+    SetConfig,
+    | 'name'
+    | 'code'
+    | 'expectedCards'
+    | 'printedTotal'
+    | 'printedNumber'
+    | 'printRun'
+    | 'rareIsHolo'
+    | 'coverCard'
+    | 'extras'
+    | 'picturesIn'
+  > & {
+    series?: SetConfig['series'];
+    /** A subset of this main set (a Trainer Gallery): one section of the parent's chunk. */
+    parentSetId?: string;
+    cardmarket?: number;
     /** Expansions Cardmarket files some of the set's prints under (SetConfig.cardmarket). */
     cardmarketOther?: number[];
     tcgplayer?: number;
   },
 ): SetConfig {
-  const { cardmarket, cardmarketOther, tcgplayer, printedTotal, ...rest } = options;
+  const {
+    series = SERIES.megaEvolution,
+    parentSetId,
+    cardmarket,
+    cardmarketOther,
+    tcgplayer,
+    printedTotal,
+    ...rest
+  } = options;
   return {
     id,
     print: 'intl',
-    kind: 'main',
-    series: SERIES.megaEvolution,
+    kind: parentSetId ? 'subset' : 'main',
+    ...(parentSetId ? { parentSetId } : {}),
+    series,
     languages: ['de', 'en'],
-    source: MEGA(set),
-    section: printedTotal ? mainAndSecret(printedTotal) : () => 'main',
+    source,
+    section: parentSetId
+      ? () => 'subset'
+      : printedTotal
+        ? mainAndSecret(printedTotal)
+        : () => 'main',
     ...(printedTotal ? { printedTotal } : {}),
     ...rest,
-    cardmarket: {
-      expansion: cardmarket,
-      ...(cardmarketOther ? { otherExpansions: cardmarketOther } : {}),
-    },
+    ...(cardmarket
+      ? {
+          cardmarket: {
+            expansion: cardmarket,
+            ...(cardmarketOther ? { otherExpansions: cardmarketOther } : {}),
+          },
+        }
+      : {}),
     ...(tcgplayer ? { tcgplayer: { category: 3, groupId: tcgplayer } } : {}),
   };
 }
+
+/** Three-digit printed numbers from TCGdex's unpadded ids (`1` → `001/185`). */
+const padded = (total: number) => (localId: string) => `${localId.padStart(3, '0')}/${total}`;
+/** Trainer Gallery and Galarian Gallery numbers (`TG05/TG30`, `GG05/GG70`). */
+const gallery = (last: string) => (localId: string) => `${localId}/${last}`;
+
+/** Earlier series, international only and cards only (R10.1–R10.3): Scarlet & Violet … Base. */
+const SCARLET_VIOLET = { series: SERIES.scarletViolet } as const;
+/** Before Scarlet & Violet, packs carry Rares as non-holos (`SetConfig.rareIsHolo`). */
+const SWORD_SHIELD = { series: SERIES.swordShield, rareIsHolo: false } as const;
 
 /**
  * A Japanese Mega Evolution set; Traditional Chinese mirrors it (same list and numbering), except
@@ -162,6 +238,14 @@ function japanese(
     ...(tcgplayer ? { tcgplayer: { category: 85, groupNames: [tcgplayer] } } : {}),
   };
 }
+
+/** The basic Energy of the Scarlet & Violet sets (SVE 001–008), sold in the first expansion's products. */
+const SVE_BASIC: ExtraCards = {
+  source: SV('Scarlet & Violet Energy'),
+  localIds: ['001', '002', '003', '004', '005', '006', '007', '008'],
+  section: 'energy',
+  idPrefix: 'intl:sve',
+};
 
 /** The basic Energy of the Mega Evolution sets (MEE 001–008), sold in the first expansion's products. */
 const MEE_BASIC: ExtraCards = {
@@ -250,7 +334,7 @@ export const CATALOG_SETS: SetConfig[] = [
   },
 
   // Mega Evolution series, international print (DE/EN), in release order.
-  international('intl:me01', 'Mega Evolution', {
+  international('intl:me01', MEGA('Mega Evolution'), {
     code: 'MEG',
     expectedCards: 188,
     printedTotal: 132,
@@ -260,7 +344,7 @@ export const CATALOG_SETS: SetConfig[] = [
     cardmarketOther: [6290], // deck exclusives
     tcgplayer: 24380,
   }),
-  international('intl:me02', 'Phantasmal Flames', {
+  international('intl:me02', MEGA('Phantasmal Flames'), {
     code: 'PFL',
     expectedCards: 130,
     printedTotal: 94,
@@ -269,7 +353,7 @@ export const CATALOG_SETS: SetConfig[] = [
     cardmarketOther: [6300], // deck exclusives
     tcgplayer: 24448,
   }),
-  international('intl:me02.5', 'Ascended Heroes', {
+  international('intl:me02.5', MEGA('Ascended Heroes'), {
     code: 'ASC',
     expectedCards: 295,
     printedTotal: 217,
@@ -278,7 +362,7 @@ export const CATALOG_SETS: SetConfig[] = [
     cardmarketOther: [6455], // pattern reverse holos
     tcgplayer: 24541,
   }),
-  international('intl:me03', 'Perfect Order', {
+  international('intl:me03', MEGA('Perfect Order'), {
     code: 'POR',
     expectedCards: 124,
     printedTotal: 88,
@@ -287,7 +371,7 @@ export const CATALOG_SETS: SetConfig[] = [
     cardmarketOther: [6516], // deck exclusives
     tcgplayer: 24587,
   }),
-  international('intl:me04', 'Chaos Rising', {
+  international('intl:me04', MEGA('Chaos Rising'), {
     code: 'CRI',
     expectedCards: 122,
     printedTotal: 86,
@@ -296,7 +380,7 @@ export const CATALOG_SETS: SetConfig[] = [
     cardmarketOther: [6518], // deck exclusives
     tcgplayer: 24655,
   }),
-  international('intl:me05', 'Pitch Black', {
+  international('intl:me05', MEGA('Pitch Black'), {
     code: 'PBL',
     expectedCards: 120,
     printedTotal: 84,
@@ -306,7 +390,7 @@ export const CATALOG_SETS: SetConfig[] = [
     tcgplayer: 24688,
   }),
   {
-    ...international('intl:mep', 'MEP Black Star Promos', {
+    ...international('intl:mep', MEGA('MEP Black Star Promos'), {
       code: 'MEP',
       expectedCards: 90,
       coverCard: '001',
@@ -315,6 +399,180 @@ export const CATALOG_SETS: SetConfig[] = [
     name: { de: 'Mega-Entwicklung Promos', en: 'MEP Black Star Promos' },
     tcgplayer: { category: 3, groupNames: ['ME: Mega Evolution Promo'] },
   },
+
+  // Scarlet & Violet, international print (DE/EN), newest first.
+  international('intl:sv10.5b', SV('Black Bolt'), {
+    ...SCARLET_VIOLET,
+    code: 'BLK',
+    expectedCards: 172,
+    printedTotal: 86,
+    coverCard: '172', // Zekrom ex, Black White Rare
+    cardmarket: 6134,
+    cardmarketOther: [6197], // pattern reverses
+  }),
+  international('intl:sv10.5w', SV('White Flare'), {
+    ...SCARLET_VIOLET,
+    code: 'WHT',
+    expectedCards: 173,
+    printedTotal: 86,
+    coverCard: '173', // Reshiram ex, Black White Rare
+    cardmarket: 6135,
+    cardmarketOther: [6198], // pattern reverses
+  }),
+  international('intl:sv10', SV('Destined Rivals'), {
+    ...SCARLET_VIOLET,
+    code: 'DRI',
+    expectedCards: 244,
+    printedTotal: 182,
+    coverCard: '231', // Team Rocket's Mewtwo ex, Special Illustration Rare
+    // TCGdex's set has no expansion; its cards' ids point here.
+    cardmarket: 6096,
+    cardmarketOther: [6140], // deck exclusives
+  }),
+  international('intl:sv08.5', SV('Prismatic Evolutions'), {
+    ...SCARLET_VIOLET,
+    code: 'PRE',
+    expectedCards: 180,
+    printedTotal: 131,
+    coverCard: '161', // Umbreon ex, Special Illustration Rare
+    cardmarket: 5944,
+    cardmarketOther: [6009], // pattern reverses
+  }),
+  international('intl:sv08', SV('Surging Sparks'), {
+    ...SCARLET_VIOLET,
+    code: 'SSP',
+    expectedCards: 252,
+    printedTotal: 191,
+    coverCard: '238', // Pikachu ex, Special Illustration Rare
+  }),
+  international('intl:sv04.5', SV('Paldean Fates'), {
+    ...SCARLET_VIOLET,
+    code: 'PAF',
+    expectedCards: 245,
+    printedTotal: 91,
+    coverCard: '234', // Charizard ex, Special Illustration Rare
+  }),
+  international('intl:sv03.5', SV('151'), {
+    ...SCARLET_VIOLET,
+    code: 'MEW',
+    expectedCards: 207,
+    printedTotal: 165,
+    coverCard: '199', // Charizard ex, Special Illustration Rare
+  }),
+  international('intl:sv01', SV('Scarlet & Violet'), {
+    ...SCARLET_VIOLET,
+    code: 'SVI',
+    expectedCards: 258,
+    printedTotal: 198,
+    extras: [SVE_BASIC],
+    coverCard: '244', // Miraidon ex, Special Illustration Rare
+  }),
+  international('intl:svp', SV('SVP Black Star Promos'), {
+    ...SCARLET_VIOLET,
+    name: { de: 'Karmesin & Purpur Promos', en: 'SVP Black Star Promos' },
+    code: 'SVP',
+    expectedCards: 226,
+    coverCard: '001',
+  }),
+
+  // Sword & Shield, international print (DE/EN), newest first; galleries are subsets.
+  international('intl:swsh12.5', SWSH('Crown Zenith'), {
+    ...SWORD_SHIELD,
+    code: 'CRZ',
+    expectedCards: 160,
+    printedTotal: 159,
+    coverCard: '160', // Pikachu, Secret Rare
+  }),
+  international('intl:swsh12.5gg', SWSH('Crown Zenith Galarian Gallery'), {
+    ...SWORD_SHIELD,
+    parentSetId: 'intl:swsh12.5',
+    code: 'CRZ',
+    expectedCards: 70,
+    printedNumber: gallery('GG70'),
+    picturesIn: 'swsh12.5',
+  }),
+  international('intl:swsh11', SWSH('Lost Origin'), {
+    ...SWORD_SHIELD,
+    code: 'LOR',
+    expectedCards: 217,
+    printedTotal: 196,
+    coverCard: '186', // Giratina V, alternate art
+  }),
+  international('intl:swsh11tg', SWSH('Lost Origin Trainer Gallery'), {
+    ...SWORD_SHIELD,
+    parentSetId: 'intl:swsh11',
+    code: 'LOR',
+    expectedCards: 30,
+    printedNumber: gallery('TG30'),
+    picturesIn: 'swsh11',
+  }),
+  // Without Astral Radiance itself, its Trainer Gallery stands alone (R10.5).
+  international('intl:swsh10tg', SWSH('Astral Radiance Trainer Gallery'), {
+    ...SWORD_SHIELD,
+    code: 'ASR',
+    expectedCards: 30,
+    printedNumber: gallery('TG30'),
+    picturesIn: 'swsh10',
+    coverCard: 'TG30', // Shadow Rider Calyrex VMAX, Secret Rare
+    cardmarket: 4979, // Astral Radiance, which sells its gallery
+  }),
+  international('intl:swsh9', SWSH('Brilliant Stars'), {
+    ...SWORD_SHIELD,
+    code: 'BRS',
+    expectedCards: 186,
+    printedTotal: 172,
+    coverCard: '154', // Charizard V, alternate art
+  }),
+  international('intl:swsh9tg', SWSH('Brilliant Stars Trainer Gallery'), {
+    ...SWORD_SHIELD,
+    parentSetId: 'intl:swsh9',
+    code: 'BRS',
+    expectedCards: 30,
+    printedNumber: gallery('TG30'),
+    picturesIn: 'swsh9',
+  }),
+  international('intl:swsh4', SWSH('Vivid Voltage'), {
+    ...SWORD_SHIELD,
+    code: 'VIV',
+    expectedCards: 203,
+    printedTotal: 185,
+    printedNumber: padded(185),
+    coverCard: '188', // Pikachu VMAX, Secret Rare
+  }),
+  international('intl:swsh2', SWSH('Rebel Clash'), {
+    ...SWORD_SHIELD,
+    code: 'RCL',
+    expectedCards: 209,
+    printedTotal: 192,
+    printedNumber: padded(192),
+    coverCard: '197', // Dragapult VMAX, Secret Rare
+  }),
+  international('intl:swshp', SWSH('SWSH Black Star Promos'), {
+    ...SWORD_SHIELD,
+    name: { de: 'Schwert & Schild Promos', en: 'SWSH Black Star Promos' },
+    code: 'SWSH',
+    expectedCards: 307,
+    coverCard: 'SWSH001',
+  }),
+
+  // Sun & Moon and the Base Set, international print (DE/EN).
+  international('intl:sm3', SM('Burning Shadows'), {
+    series: SERIES.sunMoon,
+    rareIsHolo: false,
+    code: 'BUS',
+    expectedCards: 169,
+    printedTotal: 147,
+    coverCard: '150', // Charizard-GX, Secret Rare
+  }),
+  international('intl:base1', BASE('Base Set'), {
+    series: SERIES.base,
+    rareIsHolo: false,
+    code: 'BS',
+    expectedCards: 102,
+    printedTotal: 102,
+    printRun: 'unlimited',
+    coverCard: '4', // Charizard
+  }),
 
   // The same series in Japan; each international set is built from one or two of these.
   japanese('M1L', {

@@ -1,0 +1,6 @@
+# SVP Black Star Promos: TCGdex has no German data for 28 of them. Species names come from PokéAPI
+# (build.ts); these two need a hand: one only came out in English, one needs a translation.
+setId: intl:svp
+cards:
+  '085': { languages: [en], note: 'Van Gogh Museum promo (2023), English only' }
+  '500': { curatedName: { de: Terapagos & Freunde }, note: 'Jumbo card (Pokémon Horizons)' }

@@ -115,17 +115,17 @@ export default function SearchDialog({
   const dark = resolvedTheme(settings.display.theme) === 'dark';
   const text = query.trim();
   const owned = useOwnedItemIds();
-  const { results, pending } = useCatalogSearch(
-    text,
-    { limit: 30 },
-    open && text.length > 0,
-    owned,
-  );
+  // Cards and products are searched apart, so a name many cards share (Glurak) leaves room for
+  // its sealed products.
+  const searching = open && text.length > 0;
+  const cards = useCatalogSearch(text, { kind: 'card', limit: 6 }, searching, owned);
+  const sealed = useCatalogSearch(text, { kind: 'sealed', limit: 4 }, searching, owned);
+  const pending = cards.pending || sealed.pending;
 
   const q = fold(text);
   const items: PaletteItem[] = [];
   if (text) {
-    for (const { doc } of results.filter((r) => r.kind === 'card').slice(0, 6))
+    for (const { doc } of cards.results)
       items.push({
         id: doc.id,
         group: 'cards',
@@ -145,7 +145,7 @@ export default function SearchDialog({
           params: { setId: doc.setId, cardId: doc.id },
         },
       });
-    for (const { doc } of results.filter((r) => r.kind === 'sealed').slice(0, 4))
+    for (const { doc } of sealed.results)
       items.push({
         id: doc.id,
         group: 'sealed',
