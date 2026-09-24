@@ -11,6 +11,12 @@
 .ui-backdrop[data-ending-style] {
   opacity: 0;
 }
+/* Under a modal the chrome's glass stops blurring: the dim hides the difference, and no more than
+   three blur layers run at once with the sheet’s own (DESIGN_SYSTEM.md §3.5, QUALITY.md §4). */
+html:has(.ui-backdrop) .glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
 
 .ui-dialog {
   position: fixed;

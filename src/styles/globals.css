@@ -73,6 +73,15 @@
   font-stretch: 125%;
   letter-spacing: -0.045em;
 }
+/* Windows high contrast draws an opaque plate behind each line of text: the tight display leading
+   would lay a big number's plate over the label above it. */
+@media (forced-colors: active) {
+  .type-display-xl,
+  .type-display,
+  .type-display-m {
+    line-height: 1.15;
+  }
+}
 @utility type-h1 {
   font-size: 26px;
   line-height: 1;
