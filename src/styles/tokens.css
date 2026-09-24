@@ -64,6 +64,22 @@
   --dur-slow: 320ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-spatial: 420ms;
+
+  /* Holo foil (§3.2), the same in both themes. Scarce on purpose: the holo viewer, a 100 % progress
+     ring, the set-complete moment and the palette's focus glow. Build it with the .foil class. */
+  --foil-1: oklch(0.86 0.12 200);
+  --foil-2: oklch(0.8 0.14 285);
+  --foil-3: oklch(0.82 0.13 340);
+  --foil-4: oklch(0.88 0.12 70);
+  --foil-5: oklch(0.86 0.13 145);
+}
+
+/* Turned by the foil sweep; registered so it can animate. */
+@property --foil-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
 [data-theme='dark'] {

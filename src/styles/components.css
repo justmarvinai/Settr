@@ -266,3 +266,16 @@
 .value-flash-loss {
   animation: value-flash-loss 500ms var(--ease-out);
 }
+
+/* The holo foil (DESIGN_SYSTEM.md §3.2) as a background. Animate --foil-angle to sweep it. */
+.foil {
+  background-image: conic-gradient(
+    from var(--foil-angle),
+    var(--foil-1),
+    var(--foil-2),
+    var(--foil-3),
+    var(--foil-4),
+    var(--foil-5),
+    var(--foil-1)
+  );
+}
