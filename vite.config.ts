@@ -39,6 +39,9 @@ const tcgplayerProxy = {
 };
 
 export default defineConfig({
+  // Only the backup worker imports Zod's German messages; found at runtime, the dev server would
+  // re-optimize and reload the page mid-import.
+  optimizeDeps: { include: ['zod/v4/locales/de.js'] },
   plugins: [
     paraglideVitePlugin({
       project: './src/i18n/project.inlang',

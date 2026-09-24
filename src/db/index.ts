@@ -11,3 +11,4 @@ export * from './hooks';
 export * from './collection-hooks';
 export * from './import';
 export * from './snapshots';
+export * from './data-hooks';

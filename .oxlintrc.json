@@ -205,7 +205,11 @@
       }
     },
     {
-      "files": ["src/workers/**", "src/catalog/search/client.ts"],
+      "files": [
+        "src/workers/**",
+        "src/catalog/search/client.ts",
+        "src/features/data/read-backup.ts"
+      ],
       "rules": {
         "unicorn/require-post-message-target-origin": "off"
       }

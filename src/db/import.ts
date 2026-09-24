@@ -48,7 +48,7 @@ export interface AppInfo {
 /** Something else wrote while the import was being prepared; try again (nothing was written). */
 export class DataChangedError extends Error {
   constructor() {
-    super('Die Daten haben sich währenddessen geändert. Bitte versuch es noch einmal.');
+    super('Data changed while the import was being prepared');
     this.name = 'DataChangedError';
   }
 }

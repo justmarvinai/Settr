@@ -109,6 +109,18 @@ export function formatDate(value: string | Date): string {
   return dateFormatter.format(typeof value === 'string' ? parseIsoDate(value) : value);
 }
 
+const dateTimeFormatter = new Intl.DateTimeFormat(LOCALE, {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+/** ISO timestamp or Date → `24.09.2026, 10:12` (local time) */
+export function formatDateTime(value: string | Date): string {
+  return dateTimeFormatter.format(typeof value === 'string' ? new Date(value) : value);
+}
+
 const relativeFormatter = new Intl.RelativeTimeFormat(LOCALE, { numeric: 'auto' });
 const DAY_MS = 86_400_000;
 

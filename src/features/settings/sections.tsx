@@ -6,7 +6,7 @@ import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Switch } from '@/components/ui/Switch';
 import { NativeSelect } from '@/components/ui/NativeSelect';
-import { db, updateSettings, useSettings, type SettingsPatch } from '@/db';
+import { db, updateSettings, useSettings, useSnapshots, type SettingsPatch } from '@/db';
 import {
   ACTIVE_CARD_LANGUAGES,
   CONDITIONS,
@@ -19,7 +19,14 @@ import { languageLabel, m } from '@/i18n';
 import { conditionLabel } from '@/i18n/collection-labels';
 import { formatDate } from '@/i18n/format';
 import { priceTypeLabel } from '@/i18n/price-labels';
-import { BackupSection, InstallSection, StorageSection } from '@/features/data';
+import {
+  BackupSection,
+  ImportSection,
+  InstallSection,
+  SnapshotsSection,
+  StorageSection,
+  WipeSection,
+} from '@/features/data';
 import { applyDisplay } from '@/features/appearance';
 import { LocationsManager, toastError } from '@/features/collection';
 
@@ -222,11 +229,20 @@ export function LocationSettings() {
 }
 
 export function DataSettings() {
+  const snapshots = useSnapshots();
   return (
     <div className="flex flex-col gap-4">
       <Section id="settings-backup" title={m.settings_data_backup()}>
         <BackupSection />
       </Section>
+      <Section id="settings-import" title={m.settings_data_import()}>
+        <ImportSection />
+      </Section>
+      {snapshots?.length ? (
+        <Section id="settings-snapshots" title={m.settings_data_snapshots()}>
+          <SnapshotsSection snapshots={snapshots} />
+        </Section>
+      ) : null}
       <Section id="settings-storage" title={m.settings_data_storage()}>
         <StorageSection />
       </Section>
@@ -235,6 +251,9 @@ export function DataSettings() {
       </Section>
       <Section id="settings-exit" title={m.settings_data_exit_title()}>
         <p className="type-body m-0 text-ink-muted">{m.settings_data_exit_body()}</p>
+      </Section>
+      <Section id="settings-wipe" title={m.settings_data_wipe()}>
+        <WipeSection />
       </Section>
     </div>
   );
