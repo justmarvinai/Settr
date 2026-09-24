@@ -51,7 +51,7 @@ export function renderReport(input: {
     '## Images',
     '',
     input.network
-      ? `Checked with ${images.checked} GET requests.`
+      ? `Checked with ${images.checked} GET requests${images.inconclusive ? `; ${images.inconclusive} never got an answer (the last build's pictures stood in)` : ''}.`
       : images.verified
         ? `Kept from the last network build for all ${images.carried} cards.`
         : `Not verified: ${images.carried} cards kept from the last network build, the rest are unchecked candidates.`,

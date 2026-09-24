@@ -10,30 +10,51 @@ const POOL: Record<'intl' | 'asia', CardLanguage[]> = {
   asia: ['ja', 'zh-tw', 'zh-cn'],
 };
 
-/** GET (the body is dropped) with one retry on network errors. */
-async function answers(url: string): Promise<boolean> {
-  for (let attempt = 0; attempt < 2; attempt++) {
+export type Answer = 'yes' | 'no' | 'unknown';
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * GET (the body is dropped). A success is a picture and a client error a missing one; rate limits
+ * (429), timeouts and server errors are retried with backoff (1, 2, 4, 8 s, or the server's
+ * Retry-After) and stay `unknown` if they never settle: one throttled run must not read as
+ * hundreds of missing pictures (the 2026-09-24 sync lost half of them that way).
+ */
+export async function answers(
+  url: string,
+  get: (url: string) => Promise<Response> = (u) =>
+    fetch(u, { signal: AbortSignal.timeout(15_000) }),
+  wait: (ms: number) => Promise<unknown> = sleep,
+): Promise<Answer> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let retryAfter = 0;
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+      const response = await get(url);
       await response.body?.cancel();
-      return response.ok;
+      if (response.ok) return 'yes';
+      const { status } = response;
+      if (status >= 400 && status < 500 && status !== 408 && status !== 429) return 'no';
+      retryAfter = Number(response.headers.get('retry-after')) || 0;
     } catch {
-      // retry once on network errors
+      // network error or timeout: retry
     }
+    if (attempt < 4) await wait(Math.min(Math.max(retryAfter * 1000, 1000 * 2 ** attempt), 30_000));
   }
-  return false;
+  return 'unknown';
 }
 
 /**
  * Asks TCGdex's image server whether a file exists, once per URL and eight at a time. TCGdex's
  * asset index (`datas.json`) lags behind new sets (its own API special-cases 30th), so the server
- * answer decides, not the index.
+ * answer decides, not the index. An answer that never settles counts as the last build's: a URL it
+ * used is taken for existing.
  */
-export function createChecker() {
+export function createChecker(knownGood: ReadonlySet<string> = new Set()) {
   const results = new Map<string, Promise<boolean>>();
   const queue: (() => void)[] = [];
   let running = 0;
   let checked = 0;
+  let inconclusive = 0;
   const check = (url: string): Promise<boolean> => {
     const known = results.get(url);
     if (known) return known;
@@ -41,9 +62,10 @@ export function createChecker() {
       const run = () => {
         running++;
         checked++;
-        void answers(url).then((ok) => {
+        void answers(url).then((answer) => {
           running--;
-          resolve(ok);
+          if (answer === 'unknown') inconclusive++;
+          resolve(answer === 'yes' || (answer === 'unknown' && knownGood.has(url)));
           queue.shift()?.();
         });
       };
@@ -53,13 +75,15 @@ export function createChecker() {
     results.set(url, result);
     return result;
   };
-  return { check, count: () => checked };
+  return { check, count: () => checked, inconclusive: () => inconclusive };
 }
 
 export interface ImageStats {
   /** Every picture was checked by a network build (this one or, carried over, the last one). */
   verified: boolean;
   checked: number;
+  /** Checks that never got an answer (rate limits, server errors); the last build's pictures stood in. */
+  inconclusive: number;
   /** Offline: cards whose pictures came from the last network build. */
   carried: number;
   /** Per card language: exact · other language · counterpart · none. */
@@ -87,12 +111,24 @@ export async function resolveImages(
   const byId = new Map(cards.map((c) => [c.id, c]));
   const printOf = (card: BuiltCard) =>
     sets.find((s) => s.config.id === card.setId)?.config.print ?? 'intl';
-  const checker = createChecker();
+  // The files the last network build found, to stand in for checks that never get an answer.
+  const knownGood = new Set<string>();
+  if (previous.manifest?.imagesVerified) {
+    for (const card of previous.cards.values())
+      for (const image of Object.values(card.images))
+        if (image) knownGood.add(`${image.url}/low.webp`);
+    for (const set of previous.sets.values()) {
+      for (const logo of Object.values(set.logo ?? {})) if (logo) knownGood.add(`${logo}.webp`);
+      if (set.symbol) knownGood.add(`${set.symbol}.webp`);
+    }
+  }
+  const checker = createChecker(knownGood);
   const exists = (card: BuiltCard, lang: CardLanguage) =>
     checker.check(`${assetBase(lang, card.source.set, card.source.localId)}/low.webp`);
   const stats: ImageStats = {
     verified: options.verify,
     checked: 0,
+    inconclusive: 0,
     carried: 0,
     coverage: {},
     logos: 0,
@@ -212,5 +248,6 @@ export async function resolveImages(
     }),
   );
   stats.checked = checker.count();
+  stats.inconclusive = checker.inconclusive();
   return stats;
 }

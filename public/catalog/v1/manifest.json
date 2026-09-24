@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.24.8",
-  "generatedAt": "2026-09-24T15:52:29.001Z",
+  "catalogVersion": "2026.09.24.7",
+  "generatedAt": "2026-09-24T15:56:19.957Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
@@ -12,19 +12,19 @@
     {"id":"intl:30th","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"30 Jahre","en":"30th Celebration"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":128,"total":169},"otherPrint":"asia:M6a","cover":{"cardId":"intl:30th:150","images":{"de":{"url":"https://assets.tcgdex.net/de/me/30th/150","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en"}}}},
     {"id":"intl:30th-c","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"subset","parentSetId":"intl:30th","name":{"de":"30 Jahre: Klassische Sammlung","en":"30th Classic Collection"},"code":"30C","languages":["de","en"],"releaseDates":{"de":"2026-09-16","en":"2026-09-16"},"counts":{"official":30,"total":30}},
     {"id":"asia:M6a","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"30th CELEBRATION","zh-tw":"30th CELEBRATION","zh-cn":"30周年庆典","de":"30th CELEBRATION","en":"30th CELEBRATION"},"code":"M6a","languages":["ja","zh-cn","zh-tw"],"releaseDates":{"ja":"2026-09-16"},"counts":{"official":103,"total":176},"sectionNames":{"subset":{"de":"Klassische Sammlung","en":"Classic Collection"}},"otherPrint":"intl:30th","cover":{"cardId":"asia:M6a:127","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en","counterpart":true},"zh-cn":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/30th/150","lang":"en","counterpart":true}}}},
-    {"id":"intl:me01","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Mega-Entwicklung","en":"Mega Evolution"},"code":"MEG","languages":["de","en"],"releaseDates":{"de":"2025-09-26","en":"2025-09-26"},"counts":{"official":132,"total":196},"otherPrint":"asia:M1L","otherPrints":["asia:M1L","asia:M1S"],"cover":{"cardId":"intl:me01:178","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me01/178","lang":"de"},"en":{"url":"https://assets.tcgdex.net/de/me/me01/178","lang":"de"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me01/logo","en":"https://assets.tcgdex.net/en/me/me01/logo"}},
-    {"id":"intl:me02","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Fatale Flammen","en":"Phantasmal Flames"},"code":"PFL","languages":["de","en"],"releaseDates":{"de":"2025-11-14","en":"2025-11-14"},"counts":{"official":94,"total":130},"otherPrint":"asia:M2","cover":{"cardId":"intl:me02:125","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me02/125","lang":"de"},"en":{"url":"https://assets.tcgdex.net/de/me/me02/125","lang":"de"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me02/logo","en":"https://assets.tcgdex.net/en/me/me02/logo"}},
-    {"id":"intl:me02.5","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Erhabene Helden","en":"Ascended Heroes"},"code":"ASC","languages":["de","en"],"releaseDates":{"de":"2026-01-30","en":"2026-01-30"},"counts":{"official":217,"total":295},"otherPrint":"asia:M2a","cover":{"cardId":"intl:me02.5:276","images":{"de":{"url":"https://assets.tcgdex.net/fr/me/me02.5/276","lang":"fr"},"en":{"url":"https://assets.tcgdex.net/fr/me/me02.5/276","lang":"fr"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me02.5/logo","en":"https://assets.tcgdex.net/en/me/me02.5/logo"}},
-    {"id":"intl:me03","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Optimale Ordnung","en":"Perfect Order"},"code":"POR","languages":["de","en"],"releaseDates":{"de":"2026-03-27","en":"2026-03-27"},"counts":{"official":88,"total":124},"otherPrint":"asia:M3","cover":{"cardId":"intl:me03:120","images":{"de":{"url":"https://assets.tcgdex.net/en/me/me03/120","lang":"en"},"en":{"url":"https://assets.tcgdex.net/en/me/me03/120","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me03/logo","en":"https://assets.tcgdex.net/en/me/me03/logo"}},
-    {"id":"intl:me04","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Wachsendes Chaos","en":"Chaos Rising"},"code":"CRI","languages":["de","en"],"releaseDates":{"de":"2026-05-22","en":"2026-05-22"},"counts":{"official":86,"total":122},"otherPrint":"asia:M4","cover":{"cardId":"intl:me04:116","images":{"de":{"url":"https://assets.tcgdex.net/en/me/me04/116","lang":"en"},"en":{"url":"https://assets.tcgdex.net/en/me/me04/116","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me04/logo","en":"https://assets.tcgdex.net/en/me/me04/logo"}},
-    {"id":"intl:me05","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Dunkelnacht","en":"Pitch Black"},"code":"PBL","languages":["de","en"],"releaseDates":{"de":"2026-07-17","en":"2026-07-17"},"counts":{"official":84,"total":120},"otherPrint":"asia:M5","cover":{"cardId":"intl:me05:116","images":{"de":{"url":"https://assets.tcgdex.net/en/me/me05/116","lang":"en"},"en":{"url":"https://assets.tcgdex.net/en/me/me05/116","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/me/me05/logo"}},
-    {"id":"intl:mep","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Mega-Entwicklung Promos","en":"MEP Black Star Promos"},"code":"MEP","languages":["de","en"],"releaseDates":{"de":"2025-09-26","en":"2025-09-26"},"counts":{"official":0,"total":90},"otherPrint":"asia:M-P","cover":{"cardId":"intl:mep:001","images":{"de":{"url":"https://assets.tcgdex.net/en/me/mep/001","lang":"en"},"en":{"url":"https://assets.tcgdex.net/en/me/mep/001","lang":"en"}}}},
-    {"id":"asia:M1L","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガブレイブ","de":"Mega Brave","en":"Mega Brave"},"code":"M1L","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-08-01"},"counts":{"official":63,"total":92},"otherPrint":"intl:me01","cover":{"cardId":"asia:M1L:088","images":{"ja":{"url":"https://assets.tcgdex.net/de/me/me01/179","lang":"de","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/de/me/me01/179","lang":"de","counterpart":true}}}},
-    {"id":"asia:M1S","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガシンフォニア","de":"Mega Symphonia","en":"Mega Symphonia"},"code":"M1S","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-08-01"},"counts":{"official":63,"total":92},"otherPrint":"intl:me01","cover":{"cardId":"asia:M1S:087","images":{"ja":{"url":"https://assets.tcgdex.net/de/me/me01/178","lang":"de","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/de/me/me01/178","lang":"de","counterpart":true}}}},
-    {"id":"asia:M2","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"インフェルノX","de":"Inferno X","en":"Inferno X"},"code":"M2","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-09-26"},"counts":{"official":80,"total":116},"otherPrint":"intl:me02","cover":{"cardId":"asia:M2:110","images":{"ja":{"url":"https://assets.tcgdex.net/de/me/me02/125","lang":"de","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/de/me/me02/125","lang":"de","counterpart":true}}}},
-    {"id":"asia:M2a","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"MEGAドリームex","de":"MEGA Dream ex","en":"MEGA Dream ex"},"code":"M2a","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-11-28"},"counts":{"official":193,"total":250},"otherPrint":"intl:me02.5","cover":{"cardId":"asia:M2a:234","images":{"ja":{"url":"https://assets.tcgdex.net/fr/me/me02.5/277","lang":"fr","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/fr/me/me02.5/277","lang":"fr","counterpart":true}}}},
+    {"id":"intl:me01","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Mega-Entwicklung","en":"Mega Evolution"},"code":"MEG","languages":["de","en"],"releaseDates":{"de":"2025-09-26","en":"2025-09-26"},"counts":{"official":132,"total":196},"otherPrint":"asia:M1L","otherPrints":["asia:M1L","asia:M1S"],"cover":{"cardId":"intl:me01:178","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me01/178","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me01/178","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me01/logo","en":"https://assets.tcgdex.net/en/me/me01/logo"}},
+    {"id":"intl:me02","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Fatale Flammen","en":"Phantasmal Flames"},"code":"PFL","languages":["de","en"],"releaseDates":{"de":"2025-11-14","en":"2025-11-14"},"counts":{"official":94,"total":130},"otherPrint":"asia:M2","cover":{"cardId":"intl:me02:125","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me02/125","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me02/125","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me02/logo","en":"https://assets.tcgdex.net/en/me/me02/logo"}},
+    {"id":"intl:me02.5","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Erhabene Helden","en":"Ascended Heroes"},"code":"ASC","languages":["de","en"],"releaseDates":{"de":"2026-01-30","en":"2026-01-30"},"counts":{"official":217,"total":295},"otherPrint":"asia:M2a","cover":{"cardId":"intl:me02.5:276","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me02.5/276","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me02.5/276","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me02.5/logo","en":"https://assets.tcgdex.net/en/me/me02.5/logo"}},
+    {"id":"intl:me03","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Optimale Ordnung","en":"Perfect Order"},"code":"POR","languages":["de","en"],"releaseDates":{"de":"2026-03-27","en":"2026-03-27"},"counts":{"official":88,"total":124},"otherPrint":"asia:M3","cover":{"cardId":"intl:me03:120","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me03/120","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me03/120","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me03/logo","en":"https://assets.tcgdex.net/en/me/me03/logo"}},
+    {"id":"intl:me04","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Wachsendes Chaos","en":"Chaos Rising"},"code":"CRI","languages":["de","en"],"releaseDates":{"de":"2026-05-22","en":"2026-05-22"},"counts":{"official":86,"total":122},"otherPrint":"asia:M4","cover":{"cardId":"intl:me04:116","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me04/116","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me04/116","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/me/me04/logo","en":"https://assets.tcgdex.net/en/me/me04/logo"}},
+    {"id":"intl:me05","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Dunkelnacht","en":"Pitch Black"},"code":"PBL","languages":["de","en"],"releaseDates":{"de":"2026-07-17","en":"2026-07-17"},"counts":{"official":84,"total":120},"otherPrint":"asia:M5","cover":{"cardId":"intl:me05:116","images":{"de":{"url":"https://assets.tcgdex.net/de/me/me05/116","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/me05/116","lang":"en"}}},"logo":{"en":"https://assets.tcgdex.net/en/me/me05/logo"}},
+    {"id":"intl:mep","print":"intl","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"de":"Mega-Entwicklung Promos","en":"MEP Black Star Promos"},"code":"MEP","languages":["de","en"],"releaseDates":{"de":"2025-09-26","en":"2025-09-26"},"counts":{"official":0,"total":90},"otherPrint":"asia:M-P","cover":{"cardId":"intl:mep:001","images":{"de":{"url":"https://assets.tcgdex.net/de/me/mep/001","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/me/mep/001","lang":"en"}}}},
+    {"id":"asia:M1L","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガブレイブ","de":"Mega Brave","en":"Mega Brave"},"code":"M1L","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-08-01"},"counts":{"official":63,"total":92},"otherPrint":"intl:me01","cover":{"cardId":"asia:M1L:088","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me01/179","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me01/179","lang":"en","counterpart":true}}}},
+    {"id":"asia:M1S","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガシンフォニア","de":"Mega Symphonia","en":"Mega Symphonia"},"code":"M1S","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-08-01"},"counts":{"official":63,"total":92},"otherPrint":"intl:me01","cover":{"cardId":"asia:M1S:087","images":{"ja":{"url":"https://assets.tcgdex.net/ja/M/M1S/087","lang":"ja"},"zh-tw":{"url":"https://assets.tcgdex.net/ja/M/M1S/087","lang":"ja"}}}},
+    {"id":"asia:M2","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"インフェルノX","de":"Inferno X","en":"Inferno X"},"code":"M2","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-09-26"},"counts":{"official":80,"total":116},"otherPrint":"intl:me02","cover":{"cardId":"asia:M2:110","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me02/125","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me02/125","lang":"en","counterpart":true}}}},
+    {"id":"asia:M2a","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"MEGAドリームex","de":"MEGA Dream ex","en":"MEGA Dream ex"},"code":"M2a","languages":["ja","zh-tw"],"releaseDates":{"ja":"2025-11-28"},"counts":{"official":193,"total":250},"otherPrint":"intl:me02.5","cover":{"cardId":"asia:M2a:234","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me02.5/277","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me02.5/277","lang":"en","counterpart":true}}}},
     {"id":"asia:M3","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"ムニキスゼロ","de":"Nihil Zero","en":"Nihil Zero"},"code":"M3","languages":["ja","zh-tw"],"releaseDates":{"ja":"2026-01-23"},"counts":{"official":80,"total":117},"otherPrint":"intl:me03","cover":{"cardId":"asia:M3:113","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me03/120","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me03/120","lang":"en","counterpart":true}}}},
-    {"id":"asia:M4","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"ニンジャスピナー","de":"Ninja Spinner","en":"Ninja Spinner"},"code":"M4","languages":["ja","zh-tw"],"releaseDates":{"ja":"2026-03-13"},"counts":{"official":83,"total":120},"otherPrint":"intl:me04","cover":{"cardId":"asia:M4:114","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me04/116","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me04/116","lang":"en","counterpart":true}}},"logo":{"ja":"https://assets.tcgdex.net/ja/M/M4/logo"}},
+    {"id":"asia:M4","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"ニンジャスピナー","de":"Ninja Spinner","en":"Ninja Spinner"},"code":"M4","languages":["ja","zh-tw"],"releaseDates":{"ja":"2026-03-13"},"counts":{"official":83,"total":120},"otherPrint":"intl:me04","cover":{"cardId":"asia:M4:114","images":{"ja":{"url":"https://assets.tcgdex.net/ja/M/M4/114","lang":"ja"},"zh-tw":{"url":"https://assets.tcgdex.net/ja/M/M4/114","lang":"ja"}}},"logo":{"ja":"https://assets.tcgdex.net/ja/M/M4/logo"}},
     {"id":"asia:M5","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"アビスアイ","de":"Abyss Eye","en":"Abyss Eye"},"code":"M5","languages":["ja","zh-tw"],"releaseDates":{"ja":"2026-05-22"},"counts":{"official":81,"total":118},"otherPrint":"intl:me05","cover":{"cardId":"asia:M5:114","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me05/116","lang":"en","counterpart":true},"zh-tw":{"url":"https://assets.tcgdex.net/en/me/me05/116","lang":"en","counterpart":true}}}},
     {"id":"asia:M-P","print":"asia","series":{"id":"mega-evolution","name":{"de":"Mega-Entwicklung","en":"Mega Evolution","ja":"MEGA"}},"kind":"main","name":{"ja":"メガ プロモカード","de":"MEGA-Promokarten","en":"MEGA Promo Cards"},"code":"M-P","languages":["ja"],"releaseDates":{"ja":"2025-07-28"},"counts":{"official":0,"total":132},"otherPrint":"intl:mep","cover":{"cardId":"asia:M-P:002","images":{"ja":{"url":"https://assets.tcgdex.net/en/me/me03/022","lang":"en","counterpart":true}}}}
   ],
@@ -32,78 +32,78 @@
     "sets": {
       "intl:30th": {
         "path": "sets/intl_30th.json",
-        "sha256": "ad10bd45931abef775ca31b1f31cd293db11bf8dfc3cc29a7c93ede5f0a768db",
+        "sha256": "bcc01fd86e1f49402d5fa279257539f4978035b3f4ee5658bab53e1f8e292ca2",
         "bytes": 120997
       },
       "asia:M6a": {
         "path": "sets/asia_M6a.json",
-        "sha256": "3c8da54e0fa2ad413773ce2b056fb4c9f3c91058c5745b832fe3519f8e481c88",
+        "sha256": "92269302b5ac98d28c174fd09b1f1bd0e2d998b86eb777bb0e345e1284e39668",
         "bytes": 158923
       },
       "intl:me01": {
         "path": "sets/intl_me01.json",
-        "sha256": "acd5597a79155f2660e075f066d2a27e759789191a9ee8c67e02f841dc2f34b9",
+        "sha256": "0f5e6052a3112212ecf835ff82ba33bd13a88b5516c0a7223603043069ed1ff0",
         "bytes": 137836
       },
       "intl:me02": {
         "path": "sets/intl_me02.json",
-        "sha256": "a98579978dec25d4646564a5bdc349f79da2fed48d29402dcafe552863580a2a",
+        "sha256": "2873025be6e2bc9e1bee40f7ed30726703ac0e56a912feacb555c65d8e6388c9",
         "bytes": 90805
       },
       "intl:me02.5": {
         "path": "sets/intl_me02.5.json",
-        "sha256": "0cc1ddefa220cab06fe79cf2234f69d5b545d6a74829bac7fa9095637cf1ffd6",
+        "sha256": "93f33f964d922b4a60d673c95baf6939dfdbbd5b9110d83e92c985f7d96a4417",
         "bytes": 215362
       },
       "intl:me03": {
         "path": "sets/intl_me03.json",
-        "sha256": "f1a067bd1025ad996e054aa29947686994dfde62b0d3a6573d8b2d33cf06d2f9",
+        "sha256": "3e26e2df461e7657d62d73de3560ce4b6fceed3c0fc677fd2a869c5d5c86124f",
         "bytes": 88462
       },
       "intl:me04": {
         "path": "sets/intl_me04.json",
-        "sha256": "bbbcef5d9b182cfd27abc71ce7e99c4f236f88e92acde0b3b9045e47a365d52c",
+        "sha256": "ed0fad2f3eb6b5c7116fe176683c214ac37c760996e59148dccbc276a69e1081",
         "bytes": 85169
       },
       "intl:me05": {
         "path": "sets/intl_me05.json",
-        "sha256": "23865624ddfed77a743b268533e65a4a3ed57ff96e89225030ab1b76c5bfbd68",
+        "sha256": "70b26995866c8b9fb7f40f3e92c83514869b36f648064713854320ddc763e6b9",
         "bytes": 83384
       },
       "intl:mep": {
         "path": "sets/intl_mep.json",
-        "sha256": "63e10080128896132d8ab662a270470a73baf8c36073d1c6878c8bef6664023e",
-        "bytes": 51379
+        "sha256": "c672ca4f8afab09f02a74c8fa92f7b186ca529eb01994eb95a48634c3492bbe7",
+        "bytes": 55369
       },
       "asia:M1L": {
         "path": "sets/asia_M1L.json",
-        "sha256": "6d0e071497d62a38c2bd2d485f527af133aafd49c121a2c6cc8f071130c54298",
+        "sha256": "12f10d7ab0f034da563737995613e9a25c42f43a5f6d71e61b5aac0816f0f5de",
         "bytes": 75736
       },
       "asia:M1S": {
         "path": "sets/asia_M1S.json",
-        "sha256": "c037e96c48da0ca9dfca2ac41541490aef4ff1a3eb6f825f8ffb6eda6225cbb5",
-        "bytes": 75435
+        "sha256": "ef13ec50a71de1c1b0bdd9221d784b9797f5f987464235aebd30c7f8b1f9f39d",
+        "bytes": 73353
       },
       "asia:M2": {
         "path": "sets/asia_M2.json",
-        "sha256": "b31d2c8cfb1e5a6cac3ff23c760ae7cf287996fd910dc61c2933bf6791b7945b",
-        "bytes": 94324
+        "sha256": "84dd0da854b056f86b3c4ed247eb67aaa4cb373f841ddcd418aa18aba1715038",
+        "bytes": 93976
       },
       "asia:M2a": {
         "path": "sets/asia_M2a.json",
-        "sha256": "2b824fa07c023d151cbb334048d266f3e62c45a13a5ad8284bc6386eaad50a03",
-        "bytes": 212971
+        "sha256": "72998746c2fbf2408073a2b9d2b0d38b262922549ae65492a687f70bdfde3fff",
+        "bytes": 213145
       },
       "asia:M3": {
         "path": "sets/asia_M3.json",
-        "sha256": "d1737403248180c71a20bbefd140abfeaea3354d2cf824fe67db1f584eb01300",
-        "bytes": 93941
+        "sha256": "ef727d0f482ba6113e4add667d1838ee6b77953e58a742c3f7123fd65b6adedc",
+        "bytes": 94115
       },
       "asia:M4": {
         "path": "sets/asia_M4.json",
-        "sha256": "1785b82ed0368a04a49963bfe1c2117b0cb6066c78c70eac955eb4c1a83bcf7c",
-        "bytes": 96878
+        "sha256": "2b951ee8492a3f066bc34868b6f7fad8dd61190487b7af0a69b558a547165305",
+        "bytes": 92410
       },
       "asia:M5": {
         "path": "sets/asia_M5.json",
@@ -112,19 +112,19 @@
       },
       "asia:M-P": {
         "path": "sets/asia_M-P.json",
-        "sha256": "c1d41c3cce413612cf9ae62842ebd0bb05cb00458f78dd900a52c1cfe21626b5",
-        "bytes": 72312
+        "sha256": "08c3edf83068cea967bab2b0178d8f4c6f816233d62874e31ddb4f2c846ca6f2",
+        "bytes": 74012
       }
     },
     "sealed": {
       "path": "sealed.json",
-      "sha256": "3efecc4b20423c85bc42b24a2b5cd4bd0d27a44bd9e749bc84d4f7025e888128",
-      "bytes": 96391
+      "sha256": "3f064678794de8dd9ce7747425cd44d9abe03fe31b21de2710fbd804a3cb4177",
+      "bytes": 78613
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "85590d246cf54c91575ab63a4e824241ec7632ad8d874df7e8a81e77139e082f",
-      "bytes": 1010181
+      "sha256": "1731180fcc9a3112a52e1fa49e2ec7098510cf2cf4fe123ecc09ed91bade303c",
+      "bytes": 1010863
     }
   }
 }

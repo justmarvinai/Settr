@@ -3,6 +3,7 @@ import type { CatalogCard } from '../../src/domain/catalog';
 import { matchCounterparts } from './crossprint';
 import { fileNameFor, stableJson } from './emit';
 import { deriveFromSpecies, parseJapaneseName, simplify, type SpeciesNames } from './names';
+import { answers } from './images';
 import { deriveVariant } from './variants';
 
 const species = new Map<number, SpeciesNames>([
@@ -269,6 +270,23 @@ describe('variants', () => {
     expect(() => deriveVariant({ type: 'holo', foil: 'galaxy' }, 'x:1')).toThrow(
       /unknown variant foil/,
     );
+  });
+});
+
+const reply = (status: number, headers: Record<string, string> = {}) =>
+  new Response(status === 200 ? 'x' : null, { status, headers });
+const noWait = () => Promise.resolve();
+
+describe('picture checks', () => {
+  it('tells missing pictures from unanswered checks', async () => {
+    expect(await answers('u', () => Promise.resolve(reply(200)), noWait)).toBe('yes');
+    expect(await answers('u', () => Promise.resolve(reply(404)), noWait)).toBe('no');
+    let calls = 0;
+    const throttled = () => Promise.resolve(reply(++calls < 3 ? 429 : 200, { 'retry-after': '2' }));
+    expect(await answers('u', throttled, noWait)).toBe('yes');
+    expect(calls).toBe(3);
+    expect(await answers('u', () => Promise.resolve(reply(503)), noWait)).toBe('unknown');
+    expect(await answers('u', () => Promise.reject(new Error('reset')), noWait)).toBe('unknown');
   });
 });
 
