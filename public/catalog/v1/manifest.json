@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.24.17",
-  "generatedAt": "2026-09-24T23:27:59.982Z",
+  "catalogVersion": "2026.09.24.18",
+  "generatedAt": "2026-09-24T23:43:05.197Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
@@ -399,8 +399,8 @@
       },
       "intl:sm4": {
         "path": "sets/intl_sm4.json",
-        "sha256": "a50885f9cfa62bd14fd3b2ca7a5002b1f5935e439c84e45f2a67a42b5ca065e9",
-        "bytes": 78015
+        "sha256": "3b1fbbd8175cd6954f43b66621a3d4023769bf22b935f35249e8fd629fa1bc77",
+        "bytes": 77996
       },
       "intl:sm3.5": {
         "path": "sets/intl_sm3.5.json",
@@ -419,8 +419,8 @@
       },
       "intl:sm1": {
         "path": "sets/intl_sm1.json",
-        "sha256": "654c251218dafe8a4de9ae28c929615043b2f603a27f80d30604fa688ea64079",
-        "bytes": 107074
+        "sha256": "8280f97a22d76baa57f4bcac0c07f344f71c9b0d5d2c8d905bc0d8a54d3cfdf5",
+        "bytes": 106552
       },
       "intl:smp": {
         "path": "sets/intl_smp.json",
@@ -495,7 +495,7 @@
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "82dce73e42f3022f1e09795aa6cdf4776e42c41a4ae13a6fcca82728c1ab81b5",
+      "sha256": "9f4c27b84b175a6fe444b9d906e3af1e37d89e67ab546539ad9cdc16d70e9442",
       "bytes": 5421470
     }
   }
