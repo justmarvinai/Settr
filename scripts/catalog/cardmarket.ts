@@ -404,19 +404,21 @@ function groupBy<T>(items: readonly T[], key: (item: T) => string): Map<string, 
   return out;
 }
 
+/** Letters and digits only: "Rotom Dex—Poké Finder Mode" and "Rotom Dex Poké Finder Mode" agree. */
 const normalize = (text: string) =>
   text
     .normalize('NFKD')
     .replace(/\p{M}/gu, '')
-    .replace(/[’`´]/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim()
+    .replace(/[^\p{L}\p{N}]/gu, '')
     .toLowerCase();
 
-/** Cardmarket's product name: the card name, then its abilities and attacks in brackets. */
+/**
+ * Cardmarket's product name: the card name, then its abilities and attacks in brackets; a
+ * trainer's character after a dash ("Professor's Research - Professor Sada").
+ */
 function productKey(name: string): { base: string; moves: string } {
   const bracket = /^(.*?)\s*\[(.*)\]?\s*$/.exec(name);
-  const base = bracket?.[1] ?? name;
+  const base = (bracket?.[1] ?? name).replace(/\s+-\s+.*$/, '');
   const moves = (bracket?.[2] ?? '').replace(/\]$/, '');
   return {
     base: normalize(base),
@@ -440,12 +442,38 @@ function cardKey(card: BuiltCard): { base: string; moves: string } {
   };
 }
 
+/** Cards and the products that may be theirs: one name, and one set of moves where known. */
+interface NameGroup {
+  cards: BuiltCard[];
+  products: CardmarketProduct[];
+  label: string;
+}
+
+/**
+ * Splits one name's cards and products by abilities and attacks (two different Pikachu of a set
+ * differ there), unless the two sides never agree on them (other spellings): then by name alone.
+ */
+function nameGroups(cards: BuiltCard[], products: CardmarketProduct[]): NameGroup[] {
+  const label = cards[0]?.name.en ?? '';
+  const cardsByMoves = groupBy(cards, (c) => cardKey(c).moves);
+  const productsByMoves = groupBy(products, (p) => productKey(p.name).moves);
+  if (![...cardsByMoves.keys()].some((moves) => productsByMoves.has(moves)))
+    return [{ cards, products, label }];
+  return [...cardsByMoves].map(([moves, list]) => ({
+    cards: list,
+    products: productsByMoves.get(moves) ?? [],
+    label,
+  }));
+}
+
 /**
  * Products for the cards of an international set TCGdex has no Cardmarket id for (Karmesin &
- * Purpur, Nacht in Flammen): the expansion's singles that no other card uses, by English name, and
- * by abilities and attacks where that tells prints apart. Several prints of one card (a full art,
- * a Special Illustration Rare) pair in number order, and only when both sides have the same
- * count. The product goes to the card's plain variants; its reverse holo is filtered for.
+ * Purpur, Nacht in Flammen): the expansion's singles that no other card uses, by English name and
+ * by abilities and attacks. Several prints of one card (a full art, a Special Illustration Rare)
+ * pair in number order, and only when both sides have the same count. Cardmarket files stamped and
+ * promotional prints under the same names, so a second pass keeps to the batch it added the set's
+ * regular prints in (card order, between the first and the last product the first pass found).
+ * The product goes to the card's plain variants; its reverse holo is filtered for.
  */
 function matchByName(
   set: BuiltSet,
@@ -468,32 +496,34 @@ function matchByName(
   const products = [...cm.singles.values()]
     .filter((p) => p.idExpansion === expansion && !used.has(p.idProduct))
     .toSorted((a, b) => a.idProduct - b.idProduct);
-  const assign = (cards: BuiltCard[], found: CardmarketProduct[]) =>
+  const found: number[] = [];
+  const assign = ({ cards, products: list }: NameGroup) =>
     cards
       .toSorted((a, b) => a.sort - b.sort)
       .forEach((card, i) => {
-        const id = found[i]?.idProduct;
+        const id = list[i]?.idProduct;
         if (!id) return;
         for (const variant of plainVariants(card))
           variant.refs = { ...variant.refs, cardmarket: { default: id } };
         finding.byName++;
+        found.push(id);
         used.add(id);
       });
   const productsByBase = groupBy(products, (p) => productKey(p.name).base);
-  for (const [base, cards] of groupBy(missing, (c) => cardKey(c).base)) {
-    const candidates = productsByBase.get(base) ?? [];
-    // Abilities and attacks first: two different Pikachu of one set differ there.
-    const cardsByMoves = groupBy(cards, (c) => cardKey(c).moves);
-    const productsByMoves = groupBy(candidates, (p) => productKey(p.name).moves);
-    const byMoves = [...cardsByMoves].every(
-      ([moves, list]) => productsByMoves.get(moves)?.length === list.length,
-    );
-    if (byMoves)
-      for (const [moves, list] of cardsByMoves) assign(list, productsByMoves.get(moves) ?? []);
-    else if (candidates.length === cards.length) assign(cards, candidates);
+  const open: NameGroup[] = [];
+  for (const [base, cards] of groupBy(missing, (c) => cardKey(c).base))
+    for (const group of nameGroups(cards, productsByBase.get(base) ?? []))
+      if (group.products.length === group.cards.length) assign(group);
+      else open.push(group);
+  // The batch of regular prints, as far as the first pass found it.
+  const first = Math.min(...found);
+  const last = Math.max(...found);
+  for (const group of open) {
+    const batch = group.products.filter((p) => p.idProduct >= first && p.idProduct <= last);
+    if (found.length && batch.length === group.cards.length) assign({ ...group, products: batch });
     else
       finding.unresolved.push(
-        `${cards.map((c) => c.id).join(', ')} (${cards[0]?.name.en ?? base}): ${cards.length} cards vs ${candidates.length} products`,
+        `${group.cards.map((c) => c.id).join(', ')} (${group.label}): ${group.cards.length} cards vs ${group.products.length} products`,
       );
   }
   finding.unmatched = products.filter((p) => !used.has(p.idProduct));

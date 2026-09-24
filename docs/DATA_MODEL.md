@@ -47,8 +47,10 @@ Therefore:
     - `normal+deck`: the non-holo print of a Rare from the Build & Battle Boxes.
 
     Kinds: `finish` and `pattern` count toward Master. `stamp` covers every promotional print (stamps, Cosmos and league holos, jumbo, deck prints).
+  - *Before Scarlet & Violet (ADR-055):* packs carry Rares as non-holos, so a holo print of a Common or Rare is promotional: `holo+promo` (*Holo (Promo)*). Rainbow Rares (`holo-rainbow`) and gold cards are the set's own; Tinsel, Galaxy and Cracked Ice holos and metal cards are promotional. An extra card's pattern prints (SVE with Poké Ball) are promotional in its host set.
+  - *Editions:* the Base Set holds its Unlimited print only (`printRun`, R10.4); 1st Edition and Shadowless would be variants of kind `edition` (outside Master) if they come.
 - An owned copy is identified by **card × language × variant (× condition/grade)**.
-- **Multi-set and multi-era from day one (R2.5, ADR-028):** v1 shipped one expansion, and the Mega Evolution series followed on 2026-09-24 without a model change; nothing in the IDs, the schema or the completion rules assumes a single set or era. Adding a set after v1 means pipeline config, a curated overlay and a review, not a model change.
+- **Multi-set and multi-era from day one (R2.5, ADR-028):** v1 shipped one expansion; the Mega Evolution series and 21 sets from Scarlet & Violet back to the Base Set followed on 2026-09-24 without a model change; nothing in the IDs, the schema or the completion rules assumes a single set or era. Adding a set after v1 means pipeline config, a curated overlay and a review, not a model change.
 
 ```
 Print 1─* Set 1─* Card 1─* Variant
@@ -148,7 +150,7 @@ type CardSection = 'main' | 'secret' | 'subset' | 'energy' | 'promo'; // display
 interface CatalogCard {
   id: string; setId: string;     // setId may be a subset (intl:30th-c); energies carry their main set (intl:30th)
   localId: string;               // source local ID, e.g. '025', 'R', 'GRA'
-  printedNumber: string;         // as printed, e.g. '025/128', '4/102' (Classic Collection); '' when nothing is printed
+  printedNumber: string;         // as printed, e.g. '025/128', '4/102' (Classic Collection, Base Set), '001/185' (TCGdex id '1'), 'TG05/TG30'; '' when nothing is printed
   section: CardSection;
   sort: number;                  // numeric sort key within the section (R/G/B = 1000+, energies = 2000+)
   name: LocalizedText;
@@ -526,6 +528,8 @@ For a set *S*, a language filter *L* (a specific language or "any") and "owned" 
 | **Master** (*Master-Set*) | owned (card, variant) pairs | all (card, variant) pairs of the set **and its subsets and energies**, excluding stamp/promo variants unless enabled |
 
 For 30th Celebration (EN/DE) that means: **Basis = 128**, **Komplett = 161**, **Master = 199** (161 + 30 Classic Collection + 8 Energies; exactly one variant per card). For JP M6a: Basis = 103, Komplett = 138 (incl. 20 AR, 10 SAR, 2 FUR and 3 RGB), Master = 176 (+ Classic Collection 136–165 + 8 Energies, which are sections inside M6a).
+
+Galleries are subsets (ADR-054): Lost Origin's Trainer Gallery counts toward Verlorener Ursprung's Master, not its Basis or Komplett.
 
 For Mega-Entwicklung (EN/DE): Basis = 132, Komplett = 188, Master = 326 (188 cards + 8 basic Energy, each in its regular variants: normal or holo, plus reverse holo). Erhabene Helden's reverse patterns make its Master 613. Promotional variants don't count; a card that only exists in promotional variants (an MEP promo) counts with its first one (ADR-052).
 

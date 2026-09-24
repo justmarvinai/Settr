@@ -92,3 +92,44 @@ test('a Japanese reverse holo is a product of its own: no reverse-holo filter', 
   await expect(cardmarket).toHaveAttribute('href', /idProduct=861527&language=7/);
   await expect(cardmarket).not.toHaveAttribute('href', /isReverseHolo/);
 });
+
+test('older series: eras newest first, a Trainer Gallery as a section, the Base Set in its Unlimited print', async ({
+  page,
+}) => {
+  await page.goto('/catalog?print=intl');
+  await expect(page.getByRole('main').getByRole('heading', { level: 2 })).toHaveText([
+    /^Mega-Entwicklung/,
+    /^Karmesin & Purpur/,
+    /^Schwert & Schild/,
+    /^Sonne & Mond/,
+    /^Grundset-Serie/,
+  ]);
+
+  // Lost Origin's Trainer Gallery is a section of its set, numbered as printed.
+  await page.getByRole('link', { name: /Verlorener Ursprung/ }).click();
+  await expect(page.getByRole('heading', { name: 'Verlorener Ursprung', level: 2 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Trainer-Galerie/, level: 3 })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^TG01\/TG30, / })).toBeVisible();
+
+  // The Base Set holds the Unlimited print; the jumbo and the stamped Pikachu are promotional.
+  await page.goto('/catalog/sets/intl:base1/cards/intl:base1:58');
+  await holdings(page).getByRole('button', { name: 'Hinzufügen' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Karte hinzufügen' });
+  await expect(sheet.getByRole('radiogroup', { name: 'Variante' }).getByRole('radio')).toHaveText([
+    'Normal',
+    'Normal · Jumbo',
+    'Normal · PokéTour ’99',
+  ]);
+});
+
+test('before Scarlet & Violet, the holo of a Common is a promo print', async ({ page }) => {
+  await page.goto('/catalog/sets/intl:sm3/cards/intl:sm3:18');
+  await expect(page.getByRole('heading', { name: 'Glumanda', level: 2 })).toBeVisible();
+  await holdings(page).getByRole('button', { name: 'Hinzufügen' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Karte hinzufügen' });
+  await expect(sheet.getByRole('radiogroup', { name: 'Variante' }).getByRole('radio')).toHaveText([
+    'Normal',
+    'Reverse-Holo',
+    'Holo (Promo)',
+  ]);
+});

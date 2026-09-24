@@ -120,7 +120,8 @@ test('command palette finds cards in any script and opens them', async ({ page, 
   else await page.keyboard.press('Control+k');
   const input = page.getByRole('combobox', { name: 'Suche' });
   await input.fill('glurak');
-  await expect(page.getByRole('option', { name: /Glurak.*4\/102/ })).toBeVisible();
+  // The Classic Collection's Glurak and the Base Set's original share the number 4/102.
+  await expect(page.getByRole('option', { name: /Glurak.*4\/102/ })).toHaveCount(2);
   await expect(page.getByRole('option', { name: /Glurak-Figuren-Geschenkbox/ })).toBeVisible();
   await input.fill('ピカチュウ');
   await expect(page.getByRole('option').first()).toContainText('Pikachu');

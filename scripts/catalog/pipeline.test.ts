@@ -400,7 +400,7 @@ const productOf = (set: BuiltSet, localId: string, variantId: string) =>
     ?.cardmarket?.default;
 
 describe('Cardmarket products by name', () => {
-  it("matches name, attacks and number order in the set's expansion", () => {
+  it("matches name, attacks and number order in the set's expansion, then its batch of regular prints", () => {
     const set = svSet([
       unlinked('050', 'Pikachu', ['Quick Attack', 'Thunder']),
       unlinked('063', 'Pikachu', ['Thunder Shock']),
@@ -408,14 +408,24 @@ describe('Cardmarket products by name', () => {
       unlinked('235', 'Arven', [], ['holo']),
       unlinked('081', 'Miraidon ex', ['Photon Blaster'], ['holo']),
       unlinked('244', 'Miraidon ex', ['Photon Blaster'], ['holo']),
+      unlinked('070', 'Rotom', ['Junk Hunt', 'Thunder Shock']),
+      unlinked('189', "Professor's Research", []),
+      unlinked('190', "Professor's Research", []),
     ]);
     const products = [
+      product(690_000, "Professor's Research - Professor Sada"),
+      product(690_001, "Professor's Research - Professor Turo"),
       product(700_001, 'Pikachu [Thunder Shock]'),
       product(700_002, 'Pikachu [Quick Attack | Thunder]'),
+      product(700_003, 'Rotom [Junk Hunt | Thunder Shock]'),
+      product(700_004, "Professor's Research - Professor Sada"),
+      product(700_005, "Professor's Research - Professor Turo"),
       product(700_010, 'Arven'),
       product(700_011, 'Arven'),
       product(700_020, 'Miraidon ex [Photon Blaster]'),
       product(700_030, 'Pikachu [Thunder Shock]', 9999),
+      // A stamped print, added later under the same name.
+      product(700_050, 'Rotom [Junk Hunt | Thunder Shock]'),
     ];
     const cm: CardmarketIndex = {
       singles: new Map(products.map((p) => [p.idProduct, p])),
@@ -430,12 +440,18 @@ describe('Cardmarket products by name', () => {
     expect(productOf(set, '063', 'reverse')).toBe(700_001);
     expect(productOf(set, '166', 'normal')).toBe(700_010);
     expect(productOf(set, '235', 'holo')).toBe(700_011);
+    // More products than cards: the batch of regular prints decides.
+    expect(productOf(set, '070', 'normal')).toBe(700_003);
+    expect(productOf(set, '189', 'normal')).toBe(700_004);
+    expect(productOf(set, '190', 'normal')).toBe(700_005);
     // Two prints, one product: left for curation.
     expect(productOf(set, '081', 'holo')).toBeUndefined();
     const [finding] = report.international;
-    expect(finding).toMatchObject({ setId: 'intl:sv01', expansion: 5223, byName: 4 });
+    expect(finding).toMatchObject({ setId: 'intl:sv01', expansion: 5223, byName: 7 });
     expect(finding?.unresolved).toHaveLength(1);
-    expect(finding?.unmatched.map((p) => p.idProduct)).toEqual([700_020]);
+    expect(finding?.unmatched.map((p) => p.idProduct)).toEqual([
+      690_000, 690_001, 700_020, 700_050,
+    ]);
     expect(problems.warnings).toEqual([]);
   });
 

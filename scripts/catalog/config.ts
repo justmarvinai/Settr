@@ -401,6 +401,8 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 172,
     printedTotal: 86,
     coverCard: '172', // Zekrom ex, Black White Rare
+    cardmarket: 6134,
+    cardmarketOther: [6197], // pattern reverses
   }),
   international('intl:sv10.5w', SV('White Flare'), {
     ...SCARLET_VIOLET,
@@ -408,6 +410,8 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 173,
     printedTotal: 86,
     coverCard: '173', // Reshiram ex, Black White Rare
+    cardmarket: 6135,
+    cardmarketOther: [6198], // pattern reverses
   }),
   international('intl:sv10', SV('Destined Rivals'), {
     ...SCARLET_VIOLET,
@@ -415,6 +419,9 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 244,
     printedTotal: 182,
     coverCard: '231', // Team Rocket's Mewtwo ex, Special Illustration Rare
+    // TCGdex's set has no expansion; its cards' ids point here.
+    cardmarket: 6096,
+    cardmarketOther: [6140], // deck exclusives
   }),
   international('intl:sv08.5', SV('Prismatic Evolutions'), {
     ...SCARLET_VIOLET,
@@ -422,6 +429,8 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 180,
     printedTotal: 131,
     coverCard: '161', // Umbreon ex, Special Illustration Rare
+    cardmarket: 5944,
+    cardmarketOther: [6009], // pattern reverses
   }),
   international('intl:sv08', SV('Surging Sparks'), {
     ...SCARLET_VIOLET,
@@ -496,6 +505,7 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 30,
     printedNumber: gallery('TG30'),
     coverCard: 'TG30', // Shadow Rider Calyrex VMAX, Secret Rare
+    cardmarket: 4979, // Astral Radiance, which sells its gallery
   }),
   international('intl:swsh9', SWSH('Brilliant Stars'), {
     ...SWORD_SHIELD,

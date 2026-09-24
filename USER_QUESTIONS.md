@@ -2,14 +2,53 @@
 
 > Last updated: 2026-09-24.
 > **Rounds 1–7: decided ✓.** Rounds 1–3 were answered one by one (spec v0.3). For rounds 4–7 you chose my recommendation (⭐) everywhere on 2026-09-24 (spec v0.4).
-> **Round 8 (M6): open, nothing blocking.** The app already works like the ⭐ options; answer when you check M6.
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M5 are merged (PRs #1–#3). M6 · Polish & Launch started on 2026-09-24.
+> **Round 8 (M6) and round 9 (Mega Evolution): open, nothing blocking.** The app already works like the ⭐ options; answer when you check them.
+> **Round 10 (your older sets): decided 2026-09-24 with the ⭐ options**, as you asked ("go with your recommended defaults"). Tell me if you want any of them changed.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M6 and the Mega Evolution series are merged (PRs #1–#5); your older sets follow in a new PR.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 10: your older sets (decided 2026-09-24 with the ⭐ options)
+
+You asked for 21 sets you have cards from, "only these for now", and for my recommended defaults on any question. So these are decided; tell me if you want one changed.
+
+**To try:**
+- **Sets page:** four new series under *Mega-Entwicklung*: *Karmesin & Purpur* (9 sets), *Schwert & Schild* (7 sets, the galleries inside their sets), *Sonne & Mond* (Nacht in Flammen) and *Grundset-Serie* (Grundset).
+- **Verlorener Ursprung:** the *Trainer-Galerie* is a section of the set (TG01/TG30 …). Master counts it.
+- **Grundset:** Glurak 4/102 comes as *Holo* only, the Unlimited print. Search `#4/102` finds it next to the 30 Jahre reprint.
+- **Karmesin & Purpur** (SV Base): its Cardmarket buttons open the exact products, found by name because TCGdex has no ids for this set (ADR-056). Please check one or two.
+
+**R10.1 · Which prints.** Only the international print (DE/EN) of these sets, no Japanese ones.
+- [x] ⭐ International only; Japanese prints of these sets later if you need them.
+- [ ] Add the Japanese prints too.
+
+**R10.2 · Sealed products.** These sets come without sealed products for now: several hundred products, and you asked for your cards.
+- [x] ⭐ Cards only; tell me which sealed products you own and I'll add those sets' products.
+- [ ] Add the sealed products of all 21 sets.
+
+**R10.3 · Holos of non-holo cards.** Before Scarlet & Violet, packs carry Commons and Rares as non-holos. A holo print of such a card (Glumanda in Nacht in Flammen, Smettbo in Clash der Rebellen) comes from a blister or a collection. It's the variant *Holo (Promo)*, outside Master like the other promotional prints (ADR-055).
+- [x] ⭐ Like that.
+- [ ] Count it in Master.
+
+**R10.4 · Grundset.** The set holds the Unlimited print, as you wrote ("Base Set Unlimited"). 1st Edition, Shadowless and the 1999–2000 copyright print stay out; the jumbo Pikachu and the PokéTour stamp are promotional variants. The series is called *Grundset-Serie* (TCGdex's German "Grund" reads oddly).
+- [x] ⭐ Unlimited only; 1st Edition and Shadowless can come later as variants.
+- [ ] Add 1st Edition (and Shadowless) now.
+
+**R10.5 · Astral Radiance Trainer Gallery.** You have its gallery but not Astral Radiance itself, so the gallery is a set of its own (*Astralglanz Trainer-Galerie*). If Astral Radiance comes later, the gallery becomes its section, and your copies stay.
+- [x] ⭐ Like that.
+- [ ] Add Astral Radiance too.
+
+**R10.6 · Promo names.**
+- TCGdex has no German data for 34 promos. The Pokémon among them get their German species names (*Paldea-Felino*, *Riffex-ex*), marked *übersetzt*; *Terapagos & Friends* is *Terapagos & Freunde*.
+- The Special Delivery promos (Pikachu, Glurak, Bidiza) and the Van Gogh Museum Pikachu only came out in English, so they only offer English copies and show their English names.
+- [x] ⭐ Keep them; official names replace them when TCGdex has them.
+- [ ] Different names (tell me which).
 
 ---
 
