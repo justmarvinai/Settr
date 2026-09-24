@@ -10,7 +10,7 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 
 ### Added
 - **M6 · Polish & Launch (in progress, 2026-09-24).**
-  - **Keyboard (UX §7):** `G` then `O`/`S`/`K`/`P`/`F`/`E` goes to a main area, and `V` then `G`/`T` switches between grid and table. `/` searches, `?` lists every shortcut (also from the palette and *Über*), `H` hides values, `N` adds, and `+` adds one copy of the focused set tile. Arrow keys, `Home` and `End` move through card and product grids, which take one tab stop each.
+  - **Keyboard (UX §7):** `G` then `O`/`S`/`K`/`P`/`F`/`E` goes to a main area, and `V` then `G`/`T` switches between grid and table. `/` searches, `?` lists every shortcut (also from the palette and *Über*), `H` hides values, `N` adds, and `+` adds one copy of the focused set tile. Arrow keys, `Home` and `End` move through card and product grids, which take one tab stop each. On card and product pages, `N` adds that item. A palette pick that opens a page moves focus into the page, not back to the field you came from.
   - **Palette:** *Schnellerfassung* for a set, *Tastenkürzel anzeigen*, *Werte verbergen* and the theme, next to the backup actions from M5.
   - **Offline pill** in the toolbar. **Fehlerbericht kopieren** on error pages and under *Über*: the version, the browser and the last errors from a log on the device, never collection data.
   - **Onboarding (APP-06):** three steps on a fresh device, then the set:
@@ -29,6 +29,11 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
     - every license text in `licenses.txt`, which the build generates from what Settr ships;
     - the privacy note and the disclaimer;
     - *Tastenkürzel* and *Fehlerbericht kopieren*.
+  - **Quality gates (QUALITY.md §2, §4):**
+    - e2e journeys 5 (a sealed product's P/L), 9 (offline with the service worker, including a reload without network) and 10 (keyboard only, from adding a card to the price session);
+    - every journey nightly in Firefox and on an Android phone (Pixel 7);
+    - visual regression for six screens in light and dark (`visual.yml`), with the baselines made on CI's Ubuntu runner;
+    - Lighthouse CI on every PR (`lighthouse.yml`): LCP, CLS and blocking time against the budgets, on the production build.
 - **M5 · Data Safety (v0.5.0 candidate, 2026-09-24).**
   - **Backup einspielen (DAT-02):**
     - A backup file by button or drag and drop is read in a worker and checked: checksum, migration, every record against its schema.

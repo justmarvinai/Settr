@@ -1,0 +1,39 @@
+name: Lighthouse
+
+# The performance budgets of QUALITY.md §4 (LCP, CLS, blocking time) and the Lighthouse scores, on
+# the production build served by `vite preview` with the production headers, as a phone on a
+# simulated 4G network. Local rather than the Vercel preview: no deployment protection to get
+# past, and the deployment URL stays out of the repository (ADR-029).
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # Pinned, and not a dependency: only this job needs Lighthouse (the runner brings Chrome).
+      - run: npx --yes @lhci/cli@0.15.1 autorun
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouseci
+          retention-days: 14

@@ -17,7 +17,7 @@ import {
 } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, type NavigateOptions } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useManifest } from '@/catalog';
 import { useCatalogSearch } from '@/catalog/useCatalogSearch';
 import { CardImage } from '@/components/domain/CardImage';
@@ -107,6 +107,8 @@ export default function SearchDialog({
   const manifest = useManifest();
   const customItems = useCustomItems();
   const [query, setQuery] = useState('');
+  /** A pick that opens a page sends focus to it, not back to where the palette opened (a field). */
+  const navigated = useRef(false);
   const adding = mode === 'add';
   const settings = useSettings();
   const privacy = usePrivacy();
@@ -277,6 +279,7 @@ export default function SearchDialog({
       openSheet({ type: 'add', item: { kind, id: item.id }, setId: item.setId });
       return;
     }
+    navigated.current = true;
     void navigate(item.target);
   };
   const addCustom = () => {
@@ -315,6 +318,11 @@ export default function SearchDialog({
         <BaseDialog.Popup
           className="ui-palette glass-thick"
           aria-label={adding ? m.search_add_title() : m.search_title()}
+          finalFocus={() => {
+            if (!navigated.current) return true;
+            navigated.current = false;
+            return document.getElementById('main');
+          }}
         >
           <Autocomplete.Root
             open
@@ -422,6 +430,7 @@ export default function SearchDialog({
                   type="button"
                   onClick={() => {
                     close();
+                    navigated.current = true;
                     void navigate({ to: '/catalog/cards', search: { q: text } });
                   }}
                   className="type-small font-bold text-accent-text hover:underline"

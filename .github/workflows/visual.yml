@@ -1,0 +1,64 @@
+name: Visual regression
+
+# Six screens in light and dark (QUALITY.md §2), compared with the baselines in
+# tests/visual/__screenshots__. Chromium on GitHub's Ubuntu runner only: other machines render
+# text a little differently, so the baselines are made here too. After an intended design change,
+# run it by hand with `update` to regenerate the baselines and commit them to the branch.
+on:
+  schedule:
+    - cron: '47 2 * * *' # 04:47 CEST, after the nightly journeys
+  workflow_dispatch:
+    inputs:
+      update:
+        description: Regenerate the baselines and commit them to this branch
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: visual-${{ github.ref }}
+
+jobs:
+  visual:
+    name: Playwright (visual, chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LEFTHOOK: '0' # no local git hooks in CI
+      VISUAL: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Compare with the baselines
+        if: ${{ !inputs.update }}
+        run: pnpm e2e --project=visual
+      - name: Regenerate the baselines
+        if: ${{ inputs.update }}
+        run: pnpm e2e --project=visual --update-snapshots
+      - name: Commit the baselines
+        if: ${{ inputs.update }}
+        run: |
+          git add tests/visual/__screenshots__
+          if git diff --cached --quiet; then
+            echo "The baselines are unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test(visual): update the screenshot baselines"
+          git push
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: test-results
+          retention-days: 7
