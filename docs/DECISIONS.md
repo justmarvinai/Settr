@@ -692,7 +692,8 @@
   - TCGplayer lists a card's printings (Normal, Holofoil, Reverse Holofoil) per product, and TCGCSV mirrors them as static JSON (DATA_SOURCES.md §4), a source the pipeline already uses.
 - **Decision** (`scripts/catalog/finishes.ts`, `build.ts`):
   - A set whose cards come without variants names its TCGplayer group (`tcgplayerGroup`). Network builds read the group's printings per card number; a plain product wins over promotional ones with the same number ("Caterpie (Prerelease)").
-  - Offline builds keep the finishes of the last build; a card neither knows gets a rarity rule: Commons, Uncommons and Rares normal and reverse holo, everything rarer holo.
+  - The last build's finishes stand in only when TCGplayer's printings weren't loaded (offline, an outage, an empty group). A card missing from a loaded group takes the rarity rule, so an old guess doesn't outlive a better one.
+  - The rarity rule: basic Energy is plain; a GX, EX or V is a holo; Commons, Uncommons and Rares come as normal and reverse holo, everything rarer as a holo.
   - The variants are normal, holo and reverse like TCGdex's, so ids and the deck/promo rules (ADR-055) are the same as elsewhere.
   - The card's own products go to its regular variants (normal, holo, reverse holo); stamped, deck and promo prints never inherit them.
   - A Sun & Moon card TCGdex calls "Rare" that TCGplayer prints only as a holo is a *Holo Rare*.

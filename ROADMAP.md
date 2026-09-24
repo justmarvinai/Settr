@@ -237,7 +237,7 @@ Marvin (2026-09-24): "add the following sets … As these are sets I have cards 
 - [ ] Your check: round 10 in `USER_QUESTIONS.md` (decided with the ⭐ defaults)
 - [ ] Later, on request: sealed products for these sets, their Japanese prints, 1st Edition and Shadowless Base Set cards (Astral Radiance came with the rest of the eras)
 
-### The rest of the eras ✅ (built 2026-09-24, ADR-057–060, R11)
+### The rest of the eras ✅ (built 2026-09-24, ADR-057–061, R11)
 
 Marvin (2026-09-24): "add all missing sets from all Eras we currently at least have one Set from", "except for the Era where Base Set is in". International (DE/EN), cards only; plus the Japanese M6, MC and MF.
 - [x] **Karmesin & Purpur** (10 more): Reisegefährten, Stellarkrone, Nebel der Sagen, Maskerade im Zwielicht, Gewalten der Zeit, Paradoxrift, Obsidianflammen, Entwicklungen in Paldea, My First Battle (English only) and Karmesin & Purpur Energie (SVE 001–024, a set of its own)
@@ -248,7 +248,9 @@ Marvin (2026-09-24): "add all missing sets from all Eras we currently at least h
 - [x] Numbers as printed: `001/086` for sets under 100 cards, the Shiny Vaults' `SV001/SV122` and `SV1/SV94`, the Klassische Kollektion's originals
 - [x] Names: the Klassische Kollektion's German names from the original cards; MC/MF reprints checked against their illustrators; M6's new trainers translated until ME06 (R11.6)
 - [x] Search: exact names and numbers first, then name matches, then set or illustrator matches (ADR-060)
+- [x] Moved cards: your copies of SVE 001–008 follow the cards into Karmesin & Purpur Energie, also after an import (ADR-061)
 - [ ] Your check: round 11 in `USER_QUESTIONS.md`, then a PR when you ask for one
+- [ ] Later, on request: sealed products and Japanese prints of these sets, the McDonald's collections and the Sun & Moon trainer kits (R11.2, R11.8)
 
 ## Post-v1 backlog (ordered by expected value)
 
