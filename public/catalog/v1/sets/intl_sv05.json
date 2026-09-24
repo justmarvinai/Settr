@@ -37,6 +37,9 @@
           "lang": "en"
         }
       }
+    },
+    "logo": {
+      "de": "https://assets.tcgdex.net/de/sv/sv05/logo"
     }
   },
   "subsets": [],

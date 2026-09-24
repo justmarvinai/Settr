@@ -37,6 +37,10 @@
           "lang": "en"
         }
       }
+    },
+    "logo": {
+      "de": "https://assets.tcgdex.net/de/swsh/swsh8/logo",
+      "en": "https://assets.tcgdex.net/en/swsh/swsh8/logo"
     }
   },
   "subsets": [],

@@ -32,6 +32,9 @@
           "lang": "en"
         }
       }
+    },
+    "logo": {
+      "en": "https://assets.tcgdex.net/en/swsh/fut2020/logo"
     }
   },
   "subsets": [],

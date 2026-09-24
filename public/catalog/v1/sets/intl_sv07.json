@@ -37,6 +37,10 @@
           "lang": "en"
         }
       }
+    },
+    "logo": {
+      "de": "https://assets.tcgdex.net/de/sv/sv07/logo",
+      "en": "https://assets.tcgdex.net/en/sv/sv07/logo"
     }
   },
   "subsets": [],
