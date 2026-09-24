@@ -1,0 +1,13 @@
+# Abyss Eye (Japanese M5).
+setId: asia:M5
+cards:
+  '071': { counterpart: 'intl:me05:073', note: Antique Skull Fossil · AYUMI ODASHIMA }
+  '072': { counterpart: 'intl:me05:072', note: Antique Armor Fossil · AYUMI ODASHIMA }
+  '080': { counterpart: 'intl:me05:084', note: Voltaic Lightning Energy }
+  '081': { counterpart: 'intl:me05:083', note: Shadowy Darkness Energy }
+  '103': { counterpart: 'intl:me05:107', note: Energy Switch · Studio Bora Inc. }
+  '104':
+    {
+      counterpart: 'intl:me05:105',
+      note: "Crushing Hammer · Ayaka Yoshida (TCGdex spells the Japanese print's artist Ayako)",
+    }

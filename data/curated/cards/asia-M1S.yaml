@@ -1,0 +1,7 @@
+# Mega Symphonia (Japanese M1S).
+setId: asia:M1S
+cards:
+  '018':
+    { counterpart: 'intl:me01:036', note: Mega Abomasnow ex; TCGdex has no Pokédex number for it }
+  '076': { counterpart: 'intl:me01:157', note: Mega Abomasnow ex (full art) }
+  '057': { counterpart: 'intl:me01:128', note: Strange Timepiece · Toyste Beach }

@@ -1,0 +1,16 @@
+# MEGA promo cards (Japanese M-P). Promos of the same artwork as an international card pair here;
+# reprints of older trainers take their names from data/curated/names.
+setId: asia:M-P
+cards:
+  '033': { counterpart: 'intl:mep:028', note: Celebratory Fanfare · Yuu Nishida }
+  '075': { counterpart: 'intl:me05:079', note: Jett · GIDORA }
+  '144': { counterpart: 'intl:me02.5:183', note: Boss's Orders · akagi }
+  '060':
+    curatedName: { de: Kampfsucher, en: Battle Searcher }
+    note: Provisional; no English print found yet. To check against Cardmarket's product name.
+  '099':
+    curatedName: { de: Guri, en: Guri }
+    note: A Pokémon Legends Z-A character without an international card yet; provisional romanization. To check against Cardmarket's product name.
+  '143':
+    curatedName: { de: Deuro, en: Deuro }
+    note: A Pokémon Legends Z-A character without an international card yet; provisional romanization. To check against Cardmarket's product name.

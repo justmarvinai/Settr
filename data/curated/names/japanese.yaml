@@ -1,0 +1,40 @@
+# German and English names for Japanese card names no artwork match resolves (build.ts, ADR-051):
+# mostly Scarlet & Violet and XY reprints in MEGA Dream ex and the MEGA promos, which the catalog
+# doesn't carry internationally. `from` takes the official names of that international card;
+# otherwise the names are the official ones of the card's last international print (TCGdex).
+エネルギーリサイクル: { from: 'intl:me03:108', note: Energy Recycler }
+改造ハンマー: { de: Spezial-Hammer, en: Enhanced Hammer, note: Twilight Masquerade 148 }
+せいなるはい: { from: 'intl:me03:115', note: Sacred Ash }
+ホップのバッグ: { de: Hops Tasche, en: Hop's Bag, note: Journey Together 147 }
+むしとりセット: { de: Käfersammlerset, en: Bug Catching Set, note: Twilight Masquerade 143 }
+シロナのパワーウエイト:
+  { de: Cynthias Machtgewicht, en: Cynthia's Power Weight, note: Destined Rivals 162 }
+ホップのこだわりハチマキ: { de: Hops Wahlband, en: Hop's Choice Band, note: Journey Together 148 }
+トウコ: { de: Lotta, en: Hilda, note: White Flare 084 }
+ヒビキの冒険: { de: Klarins Abenteuer, en: Ethan's Adventure, note: Destined Rivals 165 }
+Nの城: { de: Schloss von N, en: N's Castle, note: Journey Together 152 }
+グラビティーマウンテン: { de: Erdanziehungsberg, en: Gravity Mountain, note: Surging Sparks 177 }
+ゼロの大空洞: { de: Höhlensystem Null, en: Area Zero Underdepths, note: Stellar Crown 131 }
+ハッコウシティ: { de: Fermanca City, en: Levincia, note: Journey Together 150 }
+ハロンタウン: { de: Furlongham, en: Postwick, note: Journey Together 154 }
+夜の鉱山: { from: 'intl:me02.5:197', note: Nighttime Mine (another artist than the Japanese print) }
+イグニッションエネルギー: { from: 'intl:me02:124', note: Ignition Energy }
+オーガポン みどりのめんex:
+  { de: Türkisgrüne-Maske-Ogerpon-ex, en: Teal Mask Ogerpon ex, note: Shrouded Fable 012 }
+あなあけスコップ: { from: 'intl:me03:074', note: Hole-Digging Shovel }
+逆境ほけん: { from: 'intl:me04:074', note: Adversity Policy }
+ペパー: { de: Pepper, en: Arven, note: Obsidian Flames 186 }
+スペシャルチャージ: { de: Spezial-Aufladung, en: Special Charge, note: STEAM Siege 105 }
+トレーナーズポスト: { de: TrainerPost, en: Trainers' Mail, note: Roaring Skies 92 }
+バトルコンプレッサー:
+  {
+    de: Kampfverdichter,
+    en: Battle Compressor,
+    note: 'Phantom Forces 92 (there: Battle Compressor Team Flare Gear)',
+  }
+フィールドブロアー: { de: Feldgebläse, en: Field Blower, note: Guardians Rising 125 }
+かるいし: { de: Leichtstein, en: Float Stone, note: BREAKthrough 137 }
+プルメリ: { de: Fran, en: Plumeria, note: Burning Shadows 120 }
+パラレルシティ: { de: Parallelstadt, en: Parallel City, note: BREAKthrough 145 }
+ダブルドラゴンエネルギー:
+  { de: DoppelDrachenEnergie, en: Double Dragon Energy, note: Roaring Skies 97 }

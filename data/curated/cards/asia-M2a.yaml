@@ -1,0 +1,16 @@
+# MEGA Dream ex (Japanese M2a). Most of its trainers without a match here are Scarlet & Violet
+# reprints the catalog doesn't carry; their names are in data/curated/names.
+setId: asia:M2a
+cards:
+  '146': { counterpart: 'intl:me02.5:195', note: N's PP Up · Toyste Beach }
+  '214': { counterpart: 'intl:me02.5:262', note: N's PP Up · Toyste Beach }
+  '149': { counterpart: 'intl:me02.5:189', note: Glass Trumpet · Toyste Beach }
+  '215': { counterpart: 'intl:me02.5:260', note: Glass Trumpet · Toyste Beach }
+  '151': { counterpart: 'intl:me02.5:212', note: Tool Scrapper · Studio Bora Inc. }
+  '163': { counterpart: 'intl:me02.5:191', note: Light Ball · Studio Bora Inc. }
+  '164': { counterpart: 'intl:me02.5:211', note: Thick Scale · Toyste Beach }
+  '177': { counterpart: 'intl:me02.5:201', note: Team Rocket's Archer · Hideki Ishikawa }
+  '180': { counterpart: 'intl:me02.5:208', note: Team Rocket's Proton · Naoki Saito }
+  '189': { counterpart: 'intl:me02.5:210', note: Team Rocket's Watchtower · AYUMI ODASHIMA }
+  '192': { counterpart: 'intl:me02.5:216', note: Prism Energy }
+  '193': { counterpart: 'intl:me02.5:217', note: Team Rocket's Energy }

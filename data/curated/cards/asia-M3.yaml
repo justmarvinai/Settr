@@ -1,0 +1,10 @@
+# Nihil Zero (Japanese M3).
+setId: asia:M3
+cards:
+  '067': { counterpart: 'intl:me03:073', note: Energy Swatter · Toyste Beach }
+  '068': { counterpart: 'intl:me03:068', note: Antique Jaw Fossil · AYUMI ODASHIMA }
+  '069': { counterpart: 'intl:me03:069', note: Antique Sail Fossil · AYUMI ODASHIMA }
+  '078': { counterpart: 'intl:me03:086', note: Growing Grass Energy }
+  '079': { counterpart: 'intl:me03:088', note: Telepathic Psychic Energy }
+  '080': { counterpart: 'intl:me03:087', note: Rocky Fighting Energy }
+  '104': { counterpart: 'intl:me03:117', note: Wondrous Patch · Studio Bora Inc. }

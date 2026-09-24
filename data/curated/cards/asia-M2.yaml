@@ -1,0 +1,4 @@
+# Inferno X (Japanese M2). TCGdex lists the Mega-era special Energy without an illustrator.
+setId: asia:M2
+cards:
+  '109': { counterpart: 'intl:me02:124', note: Ignition Energy }

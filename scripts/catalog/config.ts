@@ -95,6 +95,65 @@ const mainAndSecret = (total: number) => (localId: string) =>
 const MEGA = (set: string): SourceSet => ({ pool: 'data', serie: 'Mega Evolution', set });
 const M = (set: string): SourceSet => ({ pool: 'data-asia', serie: 'M', set });
 
+/** An international Mega Evolution expansion (DE/EN share one card list, DATA_MODEL.md §2). */
+function international(
+  id: string,
+  set: string,
+  options: Pick<SetConfig, 'code' | 'expectedCards' | 'printedTotal' | 'coverCard' | 'extras'> & {
+    cardmarket: number;
+    tcgplayer?: number;
+  },
+): SetConfig {
+  const { cardmarket, tcgplayer, printedTotal, ...rest } = options;
+  return {
+    id,
+    print: 'intl',
+    kind: 'main',
+    series: SERIES.megaEvolution,
+    languages: ['de', 'en'],
+    source: MEGA(set),
+    section: printedTotal ? mainAndSecret(printedTotal) : () => 'main',
+    ...(printedTotal ? { printedTotal } : {}),
+    ...rest,
+    cardmarket: { expansion: cardmarket },
+    ...(tcgplayer ? { tcgplayer: { category: 3, groupId: tcgplayer } } : {}),
+  };
+}
+
+/** A Japanese Mega Evolution set; Traditional Chinese mirrors it (same list and numbering). */
+function japanese(
+  set: string,
+  options: Pick<
+    SetConfig,
+    'expectedCards' | 'printedTotal' | 'coverCard' | 'counterpartSets' | 'rarities' | 'rarityMarks'
+  > & { name: LocalizedText; tcgplayer?: string },
+): SetConfig {
+  const { name, tcgplayer, printedTotal, ...rest } = options;
+  return {
+    id: `asia:${set}`,
+    print: 'asia',
+    kind: 'main',
+    series: SERIES.megaEvolution,
+    name,
+    code: set,
+    languages: ['ja', 'zh-tw'],
+    source: M(set),
+    section: printedTotal ? mainAndSecret(printedTotal) : () => 'main',
+    ...(printedTotal ? { printedTotal } : {}),
+    traditionalChinese: set,
+    ...rest,
+    ...(tcgplayer ? { tcgplayer: { category: 85, groupName: tcgplayer } } : {}),
+  };
+}
+
+/** The basic Energy of the Mega Evolution sets (MEE 001–008), sold in the first expansion's products. */
+const MEE_BASIC: ExtraCards = {
+  source: MEGA('Mega Evolution Energy'),
+  localIds: ['001', '002', '003', '004', '005', '006', '007', '008'],
+  section: 'energy',
+  idPrefix: 'intl:mee',
+};
+
 export const CATALOG_SETS: SetConfig[] = [
   {
     id: 'intl:30th',
@@ -170,6 +229,141 @@ export const CATALOG_SETS: SetConfig[] = [
     tcgplayer: { category: 85, groupName: '30th Celebration' },
     rarityMarks: 'special',
   },
+
+  // Mega Evolution series, international print (DE/EN), in release order.
+  international('intl:me01', 'Mega Evolution', {
+    code: 'MEG',
+    expectedCards: 188,
+    printedTotal: 132,
+    extras: [MEE_BASIC],
+    coverCard: '178', // Mega Gardevoir ex, Special Illustration Rare
+    cardmarket: 6209,
+    tcgplayer: 24380,
+  }),
+  international('intl:me02', 'Phantasmal Flames', {
+    code: 'PFL',
+    expectedCards: 130,
+    printedTotal: 94,
+    coverCard: '125', // Mega Charizard X ex, Special Illustration Rare
+    cardmarket: 6299,
+    tcgplayer: 24448,
+  }),
+  international('intl:me02.5', 'Ascended Heroes', {
+    code: 'ASC',
+    expectedCards: 295,
+    printedTotal: 217,
+    coverCard: '276', // Pikachu ex, Special Illustration Rare
+    cardmarket: 6395,
+    tcgplayer: 24541,
+  }),
+  international('intl:me03', 'Perfect Order', {
+    code: 'POR',
+    expectedCards: 124,
+    printedTotal: 88,
+    coverCard: '120', // Mega Zygarde ex, Special Illustration Rare
+    cardmarket: 6443,
+    tcgplayer: 24587,
+  }),
+  international('intl:me04', 'Chaos Rising', {
+    code: 'CRI',
+    expectedCards: 122,
+    printedTotal: 86,
+    coverCard: '116', // Mega Greninja ex, Special Illustration Rare
+    cardmarket: 6517,
+    tcgplayer: 24655,
+  }),
+  international('intl:me05', 'Pitch Black', {
+    code: 'PBL',
+    expectedCards: 120,
+    printedTotal: 84,
+    coverCard: '116', // Mega Darkrai ex, Special Illustration Rare
+    cardmarket: 6569,
+    tcgplayer: 24688,
+  }),
+  {
+    ...international('intl:mep', 'MEP Black Star Promos', {
+      code: 'MEP',
+      expectedCards: 90,
+      coverCard: '001',
+      cardmarket: 6232,
+    }),
+    name: { de: 'Mega-Entwicklung Promos', en: 'MEP Black Star Promos' },
+    tcgplayer: { category: 3, groupName: 'ME: Mega Evolution Promo' },
+  },
+
+  // The same series in Japan; each international set is built from one or two of these.
+  japanese('M1L', {
+    name: { ja: 'メガブレイブ', de: 'Mega Brave', en: 'Mega Brave' },
+    expectedCards: 92,
+    printedTotal: 63,
+    counterpartSets: ['intl:me01'],
+    rarityMarks: 'all',
+    coverCard: '088', // メガルカリオex SAR
+    tcgplayer: 'M1L:',
+  }),
+  japanese('M1S', {
+    name: { ja: 'メガシンフォニア', de: 'Mega Symphonia', en: 'Mega Symphonia' },
+    expectedCards: 92,
+    printedTotal: 63,
+    counterpartSets: ['intl:me01'],
+    // TCGdex calls M1S's SR cards "Secret Rare" (M1L: "Ultra Rare"); both print SR.
+    rarities: { 'Secret Rare': 'ultra-rare' },
+    rarityMarks: 'all',
+    coverCard: '087', // メガサーナイトex SAR
+    tcgplayer: 'M1S:',
+  }),
+  japanese('M2', {
+    name: { ja: 'インフェルノX', de: 'Inferno X', en: 'Inferno X' },
+    expectedCards: 116,
+    printedTotal: 80,
+    counterpartSets: ['intl:me02'],
+    rarityMarks: 'all',
+    coverCard: '110', // メガリザードンXex SAR
+    tcgplayer: 'M2:',
+  }),
+  japanese('M2a', {
+    name: { ja: 'MEGAドリームex', de: 'MEGA Dream ex', en: 'MEGA Dream ex' },
+    expectedCards: 250,
+    printedTotal: 193,
+    counterpartSets: ['intl:me02.5'],
+    rarityMarks: 'all',
+    coverCard: '234', // ピカチュウex SAR
+    tcgplayer: 'M2a:',
+  }),
+  japanese('M3', {
+    name: { ja: 'ムニキスゼロ', de: 'Nihil Zero', en: 'Nihil Zero' },
+    expectedCards: 117,
+    printedTotal: 80,
+    counterpartSets: ['intl:me03'],
+    rarityMarks: 'all',
+    coverCard: '113', // メガジガルデex SAR
+    tcgplayer: 'M3:',
+  }),
+  japanese('M4', {
+    name: { ja: 'ニンジャスピナー', de: 'Ninja Spinner', en: 'Ninja Spinner' },
+    expectedCards: 120,
+    printedTotal: 83,
+    counterpartSets: ['intl:me04'],
+    rarityMarks: 'all',
+    coverCard: '114', // メガゲッコウガex SAR
+    tcgplayer: 'M4:',
+  }),
+  japanese('M5', {
+    name: { ja: 'アビスアイ', de: 'Abyss Eye', en: 'Abyss Eye' },
+    expectedCards: 118,
+    printedTotal: 81,
+    counterpartSets: ['intl:me05'],
+    rarityMarks: 'all',
+    coverCard: '114', // メガダークライex SAR
+    tcgplayer: 'M5:',
+  }),
+  japanese('M-P', {
+    name: { ja: 'メガ プロモカード', de: 'MEGA-Promokarten', en: 'MEGA Promo Cards' },
+    expectedCards: 132,
+    counterpartSets: ['intl:mep'],
+    coverCard: '002', // ラプラスex
+    tcgplayer: 'M-P',
+  }),
 ];
 
 /**
