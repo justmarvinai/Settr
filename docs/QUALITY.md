@@ -32,7 +32,7 @@ A change is **done** only when all of the following hold:
 | **Property-based** | fast-check (in Vitest) | Money allocation sums exactly, merge is idempotent (`merge(A,A)=A`) and order-independent for disjoint sets, export→import round-trip identity, time-series sweep = naive computation | Runs in CI with a fixed seed plus a nightly random seed |
 | **Integration** | Vitest + `fake-indexeddb` | Dexie repositories, transactions, `priceLatest` maintenance, tombstones, import pipeline, catalog loader | All repositories |
 | **Component** | Vitest Browser Mode (Playwright provider, `vitest-browser-react`), `*.test.tsx` next to the component | Complex inputs (money input parsing `4,5` → 450), forms, filters, command palette, charts' data mapping | Critical components |
-| **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. Every test also fails on console errors and CSP violations (the preview server sends the production CSP) | All journeys green before merge to `main` |
+| **E2E** | Playwright | Critical journeys (below). **Every run:** Chromium desktop (the engine of Marvin's Brave on Windows), Chromium at iPhone size and WebKit iPhone emulation. **Nightly:** plus Firefox and Pixel emulation. No retries: a flaky test is a bug to fix. CI renders WebKit in software (frames of 100–600 ms with the glass layers), so the WebKit project allows 60 s per test instead of 30 s. Every test also fails on console errors and CSP violations (the preview server sends the production CSP) | All journeys green before merge to `main` |
 | **Visual regression** | Playwright `toHaveScreenshot` | Dashboard, set detail, card detail, add sheet, price session, and settings in light/dark | Chromium only, pinned fonts |
 | **Accessibility** | `@axe-core/playwright` | Every E2E page state | 0 serious/critical |
 | **Performance** | Lighthouse CI on preview URL; `size-limit` | Budgets in §4 | Enforced in CI |
@@ -56,6 +56,8 @@ A change is **done** only when all of the following hold:
 13. Open sealed with pulls: proportional cost allocation sums exactly to the product cost.
 
 **Automated as of M3** (`tests/e2e/*.spec.ts`, desktop and phone Chromium; WebKit in CI): 4 (the sale; realized P/L arrives with M4), 8, 12 (next-free-slot rules as unit tests for 3×3 and 3×4, the move into a binder in e2e) and 13 (the exact sum as a property test, the flow in e2e). The collection spec also covers quick add with undo, the add sheet, Sammlung filters, table sort, tags, move and delete with undo, the backup download and `owned:` search, with axe on those screens in light and dark. The other journeys arrive with their milestones.
+
+**Added in M4** (`tests/e2e/prices.spec.ts`): 2 (a price on the card page with `P` and `Enter`, the lot's P/L, undo; the price sheet from `P` on a tile), 3 (the session with `Enter` and `S` and its summary; `U` in the price sheet), 11 (guide chips from a stubbed snapshot, `V`, `origin: guide`, a changed amount stays the user's), the value and P/L agreeing across Übersicht, Sammlung and Portfolio (the numbers themselves against the hand-calculated fixture in `valuation.test.ts`), and axe on the card page with prices, Übersicht, Preise, Portfolio, the session and the price sheet in light and dark. Journey 1 waits for onboarding (M6), 5–7 and 9–10 for M5/M6.
 
 ### 2.2 Test data
 
@@ -96,7 +98,7 @@ Chromium in CI covers Brave's engine, but not its privacy features (ADR-027). Be
 
 | Metric | Budget |
 |---|---|
-| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB) |
+| Initial JS (entry + modulepreloads, gzip) | ≤ 230 KB (re-baselined on the M1 build and again with TanStack Query in M2, ADR-030; M1: 209 KB, M2: 224 KB, M3: 219.6 KB, M4: 220.3 KB) |
 | Per-route lazy chunk (gzip) | ≤ 80 KB (charts chunk ≤ 120 KB) |
 | CSS (gzip) | ≤ 35 KB initial; on-demand CSS ≤ 45 KB per file (one Noto CJK family's `@font-face` rules, loaded only where Japanese or Chinese names show) |
 | Web fonts on first render | ≤ 2 files, ≤ 125 KB total (latin subsets, variable; ADR-030). CJK fonts load lazily and only when CJK text is rendered |

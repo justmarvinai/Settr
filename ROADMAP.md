@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-23 · Current phase: **M3 · Collection** ✅ built, waiting for your check (M1 and M2 are merged; Vercel, Brave and iPhone checks still open) · next: **M4 · Prices & Portfolio**
+> Last updated: 2026-09-24 · Current phase: **M4 · Prices & Portfolio** ✅ built, waiting for your check (M1–M3 are merged; Vercel, Brave and iPhone checks still open) · next: **M5 · Data Safety**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -13,8 +13,8 @@
 | **M0 · Planning** | Complete plan, open questions answered, design direction chosen, **coding permission granted** | — | ✅ |
 | **M1 · Foundation** | Running, deployable skeleton with design tokens, app shell, i18n, database and CI | 0.1.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
 | **M2 · Catalog** | 30 Jahre / 30th Celebration catalog (cards DE/EN/JA/ZH-CN/ZH-TW, sealed DE/EN/JP/TC/SC) browsable and searchable, on a multi-set foundation | 0.2.0 | ✅ merged (PR #1) · 🔒 your check in Brave/iPhone |
-| **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ built · 🔒 your check |
-| **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | 🔒 |
+| **M3 · Collection** | Add and manage singles and sealed with purchase prices, plus set completion | 0.3.0 | ✅ merged (PR #2) · 🔒 your check in Brave/iPhone |
+| **M4 · Prices & Portfolio** | Manual price tracking, charts, dashboard, P/L, price session | 0.4.0 | ✅ built · 🔒 your check |
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | 🔒 |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | 🔒 |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
@@ -93,7 +93,7 @@
 
 ---
 
-## M3 · Collection ✅ → v0.3.0 (built 2026-09-23, waiting for your check)
+## M3 · Collection ✅ → v0.3.0 (merged as PR #2 on 2026-09-23, waiting for your check)
 
 - [x] Add/edit card holdings (COL-01) and sealed holdings (COL-02) with money and date inputs: one sheet from ＋ Hinzufügen, `N` on a tile and the card/product pages; ＋ quick add on set tiles (R2.1)
 - [x] Edit / duplicate / delete + undo (COL-03)
@@ -115,22 +115,27 @@
 
 ---
 
-## M4 · Prices & Portfolio 🔒 → v0.4.0
+## M4 · Prices & Portfolio ✅ → v0.4.0 (built 2026-09-24, waiting for your check)
 
-- [ ] Price entry popover + inline entry (PRC-01), history list with edit/delete (PRC-02)
-- [ ] Item price chart with markers, purchase baseline, ranges, language compare (PRC-03)
-- [ ] Valuation + P/L engine (pure functions, property-tested) (`DATA_MODEL.md` §6)
-- [ ] Portfolio time series (event sweep, Web Worker) (`DATA_MODEL.md` §6.5)
-- [ ] Dashboard bento (PRT-01): hero value + scrubbable chart, stale tile, progress, movers, allocation, recent
-- [ ] Staleness indicators and a Preise hub (PRC-05)
-- [ ] **Price-update session** (PRC-04), with Cardmarket links preset to language + German sellers
-- [ ] **Price-guide suggestions** (PRC-09, ADR-020): the `price-guide.yml` daily job, `cm-prices.json`, and suggestion chips with `V` to accept
-- [ ] Per-lot value override for LP/damaged copies (PRC-07)
-- [ ] Portfolio page: allocation and performance (PRT-02, PRT-03)
-- [ ] Realized P/L (PRT-04)
-- [ ] Sammlung: value and P/L in the summary, tiles and table; price columns and a column chooser; *Bepreist*, *Preis veraltet* and *G/V* filters; the price session for a selection (from M3)
+- [x] Price entry (PRC-01), history list with edit/delete (PRC-02): inline on card and product pages (`P` focuses it); *Preis eintragen* as a sheet (ADR-040) from `P` on set and Sammlung tiles and table rows, the € button on set tiles and the lot menu; `Enter` saves, `U` confirms the last price for today, every change undoable
+- [x] Item price chart with markers, purchase baseline, ranges, language compare (PRC-03): hand-written SVG with scrubbing and a table view (ADR-038)
+- [x] Valuation + P/L engine (pure functions, property-tested) (`DATA_MODEL.md` §6), checked against a hand-calculated fixture
+- [x] Portfolio time series (event sweep) (`DATA_MODEL.md` §6.5): on the main thread, fast enough for v1 collections (ADR-039)
+- [x] Dashboard bento (PRT-01): hero value + scrubbable chart (value or P/L, *Investiert* line), stale tile, set progress, movers, allocation, recent, unpriced notice
+- [x] Staleness indicators and a Preise hub (PRC-05): counts, the stale list, latest entries, start or resume a session
+- [x] **Price-update session** (PRC-04), with Cardmarket links preset to language + German sellers: scopes (stale, unpriced, all, a Sammlung selection), orders, `C`/`U`/`S`/`←`/`Esc`, pause and resume, a summary of what changed
+- [x] **Price-guide suggestions** (PRC-09, ADR-020): `price-guide.yml` daily calls a Vercel deploy hook, the build writes `cm-prices.json` (never committed, ADR-029), chips on card pages, the price sheet and the session, `V` to accept, stored with `origin: 'guide'` (ADR-040)
+- [x] Per-lot value override for LP/damaged copies (PRC-07): *Eigener Wert* in the lot menu, tagged wherever it's shown
+- [x] Portfolio page: allocation and performance (PRT-02, PRT-03): filters for cards/sealed, language and set; allocation by category, set, language or rarity; movers; P/L per set or language
+- [x] Realized P/L (PRT-04): every sale and trade with proceeds after fees, cost and result
+- [x] Sammlung: value and P/L in the summary, tiles and table; price columns and a column chooser; *Bepreist*, *Preis veraltet* and *G/V* filters; the price session for a selection (from M3)
+- [x] Einstellungen › Preise editable: default price type, Cardmarket language filter and minimum condition, suggestions on/off, stale threshold, how unpriced cards count
+- [x] e2e + axe for the price flows, Übersicht, Preise, Portfolio, the session and the price sheet
+- [ ] **You:** create a Vercel deploy hook for `main` and store it as the Actions secret `VERCEL_DEPLOY_HOOK` (once Vercel is connected), check M4 in Brave and on the iPhone, answer round 6 in `USER_QUESTIONS.md`
 
-**Exit:** 30 prices can be updated in ≤ 5 min. Dashboard numbers reconcile with a hand-calculated fixture.
+**Exit:** 30 prices can be updated in ≤ 5 min (the session: type, `Enter`, next; to confirm on your collection). Dashboard numbers reconcile with a hand-calculated fixture (unit test) and agree across Übersicht, Sammlung and Portfolio (e2e).
+
+**Carried forward:** spending analytics (PRT-06, later); the long-press menu on phone tiles (M6); a worker for the time series if collections grow into the thousands (ADR-039).
 
 ---
 

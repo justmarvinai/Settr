@@ -162,6 +162,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
 - **Recently added tile:** a horizontal strip of the last 10 holdings.
 - **Unpriced notice:** when holdings have no price, a subtle line such as "12 Positionen ohne Preis. Nicht im Gesamtwert enthalten." links to a filtered collection.
 - **Empty state (first run):** a 3-step welcome ("Set öffnen → Karte hinzufügen → Preis eintragen") and the backup/persistence explainer. There's no demo data (I-19 = no).
+- **As built (M4):** the hero shows Gesamtwert, P/L (arrow, sign and color), *Investiert* and *Realisiert*; its step chart switches between *Wert* and *Gewinn/Verlust* (with a dashed *Investiert* line in value mode), keeps range and mode per device, and scrubbing shows any day's numbers and the change since the range began. The number doesn't count up (motion stays for M6). The stale tile starts the session for stale prices, progress shows up to four sets × languages, movers link to their cards (abs or %), the allocation is cards / graded / sealed, and *Zuletzt hinzugefügt* lists the latest lots. The unpriced notice links to Sammlung filtered to unpriced lots.
 
 ### 4.2 Katalog › Sets · CAT-01
 
@@ -241,6 +242,7 @@ Each screen lists its **purpose**, **layout**, **key interactions** and **states
   - ***Eigener Wert* (PRC-07, R2.2):** the reference price means Near Mint or better, so a worse copy (LP, damaged) can get its own per-lot value with a date and an optional note. That lot then shows the value with an *"eigener Wert"* tag, and it goes stale like any price.
 - **Prev/next:** ← / → keys and swipe on mobile, in set order.
 - **Shared-element transition (DSN-02):** the tile image morphs into the hero image.
+- **As built (M4):** the language follows the page's language switch; variant and grade selectors appear only where a card has them. The chart marks every entry by type, draws the purchase price per copy (average of the lots) dashed, compares other card languages as dashed lines with their own color and pattern, scrubs with the pointer or the arrow keys, and has a table view. `P` focuses *Neuer Preis*; the inline form shows the live delta to the last price and *Unverändert · 31,50 €* when the last price is older than today. Price-guide chips read *"Cardmarket-Preisführer vom 23.09.2026 · alle Sprachen, Länder und Zustände"* with *ab* and *Trend*; accepted values are listed as *Preisführer ab/Trend*. The lot menu is Bearbeiten, Duplizieren, *Preis eintragen…*, *Eigener Wert…*, Verkaufen…, Öffnen… (sealed), Löschen. Holo viewer, swipe and the shared-element transition stay for M6.
 
 ### 4.5 Sealed product detail · CAT-05
 
@@ -270,6 +272,7 @@ This screen uses the same structure as card detail, but:
   - *Grouping* shows groups in their own order (sets as in the catalog, rarities from common up, languages as everywhere, locations as sorted in Einstellungen), "ohne …" last; the sort applies inside each group.
   - *Multi-select:* check boxes on hover (desktop) or after *Auswahl* (always on touch), `Space` on a focused tile, the table's header box for everything shown. The bar at the bottom offers **Tags …** (checked = all, dash = some; untouched tags stay), **Verschieben …** (into a binder, lots fill the next free pockets in list order; lots already in it keep theirs) and **Löschen**, each with *Rückgängig*. The price session (M4) and CSV (M5) for a selection come later.
   - `N` on a focused tile adds another lot of that card or product; custom items and lots whose item left the catalog open their edit sheet instead of a page.
+- **As built (M4):** the summary adds *Wert* and *Gewinn/Verlust* (with how many lots have no price or a stale one); tiles show value and P/L % (a dot for a stale price, *eigener Wert* where it applies); the table adds Wert/Stk., Wert, G/V, G/V % and *Preis vom*, and a column chooser remembers the columns per device. Filters add *Bepreist/Ohne Preis*, *Preis veraltet* and *G/V positiv/negativ*. *Preise …* in the selection bar starts a price session for the selected lots. `P` on a tile or a row's name opens *Preis eintragen*.
 
 ### 4.7 Add / edit holding sheet · COL-01, COL-02
 
@@ -318,6 +321,7 @@ This screen uses the same structure as card detail, but:
 - Fields: amount (autofocus), date (default today), type (*Trend*, *ab*, *30-Tage-Ø*, *7-Tage-Ø*, *Verkauft*, *Eigene Schätzung*, with the default from settings) and an optional note.
 - It shows the last price and its date, and a live delta vs last (+/− abs and %).
 - `Enter` saves and `Esc` closes. "Unverändert" (`U`) re-confirms the last price with today's date.
+- **As built (M4, ADR-040):** a sheet like the other collection forms (right on desktop, from the bottom on phones), from `P` on set and Sammlung tiles and table rows, the € button on set tiles (hover or focus, desktop) and the lot menu; on card and product pages `P` focuses the inline field instead. It shows the item, the current price with its context and staleness, the Cardmarket button, variant/grade selectors where they exist (preset from the lot, or the variant you own), guide chips, then amount (focused) with the live delta, date, type and note. `Enter` saves and closes with *Rückgängig* in the toast; `U` (also typed into the amount) confirms the last price for today, keeping its type and context.
 
 ### 4.10 Price-update session · PRC-04 (signature feature)
 
@@ -346,6 +350,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 - **Keyboard:** `C` opens Cardmarket (exact product, language + seller country DE + Near Mint or better preset) in a new tab, `V` copies the price-guide suggestion into the input, `Enter` saves and advances, `U` keeps the price unchanged, `S` skips, `←` goes back, and `Esc` pauses. The session can be resumed, and its state persists.
 - **On desktop,** a tip suggests arranging Settr and Cardmarket side by side. Cardmarket can't be embedded in an iframe.
 - **Summary screen:** number updated, portfolio delta caused by this session, the biggest movers, and "Fertig" or "Weitere veraltete Preise".
+- **As built (M4):** started from the Preise hub (scope *Veraltete Preise*, *Ohne Preis* or *Alle Preise* with their counts; order *Wertvollste zuerst*, *Älteste Preise zuerst* or *Wie im Set*), from the stale tile on Übersicht, or for a selection in Sammlung (*Preise …*). A series is one step: all lots of a card in one language, variant and grade share its price (lots with an *Eigener Wert* don't need one). Each step shows the picture, the lot's language · variant · condition or grade, the last price with its type and age, the price paid per copy and the copies held; the progress bar and *12 von 37* sit above. Saving a step again replaces what the session entered for it. The session state lives in `kv` (never exported) and survives reloads; the hub offers *Session fortsetzen* or *Verwerfen*. Wishlist and top-N scopes come with those features.
 
 ### 4.11 Portfolio · PRT-02…06
 
@@ -353,6 +358,7 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 - **Aufteilung:** allocation by category (singles/sealed/graded), set, language and rarity, shown as a donut plus a ranked bar list (treemap optional).
 - **Performance:** a sortable best/worst list (abs and %), P/L per set and per language, and a realized P/L section (sales tracking is on, Q6.5).
 - **Ausgaben:** spend per month (bars), spend by source, and average price per card by rarity.
+- **As built (M4):** one page with filters at the top (*Alles / Karten / Sealed*, language and set where there's more than one; in the URL) that apply to everything below: the hero chart of Übersicht for that part (*Wert der Auswahl* when filtered), *Aufteilung* by Art (cards / graded / sealed), Set, Sprache or Seltenheit as a donut with a ranked list of shares and amounts (top six, then *Weitere*; lots without a price are left out and counted), *Seit dem Kauf* with the top eight gains and losses, *Performance* per set or language (Wert, Investiert, G/V), and *Realisiert*: the total and every sale and trade with its proceeds after fees, its cost and its result (*Ergebnis offen* when the price paid is unknown). *Ausgaben* is PRT-06, later (I-21).
 
 ### 4.12 Wunschliste · WSH-01 (post-v1, I-06)
 
@@ -369,6 +375,8 @@ Updating dozens of prices by hand is tedious. The session turns it into a fast, 
 | **Lagerorte** | Binders and boxes: name, layout (3×3 / 3×4 / 4×3 / custom), page count, sort order |
 | **Daten** | Export backup (a download; Brave asks where to save it) · import backup · CSV export · backup reminder interval · **storage status**: persistent yes/no (`persist()`) and used space; the reported quota isn't relied on, since Brave always reports 2 GiB (ADR-027) · request persistence · **install hint**: an installed app gets `persist()` (Brave: the install icon in the address bar, or ☰ → *Save and share* → *Install Settr…*; English menu names, the German ones are to verify) · **delete-on-exit warning**: Brave's Shields *"Forget me when I close this site"*, the *"Delete data on exit"* tab under *Clear browsing data* and a per-site *"clear cookies on exit"* erase the whole collection (all off by default; ADR-027, R3.4) · delete all data |
 | **Über** | App version and the long tagline (*"Jede Karte. Jedes Set. Jeder Cent."*) · catalog version and date · data sources and credits · keyboard shortcuts · legal (disclaimer, privacy, Impressum if public) |
+
+- **As built (M4), Preise:** default price type (a select), the Cardmarket filters (sellers from Germany, fixed while it's the only verified country; *Nur Angebote in der Sprache der Karte*; the minimum condition MT…PO), *Vorschläge aus dem Cardmarket-Preisführer* on/off, *Preis veraltet nach* 7/14/30/60/90 days and *Karten ohne Preis im Gesamtwert* (*nicht mitzählen* / *mit Einkaufspreis*). Changes apply at once.
 
 ### 4.14 Onboarding · APP-06
 

@@ -9,6 +9,16 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 ## [Unreleased]
 
 ### Added
+- **M4 · Prices & Portfolio (v0.4.0 candidate, 2026-09-24).**
+  - **Prices (PRC-01…03):** card and product pages show the current price with its context (*Deutsch · ab (DE) · NM oder besser*), take a new one inline (`P` focuses it, `Enter` saves, *Unverändert* confirms the last one for today), and chart every entry with shaped markers, the purchase price as a dashed baseline, ranges `1M · 3M · 6M · 1J · Max`, scrubbing and other card languages to compare; the entries list edits and deletes, all undoable. Variant and grade pick the series where a card has them.
+  - **Preis eintragen (UX §4.9, ADR-040):** a sheet from `P` on set and Sammlung tiles and table rows, the € button on set tiles and the lot menu, preset to the lot's language, variant and grade; `U` confirms the last price.
+  - **Eigener Wert (PRC-07):** a lot's own value per copy with date and note (LP or damaged copies), tagged wherever it's shown.
+  - **Übersicht (PRT-01):** Gesamtwert with P/L, *Investiert* and *Realisiert* over a scrubbable step chart (value or P/L, with the invested line), stale prices, set progress, the biggest gains and losses since purchase, the allocation and the latest additions; a notice for lots without a price.
+  - **Sammlung:** *Wert* and *Gewinn/Verlust* in the summary, value and P/L on tiles, price columns in the table with a column chooser, and filters for priced, stale, gains and losses.
+  - **Preise (PRC-05) and the price session (PRC-04):** how current your prices are, the most valuable stale ones and the latest entries; a session walks stale, unpriced, all or selected series by value, age or set order, opens Cardmarket with `C`, saves with `Enter`, keeps with `U`, skips with `S`, goes back with `←`, pauses with `Esc`, resumes later and sums up what changed.
+  - **Price-guide suggestions (PRC-09):** a daily deployment builds a snapshot of Cardmarket's price guide for the catalog's products (never committed, ADR-029); *ab* and *Trend* show as dated, scope-labeled chips on card pages, in the price sheet and in the session, `V` copies one, and nothing is saved until you save it (`origin: 'guide'`).
+  - **Portfolio (PRT-02…04):** everything or a part (cards or sealed, a language, a set) over time, the allocation by category, set, language or rarity, the lots that gained and lost most, P/L per set or language, and every sale and trade with its realized result.
+  - **Einstellungen › Preise:** default price type, the Cardmarket language filter and minimum condition, suggestions on or off, when a price gets stale, and how unpriced cards count.
 - **M3 · Collection (v0.3.0 candidate, 2026-09-23).**
   - **Adding (COL-01, COL-02):** ＋ on set tiles adds one copy in one click (the view's language, NM, no price) with a toast and *Rückgängig*; `N` on a focused tile, *Hinzufügen* on card and product pages and *＋ Hinzufügen* (the palette in add mode) open the add sheet: language, variant, condition or state, quantity, price per copy or for all, date, source, Lagerort with the next free pocket, and fees, grading, tags and note under *Mehr Details*. `Enter` saves, `⇧ Enter` adds and opens the next card. The last-used language, source and Lagerort are remembered per device.
   - **Lots (COL-03, COL-11, COL-12):** *In deiner Sammlung* on card and product pages lists every lot with cost, date, source and place; its menu edits, duplicates, sells or gives away part of a lot, opens sealed products (with optional pulls whose cost is split by their prices, evenly without prices) and deletes, all undoable.
@@ -42,11 +52,21 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
   - **Quality:** Oxlint (type-aware, layer boundaries) + oxfmt, Vitest unit/integration tests and Browser Mode component tests, Playwright e2e on Chromium (desktop, phone) and WebKit (iPhone) with axe in light and dark plus a console/CSP guard, size-limit budgets, lefthook hooks, and GitHub Actions CI.
 
 ### Changed
+- Charts are hand-written SVG instead of Recharts (ADR-038); the portfolio time series runs on the main thread (ADR-039).
+- `pnpm build` ends with the price-guide step (`scripts/price-guide`), which writes an empty snapshot outside Vercel; the service worker serves `cm-prices.json` stale-while-revalidate. `price-guide.yml` runs daily and calls the Vercel deploy hook in the `VERCEL_DEPLOY_HOOK` secret.
+- The lot menu offers *Preis eintragen …*; *Eigener Wert* has its own icon.
+- The WebKit e2e project allows 60 s per test: CI renders WebKit in software.
 - The shell's icons (sidebar, tab bar, toolbar, backup pill, toasts) are single-weight inline SVG, and the list pages and entry sheets load only with their routes (ADR-037): initial JS is 219.6 KB gzip after M3.
 - Initial JS budget 230 KB (TanStack Query joined with the catalog loader, ADR-030 amendment); CSS budgets split into initial (≤ 35 KB) and on-demand (≤ 45 KB per file).
 - `vercel.json`: `/catalog/*` app routes reach the SPA (only `/catalog/v1/` is static); `/img/tcgp/*` proxies TCGplayer pictures.
 
+### Fixed
+- On phones a toast could cover an open dialog's buttons; while a dialog or sheet is open, toasts show at the top.
+- Einstellungen › Daten works offline again (it no longer asks for the catalog to show the page).
+- A picture's loading placeholder pulses three times instead of forever.
+
 ### Docs
+- **M4 notes:** ADR-038 (SVG charts, supersedes ADR-010), ADR-039 (time series on the main thread), ADR-040 (price entry as a sheet; guide values keep their type with `origin: 'guide'`). `UX_SPEC.md` §4.1, §4.4, §4.6, §4.9–4.11 and §4.13 as built; `DATA_MODEL.md` (session and UI preferences in `kv`, guide entries, the snapshot as built); `ARCHITECTURE.md` (charts, the price-guide build step, folders `features/prices`, `features/overview`, `features/portfolio`); `QUALITY.md` (e2e for prices, WebKit timeout, budgets); `USER_QUESTIONS.md` round 6.
 - **M3 notes:** ADR-036 (collection lists without a table library: one domain pipeline + TanStack Virtual), ADR-037 (startup bundle hygiene: route-owned features, a lean shell). `UX_SPEC.md` §4.6–4.8 as built (Sammlung, add sheet, sell and open, Schnellerfassung); `DATA_MODEL.md` §6.2 (opening split as built, quick adds without date); `ARCHITECTURE.md` (folders `features/entry`, `features/library`, `db/core`, the lists row of the stack, the add flow); `USER_QUESTIONS.md` round 5 (condition default, lots in binders, opening split, missing cards, table columns; nothing blocking).
 - **M2 notes:** ADR-033 (pipeline: pinned sources offline, network facts in CI), ADR-034 (SC names converted from the official TC names), ADR-035 (card URLs under their set, ids with colons, one search worker). `DATA_MODEL.md` §4 matches the catalog schema; `DATA_SOURCES.md` records what the CI syncs found and what's resolved (TC licensing, M6a 156, Classic Collection numbers); `UX_SPEC.md` card route; `ARCHITECTURE.md` search as built; `QUALITY.md` budgets; `USER_QUESTIONS.md` round 4 (things to check, nothing blocking).
 - **M1 notes:** ADR-030 (budgets re-baselined on the measured build: initial JS ≤ 220 KB, fonts ≤ 125 KB), ADR-031 (primitives hand-written on Base UI because the shadcn CLI needs the TypeScript JS API that TS 7 dropped) and ADR-032 (pre-paint UI state in `localStorage`). Updated `QUALITY.md` (budgets, test layers, CI steps, hooks), `ARCHITECTURE.md` (versions, folders, state), `UX_SPEC.md` (settings routes incl. *Lagerorte*, the phone *Mehr* sheet), `DATA_MODEL.md` (`PriceLatest.createdAt`), `I18N.md` (Paraglide build) and `CLAUDE.md` (phase, commands, sandbox notes).

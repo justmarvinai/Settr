@@ -1,15 +1,33 @@
 # Settr: Questions and Decisions
 
-> Last updated: 2026-09-23.
+> Last updated: 2026-09-24.
 > **Rounds 1–3: answered ✓** (decision records below, incorporated into spec v0.3).
-> **Coding: approved on 2026-09-23** ("You can start"). M1 (Foundation), M2 (Catalog) and M3 (Collection) are built and wait for your check.
-> **Rounds 4 (M2) and 5 (M3): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M3 are merged; M4 (Prices & Portfolio) is built and waits for your check.
+> **Rounds 4 (M2), 5 (M3) and 6 (M4): open**, nothing blocking. Until you answer, my recommendation (⭐) applies.
 
 ## How to answer
 
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 6: prices and portfolio (M4, open, nothing blocking)
+
+**To do on your side (once Vercel is connected):** in Vercel › Project › Settings › Git › *Deploy Hooks*, create a hook for `main` and store its URL in GitHub › Settings › Secrets and variables › Actions as `VERCEL_DEPLOY_HOOK`. Then the daily `price-guide.yml` job redeploys every morning and the Cardmarket price-guide suggestions appear. Without it everything else works; the chips just stay hidden. And when you try the price session on your collection: does 30 prices in about 5 minutes feel right (the M4 exit criterion)?
+
+**R6.1 · Seller country for *ab (DE)*.** Only Germany is a verified Cardmarket country id, so the Cardmarket links and every *ab (DE)* price assume German sellers; Einstellungen › Preise shows it as fixed. The language filter and the minimum condition can be changed.
+- [ ] ⭐ Keep German sellers fixed (your rule, R2.2).
+- [ ] Add *alle Länder* as an option (prices then read *ab (alle Länder)*).
+
+**R6.2 · What `V` copies from the price guide.** Next to the price field the guide shows *ab* (the cheapest offer on Cardmarket, over all languages, countries and conditions) and *Trend*. `V` copies *ab*, the same type as your default. For German cards the guide's *ab* is often below "cheapest German seller, German, NM or better", because it includes every language and condition.
+- [ ] ⭐ `V` copies *ab*; *Trend* is one click on its chip.
+- [ ] `V` copies *Trend*.
+
+**R6.3 · *Preis eintragen* as a sheet.** The spec described a small popover at the tile. It's built as the same sheet as *Hinzufügen*, *Eigener Wert* or *Verkaufen* (right on desktop, from the bottom on the iPhone; ADR-040): `P` on a tile or row, the € button on set tiles, or *Preis eintragen…* in a lot's menu. On a card page `P` jumps to the price field instead.
+- [ ] ⭐ Keep the sheet.
+- [ ] I'd rather have a small popover at the tile on desktop.
 
 ---
 

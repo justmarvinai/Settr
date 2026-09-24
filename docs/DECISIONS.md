@@ -43,6 +43,9 @@
 | 035 | Catalog URLs and search: cards under their set, ids with colons, one worker index | Accepted (M2) |
 | 036 | Collection lists without a table library: one domain pipeline + TanStack Virtual | Accepted (M3) |
 | 037 | Startup bundle hygiene: route-owned features and a lean shell | Accepted (M3; amends ADR-030) |
+| 038 | Hand-written SVG charts instead of Recharts | Accepted (M4; supersedes ADR-010) |
+| 039 | Portfolio time series on the main thread (no worker yet) | Accepted (M4) |
+| 040 | Price entry as a sheet; price-guide values stored as `from`/`trend` with `origin: 'guide'` | Accepted (M4) |
 
 ---
 
@@ -344,3 +347,17 @@
   - Colors come from tokens only: the accent line, the gain/loss tint against the baseline, the new `--viz-1…8` palette for comparison lines, which also differ by dash pattern.
 - **Consequences:** a few KB instead of 116 KB, the charts look exactly like the design system, and they work offline and without layout libraries. We own the edge cases (flat lines, one point, prices older than the range), which the scale tests cover. Treemaps and other chart types stay out of v1.
 - **Alternatives:** Recharts 3 (too heavy, see above), TradingView Lightweight Charts 5 (canvas instead of SVG, mandatory attribution, a second look to theme), visx (low-level pieces we'd assemble anyway), uPlot (canvas, tiny, but no SVG accessibility and its own look).
+
+### ADR-039 · Portfolio time series on the main thread (Accepted, M4)
+- **Context:** The roadmap planned the portfolio time series (DATA_MODEL.md §6.5) in a Web Worker. Built in M4, the event sweep is one pass over lots and price entries per grid day. Measured in the build sandbox: 1,500 lots over 600 series with 4,800 prices and two years of daily points take 160–190 ms; a v1 collection (one set, a few hundred lots) takes a few milliseconds.
+- **Decision:** `portfolioSeries` runs on the main thread, in the render of the charts that show it (Übersicht, Portfolio). The React Compiler memoizes it on its inputs, so scrubbing the chart doesn't recompute it; a new price, a range or a mode does.
+- **Consequences:** no worker protocol, no second copy of the domain code in a worker chunk, and the chart has its data in the first render. With collections in the thousands a range change can take a noticeable moment: that's the signal to move the sweep into a worker (the function is pure and takes plain data, so the move is mechanical).
+- **Alternatives:** a worker now (message passing and structured cloning of every lot and price for a computation that is fast at v1 sizes), caching series in IndexedDB (derived data to keep in sync).
+
+### ADR-040 · Price entry as a sheet; guide values stored as `from`/`trend` with `origin: 'guide'` (Accepted, M4)
+- **Context:** UX_SPEC.md §4.9 describes a price entry *popover*. The app already opens every collection form as a sheet (right on desktop, from the bottom on phones), and a popover anchored to a tile would be cramped on phones and a second pattern next to the add, sell and value forms. Separately, accepted price-guide suggestions (PRC-09, ADR-020) need a type: Cardmarket's guide `low` is an *ab* price, but over all languages, countries and conditions, not the German-seller, same-language, Near-Mint *ab (DE)* of R2.2.
+- **Decision:**
+  - *Preis eintragen* is a sheet like the other collection forms: from `P` on a set or Sammlung tile, a table row's name, the € button on set tiles and the lot menu. On card and product pages `P` focuses the inline price field instead.
+  - An accepted guide value keeps the price type it is (`from` for *ab*, `trend` for *Trend*) with `origin: 'guide'`, `source: 'cardmarket'` and no `context` (no filters applied). Lists label such entries *Preisführer ab* / *Preisführer Trend*, and the context line never claims a filter the value didn't have. No new price type, so no user-data shape change.
+- **Consequences:** one sheet pattern everywhere, keyboard-first on desktop and thumb-friendly on phones. Valuation treats a guide value like any price of its series; the entry says where it came from.
+- **Alternatives:** an anchored popover (small, and a second pattern), new price types `guide-low`/`guide-trend` (a user-data shape change with a migration for no gain in valuation).
