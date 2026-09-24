@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useStoredDisplay } from '@/db/core';
+import { db, updateSettings, useStoredDisplay } from '@/db/core';
 import type { Settings } from '@/domain/schemas';
 
 type Display = Settings['display'];
@@ -35,11 +35,40 @@ export function applyDisplay(display: Display): void {
   }
 }
 
+/** What the user just changed, until the stored settings say the same. */
+let pending: Partial<Display> | undefined;
+
+const hasCaughtUp = (stored: Display, change: Partial<Display>) =>
+  (change.theme === undefined || stored.theme === change.theme) &&
+  (change.reduceTransparency === undefined ||
+    stored.reduceTransparency === change.reduceTransparency) &&
+  (change.motion === undefined || stored.motion === change.motion) &&
+  (change.colorblindPL === undefined || stored.colorblindPL === change.colorblindPL);
+
+/**
+ * A display change from the UI: applied at once, then stored. Until the store has it, an older
+ * stored value (say, the first read after startup landing late) can't switch the page back or
+ * overwrite the pre-paint copy in localStorage.
+ */
+export function changeDisplay(current: Display, patch: Partial<Display>): Promise<unknown> {
+  const change = { ...pending, ...patch };
+  pending = change;
+  applyDisplay({ ...current, ...patch });
+  return updateSettings(db, { display: patch }).catch((error: unknown) => {
+    if (pending === change) pending = undefined;
+    throw error;
+  });
+}
+
 /** Keeps <html> in sync with the stored display settings and the OS preferences. */
 export function useDisplaySync(): void {
   const display = useStoredDisplay();
   useEffect(() => {
     if (!display) return undefined;
+    if (pending) {
+      if (!hasCaughtUp(display, pending)) return undefined; // older than the user's change
+      pending = undefined;
+    }
     applyDisplay(display);
     const onChange = () => applyDisplay(display);
     const queries = [darkQuery(), transparencyQuery()];

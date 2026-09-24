@@ -28,7 +28,7 @@ import {
   StorageSection,
   WipeSection,
 } from '@/features/data';
-import { applyDisplay } from '@/features/appearance';
+import { changeDisplay } from '@/features/appearance';
 import { LocationsManager, toastError } from '@/features/collection';
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
@@ -100,8 +100,7 @@ export function GeneralSettings() {
 export function AppearanceSettings() {
   const settings = useSettings();
   const setDisplay = (patch: Partial<Settings['display']>) => {
-    applyDisplay({ ...settings.display, ...patch }); // instant feedback
-    void updateSettings(db, { display: patch });
+    void changeDisplay(settings.display, patch); // instant feedback, stored after
   };
   return (
     <Section id="settings-appearance" title={m.settings_section_appearance()}>
