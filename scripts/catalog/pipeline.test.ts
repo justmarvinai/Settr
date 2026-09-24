@@ -17,9 +17,11 @@ import {
   simplify,
   type SpeciesNames,
 } from './names';
+import { finishesByNumber, finishesOf, numberKey, ruleFinishes, type Finish } from './finishes';
 import { answers } from './images';
+import type { PreviousCatalog } from './previous';
 import type { RawSet } from './tcgdex';
-import { deriveVariant } from './variants';
+import { deriveVariant, isPlainVariant } from './variants';
 
 const species = new Map<number, SpeciesNames>([
   [
@@ -336,10 +338,93 @@ describe('variants', () => {
     expect(deriveVariant({ type: 'reverse', foil: 'pokeball' }, 'test').kind).toBe('pattern');
   });
 
+  it('reads the subtypes, symbols and prize foils of later sets', () => {
+    // Pokémon GO's reverse holos with a Ditto sticker come from its booster packs.
+    expect(variant({ type: 'reverse', subtype: 'peelable-ditto' })).toEqual({
+      id: 'reverse+peelable-ditto',
+      kind: 'pattern',
+      de: 'Reverse-Holo · Ditto-Sticker',
+    });
+    expect(variant({ type: 'normal', subtype: 'blue-border' })).toMatchObject({
+      id: 'normal+blue-border',
+      kind: 'stamp',
+    });
+    // My First Battle prints its deck's symbol on every card.
+    expect(variant({ type: 'normal', stamp: ['bulbasaur', 'pokeball'] })).toEqual({
+      id: 'normal+bulbasaur+pokeball',
+      kind: 'stamp',
+      de: 'Normal · Bisasam-Symbol · Pokéball-Symbol',
+    });
+    expect(variant({ type: 'reverse', foil: 'player-reward' })).toMatchObject({
+      id: 'reverse-player-reward',
+      kind: 'stamp',
+    });
+    // A print run is no variant of its own; a subtype is.
+    expect(isPlainVariant({ type: 'normal', subtype: 'unlimited' })).toBe(true);
+    expect(isPlainVariant({ type: 'reverse', subtype: 'peelable-ditto' })).toBe(false);
+  });
+
   it('stops on values it does not know', () => {
     expect(() => deriveVariant({ type: 'holo', foil: 'moonlight' }, 'x:1')).toThrow(
       /unknown variant foil/,
     );
+  });
+});
+
+describe('finishes of cards without TCGdex variants', () => {
+  it("reads TCGplayer's printings per card number, the regular product before promotional ones", () => {
+    const products = [
+      { productId: 1, name: 'Caterpie', extendedData: [{ name: 'Number', value: '001/149' }] },
+      {
+        productId: 2,
+        name: 'Caterpie (Prerelease)',
+        extendedData: [{ name: 'Number', value: '001/149' }],
+      },
+      {
+        productId: 3,
+        name: 'Tapu Koko GX',
+        extendedData: [{ name: 'Number', value: 'SV93/SV94' }],
+      },
+      { productId: 4, name: 'Booster Box' },
+    ];
+    const printings = [
+      { productId: 1, subTypeName: 'Reverse Holofoil' },
+      { productId: 1, subTypeName: 'Normal' },
+      { productId: 2, subTypeName: 'Holofoil' },
+      { productId: 3, subTypeName: 'Holofoil' },
+      { productId: 4, subTypeName: 'Normal' },
+    ];
+    expect(finishesByNumber(products, printings)).toEqual(
+      new Map([
+        ['1', ['normal', 'reverse']],
+        ['SV93', ['holo']],
+      ]),
+    );
+    expect(numberKey('63a/111')).toBe('63A');
+    expect(numberKey('SV001')).toBe('SV1');
+  });
+
+  it('falls back to the last build, then to the rarity rule', () => {
+    const config = { id: 'intl:sm1', rareIsHolo: false } as SetConfig;
+    const before = card('intl:sm1:2', { variants: [{ id: 'holo' }, { id: 'reverse' }] });
+    const lookup = {
+      table: new Map([['intl:sm1', new Map<string, Finish[]>([['1', ['normal', 'reverse']]])]]),
+      previous: { cards: new Map([[before.id, before]]) } as PreviousCatalog,
+    };
+    expect(finishesOf(lookup, config, 'intl:sm1:1', '1', 'common')).toEqual({
+      finishes: ['normal', 'reverse'],
+      source: 'tcgplayer',
+    });
+    expect(finishesOf(lookup, config, 'intl:sm1:2', '2', 'rare')).toEqual({
+      finishes: ['holo', 'reverse'],
+      source: 'previous',
+    });
+    expect(finishesOf(lookup, config, 'intl:sm1:3', '3', 'rare')).toEqual({
+      finishes: ['normal', 'reverse'],
+      source: 'rule',
+    });
+    expect(ruleFinishes('ultra-rare', false)).toEqual(['holo']);
+    expect(ruleFinishes('rare', true)).toEqual(['holo', 'reverse']);
   });
 });
 

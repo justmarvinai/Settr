@@ -26,6 +26,11 @@ export interface RawCard {
   trainerType?: string;
   energyType?: string;
   variants?: RawVariant[] | Record<string, boolean>;
+  /**
+   * The card's Cardmarket and TCGplayer products where TCGdex keeps them per card instead of per
+   * variant (Sun & Moon, early Sword & Shield); reverse holos share the product.
+   */
+  thirdParty?: { cardmarket?: number; tcgplayer?: number };
   /** Names only: Cardmarket names Pokémon products after them ("Magikarp [Vigorous Leap]"). */
   abilities?: { name: Record<string, string | undefined> }[];
   attacks?: { name: Record<string, string | undefined> }[];

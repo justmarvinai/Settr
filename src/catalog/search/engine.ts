@@ -7,6 +7,7 @@ import {
   isCjkTerm,
   isLatinWord,
   isNumberTerm,
+  normalizeText,
   numberTerms,
   queryTerms,
   usesPrefixSearch,
@@ -320,9 +321,8 @@ export function createSearchEngine(
   const illustratorTerms = memoize(indexTerms);
   const rarityTerms = memoize(rarityIndexTerms);
   const termsOf = ({ doc, numbers }: Entry): Record<Field, readonly string[]> => {
-    const names = (doc.names.includes(doc.name) ? doc.names : [doc.name, ...doc.names]).map(
-      nameTerms,
-    );
+    const own = doc.names.includes(doc.name) ? doc.names : [doc.name, ...doc.names];
+    const names = [...own, ...(doc.aliases ?? [])].map(nameTerms);
     return {
       names: union(names.map((name) => name.words)),
       cjkNames: union(names.map((name) => name.cjk)),
@@ -346,25 +346,38 @@ export function createSearchEngine(
     },
   });
 
+  const normalizedName = memoize((name: string) => normalizeText(name));
+
   function rank(
     terms: readonly string[],
+    text: string,
     accept: Check | undefined,
     limit: number,
   ): SearchResult[] {
     const numbers = terms.filter(isNumberTerm);
-    const hits: { entry: Entry; score: number; exactNumber: boolean }[] = [];
+    const wanted = normalizeText(text);
+    const hits: { entry: Entry; score: number; tier: number }[] = [];
     let best = 0;
     for (const hit of index.search(terms.join(' '))) {
       const id: unknown = hit.id;
       const entry = typeof id === 'string' ? byId.get(id) : undefined;
       if (!entry || (accept && !accept(entry))) continue;
       const exactNumber = numbers.some((term) => hit.match[term]?.includes('number'));
-      hits.push({ entry, score: hit.score, exactNumber });
+      const exactName = [entry.doc.name, ...entry.doc.names].some(
+        (name) => normalizedName(name) === wanted,
+      );
+      const byName = Object.values(hit.match).some(
+        (fields) => fields.includes('names') || fields.includes('cjkNames'),
+      );
+      hits.push({ entry, score: hit.score, tier: exactNumber || exactName ? 2 : byName ? 1 : 0 });
       best = Math.max(best, hit.score);
     }
-    // An exact card number outranks everything else: `4` lists 4/102 before 40–49 and 400.
+    // Tiers before relevance: an exact card number or name first (`4` lists 4/102 before 40–49
+    // and 400, `pikachu` the Pikachu cards before Meisterdetektiv Pikachu), then other name
+    // matches, then cards found only through their set or illustrator (Detective Pikachu's
+    // Bisasam). Species aliases don't count as the card's name.
     return hits
-      .map((hit) => ({ entry: hit.entry, score: hit.exactNumber ? hit.score + best : hit.score }))
+      .map((hit) => ({ entry: hit.entry, score: hit.score + hit.tier * best }))
       .toSorted((a, b) => b.score - a.score || compareEntries(a.entry, b.entry))
       .slice(0, limit)
       .map((hit) => toResult(hit.entry, hit.score));
@@ -377,7 +390,7 @@ export function createSearchEngine(
       const accept = compileFilter(filters, options, setKeys);
       const limit = resolveLimit(options.limit);
       const terms = queryTerms(text);
-      if (terms.length > 0) return rank(terms, accept, limit);
+      if (terms.length > 0) return rank(terms, text, accept, limit);
       if (!accept && filters.owned === undefined) return [];
       const results: SearchResult[] = [];
       for (const entry of ordered) {

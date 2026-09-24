@@ -25,6 +25,7 @@ import { CATALOG_SETS, NAME_DONORS } from './config';
 import { loadCardOverlays, loadIdAliases, loadJapaneseNames, loadSealed } from './curated';
 import { emitCatalog } from './emit';
 import { fetchSources, updateLock } from './fetch';
+import { loadFinishes, type FinishTable } from './finishes';
 import { createChecker, resolveImages } from './images';
 import { loadSpeciesNames } from './names';
 import { CACHE, REPORT } from './paths';
@@ -46,6 +47,15 @@ if (args.has('--update-sources')) {
 }
 await fetchSources({ network });
 const previous = loadPrevious();
+// Printings of cards TCGdex has no variants for (TCGCSV, network builds; ADR-057).
+let finishTable: FinishTable = new Map();
+if (network) {
+  try {
+    finishTable = await loadFinishes(CATALOG_SETS);
+  } catch (error) {
+    problems.warnings.push(`TCGCSV printings unavailable, the last build's kept: ${String(error)}`);
+  }
+}
 const species = loadSpeciesNames();
 const overlays = loadCardOverlays();
 const donors = await loadDonors(NAME_DONORS, loadTcgdexSerie);
@@ -55,6 +65,7 @@ const sets = await buildSets(
     overlays,
     donors,
     japaneseNames: loadJapaneseNames(),
+    finishes: { table: finishTable, previous },
     traditionalChinese: new Map(
       CATALOG_SETS.flatMap((c) =>
         c.traditionalChinese

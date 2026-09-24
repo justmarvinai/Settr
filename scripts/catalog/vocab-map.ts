@@ -21,6 +21,8 @@ const RARITY: Record<string, RarityId | null> = {
   'Radiant Rare': 'radiant-rare',
   'Amazing Rare': 'amazing-rare',
   'Ultra Rare': 'ultra-rare',
+  // The full-art Supporters of the Trainer Galleries (Silver Tempest).
+  'Full Art Trainer': 'ultra-rare',
   'Illustration rare': 'illustration-rare',
   'Special illustration rare': 'special-illustration-rare',
   'Secret Rare': 'secret-rare',
@@ -34,6 +36,8 @@ const RARITY: Record<string, RarityId | null> = {
   'Classic Collection': 'classic-collection',
   'ACE SPEC Rare': 'ace-spec-rare',
   'Shiny rare': 'shiny-rare',
+  'Shiny rare V': 'shiny-rare-v',
+  'Shiny rare VMAX': 'shiny-rare-vmax',
   'Shiny Ultra Rare': 'shiny-ultra-rare',
   Promo: 'promo',
 };

@@ -62,11 +62,8 @@ function searchDocs(
   const docs: SearchDoc[] = [];
   for (const set of sets) {
     for (const card of set.cards) {
-      const names = [
-        ...new Set(
-          [...Object.values(card.name), ...speciesAliases(card.dexIds, species)].filter(Boolean),
-        ),
-      ];
+      const names = [...new Set(Object.values(card.name).filter(Boolean))];
+      const aliases = speciesAliases(card.dexIds, species).filter((a) => !names.includes(a));
       const image =
         card.images[card.languages[0] as keyof typeof card.images] ?? Object.values(card.images)[0];
       docs.push({
@@ -76,6 +73,7 @@ function searchDocs(
         print: set.config.print,
         name: pickText(card.name),
         names,
+        ...(aliases.length ? { aliases } : {}),
         ...(card.printedNumber ? { number: card.printedNumber } : {}),
         sort: card.sort,
         ...(card.rarity ? { rarity: card.rarity } : {}),

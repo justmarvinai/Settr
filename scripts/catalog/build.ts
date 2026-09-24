@@ -16,6 +16,7 @@ import {
   type SetConfig,
 } from './config';
 import type { CardOverlay, JapaneseName } from './curated';
+import { finishesOf, finishVariants, type FinishLookup, type FinishSource } from './finishes';
 import { matchCounterparts } from './crossprint';
 import { deriveFromSpecies, germanFromEnglish, simplify, type SpeciesNames } from './names';
 import {
@@ -25,7 +26,7 @@ import {
   type RawVariant,
   type SourceSet,
 } from './tcgdex';
-import { deriveVariant, isPlainVariant, variantLanguages } from './variants';
+import { deriveVariant, isPlainVariant, PRINT_RUNS, variantLanguages } from './variants';
 import {
   ENERGY_ORDER,
   mapCategory,
@@ -49,6 +50,8 @@ export interface BuiltCard extends CatalogCard {
     variants: { id: string; cardmarket?: number }[];
     /** A donor card with the same artwork (its pictures stand in when the card has none). */
     donor?: { set: RawSet; localId: string };
+    /** Where the finishes came from when TCGdex lists no variants (finishes.ts). */
+    finishes?: FinishSource;
   };
 }
 
@@ -70,6 +73,8 @@ export interface BuildInputs {
   donors: Map<string, Donor[]>;
   /** Curated Japanese names (data/curated/names): the card to take names from, or the names. */
   japaneseNames: Map<string, JapaneseName>;
+  /** Finishes of cards TCGdex lists no variants for (finishes.ts). */
+  finishes: FinishLookup;
 }
 
 export interface BuildProblems {
@@ -105,12 +110,22 @@ const STANDARD_DEF: VariantDef = {
   label: { de: 'Standard', en: 'Standard' },
 };
 
+/** TCGdex's variants: a list, or flags (older sets). */
 const rawVariants = (raw: RawCard): RawVariant[] =>
   Array.isArray(raw.variants)
     ? raw.variants
-    : Object.entries(raw.variants ?? {})
-        .filter(([, present]) => present)
-        .map(([type]) => ({ type }));
+    : finishVariants(
+        Object.entries(raw.variants ?? {}).flatMap(([type, present]) => (present ? [type] : [])),
+      );
+
+/**
+ * The variants that are the card's regular product: where TCGdex keeps the products per card
+ * (Sun & Moon, early Sword & Shield), they get the card's (reverse holos share the product);
+ * stamped, deck and promo prints are products of their own.
+ */
+const REGULAR_VARIANTS = new Set(['normal', 'holo', 'reverse']);
+const productsOf = (variant: RawVariant, id: string, raw: RawCard) =>
+  variant.thirdParty ?? (REGULAR_VARIANTS.has(id) ? raw.thirdParty : undefined);
 
 /**
  * Whether booster packs carry a card of this rarity as a holo: everything above Uncommon, Rares
@@ -118,6 +133,10 @@ const rawVariants = (raw: RawCard): RawVariant[] =>
  */
 const isPackHolo = (rarity: RarityId, rareIsHolo: boolean) =>
   rarity === 'rare' ? rareIsHolo : rarity !== 'common' && rarity !== 'uncommon';
+
+/** The print run a variant belongs to (Base Set: 1st Edition, Shadowless, Unlimited), if any. */
+const printRunOf = (v: RawVariant) =>
+  v.subtype && PRINT_RUNS.has(v.subtype) ? v.subtype : undefined;
 
 interface CardVariants {
   variants: CardVariant[];
@@ -133,25 +152,33 @@ interface CardVariants {
 function cardVariants(
   config: SetConfig,
   raw: RawCard,
-  context: { languages: readonly CardLanguage[]; rarity: RarityId | undefined; extra: boolean },
+  context: {
+    languages: readonly CardLanguage[];
+    rarity: RarityId | undefined;
+    extra: boolean;
+    /** Variants from elsewhere when TCGdex lists none (finishes.ts). */
+    fallback?: RawVariant[] | undefined;
+  },
   where: string,
   problems: BuildProblems,
 ): CardVariants {
-  const { languages, rarity, extra } = context;
+  const { languages, rarity, extra, fallback } = context;
   // The Base Set's print runs (1st Edition, Shadowless, Unlimited): the set holds one of them.
-  const all = rawVariants(raw);
-  const runs = [...new Set(all.flatMap((v) => (v.subtype ? [v.subtype] : [])))];
+  const listed = rawVariants(raw);
+  const all = listed.length ? listed : (fallback ?? []);
+  const runs = [...new Set(all.flatMap((v) => printRunOf(v) ?? []))];
   if (runs.length && !config.printRun)
     problems.errors.push(
       `${where}: variants of several print runs (${runs.join(', ')}); set printRun`,
     );
-  const list = all.filter((v) => !v.subtype || v.subtype === config.printRun);
+  const list = all.filter((v) => !printRunOf(v) || printRunOf(v) === config.printRun);
   if (config.variants === 'single' || list.length === 0) {
     const cardmarketIds = new Set<number>();
     const tcgplayerIds = new Set<number>();
-    for (const variant of list) {
-      if (variant.thirdParty?.cardmarket) cardmarketIds.add(variant.thirdParty.cardmarket);
-      if (variant.thirdParty?.tcgplayer) tcgplayerIds.add(variant.thirdParty.tcgplayer);
+    const products = list.flatMap((v) => (v.thirdParty ? [v.thirdParty] : []));
+    for (const thirdParty of products.length ? products : [raw.thirdParty]) {
+      if (thirdParty?.cardmarket) cardmarketIds.add(thirdParty.cardmarket);
+      if (thirdParty?.tcgplayer) tcgplayerIds.add(thirdParty.tcgplayer);
     }
     if (cardmarketIds.size > 1)
       problems.errors.push(
@@ -199,11 +226,13 @@ function cardVariants(
     if (seen.langs && langs) seen.langs = [...new Set([...seen.langs, ...langs])];
     else delete seen.langs;
   }
-  const ordered = [...byId.values()].toSorted((x, y) => x.def.rank - y.def.rank);
+  const ordered = [...byId.values()]
+    .toSorted((x, y) => x.def.rank - y.def.rank)
+    .map((entry) => ({ ...entry, products: productsOf(entry.raw, entry.def.id, raw) }));
   return {
-    variants: ordered.map(({ def, raw: variant, langs }) => {
-      const cardmarket = variant.thirdParty?.cardmarket;
-      const tcgplayer = variant.thirdParty?.tcgplayer;
+    variants: ordered.map(({ def, products, langs }) => {
+      const cardmarket = products?.cardmarket;
+      const tcgplayer = products?.tcgplayer;
       const refs = {
         ...(cardmarket && config.print === 'intl' ? { cardmarket: { default: cardmarket } } : {}),
         ...(tcgplayer ? { tcgplayer } : {}),
@@ -214,9 +243,9 @@ function cardVariants(
         ...(Object.keys(refs).length ? { refs } : {}),
       };
     }),
-    source: ordered.map(({ def, raw: variant }) => ({
+    source: ordered.map(({ def, products }) => ({
       id: def.id,
-      ...(variant.thirdParty?.cardmarket ? { cardmarket: variant.thirdParty.cardmarket } : {}),
+      ...(products?.cardmarket ? { cardmarket: products.cardmarket } : {}),
     })),
     defs: ordered.map(({ def: { id, kind, label } }) => ({ id, kind, label })),
   };
@@ -237,6 +266,7 @@ function toCard(
   overlay: CardOverlay | undefined,
   extra: ExtraCards | undefined,
   legend: Map<string, VariantDef>,
+  finishLookup: FinishLookup,
   problems: BuildProblems,
 ): BuiltCard {
   const where = `${config.id} ${extra ? `${extra.idPrefix}:` : ''}${localId}`;
@@ -248,8 +278,9 @@ function toCard(
   const printedNumber =
     overlay?.printedNumber ??
     (extra ? undefined : config.printedNumber?.(localId)) ??
+    // Three-digit numbers come with a three-digit total (`001/086`); older sets print `4/102`.
     (n !== null && config.printedTotal && !extra
-      ? `${localId}/${config.printedTotal}`
+      ? `${localId}/${String(config.printedTotal).padStart(localId.length, '0')}`
       : JAPANESE_ENERGY_CODES[localId]
         ? ''
         : localId);
@@ -259,16 +290,36 @@ function toCard(
       ? 2000 + ENERGY_ORDER.indexOf(energyType as never)
       : (n ?? prefixedNumber(localId) ?? 1000 + ['R', 'G', 'B'].indexOf(localId)));
 
-  const rarity =
+  const listedRarity =
     config.forceRarity ??
+    (n === null ? undefined : config.rarityRanges?.find((r) => n >= r.from && n <= r.to)?.rarity) ??
     (raw.rarity ? config.rarities?.[raw.rarity] : undefined) ??
     mapRarity(raw.rarity, where) ??
     undefined;
   const languages = overlay?.languages ?? config.languages;
+  const cardId = `${extra?.idPrefix ?? config.id}:${localId}`;
+  const finishes =
+    rawVariants(raw).length || config.variants === 'single'
+      ? undefined
+      : finishesOf(finishLookup, config, cardId, localId, listedRarity);
+  // TCGdex calls Sun & Moon's holo rares "Rare"; a Rare printed only as a holo is one.
+  const rarity =
+    listedRarity === 'rare' &&
+    finishes &&
+    finishes.source !== 'rule' &&
+    finishes.finishes.includes('holo') &&
+    !finishes.finishes.includes('normal')
+      ? 'holo-rare'
+      : listedRarity;
   const variants = cardVariants(
     config,
     raw,
-    { languages, rarity, extra: extra !== undefined },
+    {
+      languages,
+      rarity,
+      extra: extra !== undefined,
+      fallback: finishes ? finishVariants(finishes.finishes) : undefined,
+    },
     where,
     problems,
   );
@@ -286,7 +337,7 @@ function toCard(
     nameSource[lang] = 'curated';
   }
   const card: BuiltCard = {
-    id: `${extra?.idPrefix ?? config.id}:${localId}`,
+    id: cardId,
     setId: config.id,
     localId,
     printedNumber,
@@ -317,7 +368,13 @@ function toCard(
     languages: [...languages],
     images: {},
     refs: { tcgdex: `${rawSet.id}-${localId}` },
-    source: { set: rawSet, localId, raw, variants: variants.source },
+    source: {
+      set: rawSet,
+      localId,
+      raw,
+      variants: variants.source,
+      ...(finishes ? { finishes: finishes.source } : {}),
+    },
   };
   return card;
 }
@@ -349,7 +406,17 @@ export async function buildSets(inputs: BuildInputs, problems: BuildProblems): P
     }
     const legend = new Map<string, VariantDef>();
     const cards = [...rawCards].map(([localId, rawCard]) =>
-      toCard(config, rawCard, raw, localId, overlays.get(localId), undefined, legend, problems),
+      toCard(
+        config,
+        rawCard,
+        raw,
+        localId,
+        overlays.get(localId),
+        undefined,
+        legend,
+        inputs.finishes,
+        problems,
+      ),
     );
     for (const extra of config.extras ?? []) {
       const { set: extraSet, cards: extraCards } = await loadTcgdexSet(extra.source);
@@ -359,7 +426,17 @@ export async function buildSets(inputs: BuildInputs, problems: BuildProblems): P
           problems.errors.push(`${config.id}: extra card ${extraSet.id}/${localId} not found`);
         else
           cards.push(
-            toCard(config, rawCard, extraSet, localId, undefined, extra, legend, problems),
+            toCard(
+              config,
+              rawCard,
+              extraSet,
+              localId,
+              undefined,
+              extra,
+              legend,
+              inputs.finishes,
+              problems,
+            ),
           );
       }
     }

@@ -35,7 +35,7 @@ export interface TcgplayerReport {
 }
 
 const CDN = 'https://tcgplayer-cdn.tcgplayer.com/product';
-const readResults = <T>(file: string) =>
+export const readResults = <T>(file: string) =>
   (JSON.parse(readFileSync(file, 'utf8')) as { results: T[] }).results;
 
 /** Downloads the groups of the configured categories and the products of the matching groups. */
@@ -71,7 +71,7 @@ export async function loadTcgcsv(sets: BuiltSet[]): Promise<Omit<TcgplayerReport
 /**
  * Pictures of curated products with a TCGplayer id: the English packaging for international
  * products (shown for DE too, marked as another language), the Japanese one for JP products.
- * Both sizes the app uses must answer. Offline, the last network build's pictures are kept.
+ * Both sizes the app uses must answer. Offline, the last build's pictures are kept.
  */
 export async function resolveProductImages(
   products: CatalogProduct[],
@@ -85,9 +85,8 @@ export async function resolveProductImages(
       if (!id) return;
       stats.curated++;
       if (!checker) {
-        const before = previous.manifest?.imagesVerified
-          ? previous.products.get(product.id)?.images
-          : undefined;
+        // Offline builds never add sealed pictures, so the last build's all passed a network check.
+        const before = previous.products.get(product.id)?.images;
         if (before) product.images = before;
         if (product.images) stats.found++;
         return;

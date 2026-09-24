@@ -173,9 +173,11 @@ export const searchDocSchema = z.object({
   kind: z.enum(['card', 'sealed']),
   setId: z.string().min(1),
   print: printSchema,
-  /** Display name (German first) and every other name and script, for matching. */
+  /** Display name (German first) and the card's names in every language and script. */
   name: z.string().min(1),
   names: z.array(z.string()),
+  /** PokéAPI species names the card isn't named after itself (Meisterdetektiv Pikachu: Pikachu). */
+  aliases: z.array(z.string()).optional(),
   number: z.string().optional(),
   sort: z.number().optional(),
   rarity: z.string().optional(),

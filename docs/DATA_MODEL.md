@@ -210,7 +210,8 @@ interface CatalogProduct {
 interface SearchDoc {             // search-index.json (ARCHITECTURE.md §7)
   id: string; kind: 'card' | 'sealed'; setId: string; print: Print;
   name: string;                  // display name (German first)
-  names: string[];               // every name and script, plus PokéAPI species aliases
+  names: string[];               // the card's names in every language and script
+  aliases?: string[];            // PokéAPI species names it isn't named after (found, never "exact")
   number?: string; sort?: number; rarity?: string; types?: string[]; category?: string;
   illustrator?: string; languages: CardLanguage[]; image?: CatalogImage;
 }
