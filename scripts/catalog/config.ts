@@ -65,6 +65,16 @@ export interface SetConfig {
   rareIsHolo?: boolean;
   /** Rarity for every card of the set (TCGdex leaves the Classic Collection at "None"). */
   forceRarity?: RarityId;
+  /**
+   * Rarities by card number where TCGdex's are wrong: M6 lists every secret card as Mega Hyper
+   * Rare; the layout every M set shares tells AR, SR, SAR and MUR apart (ADR-058).
+   */
+  rarityRanges?: { from: number; to: number; rarity: RarityId }[];
+  /**
+   * TCGplayer group of the set's cards: TCGCSV's printings per card stand in for the variants
+   * TCGdex lacks (most Sun & Moon sets, finishes.ts, ADR-057).
+   */
+  tcgplayerGroup?: number;
   /** TCGdex rarity values that mean something else in this set (M1S calls its SRs "Secret Rare"). */
   rarities?: Record<string, RarityId>;
   /**
@@ -145,6 +155,8 @@ function international(
     | 'printedNumber'
     | 'printRun'
     | 'rareIsHolo'
+    | 'forceRarity'
+    | 'tcgplayerGroup'
     | 'coverCard'
     | 'extras'
     | 'picturesIn'
@@ -194,8 +206,9 @@ function international(
   };
 }
 
-/** Three-digit printed numbers from TCGdex's unpadded ids (`1` → `001/185`). */
-const padded = (total: number) => (localId: string) => `${localId.padStart(3, '0')}/${total}`;
+/** Three-digit printed numbers from TCGdex's unpadded ids (`1` → `001/185`, `1` → `001/073`). */
+const padded = (total: number) => (localId: string) =>
+  `${localId.padStart(3, '0')}/${String(total).padStart(3, '0')}`;
 /** Trainer Gallery and Galarian Gallery numbers (`TG05/TG30`, `GG05/GG70`). */
 const gallery = (last: string) => (localId: string) => `${localId}/${last}`;
 
@@ -203,6 +216,9 @@ const gallery = (last: string) => (localId: string) => `${localId}/${last}`;
 const SCARLET_VIOLET = { series: SERIES.scarletViolet } as const;
 /** Before Scarlet & Violet, packs carry Rares as non-holos (`SetConfig.rareIsHolo`). */
 const SWORD_SHIELD = { series: SERIES.swordShield, rareIsHolo: false } as const;
+const SUN_MOON = { series: SERIES.sunMoon, rareIsHolo: false } as const;
+/** Sets that only came out in English (no German print, so no German name is due). */
+const englishOnly = (config: SetConfig): SetConfig => ({ ...config, languages: ['en'] });
 
 /**
  * A Japanese Mega Evolution set; Traditional Chinese mirrors it (same list and numbering), except
@@ -217,6 +233,7 @@ function japanese(
     | 'coverCard'
     | 'counterpartSets'
     | 'rarities'
+    | 'rarityRanges'
     | 'rarityMarks'
     | 'cardmarket'
   > & { name: LocalizedText; tcgplayer?: string; mirrored?: boolean },
@@ -231,21 +248,19 @@ function japanese(
     code: set,
     languages: mirrored ? ['ja', 'zh-tw'] : ['ja'],
     source: M(set),
-    section: printedTotal ? mainAndSecret(printedTotal) : () => 'main',
+    // Basic Energy without numbers (MC, MF: `GRA`, `FIR` …) is the set's energy section.
+    section: (localId) =>
+      JAPANESE_ENERGY_CODES[localId]
+        ? 'energy'
+        : printedTotal
+          ? mainAndSecret(printedTotal)(localId)
+          : 'main',
     ...(printedTotal ? { printedTotal } : {}),
     ...(mirrored ? { traditionalChinese: set } : {}),
     ...rest,
     ...(tcgplayer ? { tcgplayer: { category: 85, groupNames: [tcgplayer] } } : {}),
   };
 }
-
-/** The basic Energy of the Scarlet & Violet sets (SVE 001–008), sold in the first expansion's products. */
-const SVE_BASIC: ExtraCards = {
-  source: SV('Scarlet & Violet Energy'),
-  localIds: ['001', '002', '003', '004', '005', '006', '007', '008'],
-  section: 'energy',
-  idPrefix: 'intl:sve',
-};
 
 /** The basic Energy of the Mega Evolution sets (MEE 001–008), sold in the first expansion's products. */
 const MEE_BASIC: ExtraCards = {
@@ -429,6 +444,13 @@ export const CATALOG_SETS: SetConfig[] = [
     cardmarket: 6096,
     cardmarketOther: [6140], // deck exclusives
   }),
+  international('intl:sv09', SV('Journey Together'), {
+    ...SCARLET_VIOLET,
+    code: 'JTG',
+    expectedCards: 190,
+    printedTotal: 159,
+    coverCard: '185', // N's Zoroark ex, Special Illustration Rare
+  }),
   international('intl:sv08.5', SV('Prismatic Evolutions'), {
     ...SCARLET_VIOLET,
     code: 'PRE',
@@ -445,12 +467,47 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 191,
     coverCard: '238', // Pikachu ex, Special Illustration Rare
   }),
+  international('intl:sv07', SV('Stellar Crown'), {
+    ...SCARLET_VIOLET,
+    code: 'SCR',
+    expectedCards: 175,
+    printedTotal: 142,
+    coverCard: '170', // Terapagos ex, Special Illustration Rare
+  }),
+  international('intl:sv06.5', SV('Shrouded Fable'), {
+    ...SCARLET_VIOLET,
+    code: 'SFA',
+    expectedCards: 99,
+    printedTotal: 64,
+    coverCard: '093', // Pecharunt ex, Special Illustration Rare
+  }),
+  international('intl:sv06', SV('Twilight Masquerade'), {
+    ...SCARLET_VIOLET,
+    code: 'TWM',
+    expectedCards: 226,
+    printedTotal: 167,
+    coverCard: '211', // Teal Mask Ogerpon ex, Special Illustration Rare
+  }),
+  international('intl:sv05', SV('Temporal Forces'), {
+    ...SCARLET_VIOLET,
+    code: 'TEF',
+    expectedCards: 218,
+    printedTotal: 162,
+    coverCard: '205', // Walking Wake ex, Special Illustration Rare
+  }),
   international('intl:sv04.5', SV('Paldean Fates'), {
     ...SCARLET_VIOLET,
     code: 'PAF',
     expectedCards: 245,
     printedTotal: 91,
     coverCard: '234', // Charizard ex, Special Illustration Rare
+  }),
+  international('intl:sv04', SV('Paradox Rift'), {
+    ...SCARLET_VIOLET,
+    code: 'PAR',
+    expectedCards: 266,
+    printedTotal: 182,
+    coverCard: '251', // Roaring Moon ex, Special Illustration Rare
   }),
   international('intl:sv03.5', SV('151'), {
     ...SCARLET_VIOLET,
@@ -459,12 +516,34 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 165,
     coverCard: '199', // Charizard ex, Special Illustration Rare
   }),
+  englishOnly(
+    international('intl:mfb', SV('My First Battle'), {
+      ...SCARLET_VIOLET,
+      name: { de: 'My First Battle', en: 'My First Battle' },
+      code: 'MFB',
+      expectedCards: 34,
+      coverCard: '17', // Pikachu
+    }),
+  ),
+  international('intl:sv03', SV('Obsidian Flames'), {
+    ...SCARLET_VIOLET,
+    code: 'OBF',
+    expectedCards: 230,
+    printedTotal: 197,
+    coverCard: '223', // Charizard ex, Special Illustration Rare
+  }),
+  international('intl:sv02', SV('Paldea Evolved'), {
+    ...SCARLET_VIOLET,
+    code: 'PAL',
+    expectedCards: 279,
+    printedTotal: 193,
+    coverCard: '256', // Meowscarada ex, Special Illustration Rare
+  }),
   international('intl:sv01', SV('Scarlet & Violet'), {
     ...SCARLET_VIOLET,
     code: 'SVI',
     expectedCards: 258,
     printedTotal: 198,
-    extras: [SVE_BASIC],
     coverCard: '244', // Miraidon ex, Special Illustration Rare
   }),
   international('intl:svp', SV('SVP Black Star Promos'), {
@@ -474,8 +553,17 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 226,
     coverCard: '001',
   }),
+  // The basic Energy of the series: 001–008 came with the first expansion (its extras until
+  // 2026-09-24; the ids stayed), the others with later products.
+  international('intl:sve', SV('Scarlet & Violet Energy'), {
+    ...SCARLET_VIOLET,
+    name: { de: 'Karmesin & Purpur Energie', en: 'Scarlet & Violet Energy' },
+    code: 'SVE',
+    expectedCards: 24,
+    coverCard: '001',
+  }),
 
-  // Sword & Shield, international print (DE/EN), newest first; galleries are subsets.
+  // Sword & Shield, international print (DE/EN), newest first; galleries and vaults are subsets.
   international('intl:swsh12.5', SWSH('Crown Zenith'), {
     ...SWORD_SHIELD,
     code: 'CRZ',
@@ -490,6 +578,21 @@ export const CATALOG_SETS: SetConfig[] = [
     expectedCards: 70,
     printedNumber: gallery('GG70'),
     picturesIn: 'swsh12.5',
+  }),
+  international('intl:swsh12', SWSH('Silver Tempest'), {
+    ...SWORD_SHIELD,
+    code: 'SIT',
+    expectedCards: 215,
+    printedTotal: 195,
+    coverCard: '186', // Lugia V, alternate art
+  }),
+  international('intl:swsh12tg', SWSH('Silver Tempest Trainer Gallery'), {
+    ...SWORD_SHIELD,
+    parentSetId: 'intl:swsh12',
+    code: 'SIT',
+    expectedCards: 30,
+    printedNumber: gallery('TG30'),
+    picturesIn: 'swsh12',
   }),
   international('intl:swsh11', SWSH('Lost Origin'), {
     ...SWORD_SHIELD,
@@ -506,15 +609,28 @@ export const CATALOG_SETS: SetConfig[] = [
     printedNumber: gallery('TG30'),
     picturesIn: 'swsh11',
   }),
-  // Without Astral Radiance itself, its Trainer Gallery stands alone (R10.5).
+  international('intl:swsh10.5', SWSH('Pokémon GO'), {
+    ...SWORD_SHIELD,
+    code: 'PGO',
+    expectedCards: 88,
+    printedTotal: 78,
+    coverCard: '011', // Radiant Charizard
+  }),
+  international('intl:swsh10', SWSH('Astral Radiance'), {
+    ...SWORD_SHIELD,
+    code: 'ASR',
+    expectedCards: 216,
+    printedTotal: 189,
+    coverCard: '192', // Origin Forme Palkia VSTAR, Secret Rare
+  }),
+  // A main set of its own until 2026-09-24 (R10.5), now the subset of Astral Radiance; ids stayed.
   international('intl:swsh10tg', SWSH('Astral Radiance Trainer Gallery'), {
     ...SWORD_SHIELD,
+    parentSetId: 'intl:swsh10',
     code: 'ASR',
     expectedCards: 30,
     printedNumber: gallery('TG30'),
     picturesIn: 'swsh10',
-    coverCard: 'TG30', // Shadow Rider Calyrex VMAX, Secret Rare
-    cardmarket: 4979, // Astral Radiance, which sells its gallery
   }),
   international('intl:swsh9', SWSH('Brilliant Stars'), {
     ...SWORD_SHIELD,
@@ -531,6 +647,71 @@ export const CATALOG_SETS: SetConfig[] = [
     printedNumber: gallery('TG30'),
     picturesIn: 'swsh9',
   }),
+  international('intl:swsh8', SWSH('Fusion Strike'), {
+    ...SWORD_SHIELD,
+    code: 'FST',
+    expectedCards: 284,
+    printedTotal: 264,
+    printedNumber: padded(264),
+    coverCard: '269', // Mew VMAX, alternate art
+  }),
+  international('intl:cel25', SWSH('Celebrations'), {
+    ...SWORD_SHIELD,
+    code: 'CEL',
+    expectedCards: 25,
+    printedTotal: 25,
+    printedNumber: padded(25),
+    coverCard: '25', // Mew, gold
+  }),
+  // Reprints that keep their original numbers (data/curated/cards/intl-cel25cc.yaml).
+  international('intl:cel25cc', SWSH('Celebrations Classic Collection'), {
+    ...SWORD_SHIELD,
+    parentSetId: 'intl:cel25',
+    code: 'CEL',
+    expectedCards: 25,
+    forceRarity: 'classic-collection',
+    picturesIn: 'cel25',
+  }),
+  international('intl:swsh7', SWSH('Evolving Skies'), {
+    ...SWORD_SHIELD,
+    code: 'EVS',
+    expectedCards: 237,
+    printedTotal: 203,
+    printedNumber: padded(203),
+    coverCard: '215', // Umbreon VMAX, alternate art
+  }),
+  international('intl:swsh6', SWSH('Chilling Reign'), {
+    ...SWORD_SHIELD,
+    code: 'CRE',
+    expectedCards: 233,
+    printedTotal: 198,
+    printedNumber: padded(198),
+    coverCard: '205', // Shadow Rider Calyrex VMAX, alternate art
+  }),
+  international('intl:swsh5', SWSH('Battle Styles'), {
+    ...SWORD_SHIELD,
+    code: 'BST',
+    expectedCards: 183,
+    printedTotal: 163,
+    printedNumber: padded(163),
+    coverCard: '170', // Rapid Strike Urshifu VMAX, alternate art
+  }),
+  international('intl:swsh4.5', SWSH('Shining Fates'), {
+    ...SWORD_SHIELD,
+    code: 'SHF',
+    expectedCards: 73,
+    printedTotal: 72,
+    printedNumber: padded(72),
+    coverCard: '45', // Crobat VMAX
+  }),
+  international('intl:swsh4.5sv', SWSH('Shining Fates Shiny Vault'), {
+    ...SWORD_SHIELD,
+    parentSetId: 'intl:swsh4.5',
+    code: 'SHF',
+    expectedCards: 122,
+    printedNumber: gallery('SV122'),
+    picturesIn: 'swsh4.5',
+  }),
   international('intl:swsh4', SWSH('Vivid Voltage'), {
     ...SWORD_SHIELD,
     code: 'VIV',
@@ -538,6 +719,31 @@ export const CATALOG_SETS: SetConfig[] = [
     printedTotal: 185,
     printedNumber: padded(185),
     coverCard: '188', // Pikachu VMAX, Secret Rare
+  }),
+  international('intl:swsh3.5', SWSH("Champion's Path"), {
+    ...SWORD_SHIELD,
+    code: 'CPA',
+    expectedCards: 80,
+    printedTotal: 73,
+    printedNumber: padded(73),
+    coverCard: '74', // Charizard VMAX, Secret Rare
+  }),
+  englishOnly(
+    international('intl:fut2020', SWSH('Pokémon Futsal 2020'), {
+      ...SWORD_SHIELD,
+      name: { de: 'Pokémon Futsal 2020', en: 'Pokémon Futsal 2020' },
+      code: 'FUT20',
+      expectedCards: 5,
+      coverCard: '1', // Pikachu on the Ball
+    }),
+  ),
+  international('intl:swsh3', SWSH('Darkness Ablaze'), {
+    ...SWORD_SHIELD,
+    code: 'DAA',
+    expectedCards: 201,
+    printedTotal: 189,
+    printedNumber: padded(189),
+    coverCard: '20', // Charizard VMAX
   }),
   international('intl:swsh2', SWSH('Rebel Clash'), {
     ...SWORD_SHIELD,
@@ -547,6 +753,14 @@ export const CATALOG_SETS: SetConfig[] = [
     printedNumber: padded(192),
     coverCard: '197', // Dragapult VMAX, Secret Rare
   }),
+  international('intl:swsh1', SWSH('Sword & Shield'), {
+    ...SWORD_SHIELD,
+    code: 'SSH',
+    expectedCards: 216,
+    printedTotal: 202,
+    printedNumber: padded(202),
+    coverCard: '211', // Zacian V, Secret Rare
+  }),
   international('intl:swshp', SWSH('SWSH Black Star Promos'), {
     ...SWORD_SHIELD,
     name: { de: 'Schwert & Schild Promos', en: 'SWSH Black Star Promos' },
@@ -555,15 +769,152 @@ export const CATALOG_SETS: SetConfig[] = [
     coverCard: 'SWSH001',
   }),
 
-  // Sun & Moon and the Base Set, international print (DE/EN).
+  // Sun & Moon, international print (DE/EN), newest first. TCGdex has no variants for most of
+  // these sets: TCGplayer's printings stand in (tcgplayerGroup, finishes.ts, ADR-057).
+  international('intl:sm12', SM('Cosmic Eclipse'), {
+    ...SUN_MOON,
+    code: 'CEC',
+    expectedCards: 271,
+    printedTotal: 236,
+    tcgplayerGroup: 2534,
+    coverCard: '258', // Arceus & Dialga & Palkia GX, Secret Rare
+  }),
+  international('intl:sm115', SM('Hidden Fates'), {
+    ...SUN_MOON,
+    code: 'HIF',
+    expectedCards: 69,
+    printedTotal: 68,
+    tcgplayerGroup: 2480,
+    coverCard: '9', // Charizard GX
+  }),
+  international('intl:sma', SM('Hidden Fates Shiny Vault'), {
+    ...SUN_MOON,
+    parentSetId: 'intl:sm115',
+    code: 'HIF',
+    expectedCards: 94,
+    printedNumber: gallery('SV94'),
+    picturesIn: 'sm115',
+  }),
+  international('intl:sm11', SM('Unified Minds'), {
+    ...SUN_MOON,
+    code: 'UNM',
+    expectedCards: 258,
+    printedTotal: 236,
+    tcgplayerGroup: 2464,
+    coverCard: '242', // Mewtwo & Mew GX, Secret Rare
+  }),
+  international('intl:sm10', SM('Unbroken Bonds'), {
+    ...SUN_MOON,
+    code: 'UNB',
+    expectedCards: 234,
+    printedTotal: 214,
+    tcgplayerGroup: 2420,
+    coverCard: '217', // Reshiram & Charizard GX, Secret Rare
+  }),
+  international('intl:det1', SM('Detective Pikachu'), {
+    ...SUN_MOON,
+    code: 'DET',
+    expectedCards: 18,
+    printedTotal: 18,
+    tcgplayerGroup: 2409,
+    coverCard: '10', // Detective Pikachu
+  }),
+  international('intl:sm9', SM('Team Up'), {
+    ...SUN_MOON,
+    code: 'TEU',
+    expectedCards: 196,
+    printedTotal: 181,
+    tcgplayerGroup: 2377,
+    coverCard: '184', // Pikachu & Zekrom GX, Secret Rare
+  }),
+  international('intl:sm8', SM('Lost Thunder'), {
+    ...SUN_MOON,
+    code: 'LOT',
+    expectedCards: 236,
+    printedTotal: 214,
+    tcgplayerGroup: 2328,
+    coverCard: '227', // Lugia GX, Secret Rare
+  }),
+  international('intl:sm7.5', SM('Dragon Majesty'), {
+    ...SUN_MOON,
+    code: 'DRM',
+    expectedCards: 78,
+    printedTotal: 70,
+    tcgplayerGroup: 2295,
+    coverCard: '71', // Reshiram GX, Secret Rare
+  }),
+  international('intl:sm7', SM('Celestial Storm'), {
+    ...SUN_MOON,
+    code: 'CES',
+    expectedCards: 183,
+    printedTotal: 168,
+    tcgplayerGroup: 2278,
+    coverCard: '177', // Rayquaza GX, Secret Rare
+  }),
+  international('intl:sm6', SM('Forbidden Light'), {
+    ...SUN_MOON,
+    code: 'FLI',
+    expectedCards: 146,
+    printedTotal: 131,
+    tcgplayerGroup: 2209,
+    coverCard: '140', // Ultra Necrozma GX, Secret Rare
+  }),
+  international('intl:sm5', SM('Ultra Prism'), {
+    ...SUN_MOON,
+    code: 'UPR',
+    expectedCards: 173,
+    printedTotal: 156,
+    tcgplayerGroup: 2178,
+    coverCard: '163', // Dusk Mane Necrozma GX, Secret Rare
+  }),
+  international('intl:sm4', SM('Crimson Invasion'), {
+    ...SUN_MOON,
+    code: 'CIN',
+    expectedCards: 125,
+    printedTotal: 111,
+    tcgplayerGroup: 2071,
+    coverCard: '112', // Gyarados GX, Secret Rare
+  }),
+  international('intl:sm3.5', SM('Shining Legends'), {
+    ...SUN_MOON,
+    code: 'SLG',
+    expectedCards: 78,
+    printedTotal: 73,
+    tcgplayerGroup: 2054,
+    coverCard: '40', // Shining Mew
+  }),
   international('intl:sm3', SM('Burning Shadows'), {
-    series: SERIES.sunMoon,
-    rareIsHolo: false,
+    ...SUN_MOON,
     code: 'BUS',
     expectedCards: 169,
     printedTotal: 147,
     coverCard: '150', // Charizard-GX, Secret Rare
   }),
+  international('intl:sm2', SM('Guardians Rising'), {
+    ...SUN_MOON,
+    code: 'GRI',
+    expectedCards: 169,
+    printedTotal: 145,
+    tcgplayerGroup: 1919,
+    coverCard: '155', // Tapu Lele GX, Secret Rare
+  }),
+  international('intl:sm1', SM('Sun & Moon'), {
+    ...SUN_MOON,
+    code: 'SUM',
+    expectedCards: 172,
+    printedTotal: 149,
+    tcgplayerGroup: 1863,
+    coverCard: '154', // Umbreon GX, Secret Rare
+  }),
+  international('intl:smp', SM('SM Black Star Promos'), {
+    ...SUN_MOON,
+    name: { de: 'Sonne & Mond Promos', en: 'SM Black Star Promos' },
+    code: 'SMP',
+    expectedCards: 248,
+    coverCard: 'SM60', // Charizard GX
+  }),
+
+  // The Base Set, international print (DE/EN).
   international('intl:base1', BASE('Base Set'), {
     series: SERIES.base,
     rareIsHolo: false,
@@ -646,6 +997,46 @@ export const CATALOG_SETS: SetConfig[] = [
     coverCard: '114', // メガダークライex SAR
     cardmarket: { expansion: 6556 },
     tcgplayer: 'M5:',
+  }),
+  japanese('M6', {
+    name: { ja: 'ストームエメラルダ', de: 'Storm Emerald', en: 'Storm Emerald' },
+    expectedCards: 113,
+    printedTotal: 76,
+    // No international print yet; the names come from reprints (NAME_DONORS) and PokéAPI.
+    // TCGdex lists every card above 076 as Mega Hyper Rare; the layout every M set shares
+    // (12 AR, 18 SR, 6 SAR, 1 MUR) tells them apart (ADR-058).
+    rarityRanges: [
+      { from: 77, to: 88, rarity: 'illustration-rare' },
+      { from: 89, to: 106, rarity: 'ultra-rare' },
+      { from: 107, to: 112, rarity: 'special-illustration-rare' },
+      { from: 113, to: 113, rarity: 'mega-hyper-rare' },
+    ],
+    rarityMarks: 'all',
+    coverCard: '110', // メガレックウザex SAR
+    tcgplayer: 'M6:',
+  }),
+  // Reprints for the Start Deck 100 (2025) with numbers of their own; no rarities printed.
+  japanese('MC', {
+    name: {
+      ja: 'スタートデッキ100 バトルコレクション',
+      de: 'Start Deck 100 Battle Collection',
+      en: 'Start Deck 100 Battle Collection',
+    },
+    expectedCards: 774,
+    printedTotal: 742,
+    coverCard: '766', // メガリザードンYex
+    tcgplayer: 'MC:',
+  }),
+  // The premium deck set of 30th CELEBRATION (its box: asia:m6a-premium-deck-set).
+  japanese('MF', {
+    name: {
+      ja: '30th CELEBRATION プレミアムデッキセット エーフィ・ブラッキー',
+      de: 'Premium-Deckset Psiana & Nachtara',
+      en: 'Premium Deck Set Espeon & Umbreon',
+    },
+    expectedCards: 49,
+    printedTotal: 40,
+    coverCard: '044', // ブラッキーex
   }),
   japanese('M-P', {
     name: { ja: 'メガ プロモカード', de: 'MEGA-Promokarten', en: 'MEGA Promo Cards' },

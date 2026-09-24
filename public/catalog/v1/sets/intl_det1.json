@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "set": {
+    "id": "intl:det1",
+    "print": "intl",
+    "series": {
+      "id": "sun-moon",
+      "name": {
+        "de": "Sonne & Mond",
+        "en": "Sun & Moon"
+      }
+    },
+    "kind": "main",
+    "name": {
+      "de": "Meisterdetektiv Pikachu",
+      "en": "Detective Pikachu"
+    },
+    "code": "DET",
+    "languages": ["de","en"],
+    "releaseDates": {
+      "de": "2019-03-29",
+      "en": "2019-03-29"
+    },
+    "counts": {
+      "official": 18,
+      "total": 18
+    },
+    "cover": {
+      "cardId": "intl:det1:10",
+      "images": {
+        "de": {
+          "url": "https://assets.tcgdex.net/de/sm/det1/10",
+          "lang": "de"
+        },
+        "en": {
+          "url": "https://assets.tcgdex.net/en/sm/det1/10",
+          "lang": "en"
+        }
+      }
+    }
+  },
+  "subsets": [],
+  "cards": [
+    {"id":"intl:det1:1","setId":"intl:det1","localId":"1","printedNumber":"1/18","section":"main","sort":1,"name":{"de":"Bisasam","en":"Bulbasaur"},"category":"pokemon","rarity":"common","types":["grass"],"hp":60,"stage":"basic","dexIds":[1],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370766},"tcgplayer":186001}},{"id":"reverse","refs":{"cardmarket":{"default":370766},"tcgplayer":186001}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/1","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/1","lang":"en"}},"refs":{"tcgdex":"det1-1"}},
+    {"id":"intl:det1:2","setId":"intl:det1","localId":"2","printedNumber":"2/18","section":"main","sort":2,"name":{"de":"Kappalores","en":"Ludicolo"},"category":"pokemon","rarity":"rare","types":["grass"],"hp":140,"stage":"stage2","dexIds":[272],"illustrator":"Framestore","variants":[{"id":"normal","refs":{"cardmarket":{"default":370767},"tcgplayer":186003}},{"id":"reverse","refs":{"cardmarket":{"default":370767},"tcgplayer":186003}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/2","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/2","lang":"en"}},"refs":{"tcgdex":"det1-2"}},
+    {"id":"intl:det1:3","setId":"intl:det1","localId":"3","printedNumber":"3/18","section":"main","sort":3,"name":{"de":"Bubungus","en":"Morelull"},"category":"pokemon","rarity":"common","types":["grass"],"hp":50,"stage":"basic","dexIds":[755],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370768},"tcgplayer":186004}},{"id":"reverse","refs":{"cardmarket":{"default":370768},"tcgplayer":186004}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/3","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/3","lang":"en"}},"refs":{"tcgdex":"det1-3"}},
+    {"id":"intl:det1:4","setId":"intl:det1","localId":"4","printedNumber":"4/18","section":"main","sort":4,"name":{"de":"Glumanda","en":"Charmander"},"category":"pokemon","rarity":"common","types":["fire"],"hp":60,"stage":"basic","dexIds":[4],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370769},"tcgplayer":186005}},{"id":"reverse","refs":{"cardmarket":{"default":370769},"tcgplayer":186005}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/4","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/4","lang":"en"}},"refs":{"tcgdex":"det1-4"}},
+    {"id":"intl:det1:5","setId":"intl:det1","localId":"5","printedNumber":"5/18","section":"main","sort":5,"name":{"de":"Glurak","en":"Charizard"},"category":"pokemon","rarity":"ultra-rare","types":["fire"],"hp":180,"stage":"stage2","dexIds":[6],"illustrator":"Framestore","variants":[{"id":"holo","refs":{"cardmarket":{"default":370770},"tcgplayer":186007}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/5","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/5","lang":"en"}},"refs":{"tcgdex":"det1-5"}},
+    {"id":"intl:det1:6","setId":"intl:det1","localId":"6","printedNumber":"6/18","section":"main","sort":6,"name":{"de":"Arkani","en":"Arcanine"},"category":"pokemon","rarity":"rare","types":["fire"],"hp":120,"stage":"stage1","dexIds":[59],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370771},"tcgplayer":186009}},{"id":"reverse","refs":{"cardmarket":{"default":370771},"tcgplayer":186009}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/6","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/6","lang":"en"}},"refs":{"tcgdex":"det1-6"}},
+    {"id":"intl:det1:7","setId":"intl:det1","localId":"7","printedNumber":"7/18","section":"main","sort":7,"name":{"de":"Enton","en":"Psyduck"},"category":"pokemon","rarity":"common","types":["water"],"hp":80,"stage":"basic","dexIds":[54],"illustrator":"Framestore","variants":[{"id":"normal","refs":{"cardmarket":{"default":370626},"tcgplayer":186010}},{"id":"reverse","refs":{"cardmarket":{"default":370626},"tcgplayer":186010}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/7","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/7","lang":"en"}},"refs":{"tcgdex":"det1-7"}},
+    {"id":"intl:det1:8","setId":"intl:det1","localId":"8","printedNumber":"8/18","section":"main","sort":8,"name":{"de":"Karpador","en":"Magikarp"},"category":"pokemon","rarity":"common","types":["water"],"hp":30,"stage":"basic","dexIds":[129],"illustrator":"Framestore","variants":[{"id":"normal","refs":{"cardmarket":{"default":370772},"tcgplayer":186012}},{"id":"reverse","refs":{"cardmarket":{"default":370772},"tcgplayer":186012}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/8","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/8","lang":"en"}},"refs":{"tcgdex":"det1-8"}},
+    {"id":"intl:det1:9","setId":"intl:det1","localId":"9","printedNumber":"9/18","section":"main","sort":9,"name":{"de":"Quajutsu","en":"Greninja"},"category":"pokemon","rarity":"ultra-rare","types":["water"],"hp":140,"stage":"stage2","dexIds":[658],"illustrator":"MPC Film","variants":[{"id":"holo","refs":{"cardmarket":{"default":370773},"tcgplayer":186013}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/9","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/9","lang":"en"}},"refs":{"tcgdex":"det1-9"}},
+    {"id":"intl:det1:10","setId":"intl:det1","localId":"10","printedNumber":"10/18","section":"main","sort":10,"name":{"de":"Meisterdetektiv Pikachu","en":"Detective Pikachu"},"category":"pokemon","rarity":"rare","types":["lightning"],"hp":90,"stage":"basic","dexIds":[25],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370774},"tcgplayer":186015}},{"id":"reverse","refs":{"cardmarket":{"default":370774},"tcgplayer":186015}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/10","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/10","lang":"en"}},"refs":{"tcgdex":"det1-10"}},
+    {"id":"intl:det1:11","setId":"intl:det1","localId":"11","printedNumber":"11/18","section":"main","sort":11,"name":{"de":"Pantimos","en":"Mr. Mime"},"category":"pokemon","rarity":"rare","types":["psychic"],"hp":80,"stage":"basic","dexIds":[122],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370628},"tcgplayer":186019}},{"id":"reverse","refs":{"cardmarket":{"default":370628},"tcgplayer":186019}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/11","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/11","lang":"en"}},"refs":{"tcgdex":"det1-11"}},
+    {"id":"intl:det1:12","setId":"intl:det1","localId":"12","printedNumber":"12/18","section":"main","sort":12,"name":{"de":"Mewtu","en":"Mewtwo"},"category":"pokemon","rarity":"ultra-rare","types":["psychic"],"hp":130,"stage":"basic","dexIds":[150],"illustrator":"MPC Film","variants":[{"id":"holo","refs":{"cardmarket":{"default":370775},"tcgplayer":186020}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/12","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/12","lang":"en"}},"refs":{"tcgdex":"det1-12"}},
+    {"id":"intl:det1:13","setId":"intl:det1","localId":"13","printedNumber":"13/18","section":"main","sort":13,"name":{"de":"Machomei","en":"Machamp"},"category":"pokemon","rarity":"rare","types":["fighting"],"hp":160,"stage":"stage2","dexIds":[68],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370776},"tcgplayer":186021}},{"id":"reverse","refs":{"cardmarket":{"default":370776},"tcgplayer":186021}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/13","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/13","lang":"en"}},"refs":{"tcgdex":"det1-13"}},
+    {"id":"intl:det1:14","setId":"intl:det1","localId":"14","printedNumber":"14/18","section":"main","sort":14,"name":{"de":"Pummeluff","en":"Jigglypuff"},"category":"pokemon","rarity":"common","types":["fairy"],"hp":60,"stage":"basic","dexIds":[39],"illustrator":"Framestore","variants":[{"id":"normal","refs":{"cardmarket":{"default":370627},"tcgplayer":186022}},{"id":"reverse","refs":{"cardmarket":{"default":370627},"tcgplayer":186022}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/14","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/14","lang":"en"}},"refs":{"tcgdex":"det1-14"}},
+    {"id":"intl:det1:15","setId":"intl:det1","localId":"15","printedNumber":"15/18","section":"main","sort":15,"name":{"de":"Snubbull","en":"Snubbull"},"category":"pokemon","rarity":"common","types":["fairy"],"hp":70,"stage":"basic","dexIds":[209],"illustrator":"Framestore","variants":[{"id":"normal","refs":{"cardmarket":{"default":370777},"tcgplayer":186023}},{"id":"reverse","refs":{"cardmarket":{"default":370777},"tcgplayer":186023}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/15","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/15","lang":"en"}},"refs":{"tcgdex":"det1-15"}},
+    {"id":"intl:det1:16","setId":"intl:det1","localId":"16","printedNumber":"16/18","section":"main","sort":16,"name":{"de":"Schlurp","en":"Lickitung"},"category":"pokemon","rarity":"common","types":["colorless"],"hp":100,"stage":"basic","dexIds":[108],"illustrator":"MPC Film","variants":[{"id":"normal","refs":{"cardmarket":{"default":370778},"tcgplayer":186024}},{"id":"reverse","refs":{"cardmarket":{"default":370778},"tcgplayer":186024}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/16","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/16","lang":"en"}},"refs":{"tcgdex":"det1-16"}},
+    {"id":"intl:det1:17","setId":"intl:det1","localId":"17","printedNumber":"17/18","section":"main","sort":17,"name":{"de":"Ditto","en":"Ditto"},"category":"pokemon","rarity":"ultra-rare","types":["colorless"],"hp":60,"stage":"basic","dexIds":[132],"illustrator":"MPC Film","variants":[{"id":"holo","refs":{"cardmarket":{"default":370779},"tcgplayer":186025}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/17","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/17","lang":"en"}},"refs":{"tcgdex":"det1-17"}},
+    {"id":"intl:det1:18","setId":"intl:det1","localId":"18","printedNumber":"18/18","section":"main","sort":18,"name":{"de":"Letarking","en":"Slaking"},"category":"pokemon","rarity":"rare","types":["colorless"],"hp":180,"stage":"stage2","dexIds":[289],"illustrator":"Framestore","variants":[{"id":"normal","refs":{"cardmarket":{"default":370780},"tcgplayer":186026}},{"id":"reverse","refs":{"cardmarket":{"default":370780},"tcgplayer":186026}}],"languages":["de","en"],"images":{"de":{"url":"https://assets.tcgdex.net/de/sm/det1/18","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/sm/det1/18","lang":"en"}},"refs":{"tcgdex":"det1-18"}}
+  ],
+  "variantsLegend": [
+    {"id":"holo","kind":"finish","label":{"de":"Holo","en":"Holo"}},
+    {"id":"normal","kind":"finish","label":{"de":"Normal","en":"Normal"}},
+    {"id":"reverse","kind":"finish","label":{"de":"Reverse-Holo","en":"Reverse Holo"}}
+  ]
+}

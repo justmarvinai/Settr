@@ -1,0 +1,12 @@
+# SM Black Star Promos: TCGdex has no German data for eight of them. SM04 Pikachu gets its species
+# name from PokéAPI (build.ts); the Ash's Pikachu movie promos (Pokémon the Movie: I Choose You!,
+# 2017) aren't in the German card database, so they count as English only.
+setId: intl:smp
+cards:
+  SM108: { languages: [en], note: "Ash's Pikachu, Original Cap (movie promo, 2017)" }
+  SM109: { languages: [en], note: "Ash's Pikachu, Hoenn Cap (movie promo, 2017)" }
+  SM110: { languages: [en], note: "Ash's Pikachu, Sinnoh Cap (movie promo, 2017)" }
+  SM111: { languages: [en], note: "Ash's Pikachu, Unova Cap (movie promo, 2017)" }
+  SM112: { languages: [en], note: "Ash's Pikachu, Kalos Cap (movie promo, 2017)" }
+  SM113: { languages: [en], note: "Ash's Pikachu, Alola Cap (movie promo, 2017)" }
+  SM114: { languages: [en], note: "Ash's Pikachu, Partner Cap (movie promo, 2017)" }
