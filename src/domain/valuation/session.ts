@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { unitCosts } from '../collection/lots';
 import { BASE_CURRENCY } from '../money';
 import { remaining, type Holding } from '../schemas/holding';

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 
 /**
  * URL state of the price session (`/prices/session?start=stale&order=value`). Apart from

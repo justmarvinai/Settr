@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { CARD_LANGUAGES, CONDITIONS, GRADING_COMPANIES, PRINTS } from '../catalog-types';
 import { isUuidV7 } from '../ids';
 import { CURRENCIES } from '../money';

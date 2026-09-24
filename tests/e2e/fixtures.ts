@@ -5,8 +5,9 @@ import { test as base, expect, type Page } from '@playwright/test';
 const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 
 /**
- * Every test fails on console errors, uncaught exceptions and CSP violations: the preview server
- * sends the production CSP (vite.config.ts), so a blocked script or style shows up here first.
+ * Every test fails on console errors, uncaught exceptions and CSP violations (reported or not): the
+ * preview server sends the production CSP (vite.config.ts), so a blocked script or style shows up
+ * here first.
  * Pictures from TCGdex and the TCGplayer proxy are stubbed, so tests never depend on other hosts.
  */
 export const test = base.extend<{ problems: string[]; pictures: void }>({
@@ -29,6 +30,20 @@ export const test = base.extend<{ problems: string[]; pictures: void }>({
         if (msg.type() === 'error') problems.push(`console: ${msg.text()} (${msg.location().url})`);
       });
       page.on('pageerror', (error) => problems.push(`pageerror: ${error.message}`));
+      // A violation the page catches itself (e.g. an eval probe) never reaches the console in
+      // Chromium or WebKit; the event does, in every browser.
+      await page.exposeBinding('settrCspViolation', (_source, text: string) => {
+        problems.push(`csp: ${text}`);
+      });
+      await page.addInitScript(() => {
+        document.addEventListener('securitypolicyviolation', (event) => {
+          const report = (window as unknown as { settrCspViolation: (text: string) => void })
+            .settrCspViolation;
+          report(
+            `${event.violatedDirective} ${event.blockedURI} (${event.sourceFile}:${event.lineNumber})`,
+          );
+        });
+      });
       await use(problems);
       expect(problems, 'console errors, exceptions or CSP violations').toEqual([]);
     },

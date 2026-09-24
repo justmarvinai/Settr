@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import de from 'zod/v4/locales/de.js';
 import { readBackup, type BackupReadResult } from '@/domain/backup';
 import { sha256Hex } from '@/lib/hash';

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { CARD_LANGUAGES, PRINTS } from '../catalog-types';
 import { isoDateSchema, isoTimestampSchema, moneySchema } from '../schemas/common';
 import {

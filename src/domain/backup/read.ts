@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@/lib/zod';
 import { isoTimestampSchema, SCHEMA_VERSION } from '../schemas';
 import { canonicalJson } from './canonical';
 import {
