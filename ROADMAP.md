@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ merged (PR #5); **your 21 older sets** ✅ built on the work branch, PR when you ask (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7 and 10 decided, rounds 8–9 open without blockers
+> Last updated: 2026-09-24 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ merged (PR #5); **your 21 older sets** ✅ built, in PR #6 (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7 and 10 decided, rounds 8–9 open without blockers
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -18,7 +18,7 @@
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ merged (PR #4) · 🔒 your go for the `v1.0.0` tag |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
-| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ merged (PR #5) · your 21 older sets ✅ built, PR when you ask |
+| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ merged (PR #5) · your 21 older sets ✅ built, PR #6 |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
 
 > **Why data safety (M5) comes before polish:** real data will be entered from M3 onward, so backups must exist before v1 at the latest. A **minimal JSON export** already ships in M3 (DAT-01 "lite") so nothing entered during development can be lost.
@@ -233,7 +233,7 @@ Marvin (2026-09-24): "add the following sets … As these are sets I have cards 
 - [x] Printed numbers as on the card (`001/185`, `TG05/TG30`, `4/102`); German names for promos TCGdex lacks; English-only promos
 - [x] Cardmarket: every set's expansion; products by name for Karmesin & Purpur and Nacht in Flammen, where TCGdex has none (ADR-056)
 - [x] App: cards and sealed products searched apart in the palette, so a name many cards share leaves room for products; gallery sections named without their set's name
-- [ ] Your check: round 10 in `USER_QUESTIONS.md` (decided with the ⭐ defaults), then the PR and its merge
+- [ ] Your check: round 10 in `USER_QUESTIONS.md` (decided with the ⭐ defaults), then the merge of PR #6
 - [ ] Later, on request: sealed products for these sets, their Japanese prints, 1st Edition and Shadowless Base Set cards, Astral Radiance itself
 
 ## Post-v1 backlog (ordered by expected value)

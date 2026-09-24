@@ -4,7 +4,7 @@
 > **Rounds 1–7: decided ✓.** Rounds 1–3 were answered one by one (spec v0.3). For rounds 4–7 you chose my recommendation (⭐) everywhere on 2026-09-24 (spec v0.4).
 > **Round 8 (M6) and round 9 (Mega Evolution): open, nothing blocking.** The app already works like the ⭐ options; answer when you check them.
 > **Round 10 (your older sets): decided 2026-09-24 with the ⭐ options**, as you asked ("go with your recommended defaults"). Tell me if you want any of them changed.
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M6 and the Mega Evolution series are merged (PRs #1–#5); your older sets are built on the work branch, and their PR opens when you ask.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M6 and the Mega Evolution series are merged (PRs #1–#5); your older sets are in PR #6.
 
 ## How to answer
 
