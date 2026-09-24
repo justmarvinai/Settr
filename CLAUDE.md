@@ -49,8 +49,8 @@ Settr is a **local-first Pokémon TCG collection tracker** for **singles and sea
 
 - **Core:** Vite 8 (Rolldown) · React 19.3 + React Compiler · TypeScript 7 (strict) · TanStack Router (file routes, Zod search params) · TanStack Query (catalog JSON).
 - **Data:** Dexie 4.4 + `useLiveQuery` (user data).
-- **UI:** Tailwind 4.3 + OKLCH tokens · shadcn-style primitives on **Base UI**, hand-written (ADR-031) · Motion 13 · Recharts 3 · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
-- **Libraries:** Paraglide JS 2 (i18n, DE base) · TanStack Form + Zod 4 · TanStack Table 9 / Virtual 3 · MiniSearch (worker) · Zustand (tiny UI state) · vite-plugin-pwa.
+- **UI:** Tailwind 4.3 + OKLCH tokens · shadcn-style primitives on **Base UI**, hand-written (ADR-031) · motion in CSS, View Transitions and WAAPI (no animation library) · hand-written SVG charts (ADR-038) · Phosphor icons · Mona Sans / Geist Mono (self-hosted).
+- **Libraries:** Paraglide JS 2 (i18n, DE base) · TanStack Form + Zod 4 · TanStack Virtual 3 (no table library, ADR-036) · MiniSearch (worker) · Zustand (tiny UI state) · vite-plugin-pwa.
 - **Tooling:** Oxlint (type-aware) + oxfmt · Vitest 5 (+ Browser Mode) + Playwright + axe · size-limit · lefthook · pnpm 10.33 · Node 24 LTS.
 - **Jobs (GitHub Actions):** `ci.yml` (PRs, `main`, manual) · `catalog-sync.yml` (weekly catalog PR; manual run with `commit: true` commits to the branch) · `price-guide.yml` (M4, daily; a deploy hook while the repo is public, ADR-029) · `e2e-nightly.yml` (M5, nightly + manual: property tests with a random seed, the data journeys in Firefox).
 

@@ -2,6 +2,7 @@
 
 > Last updated: 2026-09-24.
 > **Rounds 1–7: decided ✓.** Rounds 1–3 were answered one by one (spec v0.3). For rounds 4–7 you chose my recommendation (⭐) everywhere on 2026-09-24 (spec v0.4).
+> **Round 8 (M6): open, nothing blocking.** The app already works like the ⭐ options; answer when you check M6.
 > **Coding: approved on 2026-09-23** ("You can start"). M1–M5 are merged (PRs #1–#3). M6 · Polish & Launch started on 2026-09-24.
 
 ## How to answer
@@ -9,6 +10,38 @@
 - Tick options with `[x]`, or write under **Antwort:**. German or English is fine, and so is answering in chat.
 - ⭐ = my recommendation. ★ = needed before coding starts.
 - As before: anything you leave open, I'll take my recommendation.
+
+---
+
+## Round 8: polish and launch (M6, open)
+
+**The app already works like the ⭐ options**, so nothing here blocks v1.0.0. Anything you leave open stays as it is.
+
+**To try when you check M6:**
+- **First run:** open Settr in a private window (or after *Alle Daten löschen*). The onboarding should take under a minute and end in the set.
+- **Holo card (card pages):**
+  - In Brave, move the mouse over the card.
+  - On the iPhone, tap *Holo aktivieren* and tilt the phone. Does the card lean the way you tilt it, also in landscape?
+  - Does the foil look good on real card art (a Rare, an SIR, the Pikachu "fireworks")?
+- **iPhone gestures:** long-press a card on a set page; swipe the big card picture left and right; pinch-zoom in the fullscreen view.
+- **Keyboard (Brave):** `?` lists every shortcut. Try `G` then `K`, the arrow keys in a set, and `N` on a card page.
+- **Offline:** turn off Wi-Fi after Settr has loaded once. The toolbar says *Offline · alles funktioniert*, and adding a card still works.
+
+**R8.1 · Where the long-press menu works.** On the iPhone, a long press on a card in a set opens *Hinzufügen …*, *Preis eintragen …* and *Details* (UX_SPEC §4.3). Search results (Katalog › Karten) open the card, and Sammlung tiles have their own lot menu.
+- [x] ⭐ Set tiles only, as specified.
+- [ ] Also on search results and on Sealed tiles.
+
+**R8.2 · Visual regression checks.** Screenshots of six screens in light and dark are compared every night, not on every PR. After an intended design change, one manual run regenerates them (ADR-049).
+- [x] ⭐ Nightly, so design tweaks don't block PRs.
+- [ ] On every PR (stricter: every design change needs a baseline run first).
+
+**R8.3 · Performance budgets in Lighthouse.** Every PR measures the built app as a phone on a 4G connection. An LCP over 2 s or layout shift over 0.05 fails the check; blocking time and the overall score only warn (ADR-049).
+- [x] ⭐ Like that.
+- [ ] Fail on the overall score too (below 90).
+
+**R8.4 · Releasing v1.0.0.** After you merge the M6 PR, the tag `v1.0.0` goes on `main`, and Vercel deploys `main` to production as usual. Before the merge, the Brave smoke test (QUALITY §3.1) runs on your PC.
+- [x] ⭐ I set the tag once you've merged and said go.
+- [ ] You set the tag yourself.
 
 ---
 

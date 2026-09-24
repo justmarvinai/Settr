@@ -247,6 +247,13 @@ Glass is Settr's signature *material* for floating chrome (Q9.5: Apple's Liquid 
 
 Everything above is disabled under `prefers-reduced-motion: reduce` or the in-app setting *Animationen: aus*.
 
+**As built (M6):**
+- **Moment 1:** one name, `card-hero`, carried only by the clicked tile's picture and the card page's picture, since names must be unique on a page (ADR-047). It morphs over `--dur-spatial` with `--ease-in-out` while the rest cross-fades over `--dur-base`. Browsers without view transitions navigate without animation (no cross-fade fallback).
+- **Moment 2:** `src/components/domain/holo/` (HoloCard, a lazy chunk), with springs for the tilt and a gyroscope follower. The iPhone asks for motion access behind a *Holo aktivieren* button; other phones start after the first touch. Inline, touch belongs to scrolling and swiping; the fullscreen view (a tap on the card) leans under a finger. *reduziert* keeps a faint static sheen, *aus* shows the plain picture, and forced colors drop the effect layers. The card's shadow leans with it.
+- **Moment 4:** `SetProgressRing` is a CSS conic gradient masked to a ring. The arc draws in once (`@starting-style`) and eases to new values through a registered `--ring-p`. At 100 % it switches to the foil with one sweep, and the set that just completed lifts and glows for a moment (*Basis*, on set pages). Forced colors show `Highlight` on `GrayText`.
+- **Swipe (§4.4):** the picture follows the finger with resistance at the ends of the set, and the next card slides in from its side over `--dur-base`.
+- **Glass (§3.5 rule 6):** under an open modal, the chrome's glass stops blurring, so a sheet never makes a fourth blur layer. In forced colors, display type gets looser leading, since Windows draws an opaque plate behind each line of text.
+
 ---
 
 ## 8. Component inventory

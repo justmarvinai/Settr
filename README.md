@@ -4,24 +4,24 @@
 
 Settr is a local-first collection tracker for Pokémon TCG **singles and sealed products**, covering German, English, Japanese and Chinese (Simplified and Traditional) cards, with a German interface. You record the prices you check on Cardmarket, **per card language**, and Settr turns them into price trends, portfolio value and profit/loss against what you paid. Everything stays private in your browser. There are no accounts and no server database, and you get full import/export.
 
-> **Status: ⏳ M6 · Polish & Launch in progress.** M1–M5 are merged: foundation, catalog, collection, prices and portfolio, data safety. Planning is complete (spec v0.4, seven question rounds decided); coding started on 2026-09-23. The catalog holds *30 Jahre / 30th CELEBRATION* in DE, EN, JA, ZH-CN and ZH-TW with 52 sealed products. The design direction, **D · Bold Studio**, is on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link).
+> **Status: v1.0.0 release candidate.** M1–M5 are merged: foundation, catalog, collection, prices and portfolio, data safety. M6 · Polish & Launch is built and waits for Marvin's check in Brave and on the iPhone; v1.0.0 is tagged after that merge. Planning is complete (spec v0.4, rounds 1–7 decided, round 8 open without blockers); coding started on 2026-09-23. The catalog holds *30 Jahre / 30th CELEBRATION* in DE, EN, JA, ZH-CN and ZH-TW with 52 sealed products. The design direction, **D · Bold Studio**, is on the design canvas "[Settr Design Directions](https://claude.ai/artifact/VRE95AH1GZ8yHK8Qb2y5hq)" (private link).
 >
 > Private project: unlisted deployment, not indexed, shared with a few friends.
 
-## Highlights (planned v1)
+## Highlights (v1)
 
 - **Catalog:** the 30th-anniversary expansion *30 Jahre / 30th Celebration* (EN/DE incl. Classic Collection and Energies; JP, Simplified and Traditional Chinese *30th CELEBRATION* M6a). More sets follow one by one after v1. Card data comes from TCGdex; sealed DE/EN/JP/TC/SC products are curated.
 - **Collection:** singles and sealed, with language, condition, grading, quantity, purchase price, fees and tags, plus **binder, page and slot** for your 9- and 12-pocket binders. Sales and sealed openings are tracked.
 - **Prices:** fast manual entry (the cheapest Near Mint offer in your card's language from German sellers), a keyboard-driven price session, exact Cardmarket links with filters preset, daily Cardmarket price-guide *suggestions*, and price history charts.
 - **Portfolio:** value over time, invested capital, unrealized/realized P/L, allocation, and set completion (Basis / Komplett / Master).
 - **Data safety:** versioned backups (replace or merge), CSV export, persistent storage and backup reminders. It's an installable, offline-capable PWA.
-- **Design:** *D · Bold Studio*: heavy, wide type, a floating glass sidebar and calm surfaces, in light and dark (references: Revolut, Apple, Wise), with a holo card viewer and scrubbable finance-grade charts. Usability first. Desktop first (Brave on Windows), and it works great on iPhone.
+- **Design:** *D · Bold Studio*: heavy, wide type, a floating glass sidebar and calm surfaces, in light and dark (references: Revolut, Apple, Wise), with a holo card viewer, foil progress rings, a grid-to-card morph and scrubbable finance-grade charts. Usability first. Desktop first (Brave on Windows, with a full keyboard model), and it works great on iPhone (long press, swipe, installable).
 
 ## Documentation
 
 | Document | Purpose |
 |---|---|
-| [`USER_QUESTIONS.md`](USER_QUESTIONS.md) | **Round-3 questions (open)** + the decision record of rounds 1 and 2 |
+| [`USER_QUESTIONS.md`](USER_QUESTIONS.md) | Round 8 (open, nothing blocking) and the decision record of rounds 1–7 |
 | [`ROADMAP.md`](ROADMAP.md) | Milestones M0–M6 and the post-v1 backlog |
 | [`CHANGELOG.md`](CHANGELOG.md) | Changes per version |
 | [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md) | Vision, scope, feature catalogue, acceptance criteria |
@@ -38,7 +38,7 @@ Settr is a local-first collection tracker for Pokémon TCG **singles and sealed 
 
 ## Stack
 
-Vite 8 · React 19 · TypeScript 7 · TanStack Router/Query/Table/Form · Dexie (IndexedDB) · Tailwind CSS 4 · Base UI · Motion · Recharts · Paraglide JS · MiniSearch · vite-plugin-pwa · Vitest · Playwright. It deploys to Vercel as static files. Details and rationale are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Vite 8 · React 19 · TypeScript 7 · TanStack Router/Query/Form/Virtual · Dexie (IndexedDB) · Tailwind CSS 4 · Base UI · hand-written SVG charts · Paraglide JS · MiniSearch · vite-plugin-pwa · Vitest · Playwright · Lighthouse CI. It deploys to Vercel as static files. Details and rationale are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Development
 
@@ -55,7 +55,7 @@ All commands are listed in [`CLAUDE.md`](CLAUDE.md#commands).
 
 ## Credits
 
-Card data is provided by [TCGdex](https://tcgdex.net) (MIT-licensed database).
+Card data is provided by [TCGdex](https://tcgdex.net) (MIT-licensed database). Traditional Chinese names come from [PTCG-database](https://github.com/type-null/PTCG-database) (MIT), Pokémon names for translations from [PokéAPI](https://pokeapi.co) (BSD-3-Clause), and product pictures from TCGplayer via [TCGCSV](https://tcgcsv.com). The app's *Einstellungen › Über & Rechtliches* lists everything, and every build ships `licenses.txt` with the notices of the open-source code it contains.
 
 ## Disclaimer
 

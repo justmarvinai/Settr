@@ -65,7 +65,7 @@
 | Local database | **Dexie** + dexie-react-hooks | 4.4 | Mature IndexedDB layer: indexes, versioned migrations, transactions and **live queries** (reactive UI) | idb (too low-level), RxDB (paid storage plugins), TinyBase (in-memory), SQLite-wasm/PGlite (heavy, and COOP/COEP would block card images), Evolu/Jazz (API churn) |
 | UI primitives | shadcn-style primitives on **Base UI**, written by hand (ADR-031: the shadcn CLI needs the TS JS API that TS 7 dropped) | Base UI 1.8 | We own the component code and restyle it fully. Base UI is shadcn's default since July 2026, actively maintained, and includes Drawer/Toast/Combobox/NumberField | Radix (development slowed), vaul (unmaintained), MUI/Chakra (opinionated look) |
 | Styling | **Tailwind CSS** v4 + CSS custom properties (OKLCH tokens) | 4.3 | Tokens-first theming, container queries, tiny CSS output | CSS-in-JS (runtime cost) |
-| Motion | **Motion** (`motion/react`, LazyMotion) + CSS (`@starting-style`, View Transitions) | 13.4 | Layout/gesture animation. Initial cost about 4.6 KB with LazyMotion | GSAP (license, size) |
+| Motion | **CSS and the platform**: transitions, `@starting-style`, registered custom properties, View Transitions and the Web Animations API (as built through M6; `motion/react` was planned but never needed) | — | Sheets, rings, the holo tilt (a small spring in `holo/spring.ts`), the grid → card morph and swipes, at no bundle cost | Motion 13 (≈ 4.6 KB with LazyMotion), GSAP (license, size) |
 | Charts | **Hand-written SVG** in `components/domain/charts` (ADR-038; Recharts 3 dropped, ADR-010 superseded) | — | A time chart (line or step, markers, baseline, comparison lines, scrubbing with pointer and keys) and a donut: a few KB, themed by the tokens, SVG with a table view | Recharts 3 (116 KB gzip for the parts we need), TradingView Lightweight Charts 5 (canvas, attribution), visx (low-level) |
 | Forms | **TanStack Form** + **Zod 4** | 1.33 · 4.6 | Strong typing. Zod schemas shared with import validation. Zod ships German error messages | react-hook-form 7 (v8 still beta) |
 | i18n | **Paraglide JS 2** (inlang) | 2.25 | Compile-time, typed, tree-shakable messages. **German only in v1** (Q3.1), but every string lives in the catalog, so adding English later needs no refactor | i18next (runtime and bundle size), Lingui 6 (needs Babel macros), react-intl (high churn) |
@@ -109,7 +109,7 @@
 - `components/ui/` (design-system primitives) has no domain knowledge.
 - These rules are enforced with Oxlint import restrictions (`no-restricted-imports` patterns) and reviewed in PRs.
 
-### 4.2 Folder structure (as built through M5, plus planned folders)
+### 4.2 Folder structure (as built through M6, plus planned folders)
 
 ```
 settr/
@@ -121,6 +121,7 @@ settr/
 ├─ scripts/
 │  ├─ catalog/                  # catalog pipeline (Node 24, TypeScript via tsx)
 │  ├─ csp-hash.mjs              # CSP hash of the inline pre-paint script (ADR-032)
+│  ├─ licenses.ts               # build plugin: licenses.txt, the notices of everything Settr ships (ADR-050)
 │  └─ icons.mjs                 # renders the PWA icons
 ├─ src/
 │  ├─ app/                      # providers, router creation, error boundaries, app shell
@@ -137,20 +138,21 @@ settr/
 │  │  ├─ settings/              # settings layout and sections
 │  │  ├─ appearance/            # theme, transparency, motion (loaded at startup, ADR-030)
 │  │  ├─ pwa/                   # install prompt, update toast (loaded at startup)
-│  │  ├─ overview/              # Übersicht: welcome or the dashboard (hero chart, tiles)
-│  │  └─ onboarding/
+│  │  ├─ overview/              # Übersicht: welcome or the dashboard (hero chart, tiles), the iPhone home-screen hint
+│  │  └─ onboarding/            # the first run (APP-06); only loaded when the device isn't onboarded yet (ADR-046)
 │  ├─ components/
 │  │  ├─ ui/                    # hand-written shadcn-style primitives on Base UI, one module each (ADR-031); glyphs.tsx = the shell's single-weight icons (ADR-037)
-│  │  └─ domain/                # CardImage, CardTile, PLDelta, charts/ (scale.ts, TimeChart, Donut, RangeChips) …
+│  │  └─ domain/                # CardImage, CardTile, PLDelta, SetProgressRing, holo/ (HoloCard, a lazy chunk), charts/ (scale.ts, TimeChart, Donut, RangeChips) …
 │  ├─ domain/                   # money, allocation, valuation, pl, timeseries, completion, csv, schemas (Zod); backup/ = format, read pipeline, migrations, validation, merge planner, reminder rule (M5)
 │  ├─ db/                       # Dexie schema, repositories, live-query hooks, backup export, import (replace/merge/restore/wipe), snapshots.ts = the `settr-snapshots` database (ADR-041); core.ts = what the shell needs at startup (ADR-037)
 │  ├─ catalog/                  # catalog loader, image URL builder, search client
 │  ├─ workers/                  # search.worker.ts, backup.worker.ts (reads backup files, M5)
 │  ├─ i18n/                     # Paraglide project (messages/de.json, en.json), format helpers
-│  ├─ lib/                      # small generic utilities (sheets.ts: the sheet request store, useElementBox for virtualizers, hash.ts, storage.ts: persistence and usage)
+│  ├─ lib/                      # small generic utilities: sheets.ts (the sheet request store), shortcuts.ts, keys.ts, useKeySequence and useRovingFocus (ADR-044), useLongPress, useSwipe and swallowClick (ADR-048), hero.ts (the morph, ADR-047), motion.ts, error-log.ts (ADR-045), onboarded.ts (ADR-046), useElementBox for virtualizers, hash.ts, storage.ts
 │  └─ styles/                   # tokens.css, globals.css
 ├─ tests/
 │  ├─ e2e/                      # Playwright specs (+ axe, console/CSP guard in fixtures.ts)
+│  ├─ visual/                   # visual regression (baselines made in CI, ADR-049)
 │  ├─ fixtures/                 # backup fixtures per schema version (backups/v1/basic.settr.json)
 │  └─ factories.ts              # valid records and fast-check arbitraries
 ├─ docs/                        # this planning suite
@@ -228,6 +230,8 @@ settr/
 
 Updates show a non-blocking toast ("Neue Version verfügbar · Neu laden"). It never auto-reloads while a sheet is open.
 
+As built (M6): the navigation fallback to the app shell skips `/catalog/v1/`, `/img/` and `/licenses.txt`, so those always reach the file itself. Journey 9 (`QUALITY.md` §2.1) checks the offline path: navigating, adding a lot and reloading without a network.
+
 ### 8.2 Storage durability
 
 | Risk | Mitigation |
@@ -289,7 +293,7 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
   - quick-add and price session
   - search worker
 - `defaultPreload: 'intent'` preloads route code on hover/focus.
-- `defaultViewTransition` is enabled with transition types for grid → detail morphs (respecting reduced motion).
+- `defaultViewTransition` is enabled with transition types for grid → detail morphs (respecting reduced motion). As built (M6, ADR-047): tile links and the card page's back link opt in per link; the router's default only types back and forward between a grid and a card page, and only where view-transition types exist. The name `card-hero` sits on the clicked tile's picture and the card page's picture (`src/lib/hero.ts`).
 
 ---
 
@@ -333,14 +337,14 @@ v1 ships one expansion (*30 Jahre*), but catalog, IDs, routes, search and UI are
 | PWA install | Installed app on Windows and iPhone | Chromium incl. Brave (install icon in the address bar, or ☰ → *Save and share* → *Install ‹App›…* in Brave's English UI; Shields also run inside app windows), Safari/iOS (*Zum Home-Bildschirm*) | Browser tab |
 | `navigator.storage.persist()` | Durability | Chromium incl. Brave (silent: granted for installed apps and most-used/bookmarked sites, not when cookies are blocked or cleared on exit), Firefox (prompt), Safari (heuristic) | Retry after install; backups + reminders |
 | `navigator.storage.estimate()` | Storage usage in Einstellungen › Daten | Universal. **Brave always reports `quota` = 2 GiB** (`usage` is real) | Show usage; never rely on the reported quota |
-| Same-document View Transitions | Grid → detail morph | Baseline (since Oct 2025) | Cross-fade |
+| Same-document View Transitions | Grid → detail morph | Baseline (since Oct 2025); transition types for back and forward in current Chromium and Safari | No animation (M6: no cross-fade fallback) |
 | File System Access pickers | Optional: save/open backups, auto-backup folder (post-v1) | Chromium only (desktop, Android 132+). **Off by default in Brave:** the pickers don't exist unless `brave://flags/#file-system-access-api` is enabled, and even then moving or renaming local files is refused | Downloads (Brave opens a Save-As dialog by default) / `<input type=file>` (via browser-fs-access). Feature-detect the picker functions, never `FileSystemHandle` |
 | Web Share (files) | Share backups/images on mobile | Chrome/Android, Safari/iOS, Brave on Windows (but it **refuses `.json` files** with `NotAllowedError` even when `canShare()` says true); not Firefox | Download. No *share backup* on desktop (ADR-027). `.json` isn't in the commonly shareable types, so check `canShare()` first and fall back to a download on any rejection |
 | Canvas readback (`getImageData`, `toDataURL`, `toBlob`) | Share images, color sampling | Universal. Brave's default fingerprinting protection adds tiny per-session noise | Fine for images and colors. Never hash canvas output or compare it byte for byte |
 | Named system fonts | CJK font stack (system fonts first, `DESIGN_SYSTEM.md` §4) | Brave limits named system fonts to an allowlist (Segoe UI, Consolas and Microsoft YaHei are allowed; others such as Yu Gothic may be hidden) | Self-hosted Noto CJK slices render JA/ZH on their own (checked in the Brave smoke test, `QUALITY.md` §3.1) |
 | Hardware and screen values (`hardwareConcurrency`, `deviceMemory`, screen size, `navigator.languages`) | Nothing | Brave randomizes hardware values, rounds screen sizes and reduces `navigator.languages` to the first entry | Never branch on them |
 | BarcodeDetector | EAN scan (I-10) | Chrome Android, macOS only | `barcode-detector` WASM ponyfill |
-| DeviceOrientation | Holo tilt on phones | iOS needs a permission tap | Pointer/touch drag |
+| DeviceOrientation | Holo tilt on phones | iOS needs a permission tap (M6: the *Holo aktivieren* button); other phones start after the first touch on the card | Touch in the fullscreen view |
 | `Intl.Segmenter` | (optional) CJK tokenization | Baseline | Bigram tokenizer (default) |
 | `CompressionStream` | gzip backups (future) | Baseline | Uncompressed JSON |
 | Temporal | — | Not Baseline (no Safari) | date-fns |
