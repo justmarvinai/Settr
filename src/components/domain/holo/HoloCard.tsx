@@ -29,6 +29,8 @@ export interface HoloCardProps {
   foil: FoilStyle;
   motion: HoloMotion;
   labels: HoloCardLabels;
+  /** The inline card's view-transition name: it morphs from the grid tile (DSN-02). */
+  heroName?: string;
   className?: string;
 }
 
@@ -67,7 +69,16 @@ function initialGyro(): Gyro {
  * `motion="full"` (or with the OS asking for less motion) the card is still: `reduced` keeps a
  * faint static sheen, `off` shows the plain picture.
  */
-export function HoloCard({ image, alt, label, foil, motion, labels, className }: HoloCardProps) {
+export function HoloCard({
+  image,
+  alt,
+  label,
+  foil,
+  motion,
+  labels,
+  heroName,
+  className,
+}: HoloCardProps) {
   const lessMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const level: HoloMotion = motion === 'full' && lessMotion ? 'reduced' : motion;
   const [open, setOpen] = useState(false);
@@ -97,6 +108,7 @@ export function HoloCard({ image, alt, label, foil, motion, labels, className }:
         gyro={gyroOn && !open}
         paused={open}
         onTouch={onTouch}
+        heroName={heroName}
         className="w-full"
       >
         <button
@@ -160,6 +172,7 @@ function HoloSurface({
   gyro,
   paused = false,
   onTouch,
+  heroName,
   children,
   className,
 }: {
@@ -176,6 +189,8 @@ function HoloSurface({
   paused?: boolean;
   /** A finger touched the card (the first one may switch the gyroscope on). */
   onTouch: () => void;
+  /** View-transition name of the stage (the inline card only). */
+  heroName?: string | undefined;
   /** Drawn above the picture and leaning with it, outside the clip (the open button). */
   children?: ReactNode;
   className?: string;
@@ -279,6 +294,7 @@ function HoloSurface({
       ref={stageRef}
       data-level={level}
       data-touch-tilt={touchTilt || undefined}
+      style={heroName ? { viewTransitionName: heroName } : undefined}
       className={cn('holo-stage', className)}
       onPointerEnter={(event) => {
         if (event.pointerType !== 'touch' && accepts(event)) steer(event);

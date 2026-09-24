@@ -45,7 +45,7 @@ test('navigates between areas', async ({ page, isMobile }) => {
 
 test('deep links and unknown routes', async ({ page }) => {
   await page.goto('/settings/about');
-  await expect(page.getByText(/^Version \d+\.\d+\.\d+/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Settr', level: 2 })).toBeVisible();
   await page.goto('/gibt-es-nicht');
   await expect(page.getByRole('heading', { name: 'Seite nicht gefunden' })).toBeVisible();
   await page.getByRole('link', { name: 'Zur Übersicht', exact: true }).click();

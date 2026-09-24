@@ -12,6 +12,7 @@ import type { RowGroup } from '@/domain/collection';
 import { remaining } from '@/domain/schemas';
 import { htmlLang, languageCode, m, productTypeLabel } from '@/i18n';
 import { formatCount, formatMoney } from '@/i18n/format';
+import { heroStyle, morphWanted, nameHeroTile } from '@/lib/hero';
 import { useElementBox } from '@/lib/useElementBox';
 import { useRovingFocus } from '@/lib/useRovingFocus';
 import { lotMenuActions, openEdit } from '@/features/collection';
@@ -109,6 +110,7 @@ function TileBody({ row, kind }: { row: LibraryRow; kind: LibraryKind }) {
         rarity={ABBREVIATIONS.get(row.rarity ?? '')}
         badge={image && image.lang !== h.language ? languageCode(image.lang) : undefined}
         missingLabel={m.catalog_image_missing()}
+        artStyle={heroStyle(h.item.id)}
         meta={
           <>
             <span className="block truncate">{meta}</span>
@@ -173,6 +175,8 @@ function LotTile({
         aria-label={ariaLabel}
         aria-keyshortcuts="N P Space"
         data-roving
+        viewTransition={morphWanted()}
+        onClick={(event) => nameHeroTile(event.currentTarget, h.item.id)}
         className={linkClass}
         onKeyDown={onKeyDown}
       >

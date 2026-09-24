@@ -14,16 +14,17 @@
 .holo-stage {
   position: relative;
   border-radius: 4.8% / 3.4%;
-  box-shadow: 0 24px 60px -28px color-mix(in oklch, var(--foil-dark) 50%, transparent);
 }
 /* Fullscreen: one finger leans the card, two still zoom */
 .holo-stage[data-touch-tilt] {
   touch-action: pinch-zoom;
 }
 
+/* The shadow leans with the card: on the unmoving stage it would outline an empty box */
 .holo-card {
   position: relative;
   border-radius: inherit;
+  box-shadow: 0 24px 60px -28px color-mix(in oklch, var(--foil-dark) 50%, transparent);
 }
 
 /* Blend modes act on the picture only */

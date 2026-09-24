@@ -8,6 +8,7 @@ import {
   CustomItemBody,
   DisposeBody,
   EditHoldingBody,
+  ItemActionsBody,
   OpenBody,
   PriceBody,
   QuickAddBody,
@@ -25,6 +26,7 @@ function titleOf(request: SheetRequest): string {
   if (request.type === 'value') return m.value_title();
   if (request.type === 'price') return m.price_sheet_title();
   if (request.type === 'quick') return m.quick_title();
+  if (request.type === 'actions') return request.title;
   return m.custom_title();
 }
 
@@ -39,6 +41,11 @@ function Body({ request }: { request: SheetRequest }) {
   if (request.type === 'price') return <PriceBody {...request} />;
   if (request.type === 'quick')
     return <QuickAddBody setId={request.setId} language={request.language} />;
+  if (request.type === 'actions') {
+    return (
+      <ItemActionsBody item={request.item} setId={request.setId} language={request.language} />
+    );
+  }
   return <CustomItemBody kind={request.kind} name={request.name} />;
 }
 

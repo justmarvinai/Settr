@@ -27,3 +27,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
 
 /** Phone tab bar: Übersicht · Sammlung · (＋) · Katalog · Preise (UX_SPEC.md §3.3). */
 export const TAB_ITEMS: readonly NavItem[] = NAV_ITEMS.filter((i) => i.to !== '/portfolio');
+
+/** A link in the floating sidebar: a full row on desktop, an icon on the tablet rail. */
+export const SIDE_ITEM_CLASS =
+  'flex h-11 items-center gap-3 rounded-[14px] px-3 type-ui text-ink-muted transition-colors duration-(--dur-fast) hover:bg-hover hover:text-ink data-[status=active]:bg-accent-soft data-[status=active]:font-extrabold data-[status=active]:text-accent-text max-lg:justify-center max-lg:px-0';

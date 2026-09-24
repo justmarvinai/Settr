@@ -9,6 +9,26 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 ## [Unreleased]
 
 ### Added
+- **M6 · Polish & Launch (in progress, 2026-09-24).**
+  - **Keyboard (UX §7):** `G` then `O`/`S`/`K`/`P`/`F`/`E` goes to a main area, and `V` then `G`/`T` switches between grid and table. `/` searches, `?` lists every shortcut (also from the palette and *Über*), `H` hides values, `N` adds, and `+` adds one copy of the focused set tile. Arrow keys, `Home` and `End` move through card and product grids, which take one tab stop each.
+  - **Palette:** *Schnellerfassung* for a set, *Tastenkürzel anzeigen*, *Werte verbergen* and the theme, next to the backup actions from M5.
+  - **Offline pill** in the toolbar. **Fehlerbericht kopieren** on error pages and under *Über*: the version, the browser and the last errors from a log on the device, never collection data.
+  - **Onboarding (APP-06):** three steps on a fresh device, then the set:
+    - the languages you collect;
+    - why your data stays here, with persistent storage, installing and the warning about browsers that delete data on exit;
+    - your default card language.
+    - *Überspringen* and *Ich habe schon ein Backup* are there too. Devices that already hold lots skip it.
+  - **Empty states** for Sammlung, Preise and Portfolio, with the next step. On iPhones, a hint to add Settr to the home screen.
+  - **Foil progress rings (DSN-03):** Basis progress as a ring on set pages, the Sets page, the Übersicht and in the sidebar, which now lists the sets you collect. At 100 % the ring turns to foil with one sweep, and the set's progress lifts.
+  - **Holo card viewer (DSN-01):** on card pages the picture leans towards the pointer, with a glare and a foil for each rarity. It's our own implementation, without GPL code. Phones use the gyroscope after a tap (the iPhone asks first), a tap opens fullscreen, and everything stays still under reduced motion.
+  - **Grid → card morph (DSN-02):** the tile's picture grows into the card page and back again (View Transitions), except with reduced motion.
+  - **Phones:** a long press on a set tile opens *Hinzufügen …*, *Preis eintragen …* and *Details*. Swiping the card picture turns to the previous or next card.
+  - **Über & Rechtliches (APP-08):**
+    - the version and catalog;
+    - the data sources with their licenses, plus the fonts and libraries;
+    - every license text in `licenses.txt`, which the build generates from what Settr ships;
+    - the privacy note and the disclaimer;
+    - *Tastenkürzel* and *Fehlerbericht kopieren*.
 - **M5 · Data Safety (v0.5.0 candidate, 2026-09-24).**
   - **Backup einspielen (DAT-02):**
     - A backup file by button or drag and drop is read in a worker and checked: checksum, migration, every record against its schema.

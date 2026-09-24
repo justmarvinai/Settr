@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { Suspense, useState } from 'react';
 import { CardImage } from '@/components/domain/CardImage';
 import { PLDelta } from '@/components/domain/PLDelta';
+import { SetProgressRing } from '@/components/domain/SetProgressRing';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { Donut, type DonutSlice } from '@/components/domain/charts/Donut';
 import { buttonVariants } from '@/components/ui/Button';
@@ -70,27 +71,22 @@ function ProgressRow({ setId, language }: { setId: string; language: CardLanguag
         to="/catalog/sets/$setId"
         params={{ setId }}
         search={{ lang: language }}
-        className="group flex flex-col gap-1.5 rounded-[14px] px-2 py-1.5 hover:bg-hover"
+        className="group flex items-center gap-3 rounded-[14px] px-2 py-2 hover:bg-hover"
       >
-        <span className="flex items-baseline justify-between gap-3">
+        <SetProgressRing value={share} size={40} />
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="type-ui truncate">
             {pickText(loaded.set.name)}
             <span className="ml-2 font-mono text-ink-muted">{languageCode(language)}</span>
           </span>
-          <span className="type-ui font-bold tabular-nums">{formatShare(share)}</span>
+          <span className="type-small text-ink-muted">
+            {m.overview_progress_basis({
+              owned: formatCount(basis.owned),
+              total: formatCount(basis.total),
+            })}
+          </span>
         </span>
-        <span aria-hidden className="h-1.5 overflow-hidden rounded-pill bg-hover-strong">
-          <span
-            className="block h-full rounded-pill bg-accent"
-            style={{ width: `${share * 100}%` }}
-          />
-        </span>
-        <span className="type-small text-ink-muted">
-          {m.overview_progress_basis({
-            owned: formatCount(basis.owned),
-            total: formatCount(basis.total),
-          })}
-        </span>
+        <span className="type-ui font-bold tabular-nums">{formatShare(share)}</span>
       </Link>
     </li>
   );

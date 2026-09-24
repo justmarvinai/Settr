@@ -17,6 +17,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "useDefineForClassFields": true,
     "types": ["vite/client", "vite-plugin-pwa/react", "node"],
     "paths": { "@/*": ["./src/*"] }

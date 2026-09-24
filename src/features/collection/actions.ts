@@ -45,6 +45,16 @@ export function openLotPrice(holding: Holding): void {
   });
 }
 
+/** A tile's long-press menu on phones (UX_SPEC.md §4.3): Hinzufügen, Preis eintragen, Details. */
+export function openItemActions(
+  item: ItemRef,
+  setId: string | undefined,
+  language: CardLanguage,
+  title: string,
+): void {
+  openSheet({ type: 'actions', item, setId, language, title });
+}
+
 export function openQuickAdd(setId: string, language?: CardLanguage): void {
   openSheet({ type: 'quick', setId, language });
 }

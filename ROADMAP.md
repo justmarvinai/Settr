@@ -173,15 +173,17 @@
 
 ## M6 · Polish & Launch ⏳ → v1.0.0 (started 2026-09-24)
 
-- [ ] Holo card viewer (DSN-01), shared-element transitions (DSN-02), foil progress rings (DSN-03)
-- [ ] Onboarding (APP-06, no demo data), empty states, microcopy pass (German review)
-- [ ] Palette commands (Schnellerfassung, Backup exportieren) and arrow-key navigation in grids (UX_SPEC.md §7)
-- [ ] PWA polish: install prompts (iOS guidance), offline indicator, update flow
+- [x] Holo card viewer (DSN-01), shared-element transitions (DSN-02), foil progress rings (DSN-03), with the rings also in the sidebar's sets
+- [x] Onboarding (APP-06, no demo data) and empty states
+- [ ] Microcopy pass (German review)
+- [x] Palette commands (Schnellerfassung, Backup exportieren) and arrow-key navigation in grids (UX_SPEC.md §7)
+- [x] PWA polish: install prompts (iOS guidance), offline indicator, update flow
 - [ ] Accessibility audit (axe + manual keyboard/screen-reader pass), performance audit (Lighthouse CI budgets)
-- [ ] "Über & Rechtliches": disclaimer, credits (TCGdex, PokéAPI, Cardmarket data), privacy note. No Impressum while private (APP-08, ADR-022)
+- [x] "Über & Rechtliches": disclaimer, credits (TCGdex, PokéAPI, Cardmarket data), privacy note, license texts. No Impressum while private (APP-08, ADR-022)
 - [ ] Glass performance and legibility pass on Windows laptops + iPhone (DSN-05)
 - [ ] Visual regression baseline
 - [ ] Release **v1.0.0**: tag, changelog, production deployment
+- [x] Carried forward from M3–M5: the long-press menu on phone tiles and swipe between cards
 
 **Exit:** all Musts in `PRODUCT_SPEC.md` are done, all quality gates are green, and you've signed off.
 

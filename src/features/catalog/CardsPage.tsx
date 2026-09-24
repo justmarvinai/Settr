@@ -13,6 +13,7 @@ import { ACTIVE_CARD_LANGUAGES, type CardLanguage } from '@/domain/catalog-types
 import { ENERGY_TYPES } from '@/domain/catalog';
 import { categoryLabel, languageLabel, m, printLabel, rarityLabel, typeLabel } from '@/i18n';
 import { formatCount } from '@/i18n/format';
+import { heroStyle, morphWanted, nameHeroTile } from '@/lib/hero';
 import { rovingFocusRef } from '@/lib/useRovingFocus';
 import type { PrintFilter } from './SetsPage';
 
@@ -184,6 +185,8 @@ function ResultTile({ doc }: { doc: SearchDoc }) {
         .filter(Boolean)
         .join(', ')}
       data-roving
+      viewTransition={morphWanted()}
+      onClick={(event) => nameHeroTile(event.currentTarget, doc.id)}
       className="group block rounded-[14px] outline-offset-4"
     >
       <CardTile
@@ -193,6 +196,7 @@ function ResultTile({ doc }: { doc: SearchDoc }) {
         nameLang="de"
         rarity={ABBREVIATIONS.get(doc.rarity ?? '')}
         missingLabel={m.catalog_image_missing()}
+        artStyle={heroStyle(doc.id)}
       />
     </Link>
   );

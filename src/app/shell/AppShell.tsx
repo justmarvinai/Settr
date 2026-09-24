@@ -4,6 +4,7 @@ import { ToastViewport } from '@/components/ui/Toasts';
 import { m } from '@/i18n';
 import { inDialog, isPlain, isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
+import { setShortcutsOpen, showShortcuts, useShortcuts } from '@/lib/shortcuts';
 import { useKeySequence } from '@/lib/useKeySequence';
 import { usePrivacy } from '../privacy';
 import { BackupReminder } from './BackupReminder';
@@ -40,12 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     setMoreLoaded(true);
     setMoreOpen(true);
   };
-  const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [shortcutsLoaded, setShortcutsLoaded] = useState(false);
-  const openShortcuts = () => {
-    setShortcutsLoaded(true);
-    setShortcutsOpen(true);
-  };
+  const shortcuts = useShortcuts();
 
   // G then O / S / K / P / F / E goes to a main area (UX_SPEC.md §7).
   const navigate = useNavigate();
@@ -78,8 +74,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           setSearchLoaded(true);
           setSearchOpen(true);
         } else {
-          setShortcutsLoaded(true);
-          setShortcutsOpen(true);
+          showShortcuts();
         }
       } else if (key === 'h') {
         event.preventDefault();
@@ -129,13 +124,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             open={searchOpen}
             onOpenChange={setSearchOpen}
             mode={searchMode}
-            onShowShortcuts={openShortcuts}
+            onShowShortcuts={showShortcuts}
           />
         ) : null}
         {sheetRequested ? <CollectionSheets /> : null}
         {moreLoaded ? <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} /> : null}
-        {shortcutsLoaded ? (
-          <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
+        {shortcuts.requested ? (
+          <ShortcutsDialog open={shortcuts.open} onOpenChange={setShortcutsOpen} />
         ) : null}
       </Suspense>
       <ToastViewport />

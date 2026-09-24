@@ -1,5 +1,7 @@
 import { CurrencyEurIcon, PlusIcon } from '@phosphor-icons/react';
+import { useEffect, useRef, useState } from 'react';
 import type { LoadedSet } from '@/catalog';
+import { SetProgressRing } from '@/components/domain/SetProgressRing';
 import { cn } from '@/components/ui/cn';
 import {
   createHolding,
@@ -172,7 +174,25 @@ const METRIC_LABEL: Record<CompletionMetric, () => string> = {
   master: m.completion_master,
 };
 
-/** Basis big, Komplett and Master beside it (UX_SPEC.md §4.3 header, Q5.5). */
+/**
+ * The set-complete moment (DSN-03): true for a moment when Basis reaches 100 % while you watch,
+ * not when a complete set opens.
+ */
+function useCompletedJustNow(complete: boolean): boolean {
+  const before = useRef(complete);
+  const [celebrating, setCelebrating] = useState(false);
+  useEffect(() => {
+    const was = before.current;
+    before.current = complete;
+    if (was || !complete) return undefined;
+    setCelebrating(true);
+    const timer = window.setTimeout(() => setCelebrating(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [complete]);
+  return celebrating;
+}
+
+/** Basis big, Komplett and Master beside it, each with its ring (UX_SPEC.md §4.3, Q5.5). */
 export function CompletionSummary({
   completion,
   scope,
@@ -181,6 +201,7 @@ export function CompletionSummary({
   /** The language the numbers count ("Deutsch") or "alle Sprachen". */
   scope: string;
 }) {
+  const celebrating = useCompletedJustNow(ratio(completion.basis) >= 1);
   return (
     <div className="flex flex-col gap-2">
       <span className="type-label text-ink-muted">{m.completion_label({ scope })}</span>
@@ -188,17 +209,18 @@ export function CompletionSummary({
         {COMPLETION_METRICS.map((metric) => {
           const progress = completion[metric];
           const share = ratio(progress);
+          const basis = metric === 'basis';
           return (
             <div key={metric} className="flex min-w-32 flex-col gap-1.5">
               <dt className="type-ui text-ink-muted">{METRIC_LABEL[metric]()}</dt>
-              <dd className="m-0 flex flex-col gap-1.5">
+              <dd className="m-0 flex items-center gap-3">
+                <SetProgressRing
+                  value={share}
+                  size={basis ? 56 : 36}
+                  celebrate={basis && celebrating}
+                />
                 <span className="flex items-baseline gap-2">
-                  <span
-                    className={cn(
-                      'tabular-nums',
-                      metric === 'basis' ? 'type-display-m' : 'type-h2',
-                    )}
-                  >
+                  <span className={cn('tabular-nums', basis ? 'type-display-m' : 'type-h2')}>
                     {formatShare(share)}
                   </span>
                   <span className="type-small font-mono text-ink-muted">
@@ -207,15 +229,6 @@ export function CompletionSummary({
                       total: formatCount(progress.total),
                     })}
                   </span>
-                </span>
-                <span
-                  aria-hidden
-                  className="block h-1.5 overflow-hidden rounded-pill bg-hover-strong"
-                >
-                  <span
-                    className="block h-full rounded-pill bg-accent"
-                    style={{ width: `${Math.round(share * 1000) / 10}%` }}
-                  />
                 </span>
               </dd>
             </div>

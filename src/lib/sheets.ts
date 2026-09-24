@@ -30,6 +30,14 @@ export type SheetRequest =
       grade?: string | undefined;
       holdingId?: string | undefined;
     }
+  /** A tile's long-press menu on phones (UX_SPEC.md §4.3); `title` names the item. */
+  | {
+      type: 'actions';
+      item: ItemRef;
+      setId?: string | undefined;
+      language: CardLanguage;
+      title: string;
+    }
   /** Schnellerfassung for a set (COL-06). */
   | { type: 'quick'; setId: string; language?: CardLanguage | undefined }
   /** Create a custom item (CAT-08), then add a lot of it. */

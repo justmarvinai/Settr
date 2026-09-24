@@ -51,6 +51,7 @@ import { formatCount } from '@/i18n/format';
 import {
   CompletionSummary,
   openAdd,
+  openItemActions,
   openPrice,
   openQuickAdd,
   quickAdd,
@@ -60,6 +61,8 @@ import {
   type SetOwnership,
 } from '@/features/collection';
 import { useCjkFonts } from '@/components/domain/cjk';
+import { heroStyle, morphWanted, nameHeroTile } from '@/lib/hero';
+import { useLongPress } from '@/lib/useLongPress';
 import { isTyping } from '@/lib/keys';
 import { useSheets } from '@/lib/sheets';
 import { useKeySequence } from '@/lib/useKeySequence';
@@ -527,15 +530,22 @@ function CardLink({
   const rarity = card.rarity ? rarityLabel(card.rarity) : undefined;
   const owned = ownership.owned.get(card.id)?.count ?? 0;
   const ownedText = owned ? m.catalog_owned_badge({ count: owned }) : undefined;
+  // A finger resting on the tile opens its menu: Hinzufügen, Preis eintragen, Details (§4.3)
+  const longPress = useLongPress(() =>
+    openItemActions({ kind: 'card', id: card.id }, setId, lang, `${number} ${name.text}`),
+  );
   return (
     <Link
+      {...longPress}
       to="/catalog/sets/$setId/cards/$cardId"
       params={{ setId, cardId: card.id }}
       search={{ lang }}
       aria-label={[number, name.text, rarity, ownedText].filter(Boolean).join(', ')}
       aria-keyshortcuts="N P Plus"
       data-roving
-      className="group block rounded-[14px] outline-offset-4"
+      viewTransition={morphWanted()}
+      onClick={(event) => nameHeroTile(event.currentTarget, card.id)}
+      className="group block rounded-[14px] outline-offset-4 [-webkit-touch-callout:none] [@media(hover:none)]:select-none"
       onKeyDown={(event) => {
         // N opens the full add sheet for the focused card, P its price, + adds one copy (§7).
         if (event.ctrlKey || event.metaKey || event.altKey) return;
@@ -563,6 +573,7 @@ function CardLink({
         owned={owned}
         ownedText={m.count_times({ count: formatCount(owned) })}
         ghost={ownership.collecting && owned === 0}
+        artStyle={heroStyle(card.id)}
       />
     </Link>
   );

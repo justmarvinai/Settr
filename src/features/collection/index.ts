@@ -3,6 +3,7 @@ export {
   openAdd,
   openDispose,
   openEdit,
+  openItemActions,
   openLotPrice,
   openOpening,
   openPrice,

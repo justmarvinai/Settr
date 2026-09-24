@@ -1,6 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { manifestQuery } from '@/catalog';
 import { ChipGroup } from '@/components/ui/ChipGroup';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -17,7 +15,6 @@ import {
 import { PRICE_TYPES, type MotionLevel, type Settings, type Theme } from '@/domain/schemas';
 import { languageLabel, m } from '@/i18n';
 import { conditionLabel } from '@/i18n/collection-labels';
-import { formatDate } from '@/i18n/format';
 import { priceTypeLabel } from '@/i18n/price-labels';
 import {
   BackupSection,
@@ -259,29 +256,5 @@ export function DataSettings() {
         <WipeSection />
       </Section>
     </div>
-  );
-}
-
-export function AboutSettings() {
-  const catalog = useQuery(manifestQuery).data;
-  return (
-    <Section id="settings-about" title={m.app_tagline_long()}>
-      <div className="flex flex-col gap-3">
-        <p className="type-ui m-0">
-          {m.settings_about_version({ version: import.meta.env.VITE_APP_VERSION })}
-        </p>
-        <p className="type-small m-0 text-ink-muted">
-          {catalog
-            ? m.settings_about_catalog({
-                version: catalog.catalogVersion,
-                date: formatDate(new Date(catalog.generatedAt)),
-              })
-            : m.settings_about_catalog_loading()}
-        </p>
-        <p className="type-small m-0 text-ink-muted">{m.settings_about_credits()}</p>
-        <p className="type-small m-0 text-ink-muted">{m.settings_about_privacy()}</p>
-        <p className="type-small m-0 text-ink-subtle">{m.settings_about_disclaimer()}</p>
-      </div>
-    </Section>
   );
 }
