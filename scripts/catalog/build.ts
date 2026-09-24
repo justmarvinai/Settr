@@ -301,7 +301,10 @@ function toCard(
   const finishes =
     rawVariants(raw).length || config.variants === 'single'
       ? undefined
-      : finishesOf(finishLookup, config, cardId, localId, listedRarity);
+      : finishesOf(finishLookup, config, cardId, localId, listedRarity, {
+          suffix: raw.suffix,
+          basicEnergy: raw.category === 'Energy' && raw.energyType === 'Normal',
+        });
   // TCGdex calls Sun & Moon's holo rares "Rare"; a Rare printed only as a holo is one.
   const rarity =
     listedRarity === 'rare' &&

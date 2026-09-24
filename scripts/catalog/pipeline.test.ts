@@ -404,27 +404,40 @@ describe('finishes of cards without TCGdex variants', () => {
     expect(numberKey('SV001')).toBe('SV1');
   });
 
-  it('falls back to the last build, then to the rarity rule', () => {
+  it('takes TCGplayer printings, the last build only offline, else the rarity rule', () => {
     const config = { id: 'intl:sm1', rareIsHolo: false } as SetConfig;
     const before = card('intl:sm1:2', { variants: [{ id: 'holo' }, { id: 'reverse' }] });
-    const lookup = {
+    const previous = { cards: new Map([[before.id, before]]) } as PreviousCatalog;
+    const loaded = {
       table: new Map([['intl:sm1', new Map<string, Finish[]>([['1', ['normal', 'reverse']]])]]),
-      previous: { cards: new Map([[before.id, before]]) } as PreviousCatalog,
+      previous,
     };
-    expect(finishesOf(lookup, config, 'intl:sm1:1', '1', 'common')).toEqual({
+    expect(finishesOf(loaded, config, 'intl:sm1:1', '1', 'common')).toEqual({
       finishes: ['normal', 'reverse'],
       source: 'tcgplayer',
     });
-    expect(finishesOf(lookup, config, 'intl:sm1:2', '2', 'rare')).toEqual({
-      finishes: ['holo', 'reverse'],
-      source: 'previous',
-    });
-    expect(finishesOf(lookup, config, 'intl:sm1:3', '3', 'rare')).toEqual({
+    // A card missing from TCGplayer's loaded group takes the rule, not an old guess.
+    expect(finishesOf(loaded, config, 'intl:sm1:2', '2', 'rare')).toEqual({
       finishes: ['normal', 'reverse'],
       source: 'rule',
     });
+    // Without TCGplayer's printings (offline), the last build stands in.
+    const offline = { table: new Map<string, Map<string, Finish[]>>(), previous };
+    expect(finishesOf(offline, config, 'intl:sm1:2', '2', 'rare')).toEqual({
+      finishes: ['holo', 'reverse'],
+      source: 'previous',
+    });
+    expect(finishesOf(offline, config, 'intl:sm1:3', '3', 'rare')).toEqual({
+      finishes: ['normal', 'reverse'],
+      source: 'rule',
+    });
+    const empty = { table: new Map([['intl:sm1', new Map<string, Finish[]>()]]), previous };
+    expect(finishesOf(empty, config, 'intl:sm1:2', '2', 'rare').source).toBe('previous');
     expect(ruleFinishes('ultra-rare', false)).toEqual(['holo']);
     expect(ruleFinishes('rare', true)).toEqual(['holo', 'reverse']);
+    // A GX TCGdex calls "Rare" (Crimson Invasion 63a) is a holo; basic Energy is plain.
+    expect(ruleFinishes('rare', false, { suffix: 'GX' })).toEqual(['holo']);
+    expect(ruleFinishes('common', false, { basicEnergy: true })).toEqual(['normal']);
   });
 });
 

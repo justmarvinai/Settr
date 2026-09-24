@@ -106,11 +106,26 @@ export function previousFinishes(card: CatalogCard | undefined): Finish[] | unde
   return finishes.size ? ORDER.filter((f) => finishes.has(f)) : undefined;
 }
 
+/** What the rarity rule needs to know about a card besides its rarity. */
+export interface RuleCard {
+  /** A Pokémon's mechanic suffix (GX, EX, V …): always a holo. */
+  suffix?: string | undefined;
+  /** Basic Energy: printed plain. */
+  basicEnergy?: boolean;
+}
+
 /**
- * The last resort: Commons, Uncommons and Rares come as non-holo and reverse holo, everything
- * rarer as a holo (before Scarlet & Violet; `rareIsHolo` sets move Rares to the holos).
+ * The last resort: basic Energy is plain, a GX, EX or V is a holo, Commons, Uncommons and Rares come
+ * as non-holo and reverse holo, everything rarer as a holo (before Scarlet & Violet; `rareIsHolo`
+ * sets move Rares to the holos).
  */
-export function ruleFinishes(rarity: RarityId | undefined, rareIsHolo: boolean): Finish[] {
+export function ruleFinishes(
+  rarity: RarityId | undefined,
+  rareIsHolo: boolean,
+  card: RuleCard = {},
+): Finish[] {
+  if (card.basicEnergy) return ['normal'];
+  if (card.suffix) return ['holo'];
   const plain = rarity === 'common' || rarity === 'uncommon' || (rarity === 'rare' && !rareIsHolo);
   return plain ? ['normal', 'reverse'] : rarity === 'rare' ? ['holo', 'reverse'] : ['holo'];
 }
@@ -126,8 +141,9 @@ export interface FinishLookup {
 }
 
 /**
- * A card's finishes when TCGdex lists none, with where they came from: TCGplayer, else the last
- * build (offline, or a card TCGplayer doesn't list), else the rarity rule.
+ * A card's finishes when TCGdex lists none, with where they came from: TCGplayer; else, when
+ * TCGplayer's printings weren't loaded (offline, an outage), the last build's; else the rarity rule.
+ * A card missing from a loaded group takes the rule, so an old guess doesn't outlive a better one.
  */
 export function finishesOf(
   lookup: FinishLookup,
@@ -135,10 +151,13 @@ export function finishesOf(
   cardId: string,
   localId: string,
   rarity: RarityId | undefined,
+  card: RuleCard = {},
 ): { finishes: Finish[]; source: FinishSource } {
-  const fromTcgplayer = lookup.table.get(config.id)?.get(numberKey(localId));
+  const group = lookup.table.get(config.id);
+  const fromTcgplayer = group?.get(numberKey(localId));
   if (fromTcgplayer) return { finishes: fromTcgplayer, source: 'tcgplayer' };
-  const before = previousFinishes(lookup.previous.cards.get(cardId));
+  // An empty group (a bad download) counts as not loaded.
+  const before = group?.size ? undefined : previousFinishes(lookup.previous.cards.get(cardId));
   if (before) return { finishes: before, source: 'previous' };
-  return { finishes: ruleFinishes(rarity, config.rareIsHolo ?? true), source: 'rule' };
+  return { finishes: ruleFinishes(rarity, config.rareIsHolo ?? true, card), source: 'rule' };
 }
