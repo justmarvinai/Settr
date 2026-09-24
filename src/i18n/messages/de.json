@@ -977,5 +977,8 @@
   "key_s": "S",
   "key_u": "U",
   "key_v": "V",
-  "key_enter": "⏎"
+  "key_enter": "⏎",
+  "action_price": "Preis eintragen …",
+  "price_sheet_title": "Preis eintragen",
+  "collection_quick_price": "Preis für {name} eintragen"
 }

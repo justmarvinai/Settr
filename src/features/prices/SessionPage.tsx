@@ -1,16 +1,7 @@
 import { ArrowLeftIcon, ArrowSquareOutIcon, XIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { Suspense, useEffect, useId, useRef, useState, type ReactNode } from 'react';
-import {
-  cardmarketFilters,
-  cardmarketProductId,
-  cardmarketSearchUrl,
-  cardmarketUrl,
-  productCardmarketUrl,
-  useCatalogSet,
-  useManifest,
-  useSealed,
-} from '@/catalog';
+import { cardmarketSearchUrl } from '@/catalog';
 import { CardImage } from '@/components/domain/CardImage';
 import { PLDelta } from '@/components/domain/PLDelta';
 import { ProductImage } from '@/components/domain/ProductImage';
@@ -30,7 +21,7 @@ import {
   usePriceSession,
   useSettings,
 } from '@/db';
-import { chunkSetId, STANDARD_VARIANT } from '@/domain/catalog';
+import { STANDARD_VARIANT } from '@/domain/catalog';
 import { todayIso } from '@/domain/ids';
 import { money } from '@/domain/money';
 import { PRICE_TYPES, type Holding, type PriceEntry, type PriceType } from '@/domain/schemas';
@@ -41,13 +32,14 @@ import {
   type SeriesState,
   type SessionResult,
 } from '@/domain/valuation';
-import { isCustomId, snapshotOf, toastError, type LibraryRow } from '@/features/collection';
+import { snapshotOf, toastError, type LibraryRow } from '@/features/collection';
 import { htmlLang, languageLabel, m } from '@/i18n';
 import { gradingText } from '@/i18n/collection-labels';
 import { formatCount, formatMoney, formatRelative } from '@/i18n/format';
 import { parseMoneyInput } from '@/i18n/money-input';
 import { priceTypeLabel } from '@/i18n/price-labels';
 import { useMediaQuery } from '@/lib/useMediaQuery';
+import { cardmarketLinkOf } from './cardmarket-link';
 import { SCOPE_LABELS } from './PricesPage';
 import { contextOf, priceTypeOf, sourceOf } from './series';
 import { startSession, useSessionData, type SessionData } from './session-data';
@@ -324,57 +316,15 @@ function StepView({
   );
 }
 
-/** Resolves the catalog item behind a series for its Cardmarket link (PRC-06). */
-function CardStep(props: StepProps & { lot: Holding }) {
-  const settings = useSettings();
-  const manifest = useManifest();
-  const loaded = useCatalogSet(chunkSetId(props.lot.setId ?? '', manifest.sets));
-  const card = loaded.byId.get(props.lot.item.id);
-  const lang = props.lot.language;
-  const productId = card
-    ? cardmarketProductId(card, props.lot.variant ?? STANDARD_VARIANT, lang)
-    : undefined;
-  const href = productId
-    ? cardmarketUrl(productId, cardmarketFilters(settings, lang))
-    : cardmarketSearchUrl(
-        `${props.row?.name ?? props.lot.snapshot.name} ${props.row?.number ?? ''}`.trim(),
-      );
-  return <StepView {...props} href={href} exact={Boolean(productId)} />;
-}
-
-function ProductStep(props: StepProps & { lot: Holding }) {
-  const settings = useSettings();
-  const { byId } = useSealed();
-  const product = byId.get(props.lot.item.id);
-  const exact = product
-    ? productCardmarketUrl(product, cardmarketFilters(settings, props.lot.language))
-    : undefined;
-  return (
-    <StepView
-      {...props}
-      href={exact ?? cardmarketSearchUrl(props.row?.name ?? props.lot.snapshot.name)}
-      exact={Boolean(exact)}
-    />
-  );
-}
-
+/** A step with its Cardmarket link (PRC-06): the lot's exact product, else a search. */
 function Step(props: StepProps) {
+  const settings = useSettings();
   const lot = props.state.lots[0];
   if (!lot) return null;
-  if (isCustomId(lot.item.id) || !props.row?.inCatalog) {
-    return (
-      <StepView
-        {...props}
-        href={cardmarketSearchUrl(props.row?.name ?? lot.snapshot.name)}
-        exact={false}
-      />
-    );
-  }
-  return lot.item.kind === 'card' ? (
-    <CardStep {...props} lot={lot} />
-  ) : (
-    <ProductStep {...props} lot={lot} />
-  );
+  const link = props.row
+    ? cardmarketLinkOf(props.row.info, lot.language, lot.variant, settings)
+    : { href: cardmarketSearchUrl(lot.snapshot.name), exact: false };
+  return <StepView {...props} href={link.href} exact={link.exact} />;
 }
 
 function Summary({ session, data }: { session: PriceSessionState; data: SessionData }) {

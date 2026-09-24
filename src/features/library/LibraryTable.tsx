@@ -22,6 +22,7 @@ import { formatCount, formatDate, formatMoney, formatPercent } from '@/i18n/form
 import { useElementBox } from '@/lib/useElementBox';
 import type { SelectionProps } from './LibraryGrid';
 import { lotMenuActions, toastError } from '@/features/collection';
+import { lotKeys } from './lot-keys';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
 import type { LibraryKind, LibraryRow } from '@/features/collection';
 
@@ -114,6 +115,7 @@ function NameCell({
         search={{ lang: h.language }}
         lang={htmlLang(row.nameLang)}
         className={nameClass}
+        onKeyDown={lotKeys(row)}
       >
         {row.name}
       </Link>
@@ -126,6 +128,7 @@ function NameCell({
         search={{ lang: h.language }}
         lang={htmlLang(row.nameLang)}
         className={nameClass}
+        onKeyDown={lotKeys(row)}
       >
         {row.name}
       </Link>

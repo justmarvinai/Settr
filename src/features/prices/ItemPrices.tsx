@@ -6,48 +6,24 @@ import { MoneyInput } from '@/components/ui/FormControls';
 import { Input } from '@/components/ui/Input';
 import { NativeSelect } from '@/components/ui/NativeSelect';
 import { Panel } from '@/components/ui/Panel';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { addPrice, db, deletePrice, useHoldingsOfItem, useItemPrices, useSettings } from '@/db';
-import { STANDARD_VARIANT } from '@/domain/catalog';
-import type { CardLanguage, ItemRef } from '@/domain/catalog-types';
+import { useHoldingsOfItem, useItemPrices, useSettings } from '@/db';
+import type { CardLanguage } from '@/domain/catalog-types';
 import { todayIso } from '@/domain/ids';
 import { money } from '@/domain/money';
-import {
-  PRICE_TYPES,
-  type Holding,
-  type ItemSnapshot,
-  type PriceEntry,
-  type PriceType,
-} from '@/domain/schemas';
-import { cardSeriesKey, gradeKey, sealedSeriesKey, type GradeKey } from '@/domain/series';
+import { PRICE_TYPES, type PriceEntry, type PriceType } from '@/domain/schemas';
 import { isStale } from '@/domain/valuation';
-import { toastError, toastWithUndo } from '@/features/collection';
-import { languageCode, languageLabel, m } from '@/i18n';
-import { gradingText } from '@/i18n/collection-labels';
+import { toastError } from '@/features/collection';
+import { languageLabel, m } from '@/i18n';
 import { formatDate, formatMoney, formatRelative } from '@/i18n/format';
 import { parseMoneyInput } from '@/i18n/money-input';
 import { priceTypeLabel } from '@/i18n/price-labels';
+import { isTyping } from '@/lib/keys';
+import { useSheets } from '@/lib/sheets';
+import type { CardmarketLink } from './cardmarket-link';
 import { PriceChartPanel } from './PriceChartPanel';
-import { contextOf, isGradeKey, oldestFirst, priceTypeOf, sourceOf } from './series';
-
-/** A card or sealed product as the price views need it. */
-export interface PricedItem {
-  ref: ItemRef;
-  /** Display snapshot stored with every entry (rule 4: records survive catalog changes). */
-  snapshot: ItemSnapshot;
-  /** Names the item in toasts, e.g. `025 Pikachu-ex`. */
-  label: string;
-  languages: readonly CardLanguage[];
-  /** Card variants; empty for sealed products. */
-  variants: readonly { id: string; label: string }[];
-}
-
-/** The Cardmarket button: the exact product with the preset filters, or a search. */
-export interface CardmarketLink {
-  href: string;
-  exact: boolean;
-  hint: string;
-}
+import { amountError, dateError, savePrice, type PricedItem, type SeriesTarget } from './record';
+import { SeriesSelectors, useSeriesChoice } from './SeriesChoice';
+import { priceTypeOf } from './series';
 
 /** The price context of an entry (R2.2, R2.6): `Deutsch · ab (DE) · NM oder besser`. */
 export function contextText(entry: Pick<PriceEntry, 'language' | 'priceType' | 'context'>) {
@@ -58,23 +34,6 @@ export function contextText(entry: Pick<PriceEntry, 'language' | 'priceType' | '
   ]
     .filter(Boolean)
     .join(' · ');
-}
-
-function gradeOptions(
-  holdings: readonly Holding[],
-  entries: readonly PriceEntry[],
-  language: CardLanguage,
-): Map<string, string> {
-  const options = new Map<string, string>([['raw', m.prices_series_raw()]]);
-  for (const h of holdings) {
-    if (h.language === language && h.grading)
-      options.set(gradeKey(h.grading), gradingText(h.grading));
-  }
-  for (const e of entries) {
-    if (e.language === language && !options.has(e.grade))
-      options.set(e.grade, e.grade.toUpperCase());
-  }
-  return options;
 }
 
 /**
@@ -90,29 +49,14 @@ export function ItemPrices({
 }: {
   item: PricedItem;
   language: CardLanguage;
-  cardmarket: CardmarketLink;
+  /** The Cardmarket link of the chosen variant. */
+  cardmarket: (variant: string) => CardmarketLink;
 }) {
   const entries = useItemPrices(item.ref.id);
   const holdings = useHoldingsOfItem(item.ref.id);
-  const [variantChoice, setVariant] = useState(item.variants[0]?.id ?? STANDARD_VARIANT);
-  const [gradeChoice, setGrade] = useState<GradeKey>('raw');
+  const choice = useSeriesChoice(item, language, entries, holdings);
+  const { series, latest } = choice;
   const [fresh, setFresh] = useState<{ id: string; direction: 'gain' | 'loss' | 'flat' }>();
-
-  const variant = item.variants.some((v) => v.id === variantChoice)
-    ? variantChoice
-    : (item.variants[0]?.id ?? STANDARD_VARIANT);
-  const grades =
-    item.ref.kind === 'card'
-      ? gradeOptions(holdings ?? [], entries ?? [], language)
-      : new Map<GradeKey, string>();
-  const grade = grades.has(gradeChoice) ? gradeChoice : 'raw';
-  const keyFor = (lang: CardLanguage) =>
-    item.ref.kind === 'sealed'
-      ? sealedSeriesKey(item.ref.id, lang)
-      : cardSeriesKey(item.ref.id, lang, variant, grade);
-  const seriesKey = keyFor(language);
-  const series = (entries ?? []).filter((e) => e.seriesKey === seriesKey).toSorted(oldestFirst);
-  const latest = series.at(-1);
 
   useEffect(() => {
     if (!fresh) return undefined;
@@ -133,47 +77,12 @@ export function ItemPrices({
   return (
     <>
       <CurrentPrice
-        item={item}
-        language={language}
-        variant={variant}
-        grade={grade}
-        seriesKey={seriesKey}
+        target={choice}
         latest={latest}
-        cardmarket={cardmarket}
+        cardmarket={cardmarket(choice.variant)}
         flash={fresh && fresh.id === latest?.id ? fresh.direction : undefined}
         onSaved={onSaved}
-        selectors={
-          item.variants.length > 1 || grades.size > 1 ? (
-            <div className="flex flex-wrap items-center gap-3">
-              {item.variants.length > 1 ? (
-                <SegmentedControl
-                  label={m.prices_variant()}
-                  value={variant}
-                  onValueChange={setVariant}
-                  options={item.variants.map((v) => ({ value: v.id, label: v.label }))}
-                />
-              ) : null}
-              {grades.size > 1 ? (
-                <label className="flex items-center gap-2 type-small text-ink-muted">
-                  {m.prices_series()}
-                  <NativeSelect
-                    value={grade}
-                    onChange={(event) => {
-                      if (isGradeKey(event.target.value)) setGrade(event.target.value);
-                    }}
-                    className="h-10 w-auto"
-                  >
-                    {[...grades].map(([key, label]) => (
-                      <option key={key} value={key}>
-                        {label}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                </label>
-              ) : null}
-            </div>
-          ) : null
-        }
+        selectors={<SeriesSelectors choice={choice} />}
       />
       <PriceChartPanel
         item={item}
@@ -183,11 +92,11 @@ export function ItemPrices({
           .filter((l) => l !== language)
           .map((l) => ({
             language: l,
-            entries: (entries ?? []).filter((e) => e.seriesKey === keyFor(l)),
+            entries: (entries ?? []).filter((e) => e.seriesKey === choice.keyFor(l)),
           }))
           .filter((c) => c.entries.length > 0)}
         holdings={holdings ?? []}
-        seriesKey={seriesKey}
+        seriesKey={choice.seriesKey}
         freshId={fresh?.id}
         loading={entries === undefined}
       />
@@ -195,30 +104,15 @@ export function ItemPrices({
   );
 }
 
-function amountError(text: string): string | undefined {
-  if (!text.trim()) return m.error_price_required();
-  const parsed = parseMoneyInput(text);
-  if (parsed.ok) return undefined;
-  return parsed.error === 'too-many-decimals' ? m.error_price_decimals() : m.error_price_invalid();
-}
-
 function CurrentPrice({
-  item,
-  language,
-  variant,
-  grade,
-  seriesKey,
+  target,
   latest,
   cardmarket,
   flash,
   onSaved,
   selectors,
 }: {
-  item: PricedItem;
-  language: CardLanguage;
-  variant: string;
-  grade: GradeKey;
-  seriesKey: string;
+  target: SeriesTarget;
   latest: PriceEntry | undefined;
   cardmarket: CardmarketLink;
   flash: 'gain' | 'loss' | 'flat' | undefined;
@@ -233,40 +127,35 @@ function CurrentPrice({
   const [type, setType] = useState<PriceType>(settings.price.defaultType);
   const [tried, setTried] = useState(false);
   const amountRef = useRef<HTMLInputElement>(null);
+  const { language } = target;
 
-  const errors = {
-    amount: amountError(amount),
-    date: !date ? m.error_date_required() : date > today ? m.error_date_future() : undefined,
-  };
+  const errors = { amount: amountError(amount), date: dateError(date, today) };
   const parsed = parseMoneyInput(amount);
   const delta =
     latest && parsed.ok && latest.price.currency === 'EUR'
       ? parsed.minor - latest.price.minor
       : undefined;
   const stale = latest ? isStale(latest.date, today, settings.price.staleAfterDays) : false;
-  const what = `${item.label} · ${languageCode(language)}`;
   const feedback = (tried && (errors.amount ?? errors.date)) || delta !== undefined;
 
-  const save = async (price: number, entryDate: string, priceType: PriceType) => {
-    const context = contextOf(priceType, settings, language);
-    const entry = await addPrice(db, {
-      seriesKey,
-      item: item.ref,
-      language,
-      ...(item.ref.kind === 'card' ? { variant } : {}),
-      grade,
-      snapshot: item.snapshot,
-      date: entryDate,
-      price: money(price),
-      priceType,
-      source: sourceOf(priceType),
-      ...(context ? { context } : {}),
-      origin: 'manual',
-    });
+  // P records a price for the page's item (UX_SPEC.md §7): here, that's this field.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'p' || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.defaultPrevented || isTyping(event.target) || useSheets.getState().open) return;
+      const input = amountRef.current;
+      if (!input) return;
+      event.preventDefault();
+      input.scrollIntoView({ block: 'center' });
+      input.focus({ preventScroll: true });
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const save = async (input: Parameters<typeof savePrice>[2]) => {
+    const entry = await savePrice(target, settings, input);
     onSaved(entry);
-    toastWithUndo(m.prices_saved({ amount: formatMoney(entry.price), what }), () =>
-      deletePrice(db, entry.id),
-    );
     return entry;
   };
 
@@ -274,7 +163,7 @@ function CurrentPrice({
     setTried(true);
     if (errors.amount || errors.date || !parsed.ok) return;
     try {
-      await save(parsed.minor, date, type);
+      await save({ minor: parsed.minor, date, type });
       setAmount('');
       setDate(todayIso());
       setTried(false);
@@ -286,7 +175,12 @@ function CurrentPrice({
 
   const confirmUnchanged = () => {
     if (!latest) return;
-    save(latest.price.minor, todayIso(), latest.priceType).catch(toastError);
+    save({
+      minor: latest.price.minor,
+      date: todayIso(),
+      type: latest.priceType,
+      like: latest,
+    }).catch(toastError);
   };
 
   return (

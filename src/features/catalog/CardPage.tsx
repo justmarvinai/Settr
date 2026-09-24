@@ -1,26 +1,12 @@
 import { ArrowLeftIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, type ReactNode } from 'react';
-import {
-  cardmarketFilters,
-  cardmarketProductId,
-  cardmarketSearchUrl,
-  cardmarketUrl,
-  useCatalogSet,
-  useManifest,
-} from '@/catalog';
+import { useCatalogSet, useManifest } from '@/catalog';
 import { CardImage } from '@/components/domain/CardImage';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useSettings } from '@/db';
-import {
-  pickText,
-  STANDARD_VARIANT,
-  type CatalogCard,
-  pickLanguage,
-  cardName,
-  otherNames,
-} from '@/domain/catalog';
+import { pickText, type CatalogCard, pickLanguage, cardName, otherNames } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
 import {
   categoryLabel,
@@ -37,7 +23,7 @@ import {
 import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
 import { cardInfo, HoldingsPanel, lotLabel, openAdd, snapshotOf } from '@/features/collection';
-import { ItemPrices } from '@/features/prices';
+import { cardmarketLinkOf, ItemPrices } from '@/features/prices';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sets/$setId/cards/$cardId');
 
@@ -110,10 +96,6 @@ export function CardPage() {
   const info = cardInfo(card, loaded);
   const image = card.images[lang];
   const number = card.printedNumber || card.localId;
-  const productId = cardmarketProductId(card, STANDARD_VARIANT, lang);
-  const cardmarketHref = productId
-    ? cardmarketUrl(productId, cardmarketFilters(settings, lang))
-    : cardmarketSearchUrl(`${card.name.en ?? pickText(card.name)} ${number}`);
   const mark = card.printedRarity?.[lang];
   // Counterparts live in the other print's chunk (ids are never parsed, DATA_MODEL.md §3).
   const otherPrint = manifest.sets.find((s) => s.id === loaded.set.otherPrint);
@@ -212,13 +194,7 @@ export function CardPage() {
             variants: info.variants,
           }}
           language={lang}
-          cardmarket={{
-            href: cardmarketHref,
-            exact: Boolean(productId),
-            hint: productId
-              ? m.catalog_cardmarket_filters({ language: languageLabel(lang) })
-              : m.catalog_cardmarket_search_hint(),
-          }}
+          cardmarket={(variant) => cardmarketLinkOf(info, lang, variant, settings)}
         />
 
         <HoldingsPanel

@@ -51,8 +51,10 @@ import { formatCount } from '@/i18n/format';
 import {
   CompletionSummary,
   openAdd,
+  openPrice,
   openQuickAdd,
   QuickAddButton,
+  QuickPriceButton,
   useSetOwnership,
   type SetOwnership,
 } from '@/features/collection';
@@ -196,6 +198,13 @@ export function SetPage() {
               language={lang}
               name={`${card.printedNumber || card.localId} ${cardName(card, lang, names).text}`}
               className="absolute top-1.5 right-1.5 opacity-0 group-hover/tile:opacity-100 group-focus-within/tile:opacity-100 [@media(hover:none)]:bg-surface-1/90 [@media(hover:none)]:text-accent-text [@media(hover:none)]:opacity-100"
+            />
+            <QuickPriceButton
+              card={card}
+              setId={set.id}
+              language={lang}
+              name={`${card.printedNumber || card.localId} ${cardName(card, lang, names).text}`}
+              className="absolute top-12 right-1.5 opacity-0 group-hover/tile:opacity-100 group-focus-within/tile:opacity-100 [@media(hover:none)]:hidden"
             />
           </li>
         ))}
@@ -501,12 +510,16 @@ function CardLink({
       aria-label={[number, name.text, rarity, ownedText].filter(Boolean).join(', ')}
       className="group block rounded-[14px] outline-offset-4"
       onKeyDown={(event) => {
-        // N opens the full add sheet for the focused card (UX_SPEC.md §7).
-        if (event.key.toLowerCase() !== 'n' || event.ctrlKey || event.metaKey || event.altKey) {
-          return;
+        // N opens the full add sheet for the focused card, P its price (UX_SPEC.md §7).
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        const key = event.key.toLowerCase();
+        if (key === 'n') {
+          event.preventDefault();
+          openAdd({ kind: 'card', id: card.id }, setId, lang);
+        } else if (key === 'p') {
+          event.preventDefault();
+          openPrice({ kind: 'card', id: card.id }, setId, lang);
         }
-        event.preventDefault();
-        openAdd({ kind: 'card', id: card.id }, setId, lang);
       }}
     >
       <CardTile
@@ -602,6 +615,12 @@ function CardList({
                         })}
                       </span>
                     ) : null}
+                    <QuickPriceButton
+                      card={card}
+                      setId={setId}
+                      language={lang}
+                      name={`${card.printedNumber || card.localId} ${name.text}`}
+                    />
                     <QuickAddButton
                       card={card}
                       loaded={loaded}

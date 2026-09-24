@@ -1,4 +1,4 @@
-import type { LoadedSet } from '@/catalog';
+import { cardmarketProductId, type LoadedSet } from '@/catalog';
 import {
   lotName,
   pickText,
@@ -38,6 +38,8 @@ export interface ItemInfo {
   productType?: string | undefined;
   name: (lang: CardLanguage, display?: NameDisplay) => ShownName;
   image: (lang: CardLanguage) => CatalogImage | undefined;
+  /** Cardmarket's product for a copy in `lang` (a card's variant), when the catalog knows it. */
+  cardmarketId?: ((lang: CardLanguage, variant?: string) => number | undefined) | undefined;
 }
 
 export const CUSTOM_PREFIX = 'custom:';
@@ -63,6 +65,8 @@ export function cardInfo(card: CatalogCard, loaded: LoadedSet): ItemInfo {
     variants: card.variants.map((v) => ({ id: v.id, label: legend.get(v.id) ?? v.id })),
     name: (lang, display = 'copy') => lotName(card, lang, display),
     image: (lang) => card.images[lang],
+    cardmarketId: (lang, variant = card.variants[0]?.id ?? STANDARD_VARIANT) =>
+      cardmarketProductId(card, variant, lang),
   };
 }
 
@@ -79,6 +83,7 @@ export function productInfo(product: CatalogProduct, setName?: string): ItemInfo
     productType: product.type,
     name: (lang) => productNameIn(product, lang),
     image: (lang) => product.images?.[lang] ?? Object.values(product.images ?? {})[0],
+    cardmarketId: () => product.refs?.cardmarket,
   };
 }
 

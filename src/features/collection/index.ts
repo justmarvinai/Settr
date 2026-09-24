@@ -1,9 +1,19 @@
 export { CollectionLayout } from './CollectionLayout';
-export { openAdd, openDispose, openEdit, openOpening, openQuickAdd, openValue } from './actions';
+export {
+  openAdd,
+  openDispose,
+  openEdit,
+  openLotPrice,
+  openOpening,
+  openPrice,
+  openQuickAdd,
+  openValue,
+} from './actions';
 export {
   CompletionSummary,
   QuickAddButton,
   quickAddInput,
+  QuickPriceButton,
   useSetOwnership,
   type SetOwnership,
 } from './ownership';

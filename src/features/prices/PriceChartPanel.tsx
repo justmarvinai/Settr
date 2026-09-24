@@ -20,7 +20,7 @@ import { toastError } from '@/features/collection';
 import { languageCode, languageLabel, m } from '@/i18n';
 import { formatDate, formatMoney, formatMoneyShort } from '@/i18n/format';
 import { priceTypeLabel } from '@/i18n/price-labels';
-import type { PricedItem } from './ItemPrices';
+import type { PricedItem } from './record';
 import { PriceHistory } from './PriceHistory';
 import {
   chartPoints,

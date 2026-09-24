@@ -13,7 +13,8 @@ import { remaining } from '@/domain/schemas';
 import { htmlLang, languageCode, m, productTypeLabel } from '@/i18n';
 import { formatCount, formatMoney } from '@/i18n/format';
 import { useElementBox } from '@/lib/useElementBox';
-import { lotMenuActions, openAdd, openEdit } from '@/features/collection';
+import { lotMenuActions, openEdit } from '@/features/collection';
+import { lotKeys } from './lot-keys';
 import { describeRow, quantityText, stateText, variantText } from './lot-text';
 import type { LibraryKind, LibraryRow } from '@/features/collection';
 
@@ -53,16 +54,15 @@ function itemsOf(
   return items;
 }
 
-/** Space selects the focused tile, N adds another lot of its item (UX_SPEC.md §7). */
+/** Space selects the focused tile; N and P as on every lot (UX_SPEC.md §7). */
 function tileKeys(row: LibraryRow, onToggle: (id: string) => void) {
+  const keys = lotKeys(row);
   return (event: KeyboardEvent) => {
-    if (event.ctrlKey || event.metaKey || event.altKey) return;
-    if (event.key === ' ') {
+    if (event.key === ' ' && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       onToggle(row.holding.id);
-    } else if (event.key.toLowerCase() === 'n' && row.inCatalog) {
-      event.preventDefault();
-      openAdd(row.holding.item, row.setId, row.holding.language);
+    } else {
+      keys(event);
     }
   };
 }

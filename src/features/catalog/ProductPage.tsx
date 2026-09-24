@@ -1,13 +1,7 @@
 import { ArrowLeftIcon } from '@phosphor-icons/react';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
-import {
-  cardmarketFilters,
-  cardmarketSearchUrl,
-  productCardmarketUrl,
-  useManifest,
-  useSealed,
-} from '@/catalog';
+import { useManifest, useSealed } from '@/catalog';
 import { ProductImage } from '@/components/domain/ProductImage';
 import { Panel } from '@/components/ui/Panel';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -27,7 +21,7 @@ import { formatDate, formatMoney } from '@/i18n/format';
 import { useCjkFonts } from '@/components/domain/cjk';
 import { remaining } from '@/domain/schemas';
 import { HoldingsPanel, lotLabel, openAdd, productInfo, snapshotOf } from '@/features/collection';
-import { ItemPrices } from '@/features/prices';
+import { cardmarketLinkOf, ItemPrices } from '@/features/prices';
 import { ProductTile } from './ProductTile';
 
 const route = /* @__PURE__ */ getRouteApi('/catalog/sealed/$productId');
@@ -61,9 +55,6 @@ export function ProductPage() {
   const name = pickText(product.name);
   const firstSet = manifest.sets.find((s) => s.id === product.setIds[0]);
   const info = productInfo(product, firstSet ? pickText(firstSet.name) : undefined);
-  const cardmarketHref =
-    productCardmarketUrl(product, cardmarketFilters(settings, lang)) ??
-    cardmarketSearchUrl(product.name.en ?? name);
   const family = product.family
     ? products.filter((p) => p.family === product.family && p.id !== product.id)
     : [];
@@ -145,13 +136,7 @@ export function ProductPage() {
               variants: [],
             }}
             language={lang}
-            cardmarket={{
-              href: cardmarketHref,
-              exact: Boolean(product.refs?.cardmarket),
-              hint: product.refs?.cardmarket
-                ? m.catalog_cardmarket_filters_sealed({ language: languageLabel(lang) })
-                : m.catalog_cardmarket_search_hint(),
-            }}
+            cardmarket={(variant) => cardmarketLinkOf(info, lang, variant, settings)}
           />
 
           <HoldingsPanel
