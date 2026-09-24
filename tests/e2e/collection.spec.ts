@@ -1,23 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import type { Page } from '@playwright/test';
-import { axeViolations, expect, pageTitle, test } from './fixtures';
-
-/** Adds lots to 30 Jahre through Schnellerfassung (COL-06): `25`, `25x3`, `25 4,50`. */
-async function quickAdd(page: Page, entries: readonly string[], language?: 'EN') {
-  await page.goto('/catalog/sets/intl:30th');
-  await page.getByRole('button', { name: 'Schnellerfassung' }).click();
-  const sheet = page.getByRole('dialog', { name: 'Schnellerfassung' });
-  if (language) await sheet.getByRole('radio', { name: language }).click();
-  const input = sheet.getByLabel('Kartennummer');
-  for (const entry of entries) {
-    await input.fill(entry);
-    await expect(sheet.getByText(/^⏎ fügt hinzu:/)).toBeVisible();
-    await input.press('Enter');
-    await expect(input).toHaveValue('');
-  }
-  await page.keyboard.press('Escape');
-  await expect(sheet).toBeHidden();
-}
+import { axeViolations, expect, pageTitle, quickAdd, test } from './fixtures';
 
 // The service worker would fetch card pictures itself once it controls the page, past the
 // fixtures' picture stubs; the PWA spec covers it.

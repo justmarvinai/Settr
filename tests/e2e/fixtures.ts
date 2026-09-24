@@ -65,3 +65,20 @@ export async function axeViolations(page: Page): Promise<string[]> {
 
 /** The toolbar's page title (h1). */
 export const pageTitle = (page: Page) => page.getByRole('heading', { level: 1 });
+
+/** Adds lots to 30 Jahre through Schnellerfassung (COL-06): `25`, `25x3`, `25 4,50`. */
+export async function quickAdd(page: Page, entries: readonly string[], language?: 'EN') {
+  await page.goto('/catalog/sets/intl:30th');
+  await page.getByRole('button', { name: 'Schnellerfassung' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Schnellerfassung' });
+  if (language) await sheet.getByRole('radio', { name: language }).click();
+  const input = sheet.getByLabel('Kartennummer');
+  for (const entry of entries) {
+    await input.fill(entry);
+    await expect(sheet.getByText(/^⏎ fügt hinzu:/)).toBeVisible();
+    await input.press('Enter');
+    await expect(input).toHaveValue('');
+  }
+  await page.keyboard.press('Escape');
+  await expect(sheet).toBeHidden();
+}
