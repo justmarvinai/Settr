@@ -28,9 +28,24 @@ export async function getMeta(db: SettrDB): Promise<Meta | undefined> {
   return parsed.success ? parsed.data : undefined;
 }
 
-export async function markBackupDone(db: SettrDB, at: string = nowIso()): Promise<void> {
+/** Records a backup: when, and the change counter at that moment (DAT-04 counts changes since). */
+export async function markBackupDone(
+  db: SettrDB,
+  at: string = nowIso(),
+  dataVersion?: number,
+): Promise<void> {
+  await db.transaction('rw', db.kv, async () => {
+    const meta = await ensureMeta(db);
+    const next: Meta = { ...meta, lastBackupAt: at };
+    if (dataVersion !== undefined) next.backupDataVersion = dataVersion;
+    await db.kv.put({ key: META, value: next });
+  });
+}
+
+/** Records an import (IMPORT_EXPORT.md §4 step 10). Call inside a transaction that includes kv. */
+export async function markImportDone(db: SettrDB, at: string = nowIso()): Promise<void> {
   const meta = await ensureMeta(db);
-  await db.kv.put({ key: META, value: { ...meta, lastBackupAt: at } satisfies Meta });
+  await db.kv.put({ key: META, value: { ...meta, lastImportAt: at } satisfies Meta });
 }
 
 /** Bumped by every write transaction; derived caches and analytics key on it (ARCHITECTURE.md §5). */

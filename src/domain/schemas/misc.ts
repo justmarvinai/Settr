@@ -65,6 +65,8 @@ export const metaSchema = z.object({
   createdAt: isoTimestampSchema,
   schemaVersion: z.number().int().positive(),
   lastBackupAt: isoTimestampSchema.optional(),
+  /** The change counter (kv `dataVersion`) when the last backup was made (DAT-04). */
+  backupDataVersion: z.number().int().nonnegative().optional(),
   lastImportAt: isoTimestampSchema.optional(),
   catalogVersionSeen: z.string().nullable(),
 });

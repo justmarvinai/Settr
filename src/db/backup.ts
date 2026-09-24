@@ -1,79 +1,39 @@
+import {
+  BACKUP_FORMAT,
+  BACKUP_FORMAT_VERSION,
+  canonicalJson,
+  cardmarketOverridesSchema,
+  countsOf,
+  type BackupData,
+  type BackupEnvelope,
+  type BackupMedia,
+} from '@/domain/backup';
 import { nowIso } from '@/domain/ids';
-import { resolveSettings } from '@/domain/schemas';
-import { SCHEMA_VERSION, type SettrDB } from './db';
-import { ensureMeta, markBackupDone } from './repositories/meta';
+import { resolveSettings, SCHEMA_VERSION } from '@/domain/schemas';
+import { sha256Hex } from '@/lib/hash';
+import type { MediaRow, SettrDB } from './db';
+import { ensureMeta, getDataVersion, markBackupDone } from './repositories/meta';
 
 /**
- * Full backup (IMPORT_EXPORT.md §2): one JSON envelope with every user table, the settings and the
- * user's Cardmarket corrections. Derived tables (priceLatest) and per-device UI prefs stay out.
- * M3 ships the export (DAT-01 lite); import, merge and snapshots follow in M5.
+ * Full backup (IMPORT_EXPORT.md §2, §3): one JSON envelope with every user table, the settings and
+ * the user's Cardmarket corrections. Derived tables (priceLatest), per-device UI prefs and the price
+ * session stay out.
  */
 
-export const BACKUP_FORMAT = 'settr-backup';
-export const BACKUP_FORMAT_VERSION = 1;
+export const OVERRIDES_KEY = 'overrides:cardmarket';
 
-const TABLES = [
-  'holdings',
-  'prices',
-  'wishlist',
-  'tags',
-  'locations',
-  'customItems',
-  'media',
-  'tombstones',
-] as const;
-type Table = (typeof TABLES)[number];
-
-export interface BackupMedia {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  mime: string;
-  width: number;
-  height: number;
-  bytes: number;
-  base64: string;
-}
-
-export interface BackupData {
-  holdings: unknown[];
-  prices: unknown[];
-  wishlist: unknown[];
-  tags: unknown[];
-  locations: unknown[];
-  customItems: unknown[];
-  media: BackupMedia[];
-  settings: unknown;
-  overrides: { cardmarket: unknown };
-  tombstones: unknown[];
-}
-
-export interface BackupEnvelope {
-  format: typeof BACKUP_FORMAT;
-  formatVersion: number;
-  schemaVersion: number;
-  app: { name: 'Settr'; version: string; catalogVersion: string | null };
-  exportedAt: string;
-  installId: string;
-  options: { includesMedia: boolean };
-  counts: Record<Table, number>;
-  checksum: { algorithm: 'SHA-256'; value: string };
-  data: BackupData;
-}
-
-/** JSON with object keys sorted at every level and no whitespace (the checksum's input). */
-export function canonicalJson(value: unknown): string {
-  return JSON.stringify(value, (_key, entry: unknown) => {
-    if (entry === null || typeof entry !== 'object' || Array.isArray(entry)) return entry;
-    return Object.fromEntries(
-      Object.entries(entry).toSorted(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
-    );
-  });
-}
-
-export async function sha256Hex(text: string): Promise<string> {
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+/** The tables a backup holds, besides `kv` (settings, overrides). */
+export function userTables(db: SettrDB) {
+  return [
+    db.holdings,
+    db.prices,
+    db.wishlist,
+    db.tags,
+    db.locations,
+    db.customItems,
+    db.media,
+    db.tombstones,
+  ];
 }
 
 async function toBase64(blob: Blob): Promise<string> {
@@ -85,18 +45,30 @@ async function toBase64(blob: Blob): Promise<string> {
   return btoa(binary);
 }
 
-export interface BackupOptions {
-  appVersion: string;
-  catalogVersion: string | null;
-  includesMedia?: boolean;
-  now?: Date;
+export function fromBase64(base64: string, mime: string): Blob {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
 }
 
-/** Reads every table in one read-only transaction, so the backup is a consistent snapshot. */
-export async function createBackup(db: SettrDB, options: BackupOptions): Promise<BackupEnvelope> {
-  const includesMedia = options.includesMedia ?? true;
-  const meta = await ensureMeta(db);
-  const snapshot = await db.transaction('r', [...TABLES.map((t) => db[t]), db.kv], async () => ({
+export async function toBackupMedia({ blob, ...rest }: MediaRow): Promise<BackupMedia> {
+  return { ...rest, base64: await toBase64(blob) };
+}
+
+export function toMediaRow({ base64, ...rest }: BackupMedia): MediaRow {
+  return { ...rest, blob: fromBase64(base64, rest.mime) };
+}
+
+/**
+ * Every user table, the settings and the overrides, read in one read-only transaction so they're a
+ * consistent snapshot. Without media the photos table reads as empty.
+ */
+export async function readUserData(
+  db: SettrDB,
+  { includesMedia = true }: { includesMedia?: boolean } = {},
+): Promise<BackupData> {
+  const read = await db.transaction('r', [...userTables(db), db.kv], async () => ({
     holdings: await db.holdings.toArray(),
     prices: await db.prices.toArray(),
     wishlist: await db.wishlist.toArray(),
@@ -106,47 +78,57 @@ export async function createBackup(db: SettrDB, options: BackupOptions): Promise
     media: includesMedia ? await db.media.toArray() : [],
     tombstones: await db.tombstones.toArray(),
     settings: (await db.kv.get('settings'))?.value,
-    cardmarket: (await db.kv.get('overrides:cardmarket'))?.value,
+    cardmarket: (await db.kv.get(OVERRIDES_KEY))?.value,
   }));
-
   const media: BackupMedia[] = [];
-  for (const { blob, ...rest } of snapshot.media) {
-    media.push({ ...rest, base64: await toBase64(blob) });
-  }
-  const data: BackupData = {
-    holdings: snapshot.holdings,
-    prices: snapshot.prices,
-    wishlist: snapshot.wishlist,
-    tags: snapshot.tags,
-    locations: snapshot.locations,
-    customItems: snapshot.customItems,
+  for (const row of read.media) media.push(await toBackupMedia(row));
+  const overrides = cardmarketOverridesSchema.safeParse(read.cardmarket ?? {});
+  return {
+    holdings: read.holdings,
+    prices: read.prices,
+    wishlist: read.wishlist,
+    tags: read.tags,
+    locations: read.locations,
+    customItems: read.customItems,
     media,
-    settings: resolveSettings(snapshot.settings),
-    overrides: { cardmarket: snapshot.cardmarket ?? {} },
-    tombstones: snapshot.tombstones,
+    settings: resolveSettings(read.settings),
+    overrides: { cardmarket: overrides.success ? overrides.data : {} },
+    tombstones: read.tombstones,
   };
-  const counts: Record<Table, number> = {
-    holdings: data.holdings.length,
-    prices: data.prices.length,
-    wishlist: data.wishlist.length,
-    tags: data.tags.length,
-    locations: data.locations.length,
-    customItems: data.customItems.length,
-    media: data.media.length,
-    tombstones: data.tombstones.length,
-  };
+}
+
+export interface BackupOptions {
+  appVersion: string;
+  catalogVersion: string | null;
+  includesMedia?: boolean;
+  now?: Date;
+}
+
+/** Wraps data in the backup envelope with counts and the checksum over its canonical JSON. */
+export async function envelopeOf(
+  data: BackupData,
+  installId: string,
+  options: BackupOptions,
+): Promise<BackupEnvelope> {
   return {
     format: BACKUP_FORMAT,
     formatVersion: BACKUP_FORMAT_VERSION,
     schemaVersion: SCHEMA_VERSION,
     app: { name: 'Settr', version: options.appVersion, catalogVersion: options.catalogVersion },
     exportedAt: nowIso(options.now),
-    installId: meta.installId,
-    options: { includesMedia },
-    counts,
+    installId,
+    options: { includesMedia: options.includesMedia ?? true },
+    counts: countsOf(data),
     checksum: { algorithm: 'SHA-256', value: await sha256Hex(canonicalJson(data)) },
     data,
   };
+}
+
+export async function createBackup(db: SettrDB, options: BackupOptions): Promise<BackupEnvelope> {
+  const includesMedia = options.includesMedia ?? true;
+  const meta = await ensureMeta(db);
+  const data = await readUserData(db, { includesMedia });
+  return envelopeOf(data, meta.installId, { ...options, includesMedia });
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -157,7 +139,10 @@ export function backupFileName(now: Date = new Date()): string {
   return `settr-backup-${date}-${pad(now.getHours())}${pad(now.getMinutes())}.settr.json`;
 }
 
-/** Marks the backup as done once its download has started (IMPORT_EXPORT.md §3 step 6). */
+/**
+ * Marks the backup as done once its download has started (IMPORT_EXPORT.md §3 step 6), with the
+ * change counter at that moment, so reminders count the changes since (DAT-04).
+ */
 export async function recordBackup(db: SettrDB, envelope: BackupEnvelope): Promise<void> {
-  await markBackupDone(db, envelope.exportedAt);
+  await markBackupDone(db, envelope.exportedAt, await getDataVersion(db));
 }
