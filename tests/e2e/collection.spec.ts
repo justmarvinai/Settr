@@ -23,6 +23,53 @@ async function quickAdd(page: Page, entries: readonly string[], language?: 'EN')
 // fixtures' picture stubs; the PWA spec covers it.
 test.use({ serviceWorkers: 'block' });
 
+/** TEMPORARY diagnostics for CI's WebKit: what moves between frames around a target. */
+async function frames(page: Page, label: string, selector: string, text?: string) {
+  const lines = await page.evaluate(
+    async ({ selector: css, text: name }) => {
+      const pick = () =>
+        [...document.querySelectorAll<HTMLElement>(css)].find(
+          (e) =>
+            name === undefined || e.textContent === name || e.getAttribute('aria-label') === name,
+        );
+      const out: string[] = [];
+      let last = performance.now();
+      for (let i = 0; i < 20; i++) {
+        await new Promise((r) => requestAnimationFrame(r));
+        const now = performance.now();
+        const el = pick();
+        const r = el?.getBoundingClientRect();
+        const popup = document.querySelector<HTMLElement>('.ui-sheet');
+        const pr = popup?.getBoundingClientRect();
+        const vv = window.visualViewport;
+        out.push(
+          [
+            `dt=${(now - last).toFixed(1)}`,
+            r ? `el=${r.x},${r.y},${r.width},${r.height}` : 'el=none',
+            pr ? `sheet=${pr.x},${pr.y},${pr.width},${pr.height}` : 'sheet=none',
+            popup ? `tf=${getComputedStyle(popup).transform}` : '',
+            popup ? `swipe=${popup.style.getPropertyValue('--drawer-swipe-movement-y')}` : '',
+            popup ? `mh=${getComputedStyle(popup).maxHeight}` : '',
+            popup
+              ? `st=${popup.querySelector<HTMLElement>('.overflow-y-auto')?.scrollTop ?? '-'}`
+              : '',
+            `ih=${window.innerHeight}`,
+            `sy=${window.scrollY}`,
+            vv ? `vv=${vv.offsetTop},${vv.pageTop},${vv.height},${vv.scale}` : '',
+            `sh=${document.documentElement.scrollHeight}`,
+            `body=${document.body.style.position}/${document.body.style.top}/${document.documentElement.style.overflow}`,
+            `anims=${document.getAnimations().length}`,
+          ].join(' '),
+        );
+        last = now;
+      }
+      return out;
+    },
+    { selector, text },
+  );
+  console.log(`DIAG ${label}\n${lines.join('\n')}`);
+}
+
 /** "In deiner Sammlung" on card and product pages. */
 const holdings = (page: Page) => page.getByRole('region', { name: /In deiner Sammlung/ });
 
@@ -127,7 +174,17 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
   await page.getByRole('button', { name: /^Filter/ }).click();
   await filters.getByLabel('Tag').selectOption({ label: 'Tauschordner' });
   await filters.getByLabel('Lagerort').selectOption({ label: 'VaultX 9er' });
-  await filters.getByRole('button', { name: '2 Positionen anzeigen' }).click();
+  await frames(page, 'filter button', 'button', '2 Positionen anzeigen');
+  const clicked = await filters
+    .getByRole('button', { name: '2 Positionen anzeigen' })
+    .click({ timeout: 5000 })
+    .then(() => true)
+    .catch(() => false);
+  console.log(`DIAG filter click ${clicked ? 'ok' : 'TIMED OUT'}`);
+  if (!clicked) {
+    await frames(page, 'filter button after timeout', 'button', '2 Positionen anzeigen');
+    await filters.getByRole('button', { name: '2 Positionen anzeigen' }).press('Enter');
+  }
   await expect(page.getByText('2 von 5 Positionen')).toBeVisible();
   await page.getByRole('button', { name: 'Alle Filter entfernen' }).click();
   await expect(page.getByText('5 Positionen', { exact: true })).toBeVisible();
@@ -135,9 +192,14 @@ test('Sammlung › Karten: summary, search, filters, table, tags, move and delet
 
   // Delete everything shown, then take it back. The header box works from the keyboard too; a
   // click here often hung in CI's WebKit (Playwright's stability check after the re-render).
-  await table
-    .getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' })
-    .press('Space');
+  await frames(page, 'select all', '[role=checkbox]', 'Alle sichtbaren Positionen auswählen');
+  const all = table.getByRole('checkbox', { name: 'Alle sichtbaren Positionen auswählen' });
+  const ticked = await all
+    .click({ timeout: 5000 })
+    .then(() => true)
+    .catch(() => false);
+  console.log(`DIAG select-all click ${ticked ? 'ok' : 'TIMED OUT'}`);
+  if (!ticked) await all.press('Space');
   await expect(bar).toContainText('5 ausgewählt');
   await bar.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByText('5 Positionen gelöscht')).toBeVisible();
