@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SCHEMA_VERSION } from '../schemas';
+import { isoTimestampSchema, SCHEMA_VERSION } from '../schemas';
 import { canonicalJson } from './canonical';
 import {
   BACKUP_FORMAT,
@@ -132,7 +132,10 @@ export async function readBackup(
           schemaVersion: envelope.schemaVersion,
           appVersion: envelope.app?.version,
           catalogVersion: envelope.app?.catalogVersion,
-          exportedAt: envelope.exportedAt,
+          // A hand-edited date that isn't one reads as unknown (it's shown and may become lastBackupAt).
+          exportedAt: isoTimestampSchema.safeParse(envelope.exportedAt).success
+            ? envelope.exportedAt
+            : undefined,
           installId: envelope.installId,
           includesMedia: envelope.options?.includesMedia ?? data.media.length > 0,
         },

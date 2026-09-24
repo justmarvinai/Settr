@@ -107,6 +107,11 @@ describe('readBackup', () => {
     expect(result.ok && result.backup.data.holdings[0]?.quantity).toBe(2);
   });
 
+  it('treats a backup date that is no timestamp as unknown', async () => {
+    const result = await readBackup(await file(data(), { exportedAt: 'gestern' }), sha256Hex);
+    expect(result.ok && result.backup.header.exportedAt).toBeUndefined();
+  });
+
   it('reads a file without a checksum', async () => {
     const result = await readBackup(await file(data(), { checksum: undefined }), sha256Hex);
     expect(result.ok && result.backup.checksum).toBe('missing');
