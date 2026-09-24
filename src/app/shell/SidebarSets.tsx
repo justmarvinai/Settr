@@ -5,6 +5,7 @@ import { SetProgressRing } from '@/components/domain/SetProgressRing';
 import { useHoldings } from '@/db';
 import { chunkSetId, pickText } from '@/domain/catalog';
 import type { CardLanguage } from '@/domain/catalog-types';
+import type { Holding } from '@/domain/schemas';
 import { collectedSets, ratio } from '@/domain/collection';
 import { useSetOwnership } from '@/features/collection';
 import { languageCode, languageLabel, m } from '@/i18n';
@@ -42,11 +43,16 @@ function SetLink({ setId, language }: { setId: string; language: CardLanguage })
 /**
  * The sidebar's sets (UX_SPEC.md §3.2): the sets you collect, most lots first, each with its Basis
  * ring in the language you collect most. It stays useful as sets are added after v1 (R2.5).
+ * Without lots it renders nothing and loads no catalog.
  */
 export default function SidebarSets() {
-  const manifest = useManifest();
   const holdings = useHoldings();
-  if (!holdings) return null;
+  if (!holdings?.length) return null;
+  return <CollectedSets holdings={holdings} />;
+}
+
+function CollectedSets({ holdings }: { holdings: readonly Holding[] }) {
+  const manifest = useManifest();
   const sets: { setId: string; language: CardLanguage }[] = [];
   for (const entry of collectedSets(holdings, (id) => chunkSetId(id, manifest.sets))) {
     if (sets.length === MAX_SETS) break;

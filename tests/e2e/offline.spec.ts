@@ -28,6 +28,7 @@ test('journey 9: offline, Settr still navigates, adds a lot and reloads (QUALITY
     page.getByRole('link', { name: /^150\/128, Pikachu-ex, .*1 im Besitz/ }),
   ).toBeVisible();
 
+  await page.waitForLoadState('networkidle'); // everything the page loads is cached first
   await context.setOffline(true);
   await expect(page.getByText('Offline · alles funktioniert')).toBeVisible();
   await page.getByRole('link', { name: 'Sammlung', exact: true }).first().click();

@@ -72,7 +72,9 @@ test.describe('without the service worker', () => {
     await expect(page.getByRole('option').first()).toContainText('Pikachu-ex');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/\/cards\/intl:30th:150/);
-    await expect(page.getByRole('heading', { name: 'Pikachu-ex', level: 2 })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Pikachu-ex', exact: true, level: 2 }),
+    ).toBeVisible();
     await expect(page.getByRole('dialog', { name: 'Suche' })).toBeHidden();
     await page.keyboard.press('p');
     await expect(page.getByLabel('Neuer Preis')).toBeFocused();

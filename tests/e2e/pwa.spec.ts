@@ -30,6 +30,8 @@ test('works offline after the first visit', async ({ page, context, browserName 
   await expect
     .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
     .toBe(true);
+  // What the page still loads (the catalog manifest, lazy chunks) must land in the cache first
+  await page.waitForLoadState('networkidle');
   await context.setOffline(true);
   await page.reload();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Übersicht');
