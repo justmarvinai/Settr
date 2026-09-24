@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **M5 · Data Safety** ✅ built, waiting for your check (M1–M3 are merged, M4 is in PR #3; Vercel, Brave and iPhone checks still open) · next: **M6 · Polish & Launch**
+> Last updated: 2026-09-24 · Current phase: **M5 · Data Safety** ✅ built, waiting for your check (M1–M3 are merged, M4 is in PR #3 with a Vercel preview; Brave and iPhone checks still open) · next: **M6 · Polish & Launch**
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -131,7 +131,7 @@
 - [x] Sammlung: value and P/L in the summary, tiles and table; price columns and a column chooser; *Bepreist*, *Preis veraltet* and *G/V* filters; the price session for a selection (from M3)
 - [x] Einstellungen › Preise editable: default price type, Cardmarket language filter and minimum condition, suggestions on/off, stale threshold, how unpriced cards count
 - [x] e2e + axe for the price flows, Übersicht, Preise, Portfolio, the session and the price sheet
-- [ ] **You:** create a Vercel deploy hook for `main` and store it as the Actions secret `VERCEL_DEPLOY_HOOK` (once Vercel is connected), check M4 in Brave and on the iPhone, answer round 6 in `USER_QUESTIONS.md`
+- [ ] **You:** create a Vercel deploy hook for `main` and store it as the Actions secret `VERCEL_DEPLOY_HOOK` (Vercel is connected: PR #3 has a preview), check M4 in Brave and on the iPhone, answer round 6 in `USER_QUESTIONS.md`
 
 **Exit:** 30 prices can be updated in ≤ 5 min (the session: type, `Enter`, next; to confirm on your collection). Dashboard numbers reconcile with a hand-calculated fixture (unit test) and agree across Übersicht, Sammlung and Portfolio (e2e).
 

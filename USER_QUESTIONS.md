@@ -38,7 +38,7 @@
 
 ## Round 6: prices and portfolio (M4, open, nothing blocking)
 
-**To do on your side (once Vercel is connected):** in Vercel › Project › Settings › Git › *Deploy Hooks*, create a hook for `main` and store its URL in GitHub › Settings › Secrets and variables › Actions as `VERCEL_DEPLOY_HOOK`. Then the daily `price-guide.yml` job redeploys every morning and the Cardmarket price-guide suggestions appear. Without it everything else works; the chips just stay hidden. And when you try the price session on your collection: does 30 prices in about 5 minutes feel right (the M4 exit criterion)?
+**To do on your side (Vercel is connected now, PR #3 has a preview):** in Vercel › Project › Settings › Git › *Deploy Hooks*, create a hook for `main` and store its URL in GitHub › Settings › Secrets and variables › Actions as `VERCEL_DEPLOY_HOOK`. Then the daily `price-guide.yml` job redeploys every morning and the Cardmarket price-guide suggestions appear. Without it everything else works; the chips just stay hidden. And when you try the price session on your collection: does 30 prices in about 5 minutes feel right (the M4 exit criterion)?
 
 **R6.1 · Seller country for *ab (DE)*.** Only Germany is a verified Cardmarket country id, so the Cardmarket links and every *ab (DE)* price assume German sellers; Einstellungen › Preise shows it as fixed. The language filter and the minimum condition can be changed.
 - [ ] ⭐ Keep German sellers fixed (your rule, R2.2).
