@@ -163,10 +163,9 @@
 - [x] e2e (`tests/e2e/data.spec.ts`): export → delete all → import, merge with conflicts and restore, refusals, CSV, the reminder, ⌘K, axe in light and dark
 - [ ] **You:** check M5 in Brave and on the iPhone (export, import on the other device, merge back), answer round 7 in `USER_QUESTIONS.md`
 
-**Exit:** the E2E journeys "export → wipe → import" and "merge with conflicts" pass on Chromium and WebKit on every PR, and on Firefox nightly. *Status:*
-- They pass locally on Chromium (desktop and phone).
-- On every PR they run on Chromium and WebKit (`ci.yml`).
-- `e2e-nightly.yml` runs them on Firefox. The first run follows once this branch is on GitHub.
+**Exit:** the E2E journeys "export → wipe → import" and "merge with conflicts" pass on Chromium and WebKit on every PR, and on Firefox nightly. *Status:* met on `11ac12e` (2026-09-24).
+- `ci.yml` runs them on every PR: Chromium (desktop and phone) and WebKit (iPhone).
+- `e2e-nightly.yml` runs them on Firefox, together with the property tests on a random seed.
 
 **Carried forward:** a ZIP container for backups with many photos (`formatVersion: 2`, with photos, post-v1); password-protected backups (I-17); the auto-backup folder (DAT-06, post-v1).
 
