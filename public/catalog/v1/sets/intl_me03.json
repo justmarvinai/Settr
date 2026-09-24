@@ -39,6 +39,9 @@
           "lang": "en"
         }
       }
+    },
+    "logo": {
+      "en": "https://assets.tcgdex.net/en/me/me03/logo"
     }
   },
   "subsets": [],
