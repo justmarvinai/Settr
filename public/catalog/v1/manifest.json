@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.24.11",
-  "generatedAt": "2026-09-24T17:42:14.572Z",
+  "catalogVersion": "2026.09.24.12",
+  "generatedAt": "2026-09-24T17:52:30.524Z",
   "sources": [
     {"name":"TCGdex cards-database","version":"feced2e7b99bcf2e2ab76f0309e16ce2c15b6a9a","license":"MIT","url":"https://github.com/tcgdex/cards-database"},
     {"name":"PTCG-database (Traditional Chinese names)","version":"bc5a2698eb9af858feb0280d579fd5fd0f0273e2","license":"MIT","url":"https://github.com/type-null/PTCG-database"},
@@ -32,7 +32,7 @@
     {"id":"intl:swsh12.5gg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"subset","parentSetId":"intl:swsh12.5","name":{"de":"Zenit der Könige Galar-Galerie","en":"Crown Zenith Galarian Gallery"},"code":"CRZ","languages":["de","en"],"releaseDates":{"de":"2023-01-20","en":"2023-01-20"},"counts":{"official":70,"total":70}},
     {"id":"intl:swsh11","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Verlorener Ursprung","en":"Lost Origin"},"code":"LOR","languages":["de","en"],"releaseDates":{"de":"2022-09-09","en":"2022-09-09"},"counts":{"official":196,"total":217},"cover":{"cardId":"intl:swsh11:186","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh11/186","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh11/186","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh11/logo","en":"https://assets.tcgdex.net/en/swsh/swsh11/logo"}},
     {"id":"intl:swsh11tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"subset","parentSetId":"intl:swsh11","name":{"de":"Verlorener Ursprung Trainer-Galerie","en":"Lost Origin Trainer Gallery"},"code":"LOR","languages":["de","en"],"releaseDates":{"de":"2022-09-09","en":"2022-09-09"},"counts":{"official":30,"total":30}},
-    {"id":"intl:swsh10tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Astralglanz Trainer-Galerie","en":"Astral Radiance Trainer Gallery"},"code":"ASR","languages":["de","en"],"releaseDates":{"de":"2022-05-27","en":"2022-05-27"},"counts":{"official":30,"total":30},"cover":{"cardId":"intl:swsh10tg:TG30","images":{}}},
+    {"id":"intl:swsh10tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Astralglanz Trainer-Galerie","en":"Astral Radiance Trainer Gallery"},"code":"ASR","languages":["de","en"],"releaseDates":{"de":"2022-05-27","en":"2022-05-27"},"counts":{"official":30,"total":30},"cover":{"cardId":"intl:swsh10tg:TG30","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh10/TG30","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh10/TG30","lang":"en"}}}},
     {"id":"intl:swsh9","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Strahlende Sterne","en":"Brilliant Stars"},"code":"BRS","languages":["de","en"],"releaseDates":{"de":"2022-02-25","en":"2022-02-25"},"counts":{"official":172,"total":186},"cover":{"cardId":"intl:swsh9:154","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh9/154","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh9/154","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh9/logo","en":"https://assets.tcgdex.net/en/swsh/swsh9/logo"}},
     {"id":"intl:swsh9tg","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"subset","parentSetId":"intl:swsh9","name":{"de":"Strahlende Sterne Trainer-Galerie","en":"Brilliant Stars Trainer Gallery"},"code":"BRS","languages":["de","en"],"releaseDates":{"de":"2022-02-25","en":"2022-02-25"},"counts":{"official":30,"total":30}},
     {"id":"intl:swsh4","print":"intl","series":{"id":"sword-shield","name":{"de":"Schwert & Schild","en":"Sword & Shield"}},"kind":"main","name":{"de":"Farbenschock","en":"Vivid Voltage"},"code":"VIV","languages":["de","en"],"releaseDates":{"de":"2020-11-13","en":"2020-11-13"},"counts":{"official":185,"total":203},"cover":{"cardId":"intl:swsh4:188","images":{"de":{"url":"https://assets.tcgdex.net/de/swsh/swsh4/188","lang":"de"},"en":{"url":"https://assets.tcgdex.net/en/swsh/swsh4/188","lang":"en"}}},"logo":{"de":"https://assets.tcgdex.net/de/swsh/swsh4/logo","en":"https://assets.tcgdex.net/en/swsh/swsh4/logo"}},
@@ -143,23 +143,23 @@
       },
       "intl:swsh12.5": {
         "path": "sets/intl_swsh12.5.json",
-        "sha256": "79843f74d44f3d8df396c3d2526b9665252477e9d2a5bf2f82027f818d2a5164",
-        "bytes": 137596
+        "sha256": "7081e94026ea54fa45779bf38bdb29350b4706916b71ad6d53216ea31acefb21",
+        "bytes": 148026
       },
       "intl:swsh11": {
         "path": "sets/intl_swsh11.json",
-        "sha256": "35eb02e2a09591582d265f137dc2638b14354dc029f6682c2a839ad2af079e59",
-        "bytes": 155205
+        "sha256": "2458a52db0180fe1a890001596bdb77d41cb9bae431c1ebabb5059016cb530d3",
+        "bytes": 159555
       },
       "intl:swsh10tg": {
         "path": "sets/intl_swsh10tg.json",
-        "sha256": "d9bbcf7785fc4ab3f52dbba4195671764abf1dd08900e4fe98c23f5e1150b565",
-        "bytes": 14624
+        "sha256": "2afe1f83bcf9083dbdfe209585b73cb1f76698416515aef0ff921efea928cc05",
+        "bytes": 19212
       },
       "intl:swsh9": {
         "path": "sets/intl_swsh9.json",
-        "sha256": "345282b589fcb99140a0990c0e0834a191275851f96b927dcddba465d43dc93b",
-        "bytes": 134341
+        "sha256": "14d3cf346960b36988134ea3c51102925075a056fbb2170644804c3c8ecdc05c",
+        "bytes": 138631
       },
       "intl:swsh4": {
         "path": "sets/intl_swsh4.json",
@@ -234,8 +234,8 @@
     },
     "search": {
       "path": "search-index.json",
-      "sha256": "4f9e7d79ac771bd2ed4e92f90eccf97ca1eee874fefda5d331b34eb53c4f1b21",
-      "bytes": 2400236
+      "sha256": "65b94ef7cab287b7e842e9eacf8743db18c67332c9b210502bc96a1897ea3e5b",
+      "bytes": 2412506
     }
   }
 }
