@@ -5,7 +5,7 @@
 > **Round 8 (M6) and round 9 (Mega Evolution): open, nothing blocking.** The app already works like the ⭐ options; answer when you check them.
 > **Round 10 (your older sets): decided 2026-09-24 with the ⭐ options**, as you asked ("go with your recommended defaults"). Tell me if you want any of them changed.
 > **Round 11 (the rest of the eras): decided 2026-09-24**, by your answer and, where you didn't say, with the ⭐ options.
-> **Coding: approved on 2026-09-23** ("You can start"). M1–M6, the Mega Evolution series and your older sets are merged (PRs #1–#6); the rest of the eras is on `claude/great-edison-uri1z0`.
+> **Coding: approved on 2026-09-23** ("You can start"). M1–M6, the Mega Evolution series and your older sets are merged (PRs #1–#6); the rest of the eras is in PR #7.
 
 ## How to answer
 

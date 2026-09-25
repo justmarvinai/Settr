@@ -1,6 +1,6 @@
 # Settr: Roadmap
 
-> Last updated: 2026-09-24 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ merged (PR #5); **your 21 older sets** ✅ merged (PR #6); **the rest of their eras** ✅ built on `claude/great-edison-uri1z0` (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7, 10 and 11 decided, rounds 8–9 open without blockers
+> Last updated: 2026-09-25 · Current phase: **v1.x · Your sets**: the **Mega Evolution series** ✅ merged (PR #5); **your 21 older sets** ✅ merged (PR #6); **the rest of their eras** ✅ built, in PR #7 (M1–M6 are merged; the `v1.0.0` tag waits for your go) · question rounds 1–7, 10 and 11 decided, rounds 8–9 open without blockers
 > Feature IDs (e.g. `COL-01`) → [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md). Definition of Done → [`docs/QUALITY.md`](docs/QUALITY.md) §1.
 > Legend: ✅ done · ⏳ in progress · ⬜ open · 🔒 blocked (waiting on a decision)
 
@@ -18,7 +18,7 @@
 | **M5 · Data Safety** | Backup export/import (replace + merge), CSV, reminders, persistence | 0.5.0 | ✅ merged (PR #3) · 🔒 your check in Brave/iPhone |
 | **M6 · Polish & Launch** | Signature design moments, onboarding, PWA polish, audits → **v1.0** | 1.0.0 | ✅ merged (PR #4) · 🔒 your go for the `v1.0.0` tag |
 | **v1.1** | Binder view (R2.4) | 1.1.0 | 🔒 |
-| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ merged (PR #5) · your 21 older sets ✅ merged (PR #6) · the rest of their eras ✅ built |
+| **v1.x · Your sets** | Your sets, one by one and era by era, once the core is fully functional (R2.5) | 1.x | ⏳ Mega Evolution ✅ merged (PR #5) · your 21 older sets ✅ merged (PR #6) · the rest of their eras ✅ built, PR #7 |
 | **Post-v1** | English UI, wishlist and other extras, optional sync | 1.x | 🔒 |
 
 > **Why data safety (M5) comes before polish:** real data will be entered from M3 onward, so backups must exist before v1 at the latest. A **minimal JSON export** already ships in M3 (DAT-01 "lite") so nothing entered during development can be lost.
@@ -249,7 +249,7 @@ Marvin (2026-09-24): "add all missing sets from all Eras we currently at least h
 - [x] Names: the Klassische Kollektion's German names from the original cards; MC/MF reprints checked against their illustrators; M6's new trainers translated until ME06 (R11.6)
 - [x] Search: exact names and numbers first, then name matches, then set or illustrator matches (ADR-060)
 - [x] Moved cards: your copies of SVE 001–008 follow the cards into Karmesin & Purpur Energie, also after an import (ADR-061)
-- [ ] Your check: round 11 in `USER_QUESTIONS.md`, then a PR when you ask for one
+- [ ] Your check: round 11 in `USER_QUESTIONS.md`, then the merge of PR #7 (opened 2026-09-25)
 - [ ] Later, on request: sealed products and Japanese prints of these sets, the McDonald's collections and the Sun & Moon trainer kits (R11.2, R11.8)
 
 ## Post-v1 backlog (ordered by expected value)
