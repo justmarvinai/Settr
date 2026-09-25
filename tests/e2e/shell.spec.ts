@@ -63,6 +63,8 @@ test('theme toggle applies instantly and survives a reload without flashing', as
   await expect(html).toHaveAttribute('data-theme', 'light');
   await page.getByRole('button', { name: 'Dunkles Design' }).click();
   await expect(html).toHaveAttribute('data-theme', 'dark');
+  // Stored: the label follows the stored settings. A reload before the write commits would lose it.
+  await expect(page.getByRole('button', { name: 'Helles Design' })).toBeVisible();
   // The inline script must apply the stored theme before the app boots.
   await page.reload({ waitUntil: 'commit' });
   expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
@@ -78,6 +80,8 @@ test('appearance settings: theme, transparency and motion', async ({ page }) => 
   await expect(html).toHaveAttribute('data-transparency', 'reduced');
   await page.getByRole('radio', { name: 'Aus' }).click();
   await expect(html).toHaveAttribute('data-motion', 'off');
+  // Stored: the controls follow the stored settings. A reload before the write commits would lose it.
+  await expect(page.getByRole('radio', { name: 'Aus' })).toBeChecked();
   await page.reload();
   await expect(html).toHaveAttribute('data-transparency', 'reduced');
   await expect(page.getByRole('radio', { name: 'Aus' })).toBeChecked();
