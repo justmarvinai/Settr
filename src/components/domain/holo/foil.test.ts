@@ -30,6 +30,8 @@ describe('foilOf', () => {
       'classic-collection': 'classic',
       'ace-spec-rare': 'rainbow',
       'shiny-rare': 'rainbow',
+      'shiny-rare-v': 'rainbow',
+      'shiny-rare-vmax': 'rainbow',
       'shiny-ultra-rare': 'rainbow',
       promo: 'holo',
     });

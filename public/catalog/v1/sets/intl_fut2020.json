@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "set": {
+    "id": "intl:fut2020",
+    "print": "intl",
+    "series": {
+      "id": "sword-shield",
+      "name": {
+        "de": "Schwert & Schild",
+        "en": "Sword & Shield"
+      }
+    },
+    "kind": "main",
+    "name": {
+      "en": "Pokémon Futsal 2020",
+      "de": "Pokémon Futsal 2020"
+    },
+    "code": "FUT20",
+    "languages": ["en"],
+    "releaseDates": {
+      "en": "2020-09-11"
+    },
+    "counts": {
+      "official": 5,
+      "total": 5
+    },
+    "cover": {
+      "cardId": "intl:fut2020:1",
+      "images": {
+        "en": {
+          "url": "https://assets.tcgdex.net/en/swsh/fut2020/1",
+          "lang": "en"
+        }
+      }
+    },
+    "logo": {
+      "en": "https://assets.tcgdex.net/en/swsh/fut2020/logo"
+    }
+  },
+  "subsets": [],
+  "cards": [
+    {"id":"intl:fut2020:1","setId":"intl:fut2020","localId":"1","printedNumber":"1","section":"main","sort":1,"name":{"en":"Pikachu on the Ball"},"category":"pokemon","hp":60,"stage":"basic","dexIds":[25],"illustrator":"Illus. & Direc. The Pokémon Company Art Team","variants":[{"id":"holo","refs":{"cardmarket":{"default":506930},"tcgplayer":223761}}],"languages":["en"],"images":{"en":{"url":"https://assets.tcgdex.net/en/swsh/fut2020/1","lang":"en"}},"refs":{"tcgdex":"fut2020-1"}},
+    {"id":"intl:fut2020:2","setId":"intl:fut2020","localId":"2","printedNumber":"2","section":"main","sort":2,"name":{"en":"Eevee on the Ball"},"category":"pokemon","hp":60,"stage":"basic","dexIds":[133],"illustrator":"Illus. & Direc. The Pokémon Company Art Team","variants":[{"id":"holo","refs":{"cardmarket":{"default":506935},"tcgplayer":223760}}],"languages":["en"],"images":{"en":{"url":"https://assets.tcgdex.net/en/swsh/fut2020/2","lang":"en"}},"refs":{"tcgdex":"fut2020-2"}},
+    {"id":"intl:fut2020:3","setId":"intl:fut2020","localId":"3","printedNumber":"3","section":"main","sort":3,"name":{"en":"Grookey on the Ball"},"category":"pokemon","hp":60,"stage":"basic","dexIds":[810],"illustrator":"Illus. & Direc. The Pokémon Company Art Team","variants":[{"id":"holo","refs":{"cardmarket":{"default":506940},"tcgplayer":227413}}],"languages":["en"],"images":{"en":{"url":"https://assets.tcgdex.net/en/swsh/fut2020/3","lang":"en"}},"refs":{"tcgdex":"fut2020-3"}},
+    {"id":"intl:fut2020:4","setId":"intl:fut2020","localId":"4","printedNumber":"4","section":"main","sort":4,"name":{"en":"Scorbunny on the Ball"},"category":"pokemon","hp":60,"stage":"basic","dexIds":[813],"illustrator":"Illus. & Direc. The Pokémon Company Art Team","variants":[{"id":"holo","refs":{"cardmarket":{"default":569468},"tcgplayer":248016}}],"languages":["en"],"images":{"en":{"url":"https://assets.tcgdex.net/en/swsh/fut2020/4","lang":"en"}},"refs":{"tcgdex":"fut2020-4"}},
+    {"id":"intl:fut2020:5","setId":"intl:fut2020","localId":"5","printedNumber":"5","section":"main","sort":5,"name":{"en":"Sobble on the Ball"},"category":"pokemon","hp":60,"stage":"basic","dexIds":[816],"illustrator":"Illus. & Direc. The Pokémon Company Art Team","variants":[{"id":"holo","refs":{"cardmarket":{"default":574871},"tcgplayer":248015}}],"languages":["en"],"images":{"en":{"url":"https://assets.tcgdex.net/en/swsh/fut2020/5","lang":"en"}},"refs":{"tcgdex":"fut2020-5"}}
+  ],
+  "variantsLegend": [
+    {"id":"holo","kind":"finish","label":{"de":"Holo","en":"Holo"}}
+  ]
+}

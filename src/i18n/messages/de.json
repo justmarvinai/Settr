@@ -127,6 +127,8 @@
   "rarity_classic_collection": "Klassische Sammlung",
   "rarity_ace_spec_rare": "ASS-KLASSE",
   "rarity_shiny_rare": "Shiny Rare",
+  "rarity_shiny_rare_v": "Shiny Rare V",
+  "rarity_shiny_rare_vmax": "Shiny Rare VMAX",
   "rarity_promo": "Promo",
   "type_grass": "Pflanze",
   "type_fire": "Feuer",

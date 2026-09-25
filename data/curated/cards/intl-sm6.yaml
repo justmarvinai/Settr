@@ -1,0 +1,7 @@
+# Grauen der Lichtfinsternis: "Unit Energy [FDY]" on Cardmarket; ids between their neighbours'
+# products (card order), 2026-09-24 sync.
+setId: intl:sm6
+cards:
+  '118':
+    { cardmarket: { en: 355629 }, note: 'Unit Energy FightingDarknessFairy · Unit Energy [FDY]' }
+  '146': { cardmarket: { en: 355657 }, note: Unit Energy FightingDarknessFairy (Secret Rare) }

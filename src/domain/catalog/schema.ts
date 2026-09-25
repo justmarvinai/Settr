@@ -173,9 +173,11 @@ export const searchDocSchema = z.object({
   kind: z.enum(['card', 'sealed']),
   setId: z.string().min(1),
   print: printSchema,
-  /** Display name (German first) and every other name and script, for matching. */
+  /** Display name (German first) and the card's names in every language and script. */
   name: z.string().min(1),
   names: z.array(z.string()),
+  /** PokéAPI species names the card isn't named after itself (Meisterdetektiv Pikachu: Pikachu). */
+  aliases: z.array(z.string()).optional(),
   number: z.string().optional(),
   sort: z.number().optional(),
   rarity: z.string().optional(),
@@ -208,6 +210,8 @@ export const catalogManifestSchema = z.object({
   /** False when built without network access: image URLs are then unverified candidates. */
   imagesVerified: z.boolean(),
   sets: z.array(catalogSetSummarySchema),
+  /** Cards that moved to another set in an update, by id: their set now (ADR-061). */
+  movedCards: z.record(z.string(), z.string()).optional(),
   files: z.object({
     /** Keyed by main set id; subsets live in their parent's chunk. */
     sets: z.record(z.string(), fileRefSchema),

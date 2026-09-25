@@ -76,7 +76,7 @@ PriceEntry ──> PriceSeries(card|product, language, variant, grade)
 | Custom item | `custom:<uuidv7>` | `custom:0192f1c3-…` | User-created catalog entries (§5.7) |
 | User records | **UUIDv7** | `0192f1c3-7b2a-7c0e-9d3f-…` | Time-sortable and globally unique, so merge-import is safe across devices |
 
-**Stability policy:** catalog IDs are **permanent**. If an upstream source renames an ID, the pipeline maps it through `data/curated/id-aliases.json`, and the app migrates references on load. IDs are never recycled.
+**Stability policy:** catalog IDs are **permanent**. If an upstream source renames an ID, the pipeline maps it through `data/curated/id-aliases.json`, and the app migrates references on load. IDs are never recycled. A card that moves to another set keeps its id; `data/curated/moved-cards.yaml` lists it, the manifest's `movedCards` names its set now, and the app points lots recorded under the former set at it (ADR-061).
 
 ---
 
@@ -210,7 +210,8 @@ interface CatalogProduct {
 interface SearchDoc {             // search-index.json (ARCHITECTURE.md §7)
   id: string; kind: 'card' | 'sealed'; setId: string; print: Print;
   name: string;                  // display name (German first)
-  names: string[];               // every name and script, plus PokéAPI species aliases
+  names: string[];               // the card's names in every language and script
+  aliases?: string[];            // PokéAPI species names it isn't named after (found, never "exact")
   number?: string; sort?: number; rarity?: string; types?: string[]; category?: string;
   illustrator?: string; languages: CardLanguage[]; image?: CatalogImage;
 }

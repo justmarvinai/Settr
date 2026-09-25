@@ -212,7 +212,7 @@ settr/
 - **Fields and boosts:** name (all languages) ×3, number ×3 (exact `025`, `25`, `025/128`), set name/code ×2, illustrator ×1, rarity ×1.
 - **Query syntax (power users):** `set:30c`, `lang:ja`, `rarity:sar`, `#025`, and `owned:yes|no` (applied as filters after the text search).
 - Optional pinyin search for Chinese names (`pinyin-pro`) is deferred to post-v1.
-- **As built (M2, ADR-035):** `src/catalog/search` (engine, query parser, normalization, worker client) and `src/workers/search.worker.ts`. The worker builds the index once per catalog version from MiniSearch's serialized form; names sit in a Latin and a CJK field, CJK runs index bigrams plus each run's last character, and a query term that equals a card number ranks first. `useCatalogSearch` (TanStack Query) serves the palette and Katalog › Karten. `owned:ja|nein` is applied after the search against the ids of items with copies left (`useOwnedItemIds`, M3); the catalog layer itself never reads user data.
+- **As built (M2, ADR-035):** `src/catalog/search` (engine, query parser, normalization, worker client) and `src/workers/search.worker.ts`. The worker builds the index once per catalog version from MiniSearch's serialized form; names sit in a Latin and a CJK field, CJK runs index bigrams plus each run's last character, and a query term that equals a card number ranks first. Since ADR-060 results rank in tiers: an exact number or name (never a species alias), then other name matches, then documents found only through their set or illustrator. `useCatalogSearch` (TanStack Query) serves the palette and Katalog › Karten. `owned:ja|nein` is applied after the search against the ids of items with copies left (`useOwnedItemIds`, M3); the catalog layer itself never reads user data.
 
 ---
 

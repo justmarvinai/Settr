@@ -30,6 +30,8 @@ const FOIL_BY_RARITY: Record<RarityId, FoilStyle> = {
   'ace-spec-rare': 'rainbow',
   'shiny-rare': 'rainbow',
   'shiny-ultra-rare': 'rainbow',
+  'shiny-rare-v': 'rainbow',
+  'shiny-rare-vmax': 'rainbow',
   'holo-rare-v': 'rainbow',
   'holo-rare-vmax': 'rainbow',
   'holo-rare-vstar': 'rainbow',

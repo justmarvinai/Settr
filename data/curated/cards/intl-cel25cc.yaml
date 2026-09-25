@@ -1,0 +1,76 @@
+# Classic Collection (subset of Celebrations). Each reprint keeps the collector number of its
+# original set (Base Set Blastoise reads 2/102), so printedNumber is curated. TCGdex has no German
+# data for these cards: the German names are the original printings' in TCGdex (matched by number
+# and illustrator, 2026-09-24), written the way the reprint's English name is (no δ, LV.X kept).
+# Fixed on the way: "Knackrak" (Knakrack), "S Pikachu" (_____s Pikachu), missing hyphens of EX/GX.
+setId: intl:cel25cc
+cards:
+  CC001: { printedNumber: 2/102, curatedName: { de: Turtok }, note: Blastoise · Base Set }
+  CC002: { printedNumber: 4/102, curatedName: { de: Glurak }, note: Charizard · Base Set }
+  CC003: { printedNumber: 15/102, curatedName: { de: Bisaflor }, note: Venusaur · Base Set }
+  CC004:
+    printedNumber: 73/102
+    curatedName: { de: Falscher Professor Eich }
+    note: Imposter Professor Oak · Base Set
+  CC005:
+    { printedNumber: 8/82, curatedName: { de: Dunkles Garados }, note: Dark Gyarados · Team Rocket }
+  CC006:
+    printedNumber: 15/82
+    curatedName: { de: Hier kommt Team Rocket! }
+    note: Here Comes Team Rocket! · Team Rocket
+  CC007:
+    printedNumber: 15/132
+    curatedName: { de: Rockets Zapdos }
+    note: "Rocket's Zapdos · Gym Challenge (no German in TCGdex; named like EX Team Rocket Returns' Rockets Zapdos-ex)"
+  CC008:
+    printedNumber: '24'
+    curatedName: { de: _____s Pikachu }
+    note: "_____'s Pikachu · Wizards Black Star Promo 24"
+  CC009: { printedNumber: 20/111, curatedName: { de: Pii }, note: Cleffa · Neo Genesis }
+  CC010:
+    printedNumber: 66/64
+    curatedName: { de: Schimmerndes Karpador }
+    note: Shining Magikarp · Neo Revelation
+  CC011:
+    printedNumber: 9/95
+    curatedName: { de: Team Magmas Groudon }
+    note: "Team Magma's Groudon · EX Team Magma vs Team Aqua"
+  CC012:
+    printedNumber: 86/109
+    curatedName: { de: "Rocket's Admin." }
+    note: "Rocket's Admin. · EX Team Rocket Returns (its German print kept the English name)"
+  CC013: { printedNumber: 88/92, curatedName: { de: Mew-ex }, note: Mew ex · EX Legend Maker }
+  CC014:
+    printedNumber: 93/101
+    curatedName: { de: Guardevoir-ex }
+    note: Gardevoir ex δ · EX Dragon Frontiers
+  CC015:
+    printedNumber: 17/17
+    curatedName: { de: Nachtara ☆ }
+    note: Umbreon ☆ · POP Series 5 (English only; the German reprint's name)
+  CC016:
+    { printedNumber: 15/106, curatedName: { de: Lepumentas }, note: Claydol · Great Encounters }
+  CC017:
+    printedNumber: 109/111
+    curatedName: { de: Luxtra GL LV.X }
+    note: Luxray GL LV.X · Rising Rivals
+  CC018:
+    printedNumber: 145/147
+    curatedName: { de: Knakrack C LV.X }
+    note: Garchomp C LV.X · Supreme Victors
+  CC019:
+    { printedNumber: 107/123, curatedName: { de: Donphan }, note: Donphan · HeartGold SoulSilver }
+  CC020: { printedNumber: 113/114, curatedName: { de: Reshiram }, note: Reshiram · Black & White }
+  CC021: { printedNumber: 114/114, curatedName: { de: Zekrom }, note: Zekrom · Black & White }
+  CC022: { printedNumber: 54/99, curatedName: { de: Mewtu-EX }, note: Mewtwo EX · Next Destinies }
+  CC023: { printedNumber: 97/146, curatedName: { de: Xerneas-EX }, note: Xerneas EX · XY }
+  CC024:
+    printedNumber: 76/108
+    curatedName: { de: M-Rayquaza-EX }
+    note: M Rayquaza EX · Roaring Skies
+  CC025:
+    {
+      printedNumber: 60/145,
+      curatedName: { de: Kapu-Fala-GX },
+      note: Tapu Lele GX · Guardians Rising,
+    }

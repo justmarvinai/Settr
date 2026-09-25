@@ -9,6 +9,17 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 ## [Unreleased]
 
 ### Added
+- **The rest of the eras (2026-09-24, ROADMAP v1.x · Your sets, R11):** every other set of the eras you already had a set from, except the Base Set's; international (DE/EN), cards only. 7,650 more cards in 46 sets; the catalog now holds 85 sets with 13,817 cards.
+  - **Karmesin & Purpur:** Reisegefährten, Stellarkrone, Nebel der Sagen, Maskerade im Zwielicht, Gewalten der Zeit, Paradoxrift, Obsidianflammen, Entwicklungen in Paldea, My First Battle (English only), and Karmesin & Purpur Energie (SVE 001–024) as a set of its own.
+  - **Schwert & Schild:** Silberne Sturmwinde with its Trainer-Galerie, Pokémon GO, Astralglanz (whose Trainer-Galerie becomes its section), Fusionsangriff, Celebrations with the Klassische Kollektion, Drachenwandel, Schaurige Herrschaft, Kampfstile, Glänzendes Schicksal with its Glitzer-Tresor, Weg des Champs, Pokémon Futsal 2020 (English only), Flammende Finsternis and Schwert & Schild.
+  - **Sonne & Mond:** all sets from Sonne & Mond to Welten im Wandel, Meisterdetektiv Pikachu, Verborgenes Schicksal with its Glitzer-Tresor, and Sonne & Mond Promos.
+  - **Mega-Entwicklung, Japanese with Traditional Chinese:** M6 *Storm Emerald*, MC *Start Deck 100 Battle Collection* and MF, the premium deck set of 30th CELEBRATION.
+  - **Variants TCGdex lacks** (most Sun & Moon sets) come from TCGplayer's printings: Normal, Holo, Reverse-Holo per card (ADR-057). **M6's rarities** follow the M sets' layout (AR, SR, SAR, MUR), where TCGdex calls them all MUR (ADR-058).
+  - **Rarities** Shiny Rare V and Shiny Rare VMAX (the Glitzer-Tresor); **variants** with Pokémon GO's Ditto sticker, My First Battle's deck symbols and blue border, and more stamps (Master Ball League, prerelease, International Championships, judge).
+  - **Names:** the Klassische Kollektion's German names from the original cards; the Japanese reprints in MC and MF named after their international cards, checked against the illustrator; M6's new trainers translated until the English set brings official names (R11.6).
+  - **Moved cards:** your copies of the basic Energy SVE 001–008, recorded under Karmesin & Purpur, follow the cards into Karmesin & Purpur Energie, also after an import (ADR-061).
+  - **Cardmarket:** 6,719 of the 6,722 international cards and all 936 Japanese cards link to their exact product; the other three open Cardmarket's search.
+  - **Pictures** for 6,493 of the 6,722 international cards, 6,199 of them German; the Japanese cards show the international card's picture where TCGdex has none of their own (672 of 936).
 - **Your older sets (2026-09-24, ROADMAP v1.x · Your sets):** 21 sets you have cards from, international (DE/EN), cards only (R10). 3,678 cards in four new series:
   - **Karmesin & Purpur:** Schwarze Blitze, Weiße Flammen, Ewige Rivalen, Prismatische Entwicklungen, Stürmische Funken, Paldeas Schicksale, 151, Karmesin & Purpur (with the basic Energy SVE 001–008) and Karmesin & Purpur Promos.
   - **Schwert & Schild:** Zenit der Könige with its Galar-Galerie, Verlorener Ursprung and Strahlende Sterne with their Trainer-Galerien, the Astralglanz Trainer-Galerie (a set of its own), Farbenschock, Clash der Rebellen and Schwert & Schild Promos.
@@ -32,19 +43,28 @@ Categories: *Added · Changed · Deprecated · Removed · Fixed · Security · D
 - **Set pages** switch between every print of an expansion: *International · Asien M1L · Asien M1S*, also from either Japanese half. **Card pages** link each counterpart to its own set.
 
 ### Changed
+- Search ranks in tiers: an exact name or number first, then other name matches, then cards found only through their set or illustrator. "pikachu" lists the Pikachu cards before *Meisterdetektiv Pikachu* and that set's other cards (ADR-060).
+- Search documents keep a card's own names apart from the Pokémon species names it's also found by (`aliases`).
 - The search palette looks up cards and sealed products separately, so a name many cards share (*Glurak*) still shows its products.
 - A gallery's section on its set page is named without the set's name (*Trainer-Galerie*).
 - A copy's variant shows where its card comes in several: Sammlung lists, the lots on card pages, toasts (*Hinzugefügt: 001/132 Bisasam · Reverse-Holo · DE · NM*) and the price session.
 - Cardmarket links filter for reverse holos (and price suggestions read the reverse-holo prices) only where the reverse holo shares the card's product; pattern reverses and Japanese reverse holos are products of their own.
 
 ### Fixed
+- Numbers read as printed in sets under 100 cards: `001/086` (Schwarze Blitze), `001/094` (Fatale Flammen), `001/063` (Mega Brave), no longer `001/86`.
 - Catalog pipeline:
+  - offline builds keep the sealed pictures even after an offline build that couldn't verify every card picture;
+  - regular variants take the card's Cardmarket and TCGplayer products where TCGdex keeps them per card (Karmesin & Purpur, Nacht in Flammen, the Japanese Mega sets);
+  - German set names as printed: *Obsidianflammen*, *Teams sind Trumpf*, *Majestät der Drachen*, *Sturm am Firmament*, *Grauen der Lichtfinsternis*;
+  - four GX cards TCGdex lists as Rare are Ultra Rares like every other GX: Sylveon-GX, Tapu Fini-GX, Entei-GX and Guzzlord-GX 63a (curated `rarity`);
+  - finishes TCGplayer doesn't list: basic Energy comes as non-holo only, a GX as a holo; the last build's finishes stand in only when TCGplayer's printings couldn't be loaded (ADR-057);
   - a throttled image server no longer reads as missing pictures;
   - the MEGA promos no longer take Traditional Chinese names by number (Taiwan numbers its promos differently);
   - Traditional Chinese trainer names lose PTCG-database's angle brackets;
   - TCGCSV groups match by name prefix.
 
 ### Docs
+- ADR-057 to ADR-061; DATA_SOURCES.md §2.3 and §4 (TCGplayer's printings); DATA_MODEL.md (`aliases`, moved cards); the glossary (Shiny Vault); round 11 in USER_QUESTIONS.md (and R9.3: M6 now).
 - ADR-054 to ADR-056; DATA_SOURCES.md §2.2; DATA_MODEL.md (older variants, galleries); the glossary's older rarities; round 10 in USER_QUESTIONS.md, decided with the ⭐ defaults.
 - ADR-051 to ADR-053; DATA_SOURCES.md §2.1 and §7.4; DATA_MODEL.md (variants, `otherPrints`, `counterpartSets`, Master counts); round 9 in USER_QUESTIONS.md.
 

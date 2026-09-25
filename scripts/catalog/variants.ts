@@ -41,6 +41,7 @@ const FINISHES: Record<string, { prefix: LocalizedText; promo: boolean }> = {
   tinsel: { prefix: { de: 'Tinsel-', en: 'Tinsel ' }, promo: true },
   galaxy: { prefix: { de: 'Galaxy-', en: 'Galaxy ' }, promo: true },
   'cracked-ice': { prefix: { de: 'Cracked-Ice-', en: 'Cracked Ice ' }, promo: true },
+  'player-reward': { prefix: { de: 'Play!-Pokémon-', en: 'Play! Pokémon ' }, promo: true },
   gold: { prefix: { de: 'Gold-', en: 'Gold ' }, promo: false },
   // The Secret Rares of the Sword & Shield sets (Rainbow Rares).
   rainbow: { prefix: { de: 'Rainbow-', en: 'Rainbow ' }, promo: false },
@@ -48,6 +49,7 @@ const FINISHES: Record<string, { prefix: LocalizedText; promo: boolean }> = {
 const STAMPS: Record<string, LocalizedText> = {
   'set-logo': { de: 'Set-Logo', en: 'Set Logo' },
   staff: { de: 'Staff', en: 'Staff' },
+  judge: { de: 'Judge', en: 'Judge' },
   'player-rewards-program': { de: 'Play! Pokémon', en: 'Play! Pokémon' },
   'professor-program': { de: 'Professor-Programm', en: 'Professor Program' },
   'pokemon-center': { de: 'Pokémon Center', en: 'Pokémon Center' },
@@ -67,6 +69,24 @@ const STAMPS: Record<string, LocalizedText> = {
   'poke-ball-league': { de: 'Liga (Pokéball)', en: 'League (Poké Ball)' },
   'great-ball-league': { de: 'Liga (Superball)', en: 'League (Great Ball)' },
   'ultra-ball-league': { de: 'Liga (Hyperball)', en: 'League (Ultra Ball)' },
+  'master-ball-league': { de: 'Liga (Meisterball)', en: 'League (Master Ball)' },
+  'pre-release': { de: 'Prerelease', en: 'Prerelease' },
+  'thank-you': { de: 'Dankeschön', en: 'Thank You' },
+  'asia-promo': { de: 'Asien-Promo', en: 'Asia Promo' },
+  'rain-city': { de: 'Rain City', en: 'Rain City' },
+  'national-championships': { de: 'Nationale Meisterschaft', en: 'National Championships' },
+  'international-championship-europe': {
+    de: 'Internationale Meisterschaft (Europa)',
+    en: 'International Championship (Europe)',
+  },
+  'international-championship-latin-america': {
+    de: 'Internationale Meisterschaft (Lateinamerika)',
+    en: 'International Championship (Latin America)',
+  },
+  'international-championship-north-america': {
+    de: 'Internationale Meisterschaft (Nordamerika)',
+    en: 'International Championship (North America)',
+  },
   'illustration-contest-2022': {
     de: 'Illustrationswettbewerb 2022',
     en: 'Illustration Contest 2022',
@@ -94,11 +114,35 @@ const STAMPS: Record<string, LocalizedText> = {
     de: 'José Cruz Galindo Reséndiz',
     en: 'José Cruz Galindo Reséndiz',
   },
+  'jesse-parker': { de: 'Jesse Parker', en: 'Jesse Parker' },
   'liao-fu-guan': { de: 'Liao Fu Guan', en: 'Liao Fu Guan' },
+  'sakuya-ota': { de: 'Sakuya Ota', en: 'Sakuya Ota' },
   'shao-tong-yen': { de: 'Shao Tong Yen', en: 'Shao Tong Yen' },
-  pikachu: { de: 'Pikachu-Stempel', en: 'Pikachu Stamp' },
+  // Symbols printed on the card: the deck of My First Battle, a Poké Ball, the Base Set jumbos'.
+  bulbasaur: { de: 'Bisasam-Symbol', en: 'Bulbasaur Symbol' },
+  charmander: { de: 'Glumanda-Symbol', en: 'Charmander Symbol' },
+  squirtle: { de: 'Schiggy-Symbol', en: 'Squirtle Symbol' },
+  pikachu: { de: 'Pikachu-Symbol', en: 'Pikachu Symbol' },
+  pokeball: { de: 'Pokéball-Symbol', en: 'Poké Ball Symbol' },
   'poketour-99': { de: 'PokéTour ’99', en: 'PokéTour ’99' },
 };
+/**
+ * TCGdex subtypes that are prints of their own within the set's run (the Base Set's print runs are
+ * `printRun`, build.ts): part of the set when `inSet`, else promotional.
+ */
+const SUBTYPES: Record<string, { label: LocalizedText; inSet: boolean }> = {
+  // Pokémon GO: reverse holos with a Ditto sticker to peel off, from booster packs.
+  'peelable-ditto': { label: { de: 'Ditto-Sticker', en: 'Peelable Ditto' }, inSet: true },
+  // My First Battle: the blue-bordered reprint.
+  'blue-border': { label: { de: 'Blauer Rand', en: 'Blue Border' }, inSet: false },
+};
+/** TCGdex subtypes that name a print run (the Base Set's); a set keeps one (`printRun`). */
+export const PRINT_RUNS = new Set([
+  'unlimited',
+  'shadowless',
+  'shadowless-red-cheek',
+  '1999-2000-copyright',
+]);
 const SIZES: Record<string, LocalizedText> = { jumbo: { de: 'Jumbo', en: 'Jumbo' } };
 
 function known<T>(table: Record<string, T>, value: string, what: string, where: string): T {
@@ -143,8 +187,12 @@ const PROMO_HOLO: DerivedVariant = {
   rank: 101,
 };
 
-/** Neither a foil pattern nor a stamp or special size. */
-export const isPlainVariant = (raw: RawVariant) => !raw.foil && !raw.stamp?.length && !raw.size;
+/** Neither a foil pattern nor a stamp, special size or special print (a print run is fine). */
+export const isPlainVariant = (raw: RawVariant) =>
+  !raw.foil &&
+  !raw.stamp?.length &&
+  !raw.size &&
+  (raw.subtype === undefined || PRINT_RUNS.has(raw.subtype));
 
 export interface DeriveOptions {
   /** The card's plain non-holo is a deck exclusive (see DECK_PRINT). */
@@ -159,8 +207,8 @@ export interface DeriveOptions {
 }
 
 /**
- * One TCGdex variant as a Settr variant definition. `subtype` (the Base Set's print runs) is left
- * to the set's configuration (`printRun`, build.ts) and not part of the id.
+ * One TCGdex variant as a Settr variant definition. A print-run `subtype` (the Base Set's) is left
+ * to the set's configuration (`printRun`, build.ts); any other subtype is part of the id.
  */
 export function deriveVariant(
   raw: RawVariant,
@@ -193,6 +241,14 @@ export function deriveVariant(
     }
   }
   const extras: LocalizedText[] = [];
+  const subtype =
+    raw.subtype && !PRINT_RUNS.has(raw.subtype)
+      ? known(SUBTYPES, raw.subtype, 'subtype', where)
+      : undefined;
+  if (subtype && raw.subtype) {
+    extras.push(subtype.label);
+    id += `+${raw.subtype}`;
+  }
   for (const stamp of raw.stamp ?? []) {
     extras.push(known(STAMPS, stamp, 'stamp', where));
     id += `+${stamp}`;
@@ -201,7 +257,11 @@ export function deriveVariant(
     extras.push(known(SIZES, raw.size, 'size', where));
     id += `+${raw.size}`;
   }
-  if (extras.length || PROMO_TYPES.has(type) || (options.extra && kind === 'pattern'))
+  const stamped = (raw.stamp?.length ?? 0) > 0 || raw.size !== undefined;
+  if (subtype?.inSet && !stamped) {
+    kind = 'pattern';
+    rank = 30;
+  } else if (extras.length || PROMO_TYPES.has(type) || (options.extra && kind === 'pattern'))
     kind = 'stamp';
   if (kind === 'stamp') rank = 100 + rank;
   return { id, kind, label: extras.length ? join([label, ...extras]) : label, rank };

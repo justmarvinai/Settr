@@ -1,0 +1,25 @@
+# Storm Emerald (M6, 2026-09-24): trainers that have no international print yet, so no official
+# German or English names exist. These are Settr's own translations (the app marks every name of
+# a Japanese card that isn't printed as "übersetzt"). Once the international set (ME06) is in the
+# catalog, its counterparts' official names take over (build.ts): then delete this file.
+おいしいおむすび: { de: Leckerer Reisball, en: Delicious Rice Ball, note: provisional · Item }
+ぼうけんのランタン: { de: Abenteuerlaterne, en: Adventure Lantern, note: provisional · Item }
+とくちゅうチョッキ: { de: Maßgeschneiderte Weste, en: Custom-Made Vest, note: provisional · Tool }
+メガレックウザキャップ: { de: Mega-Rayquaza-Kappe, en: Mega Rayquaza Cap, note: provisional · Tool }
+MCの盛り上げ: { de: Anheizen des MC, en: "MC's Hype-Up", note: provisional · Supporter }
+ギリー: { de: Gilly, en: Gilly, note: provisional · Supporter }
+ヒガナの信頼:
+  {
+    de: Amalias Vertrauen,
+    en: "Zinnia's Trust",
+    note: 'provisional · Supporter (Zinnia is Amalia in German, Dragon Majesty 70)',
+  }
+フウとランの修行:
+  {
+    de: 'Ben & Svenjas Training',
+    en: "Tate & Liza's Training",
+    note: 'provisional · Supporter (Ben & Svenja, Celestial Storm 166)',
+  }
+伝説の海溝: { de: Legendärer Tiefseegraben, en: Legendary Trench, note: provisional · Stadium }
+伝説の山頂: { de: Legendärer Gipfel, en: Legendary Summit, note: provisional · Stadium }
+伝説の溶岩洞: { de: Legendäre Lavahöhle, en: Legendary Lava Cave, note: provisional · Stadium }

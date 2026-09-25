@@ -331,3 +331,29 @@ test.describe('accessibility of the Daten page', () => {
     });
   }
 });
+
+test('a copy of a card that moved to another set follows it, also from an older backup (ADR-061)', async ({
+  page,
+}) => {
+  await quickAdd(page, ['1 1']);
+  const { backup } = await exportBackup(page);
+
+  // A backup from before 2026-09-24: the basic Energy SVE 001 was filed under Karmesin & Purpur.
+  const older = structuredClone(backup);
+  const [lot] = older.data.holdings as unknown as Record<string, unknown>[];
+  Object.assign(lot!, {
+    item: { kind: 'card', id: 'intl:sve:001' },
+    setId: 'intl:sv01',
+    variant: 'normal',
+    snapshot: { name: 'Pflanzen-Energie', setName: 'Karmesin & Purpur', localId: '001' },
+  });
+  older.checksum.value = createHash('sha256').update(canonicalJson(older.data)).digest('hex');
+  await pickFile(page, { name: 'aelter.settr.json', buffer: Buffer.from(JSON.stringify(older)) });
+  await dialog(page).getByRole('radio', { name: 'Ersetzen' }).click();
+  await dialog(page).getByRole('button', { name: 'Ersetzen' }).click();
+  await expect(page.getByText('Backup eingespielt')).toBeVisible();
+
+  // The copy counts for Karmesin & Purpur Energie, where the card is now.
+  await page.goto('/catalog');
+  await expect(page.getByText('1 von 24 Karten')).toBeVisible();
+});

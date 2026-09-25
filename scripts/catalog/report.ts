@@ -65,6 +65,24 @@ export function renderReport(input: {
     '',
   );
 
+  const finishSets = sets.filter((s) => s.cards.some((c) => c.source.finishes));
+  if (finishSets.length) {
+    lines.push(
+      '## Finishes without TCGdex variants',
+      '',
+      "Cards TCGdex lists no variants for take their finishes from TCGplayer's printings (TCGCSV), else from the last build, else from the rarity rule (ADR-057).",
+      '',
+      '| Set | TCGplayer | last build | rarity rule |',
+      '|---|---|---|---|',
+      ...finishSets.map((s) => {
+        const count = (source: string) =>
+          s.cards.filter((c) => c.source.finishes === source).length;
+        return `| ${s.summary.id} | ${count('tcgplayer')} | ${count('previous')} | ${count('rule')} |`;
+      }),
+      '',
+    );
+  }
+
   if (cardmarket) {
     lines.push(
       '## Cardmarket',

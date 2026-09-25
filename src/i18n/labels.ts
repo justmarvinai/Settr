@@ -69,6 +69,8 @@ export const rarityLabel = /* @__PURE__ */ lookup<RarityId>({
   'classic-collection': m.rarity_classic_collection,
   'ace-spec-rare': m.rarity_ace_spec_rare,
   'shiny-rare': m.rarity_shiny_rare,
+  'shiny-rare-v': m.rarity_shiny_rare_v,
+  'shiny-rare-vmax': m.rarity_shiny_rare_vmax,
   'shiny-ultra-rare': m.rarity_shiny_ultra_rare,
   promo: m.rarity_promo,
 });

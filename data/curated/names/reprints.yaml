@@ -1,0 +1,82 @@
+# Reprints in the Start Deck 100 Battle Collection (MC) and the premium deck set of 30th CELEBRATION
+# (MF), 2026-09-24: Scarlet & Violet and Mega Evolution trainers and Energy whose illustrators
+# several international cards share, so no artwork match is unique. Each `from` names the
+# international card with the Japanese name's official names, checked against TCGdex: the same
+# illustrator drew both, except where the note says otherwise.
+アンフェアスタンプ: { from: 'intl:sv06:165', note: Unfair Stamp }
+いいきずぐすり: { from: 'intl:sv09:158', note: Super Potion }
+エネルギーコイン: { from: 'intl:sv10.5b:081', note: Energy Coin }
+エネルギー転送: { from: 'intl:sv01:172', note: Energy Search }
+鬼の仮面: { from: 'intl:sv06:159', note: "Ogre's Mask" }
+覚醒のドラム: { from: 'intl:sv05:141', note: Awakening Drum }
+きずぐすり: { from: 'intl:sv01:188', note: Potion }
+推理セット: { from: 'intl:sv08:171', note: Deduction Kit }
+スクランブルスイッチ: { from: 'intl:sv08:186', note: Scramble Switch }
+デンジャラス光線: { from: 'intl:sv06.5:058', note: Dangerous Laser }
+のんびりじゃらし: { from: 'intl:sv08:166', note: Chill Teaser Toy }
+ハイパーアロマ: { from: 'intl:sv06:152', note: Hyper Aroma }
+ハンドトリマー: { from: 'intl:sv05:150', note: Hand Trimmer }
+プライムキャッチャー: { from: 'intl:sv05:157', note: Prime Catcher }
+古びたはねの化石: { from: 'intl:sv10.5w:079', note: Antique Plume Fossil }
+プレシャスキャリー: { from: 'intl:sv08:185', note: Precious Trolley }
+ペパーのサンドウィッチ: { from: 'intl:sv10:161', note: "Arven's Sandwich" }
+ポケギア3.0: { from: 'intl:sv01:186', note: Pokégear 3.0 }
+ポケバイタルA: { from: 'intl:sv06.5:062', note: Poké Vital A }
+ポケモン回収サイクロン: { from: 'intl:sv06:162', note: Scoop Up Cyclone }
+ポケモンキャッチャー: { from: 'intl:sv01:187', note: 'Pokémon Catcher (M6: another artist)' }
+モンスターボール: { from: 'intl:sv01:185', note: Poké Ball }
+リブートポッド: { from: 'intl:sv05:158', note: Reboot Pod }
+竜の秘薬: { from: 'intl:sv08:172', note: Dragon Elixir }
+ロケット団のスーパーボール: { from: 'intl:sv10:175', note: "Team Rocket's Great Ball" }
+ロケット団のびっくりボム: { from: 'intl:sv10:172', note: "Team Rocket's Bother-Bot" }
+イトケのみ: { from: 'intl:sv08:184', note: Passho Berry }
+ウタンのみ: { from: 'intl:sv07:141', note: Payapa Berry }
+オッカのみ: { from: 'intl:sv07:140', note: Occa Berry }
+きらめく結晶: { from: 'intl:sv07:142', note: Sparkling Crystal }
+くさりもち: { from: 'intl:sv06.5:055', note: Binding Mochi }
+力の砂時計: { from: 'intl:sv06.5:097', note: Powerglass }
+デラックスボム: { from: 'intl:sv07:134', note: Deluxe Bomb }
+ナモのみ: { from: 'intl:sv08:168', note: Colbur Berry }
+ハバンのみ: { from: 'intl:sv08.5:111', note: Haban Berry }
+ヒーローマント: { from: 'intl:sv05:152', note: "Hero's Cape" }
+マキシマムベルト: { from: 'intl:sv05:154', note: Maximum Belt }
+リーリエのしんじゅ: { from: 'intl:sv09:151', note: "Lillie's Pearl" }
+リリバのみ: { from: 'intl:sv08:163', note: Babiri Berry }
+アオキの手際: { from: 'intl:sv08.5:115', note: "Larry's Skill" }
+アカマツ: { from: 'intl:sv07:133', note: Crispin }
+暗号マニアの解読: { from: 'intl:sv05:145', note: "Ciphermaniac's Codebreaking" }
+アンズの秘技: { from: 'intl:sv06.5:059', note: "Janine's Secret Art" }
+ウエートレス: { from: 'intl:me02.5:215', note: Waitress }
+Nの筋書き: { from: 'intl:sv10.5b:083', note: "N's Plan" }
+ガイ: { from: 'intl:me02.5:214', note: Urbain }
+カキツバタ: { from: 'intl:sv08:174', note: Drayton }
+クセロシキのたくらみ: { from: 'intl:sv06.5:064', note: "Xerosic's Machinations" }
+コック: { from: 'intl:sv06:147', note: Cook }
+ゴヨウ: { from: 'intl:sv06:157', note: Lucian }
+サザレ: { from: 'intl:sv06:160', note: Perrin }
+シトロンの機転: { from: 'intl:sv08:167', note: "Clemont's Quick Wit" }
+ジャッジマン: { from: 'intl:sv10:167', note: Judge }
+スイレンのお世話: { from: 'intl:sv06:155', note: "Lana's Aid" }
+スグリ: { from: 'intl:sv06:154', note: Kieran }
+セイジ: { from: 'intl:sv02:187', note: 'Saguaro (MC: another artist)' }
+ゼイユ: { from: 'intl:sv06:145', note: Carmine }
+タロ: { from: 'intl:sv07:139', note: Lacey }
+探検家の先導: { from: 'intl:sv05:147', note: "Explorer's Guidance" }
+ドラセナ: { from: 'intl:sv08:173', note: Drasna }
+ハイダイ: { from: 'intl:sv07:138', note: Kofu }
+ハッサク: { from: 'intl:sv06:151', note: Hassel }
+ブライア: { from: 'intl:sv07:132', note: Briar }
+ベルのまごころ: { from: 'intl:sv05:142', note: "Bianca's Devotion" }
+マコモ: { from: 'intl:sv10.5b:082', note: Fennel }
+マツバの確信: { from: 'intl:sv05:155', note: "Morty's Conviction" }
+ミカンのまなざし: { from: 'intl:sv08:178', note: "Jasmine's Gaze" }
+ルチアのアピール: { from: 'intl:sv08:179', note: "Lisia's Appeal" }
+スパイクエネルギー: { from: 'intl:sv09:159', note: Spiky Energy }
+ブーメランエネルギー: { from: 'intl:sv06:166', note: Boomerang Energy }
+リッチエネルギー: { from: 'intl:sv08:191', note: Enriching Energy }
+レガシーエネルギー: { from: 'intl:sv06:167', note: Legacy Energy }
+タケシのスカウト: { from: 'intl:sv09:146', note: "Brock's Scouting" }
+オーガポン かまどのめんex: { from: 'intl:sv06:040', note: Hearthflame Mask Ogerpon ex }
+オーガポン いどのめんex: { from: 'intl:sv06:064', note: Wellspring Mask Ogerpon ex }
+オーガポン いしずえのめんex: { from: 'intl:sv06:112', note: Cornerstone Mask Ogerpon ex }
+アオキのノココッチex: { from: 'intl:me02.5:164', note: "Larry's Dudunsparce ex" }

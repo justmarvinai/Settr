@@ -1,0 +1,13 @@
+# Cards that moved to another set (ADR-061): card id → the set it was in. Copies recorded under
+# that set follow the card (the manifest's `movedCards`). The build stops when a card changes set
+# without an entry here.
+# 2026-09-24: the first basic Energy of Scarlet & Violet left Karmesin & Purpur for Karmesin &
+# Purpur Energie (ADR-059).
+intl:sve:001: intl:sv01
+intl:sve:002: intl:sv01
+intl:sve:003: intl:sv01
+intl:sve:004: intl:sv01
+intl:sve:005: intl:sv01
+intl:sve:006: intl:sv01
+intl:sve:007: intl:sv01
+intl:sve:008: intl:sv01

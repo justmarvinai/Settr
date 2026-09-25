@@ -4,6 +4,7 @@ import { parse } from 'yaml';
 import { z } from 'zod';
 import { CARD_LANGUAGES } from '../../src/domain/catalog-types';
 import { catalogProductSchema } from '../../src/domain/catalog/schema';
+import { RARITY_IDS } from '../../src/domain/catalog/vocab';
 import { CURATED } from './paths';
 
 const text = z.partialRecord(z.enum(CARD_LANGUAGES), z.string().min(1));
@@ -13,6 +14,8 @@ const cardOverlaySchema = z
   .object({
     printedNumber: z.string().optional(),
     sort: z.number().optional(),
+    /** The rarity where TCGdex's is wrong (a GX it calls Rare). */
+    rarity: z.enum(RARITY_IDS).optional(),
     /** Official names that TCGdex lacks or gets wrong. */
     name: text.optional(),
     /** Hand-typed translations (shown as "übersetzt"). */
@@ -98,6 +101,12 @@ export function loadJapaneseNames(): Map<string, JapaneseName> {
     for (const [ja, entry] of Object.entries(parsed)) names.set(ja, entry);
   }
   return names;
+}
+
+/** Cards that moved to another set: card id → the set it was in (ADR-061). */
+export function loadMovedCards(): Record<string, string> {
+  const file = join(CURATED, 'moved-cards.yaml');
+  return existsSync(file) ? z.record(z.string(), z.string()).parse(readYaml(file) ?? {}) : {};
 }
 
 /** Upstream id changes: old catalog id → new id (DATA_MODEL.md §3). */

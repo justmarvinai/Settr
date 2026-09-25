@@ -1,0 +1,10 @@
+# Ultra-Prisma: Cardmarket names the Unit Energy by their types' letters ("Unit Energy [GRW]"), so
+# the name match misses them. Ids between their neighbours' products (Cardmarket numbers a set's
+# products in card order), 2026-09-24 sync.
+setId: intl:sm5
+cards:
+  '137': { cardmarket: { en: 316061 }, note: 'Unit Energy GrassFireWater · Unit Energy [GRW]' }
+  '138':
+    { cardmarket: { en: 316062 }, note: 'Unit Energy LightningPsychicMetal · Unit Energy [LPM]' }
+  '170': { cardmarket: { en: 316094 }, note: Unit Energy GrassFireWater (Secret Rare) }
+  '171': { cardmarket: { en: 316095 }, note: Unit Energy LightningPsychicMetal (Secret Rare) }

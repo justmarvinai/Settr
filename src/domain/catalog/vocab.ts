@@ -36,6 +36,8 @@ export const RARITY_IDS = [
   'classic-collection',
   'ace-spec-rare',
   'shiny-rare',
+  'shiny-rare-v',
+  'shiny-rare-vmax',
   'shiny-ultra-rare',
   'promo',
 ] as const;
@@ -67,6 +69,8 @@ export const RARITY_ABBR: Record<RarityId, string> = {
   'classic-collection': 'CC',
   'ace-spec-rare': 'ACE',
   'shiny-rare': 'S',
+  'shiny-rare-v': 'SHV',
+  'shiny-rare-vmax': 'SHVM',
   'shiny-ultra-rare': 'SUR',
   promo: 'PR',
 };

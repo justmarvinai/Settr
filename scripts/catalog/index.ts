@@ -22,9 +22,16 @@ import {
   type CardmarketReport,
 } from './cardmarket';
 import { CATALOG_SETS, NAME_DONORS } from './config';
-import { loadCardOverlays, loadIdAliases, loadJapaneseNames, loadSealed } from './curated';
+import {
+  loadCardOverlays,
+  loadIdAliases,
+  loadJapaneseNames,
+  loadMovedCards,
+  loadSealed,
+} from './curated';
 import { emitCatalog } from './emit';
 import { fetchSources, updateLock } from './fetch';
+import { loadFinishes, type FinishTable } from './finishes';
 import { createChecker, resolveImages } from './images';
 import { loadSpeciesNames } from './names';
 import { CACHE, REPORT } from './paths';
@@ -46,6 +53,15 @@ if (args.has('--update-sources')) {
 }
 await fetchSources({ network });
 const previous = loadPrevious();
+// Printings of cards TCGdex has no variants for (TCGCSV, network builds; ADR-057).
+let finishTable: FinishTable = new Map();
+if (network) {
+  try {
+    finishTable = await loadFinishes(CATALOG_SETS);
+  } catch (error) {
+    problems.warnings.push(`TCGCSV printings unavailable, the last build's kept: ${String(error)}`);
+  }
+}
 const species = loadSpeciesNames();
 const overlays = loadCardOverlays();
 const donors = await loadDonors(NAME_DONORS, loadTcgdexSerie);
@@ -55,6 +71,7 @@ const sets = await buildSets(
     overlays,
     donors,
     japaneseNames: loadJapaneseNames(),
+    finishes: { table: finishTable, previous },
     traditionalChinese: new Map(
       CATALOG_SETS.flatMap((c) =>
         c.traditionalChinese
@@ -152,6 +169,25 @@ for (const product of products) {
   seen.add(product.id);
 }
 
+// A card that changes set needs an entry in data/curated/moved-cards.yaml, so the app can point
+// copies recorded under its former set at it (ADR-061).
+const movedFrom = loadMovedCards();
+const setOfCard = new Map(sets.flatMap((s) => s.cards.map((c) => [c.id, c.setId] as const)));
+const movedCards: Record<string, string> = {};
+for (const [id, from] of Object.entries(movedFrom)) {
+  const now = setOfCard.get(id);
+  if (!now) problems.errors.push(`${id}: in data/curated/moved-cards.yaml but not in the catalog`);
+  else if (now === from) problems.errors.push(`${id}: listed as moved from ${from}, its set now`);
+  else movedCards[id] = now;
+}
+for (const [id, before] of previous.cards) {
+  const now = setOfCard.get(id);
+  if (now && now !== before.setId && movedFrom[id] !== before.setId)
+    problems.errors.push(
+      `${id}: moved from ${before.setId} to ${now}; list it in data/curated/moved-cards.yaml`,
+    );
+}
+
 if (problems.errors.length) {
   console.error(`Catalog build failed:\n  ${problems.errors.join('\n  ')}`);
   process.exit(1);
@@ -161,6 +197,7 @@ const manifest = emitCatalog(sets, products, species, {
   imagesVerified: images.verified,
   generatedAt: new Date().toISOString(),
   previous: previous.manifest,
+  movedCards,
 });
 
 // Catalog ids are permanent (DATA_MODEL.md §3): a vanished id needs an alias.

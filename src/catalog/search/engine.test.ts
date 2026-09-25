@@ -70,9 +70,16 @@ describe('search engine: names', () => {
       expect.arrayContaining(['intl:30th:025', 'asia:M6a:017', 'intl:30th-c:014']),
     );
     expect(results[0]?.doc.name).toBe('Pikachu');
-    for (const { doc } of results) {
-      expect(namesOf(doc).some((name) => name.includes('pikachu'))).toBe(true);
-    }
+    // Cards named after Pikachu first; the rest only match through their set (Meisterdetektiv
+    // Pikachu) or illustrator (2019 Pikachu Project).
+    const named = results.map(({ doc }) =>
+      [...namesOf(doc), ...(doc.aliases ?? []).map((name) => normalizeText(name))].some((name) =>
+        name.includes('pikachu'),
+      ),
+    );
+    const firstOther = named.indexOf(false);
+    expect(firstOther).toBeGreaterThan(100);
+    expect(named.slice(firstOther).includes(true)).toBe(false);
   });
 
   it('finds Japanese Pikachu by katakana and hiragana alike', () => {
@@ -150,7 +157,8 @@ describe('search engine: names', () => {
     expect(results.map((r) => r.id)).toEqual(
       expect.arrayContaining(['intl:30th:023', 'asia:M6a:017']),
     );
-    for (const { doc } of results) expect(doc.illustrator).toBe('Ken Sugimori');
+    // Cards he drew with someone else ("Ken Sugimori Yusuke Ohmura") match too.
+    for (const { doc } of results) expect(doc.illustrator).toContain('Ken Sugimori');
     for (const { doc } of search('mitsuhiro arita'))
       expect(doc.illustrator).toBe('Mitsuhiro Arita');
     // One typo away: "arita" also finds Hitoshi Ariga, after the exact matches.
@@ -175,8 +183,12 @@ describe('search engine: card numbers', () => {
   });
 
   it('finds Classic Collection cards by their printed number', () => {
-    // The Classic Collection reprints Base Set cards under their old numbers.
-    expect(ids('#4/102').toSorted()).toEqual(['intl:30th-c:001', 'intl:base1:4']);
+    // Both Classic Collections reprint Base Set cards under their old numbers.
+    expect(ids('#4/102').toSorted()).toEqual([
+      'intl:30th-c:001',
+      'intl:base1:4',
+      'intl:cel25cc:CC002',
+    ]);
     expect(ids('4')).toContain('intl:30th-c:001');
   });
 

@@ -151,7 +151,7 @@
     {"id":"holo","kind":"finish","label":{"de":"Holo","en":"Holo"}},
     {"id":"normal","kind":"finish","label":{"de":"Normal","en":"Normal"}},
     {"id":"normal+jumbo","kind":"stamp","label":{"de":"Normal · Jumbo","en":"Normal · Jumbo"}},
-    {"id":"normal+pikachu+jumbo","kind":"stamp","label":{"de":"Normal · Pikachu-Stempel · Jumbo","en":"Normal · Pikachu Stamp · Jumbo"}},
+    {"id":"normal+pikachu+jumbo","kind":"stamp","label":{"de":"Normal · Pikachu-Symbol · Jumbo","en":"Normal · Pikachu Symbol · Jumbo"}},
     {"id":"normal+poketour-99","kind":"stamp","label":{"de":"Normal · PokéTour ’99","en":"Normal · PokéTour ’99"}}
   ]
 }

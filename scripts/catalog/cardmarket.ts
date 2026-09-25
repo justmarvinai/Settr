@@ -405,8 +405,20 @@ function groupBy<T>(items: readonly T[], key: (item: T) => string): Map<string, 
 }
 
 /** Letters and digits only: "Rotom Dex—Poké Finder Mode" and "Rotom Dex Poké Finder Mode" agree. */
+/** HTML entities in Cardmarket's product names ("Nidoran &female;"). */
+const ENTITIES: Record<string, string> = {
+  female: '♀',
+  male: '♂',
+  amp: '&',
+  apos: "'",
+  quot: '"',
+  eacute: 'é',
+};
+const decodeEntities = (text: string) =>
+  text.replace(/&([a-z]+);/gi, (entity, name: string) => ENTITIES[name.toLowerCase()] ?? entity);
+
 const normalize = (text: string) =>
-  text
+  decodeEntities(text)
     .normalize('NFKD')
     .replace(/\p{M}/gu, '')
     .replace(/[^\p{L}\p{N}]/gu, '')
@@ -434,7 +446,9 @@ function productKey(name: string): { base: string; moves: string } {
 function cardKey(card: BuiltCard): { base: string; moves: string } {
   const { raw } = card.source;
   return {
-    base: normalize(raw.name.en ?? card.name.en ?? ''),
+    // A trainer's character in brackets ("Professor's Research (Professor Magnolia)"), which
+    // Cardmarket names after a dash.
+    base: normalize((raw.name.en ?? card.name.en ?? '').replace(/\s*\([^)]*\)\s*$/, '')),
     moves: [...(raw.abilities ?? []), ...(raw.attacks ?? [])]
       .flatMap((m) => (m.name.en ? [normalize(m.name.en)] : []))
       .toSorted()

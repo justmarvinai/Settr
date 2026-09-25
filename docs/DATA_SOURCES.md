@@ -100,6 +100,77 @@ International (DE/EN) only, cards only (R10.1, R10.2). Cardmarket = the singles'
 - **German names:** TCGdex has none for 34 promos; species names come from PokéAPI, the rest is curated or English-only (`data/curated/cards/intl-svp.yaml`, `intl-swshp.yaml`).
 - **Pictures:** TCGdex files the galleries' pictures in their main set's folder (`de/swsh/swsh11/TG01`, not `…/swsh11tg/…`), so the config names it (`picturesIn`); all 160 gallery cards have German pictures. The Grundset's German cards show the English picture (labeled). Of the 3,678 cards, 3,512 have a German picture, 121 the English one and 45 promos none (placeholder).
 
+### 2.3 The rest of the eras (added 2026-09-24, ADR-057–059, R11)
+
+Every other set of the eras Marvin collects from, except the Base Set's (R11.1): international (DE/EN), cards only. Cardmarket = the singles' expansion (configured, else TCGdex's, else the main set's). TCGplayer group = the printings for sets without TCGdex variants (ADR-057).
+
+| Set | Cards (official) | Cardmarket | TCGplayer group |
+|---|---|---|---|
+| `sv09` Reisegefährten (JTG) | 190 (159) | 6006 | |
+| `sv07` Stellarkrone (SCR) | 175 (142) | 5802 | |
+| `sv06.5` Nebel der Sagen (SFA) | 99 (64) | 5760 | |
+| `sv06` Maskerade im Zwielicht (TWM) | 226 (167) | 5691 | |
+| `sv05` Gewalten der Zeit (TEF) | 218 (162) | 5589 | |
+| `sv04` Paradoxrift (PAR) | 266 (182) | 5444 | |
+| `sv03` Obsidianflammen (OBF) | 230 (197) | 5385 | |
+| `sv02` Entwicklungen in Paldea (PAL) | 279 (193) | 5318 | |
+| `mfb` My First Battle (MFB), English only | 34 | — | |
+| `sve` Karmesin & Purpur Energie (SVE) | 24 | per card | |
+| `swsh12` Silberne Sturmwinde (SIT) + `swsh12tg` Trainer-Galerie | 215 (195) + 30 | 5142 | |
+| `swsh10.5` Pokémon GO (PGO) | 88 (78) | 4786 | |
+| `swsh10` Astralglanz (ASR) + `swsh10tg` Trainer-Galerie | 216 (189) + 30 | 4979 | |
+| `swsh8` Fusionsangriff (FST) | 284 (264) | 4382 | |
+| `cel25` Celebrations (CEL) + `cel25cc` Klassische Kollektion | 25 (25) + 25 | 4347 | |
+| `swsh7` Drachenwandel (EVS) | 237 (203) | 4328 | |
+| `swsh6` Schaurige Herrschaft (CRE) | 233 (198) | 4174 | |
+| `swsh5` Kampfstile (BST) | 183 (163) | 3675 | |
+| `swsh4.5` Glänzendes Schicksal (SHF) + `swsh4.5sv` Glitzer-Tresor | 73 (72) + 122 | 3630 | |
+| `swsh3.5` Weg des Champs (CPA) | 80 (73) | 3419 | |
+| `fut2020` Pokémon Futsal 2020, English only | 5 | per card | |
+| `swsh3` Flammende Finsternis (DAA) | 201 (189) | 3199 | |
+| `swsh1` Schwert & Schild (SSH) | 216 (202) | 2921 | |
+| `sm12` Welten im Wandel (CEC) | 271 (236) | 2644 | 2534 |
+| `sm115` Verborgenes Schicksal (HIF) + `sma` Glitzer-Tresor | 69 (68) + 94 | 2514 | 2480 |
+| `sm11` Bund der Gleichgesinnten (UNM) | 258 (236) | 2487 | 2464 |
+| `sm10` Kräfte im Einklang (UNB) | 234 (214) | 2437 | 2420 |
+| `det1` Meisterdetektiv Pikachu (DET) | 18 (18) | 2438 | 2409 |
+| `sm9` Teams sind Trumpf (TEU) | 196 (181) | 2407 | 2377 |
+| `sm8` Echo des Donners (LOT) | 236 (214) | 2370 | 2328 |
+| `sm7.5` Majestät der Drachen (DRM) | 78 (70) | 2351 | 2295 |
+| `sm7` Sturm am Firmament (CES) | 183 (168) | 2320 | 2278 |
+| `sm6` Grauen der Lichtfinsternis (FLI) | 146 (131) | 2075 | 2209 |
+| `sm5` Ultra-Prisma (UPR) | 173 (156) | 2065 | 2178 |
+| `sm4` Aufziehen der Sturmröte (CIN) | 125 (111) | 1843 | 2071 |
+| `sm3.5` Schimmernde Legenden (SLG) | 78 (73) | 1842 | 2054 |
+| `sm2` Stunde der Wächter (GRI) | 169 (145) | 1800 | 1919 |
+| `sm1` Sonne & Mond (SUM) | 172 (149) | 1745 | 1863 |
+| `smp` Sonne & Mond Promos | 248 | 1757 | |
+
+| Japanese (with Traditional Chinese) | Cards (official) | Notes |
+|---|---|---|
+| `M6` Storm Emerald | 113 (76) | Rarities by number (ADR-058); no international print yet |
+| `MC` Start Deck 100 Battle Collection | 774 (742) | Reprints with numbers of their own; no rarities printed |
+| `MF` Premium-Deckset Psiana & Nachtara | 49 (40) | The premium deck set of 30th CELEBRATION; its box is `asia:m6a-premium-deck-set` |
+
+**Data quirks (found while adding them, 2026-09-24)**
+- **No variants at TCGdex** for the Sun & Moon sets except Nacht in Flammen (a handful of cards aside): the finishes come from TCGplayer's printings (`tcgplayerGroup`, ADR-057). A Sun & Moon "Rare" printed only as a holo is a *Holo Rare*.
+- **Products per card:** Schwert & Schild, Weg des Champs and the Sun & Moon sets keep a card's Cardmarket and TCGplayer products on the card; the regular variants take them.
+- **Unpadded ids:** Schwert & Schild to Fusionsangriff and Celebrations are numbered `1`, `2` … at TCGdex; they print `001/202`, and a set under 100 cards prints its total with three digits too (`001/073`). The Sun & Moon sets print `1/149`.
+- **Vaults and galleries:** the Glitzer-Tresore print `SV001/SV122` (Glänzendes Schicksal) and `SV1/SV94` (Verborgenes Schicksal); Silberne Sturmwinde's gallery `TG01/TG30`. Their pictures may sit in the main set's folder (`picturesIn`).
+- **Klassische Kollektion (Celebrations):** TCGdex has no German data and numbers the cards `CC001`–`CC025`; the original numbers and the originals' German names are curated (`data/curated/cards/intl-cel25cc.yaml`, checked by number and illustrator).
+- **Aufziehen der Sturmröte 63a:** the alternate-art Guzzlord-GX of the Guzzlord-GX Box, numbered `63a/111`.
+- **GX cards TCGdex calls Rare:** Sylveon-GX (GRI 92), Tapu Fini-GX (BUS 39), Entei-GX (SLG 10) and Guzzlord-GX 63a. They're Ultra Rares like every other GX of these sets (curated `rarity`).
+- **English only:** My First Battle, Pokémon Futsal 2020 and the Ash's Pikachu promos SM108–SM114 (`data/curated/cards/intl-smp.yaml`).
+- **Karmesin & Purpur Energie:** SVE 001–008 came with the first set, 009–024 with later products; the set holds all 24.
+- **German set names:** TCGdex capitalizes some (*Teams Sind Trumpf*) or splits them (*Obsidian Flammen*); the config names them as printed.
+- **M6:** TCGdex lists every card above 076 as Mega Hyper Rare (ADR-058). Its eleven new trainers have no international print, so their German and English names are Settr's translations until ME06 (`data/curated/names/m6-provisional.yaml`).
+- **MC and MF:** reprints of Karmesin & Purpur and Mega-Entwicklung cards. Trainers whose illustrator drew several international cards get their names from the dictionary (`data/curated/names/reprints.yaml`), each checked against the international card's illustrator.
+
+**The sync (2026-09-24, catalog 2026.09.24.18)**
+- **Cardmarket:** 6,719 of the 6,722 international cards link to their product: TCGdex's ids, 149 matched by name where TCGdex has none (ADR-056), and a few curated (`data/curated/cards/`). The three left open (Guzzlord-GX 63a, Professor's Research SSH 201, Steven's Resolve CES 145) open Cardmarket's search rather than a guess. All 936 Japanese cards have their product.
+- **Pictures:** of the 6,676 cards printed in German, 6,199 show the German picture, 282 the English one and 195 none. TCGdex has no pictures for Majestät der Drachen (78), the later Sonne & Mond promos (67), the Klassische Kollektion (25), Karmesin & Purpur Energie (24) and one Celebrations card; of the 46 English-only cards, My First Battle's 34 have none. Of the 936 Japanese cards, 672 show the international card's picture (labeled) and 264 none yet (MC 129, M6 111, MF 24).
+- **Finishes (ADR-057):** TCGplayer's printings for 2,391 cards of the 15 Sun & Moon sets with a group; the ten it doesn't list take the rarity rule (Sonne & Mond's basic Energy 164–172, Guzzlord-GX 63a). The Glitzer-Tresor of Verborgenes Schicksal has no group of its own: all 94 cards are holos. 246 cards TCGdex calls Rare print only as a holo and are Holo Rares.
+
 ---
 
 ## 3. TCGdex (primary source)
@@ -166,7 +237,7 @@ International (DE/EN) only, cards only (R10.1, R10.2). Cardmarket = the singles'
 | **Cardmarket price guide** (`…/priceGuide/price_guide_6.json`, 15.5 MB) | **Suggestions only** (Q6.6 → PRC-09): a daily snapshot limited to catalog products, never saved without confirmation (§8.3). Prices stay manual by design | Public, daily, no CORS. The snapshot isn't committed while the repository is public (ADR-029) |
 | **type-null/PTCG-database** (GitHub) | JP gaps and the primary source of **Traditional Chinese** names (`data_tc`, up to M6a; R2.3, ADR-026) | MIT; its README states the repository content is MIT too (verified in M2), credited in Einstellungen › Über. **Its official image URLs are not used** (Q4.6) |
 | **duanxr/PTCG-CHS-Datasets** (GitHub) | **Not used** (R2.8, revised). It has 232 Simplified Chinese products incl. `30thC` (176 cards) with names and images, but nothing from it is committed or shipped | **Non-commercial, no redistribution.** Its terms reserve consent for redistribution to **the official owner or an authorized entity** (they point to Pokémon Shanghai), not the maintainer. A request to the maintainer can't grant it, so none is sent |
-| **TCGCSV** (`tcgcsv.com`; TCGplayer categories 3 = EN, 85 = JP) | Product names and **images of EN/JP sealed products** (`tcgplayer-cdn…/product/{id}_400w.jpg` and `…_in_1000x1000.jpg`). The CI report lists the sealed products of the matching groups (e.g. *ME: 30th Celebration* 3/24722, *M6a: MEGA Expansion 30th Celebration* 85/24721); their ids are curated as `refs.tcgplayer` | Free, no key, needs its own User-Agent, max 10k requests/day, daily updates. Build step only |
+| **TCGCSV** (`tcgcsv.com`; TCGplayer categories 3 = EN, 85 = JP) | Product names and **images of EN/JP sealed products** (`tcgplayer-cdn…/product/{id}_400w.jpg` and `…_in_1000x1000.jpg`). The CI report lists the sealed products of the matching groups (e.g. *ME: 30th Celebration* 3/24722, *M6a: MEGA Expansion 30th Celebration* 85/24721); their ids are curated as `refs.tcgplayer`. Also the **printings** (Normal, Holofoil, Reverse Holofoil) per card number of the sets TCGdex has no variants for (`…/{group}/prices`, ADR-057) | Free, no key, needs its own User-Agent, max 10k requests/day, daily updates. Build step only |
 | **PokéAPI** (CSV in its GitHub repo) | Pokémon species names in de/ja/zh-Hant/zh-Hans/ko. Used for (1) **search aliases** ("Glurak" ⇄ "Charizard" ⇄ "リザードン" ⇄ "喷火龙"), (2) the fallback for Chinese names (`zh-Hans`, `zh-Hant`) where the official Traditional Chinese name is missing (ADR-026, ADR-034), and (3) **derived German names** for Asian-print cards ("ピカチュウex" → "Pikachu-ex"). Derived names are flagged in `nameSource` | Free, open |
 | **Bulbapedia / Serebii / PokeBeach / official galleries** | Manual research for sealed contents, release waves, promos | Read-only research; no scraping into the product |
 | **Limitless TCG** | Printed Classic Collection numbers (CC1–CC30), and as a reference | No API; image CDN terms unclear, so not used |
@@ -248,6 +319,13 @@ cards:
   # SWSH029: { cardmarket: { en: 123456 } }   # international cards: one product for DE and EN
 ```
 
+```yaml
+# data/curated/cards/intl-sm3.yaml   (a rarity TCGdex gets wrong)
+setId: intl:sm3
+cards:
+  '39': { rarity: ultra-rare, note: Tapu Fini-GX }
+```
+
 Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow collections split on commas.
 
 ### 6.4 Automation
@@ -257,9 +335,9 @@ Quote YAML values that contain a comma inside `{ … }` or `[ … ]`: flow colle
 
 ### 6.5 Adding sets after v1 (R2.5, ADR-028)
 
-v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1), and the same day **21 sets Marvin listed**, from Scarlet & Violet back to the Base Set (§2.2). Further sets follow **one by one, era by era**, as Marvin asks. Adding a set means:
+v1 shipped *30 Jahre* only; the **Mega Evolution series** followed on 2026-09-24 (§2.1), the same day **21 sets Marvin listed**, from Scarlet & Violet back to the Base Set (§2.2), and then **the rest of those eras** except the Base Set's (§2.3). Further sets follow as Marvin asks. Adding a set means:
 
-1. An entry in `scripts/catalog/config.ts` (TCGdex set per print, plus subsets and energies where they exist). The options for older sets: `printedNumber` (numbers TCGdex stores differently), `printRun` (one print run of several), `rareIsHolo: false` (before Scarlet & Violet), `picturesIn` (pictures filed in another set's folder), `cardmarket` (an expansion TCGdex lacks, and side expansions).
+1. An entry in `scripts/catalog/config.ts` (TCGdex set per print, plus subsets and energies where they exist). The options for older sets: `printedNumber` (numbers TCGdex stores differently), `printRun` (one print run of several), `rareIsHolo: false` (before Scarlet & Violet), `picturesIn` (pictures filed in another set's folder), `cardmarket` (an expansion TCGdex lacks, and side expansions), `tcgplayerGroup` (finishes where TCGdex has no variants), `rarityRanges` (rarities by number where TCGdex's are wrong), `forceRarity`, `name` (set names TCGdex misspells) and `englishOnly(…)` (sets without a German print).
 2. A curated overlay in `data/curated/` (sealed products, name fixes, Cardmarket ID corrections, English-only cards).
 3. Catalog syncs on the network (`catalog-sync.yml`, `commit: true`) until the report is clean: counts, images, Cardmarket IDs and expansions.
 

@@ -11,6 +11,7 @@ import {
 import type { PriceSessionState } from '@/domain/valuation';
 import { db } from './instance';
 import { getUiPref, setUiPref } from './repositories/collection-meta';
+import { countStaleMovedCards } from './moved-cards';
 import { listHoldingsInSets, listHoldingsOfItem } from './repositories/holdings';
 import { getPrice, getPriceSession, listPricesOfItem, listSeries } from './repositories/prices';
 
@@ -25,6 +26,13 @@ export function useHoldings(): Holding[] | undefined {
 export function useHoldingsInSets(setIds: readonly string[]): Holding[] | undefined {
   const key = setIds.join('|');
   return useLiveQuery(() => listHoldingsInSets(db, key.split('|')), [key]);
+}
+
+/** Lots of moved cards still recorded under another set (ADR-061); undefined while loading. */
+export function useStaleMovedCards(
+  moved: Readonly<Record<string, string>> | undefined,
+): number | undefined {
+  return useLiveQuery(() => (moved ? countStaleMovedCards(db, moved) : 0), [moved]);
 }
 
 /** Lots of one card or product; undefined while loading. */
